@@ -1,7 +1,10 @@
 import React, { useState, useCallback } from "react";
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import ParticlesCanvas from "./components/ParticlesCanvas";
 import TopBar from "./components/TopBar";
 import MainArea from "./components/MainArea";
+import AlternativaUno from "./components/AlternativaUno";
+import AlternativaDos from "./components/AlternativaDos";
 
 // El componente raíz de la aplicación
 export default function App() {
@@ -24,7 +27,26 @@ export default function App() {
   }, []);
 
   return (
+    
     <div className="merulink-root">
+      <BrowserRouter>
+      {/* Navegación con React Router DOM */}
+      <nav style={{ padding: '10px', background: '#333' }}>
+        <Link to="/diseno-b" style={{ color: 'white', margin: '10px' }}>Alternativa-1</Link>
+        <Link to="/diseno-c" style={{ color: 'white', margin: '10px' }}>Alternativa-2</Link>
+      </nav>
+
+      {/* 🌐 Definición de las Rutas */}
+      <Routes>
+      
+        {/* Ruta para la Propuesta B: http://localhost:3000/diseno-b */}
+        <Route path="/diseno-b" element={<AlternativaUno />} />
+        
+        {/* Ruta para la Propuesta C: http://localhost:3000/diseno-c */}
+        <Route path="/diseno-c" element={<AlternativaDos />} />
+
+      </Routes>
+    </BrowserRouter>
 
       <ParticlesCanvas />
 
