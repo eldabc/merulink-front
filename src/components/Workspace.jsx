@@ -1,8 +1,6 @@
 import React from "react";
 import LobbyCalendar from "./LobbyCalendar";
 import AssistantInput from "./AssistantInput";
-import AlternativaUno from "./AlternativaUno";
-import AlternativaDos from "./AlternativaDos";
 
 export default function Workspace({ activeMenu }) {
   if (activeMenu === 'Lobby') {

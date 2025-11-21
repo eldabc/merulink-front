@@ -1,10 +1,12 @@
-import React from "react";
+// src/components/workspace/LobbyCalendar.jsx
+import React from 'react';
+
+// Datos (pueden ser extraídos a un archivo de constantes si crecen)
+const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+const diasMes = Array.from({ length: 30 }, (_, i) => i + 1);
+const hoy = new Date().getDate();
 
 export default function LobbyCalendar() {
-  const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-  const diasMes = Array.from({ length: 30 }, (_, i) => i + 1);
-  const hoy = new Date().getDate(); // Asumiendo que esta fecha es relevante
-
   return (
     <div className="calendar-card">
       <div className="calendar-header">
@@ -15,15 +17,15 @@ export default function LobbyCalendar() {
         </div>
       </div>
 
-      <div className="weekdays">
-        {diasSemana.map(d => (
+      <div className="weekdays-grid">
+        {diasSemana.map((d) => (
           <div key={d} className="weekday-header">{d}</div>
         ))}
       </div>
 
-      <div className="calendar-grid">
-        {diasMes.map(dia => (
-          <div key={dia} className={`day-cell ${dia === hoy ? 'today' : ''}`}>{dia}</div>
+      <div className="calendar-grid-wide">
+        {diasMes.map((dia) => (
+          <div key={dia} className={`day-cell ${dia === hoy ? "today" : ""}`}>{dia}</div>
         ))}
       </div>
     </div>
