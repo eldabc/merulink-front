@@ -1,5 +1,5 @@
-// src/components/workspace/LobbyCalendar.jsx
 import React from 'react';
+import Calendar from './Calendar';
 
 // Datos (pueden ser extraídos a un archivo de constantes si crecen)
 const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -8,6 +8,10 @@ const hoy = new Date().getDate();
 
 export default function LobbyCalendar() {
   return (
+
+    <>
+      <Calendar />
+    <br></br>
     <div className="calendar-card">
       <div className="calendar-header">
         <div className="month-nav">
@@ -16,7 +20,7 @@ export default function LobbyCalendar() {
           <button className="nav-btn">▶</button>
         </div>
       </div>
-
+      
       <div className="weekdays-grid">
         {diasSemana.map((d) => (
           <div key={d} className="weekday-header">{d}</div>
@@ -29,5 +33,6 @@ export default function LobbyCalendar() {
         ))}
       </div>
     </div>
+    </>
   );
 }
