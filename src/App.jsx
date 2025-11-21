@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import ParticlesCanvas from "./components/ParticlesCanvas";
 import TopBar from "./components/TopBar";
 import MainArea from "./components/MainArea";
+import Footer from "./components/Footer"
+
 
 // El componente raíz de la aplicación
 export default function App() {
@@ -52,6 +54,8 @@ export default function App() {
         activeMenu={activeMenu}
         currentSubmenu={currentSubmenu} 
       />
+
+      < Footer />
     </div>
   );
 }

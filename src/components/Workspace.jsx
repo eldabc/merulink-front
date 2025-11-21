@@ -8,7 +8,6 @@ export default function Workspace({ activeMenu }) {
       <div className="content-center">
         <h2 className="title">Calendario Plaza Meru</h2>
         <LobbyCalendar />
-        <footer className="mt-6 footer-muted">Hotel Plaza Meru — V1.0 2025</footer>
       </div>
     );
   }
@@ -26,7 +25,6 @@ export default function Workspace({ activeMenu }) {
     <div className="content-center">
       <h2 className="title">{activeMenu}</h2>
       <p className="muted">Área de trabajo — {activeMenu}</p>
-      <footer className="mt-6 footer-muted">Hotel Plaza Meru — V1.0 2025</footer>
     </div>
   );
 }

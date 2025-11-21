@@ -34,13 +34,13 @@ export default function DemoApp() {
   }
 
   function handleEventClick(clickInfo) {
-    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove()
-    }
+    // if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+    //   clickInfo.event.remove()
+    // }
   }
 
   function handleEvents(events) {
-    setCurrentEvents(events)
+    setCurrentEvents(events) // actualiza el estado en react
   }
 
   return (
@@ -50,7 +50,7 @@ export default function DemoApp() {
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{
-            left: 'prev,next today',
+            left: 'prev,next',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
@@ -61,12 +61,11 @@ export default function DemoApp() {
           dayMaxEvents={true}
           weekends={weekendsVisible}
           initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-          select={handleDateSelect}
+          //select={handleDateSelect} // con esto se llama a la función que registra evento de forma temporal en el store de F.C
           eventContent={renderEventContent} // custom render function
           eventClick={handleEventClick}
           eventsSet={handleEvents} // called after events are initialized/added/changed/removed
-          locale={esLocale}
-         
+          locale={esLocale}   
           /* you can update a remote database when these fire:
           eventAdd={function(){}}
           eventChange={function(){}}
@@ -74,11 +73,12 @@ export default function DemoApp() {
           */
         />
       </div>
+       
        <Sidebar
         weekendsVisible={weekendsVisible}
         handleWeekendsToggle={handleWeekendsToggle}
         currentEvents={currentEvents}
-      />
+       />
     </div>
   )
 }
@@ -96,31 +96,22 @@ function Sidebar({ weekendsVisible, handleWeekendsToggle, currentEvents }) {
   return (
     <div className='demo-app-sidebar'>
       <div className='demo-app-sidebar-section'>
-        <h2>Instructions</h2>
-        <ul>
-          <li>Select dates and you will be prompted to create a new event</li>
-          <li>Drag, drop, and resize events</li>
-          <li>Click an event to delete it</li>
-        </ul>
-      </div>
-      <div className='demo-app-sidebar-section'>
-        <label>
-          <input
-            type='checkbox'
-            checked={weekendsVisible}
-            onChange={handleWeekendsToggle}
-          ></input>
-          toggle weekends
-        </label>
-      </div>
-      <div className='demo-app-sidebar-section'>
-        <h2>All Events ({currentEvents.length})</h2>
+        <h2>Eventos de Hoy ({currentEvents.length})</h2>
         <ul>
           {currentEvents.map((event) => (
             <SidebarEvent key={event.id} event={event} />
           ))}
         </ul>
       </div>
+      <div className='demo-app-sidebar-section'>
+        <h2>Instrucciones</h2>
+        <ul>
+          <li>Select dates and you will be prompted to create a new event</li>
+          <li>Drag, drop, and resize events</li>
+          <li>Click an event to delete it</li>
+        </ul>
+      </div>
+      
     </div>
   )
 }

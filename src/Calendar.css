@@ -34,7 +34,7 @@ b { /* used for event dates/times */
   max-width:1820px;
   width:calc(100% - 48px);
   margin:0 auto; 
-  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  background:linear-gradient(180deg,rgb(60 64 66),rgb(45 45 45));
   border-radius:16px;
   padding:26px;
   border:1px solid rgba(255,255,255,0.06);
@@ -43,10 +43,12 @@ b { /* used for event dates/times */
 }
 
 .demo-app-sidebar {
-  width: 300px;
-  line-height: 1.5;
-  background: #eaf9ff;
-  border-right: 1px solid #d3e2e8;
+    width: 290px;
+    line-height: 1.3;
+    background: #eaf9ff;
+    border-right: 1px solid #d3e2e8;
+    color: #282a2b;
+    border-radius: 5px 16px 16px 5px;
 }
 
 .demo-app-sidebar-section {
@@ -56,7 +58,7 @@ b { /* used for event dates/times */
 .demo-app-main {
   flex-grow: 1;
   padding: 3em;
-  width: 600px;
+  width: 750px;
 }
 
 .fc-direction-ltr {
@@ -130,13 +132,6 @@ b { /* used for event dates/times */
     color: #ffffff !important; /* Flechas más blancas al pasar el ratón */
 }
 
-/* Ocultar el botón "Hoy" */
-.fc-button.fc-button-primary.fc-button-active.fc-prev-button,
-.fc-button.fc-button-primary.fc-today-button {
-    visibility: hidden; /* Ocultar el botón "Hoy" si no lo quieres */
-}
-
-
 /* Estilo específico para la flecha de "prev" */
 .fc-prev-button {
     order: 1; /* Coloca "prev" arriba */
@@ -181,7 +176,7 @@ b { /* used for event dates/times */
     font-weight: 700;
     color: #9fd8ff;
     padding: 6px 0;
-     text-transform: capitalize; 
+    text-transform: capitalize; 
 }
 
 .fc-scrollgrid-sync-table tbody tr td {
