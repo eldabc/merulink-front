@@ -28,27 +28,37 @@ b { /* used for event dates/times */
 
 .calendar-container {
   display: flex;
-  min-height: 100%;
+  flex-direction: row;
+  min-height: 600px;
+  max-height: calc(100vh - 200px);
+  height: calc(100vh - 200px);
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
-  max-width:1820px;
-  width:calc(100% - 48px);
-  margin:0 auto; 
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto; 
   background:linear-gradient(180deg,rgb(60 64 66),rgb(45 45 45));
-  border-radius:16px;
-  padding:26px;
-  border:1px solid rgba(255,255,255,0.06);
-  box-shadow:0 16px 50px rgba(2,6,23,0.6);
-  backdrop-filter:blur(10px)
+  border-radius: 20px;
+  padding: 20px;
+  border: none;
+  box-shadow: none;
+  backdrop-filter:blur(10px);
+  gap: 1.5rem;
+  box-sizing: border-box;
 }
 
 .demo-app-sidebar {
-    width: 290px;
+    width: 320px;
+    min-width: 280px;
+    max-width: 350px;
     line-height: 1.3;
     background: #eaf9ff;
     border-right: 1px solid #d3e2e8;
     color: #282a2b;
-    border-radius: 5px 16px 16px 5px;
+    border-radius: 5px 8px 8px 5px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    height: 100%;
 }
 
 .demo-app-sidebar-section {
@@ -57,18 +67,42 @@ b { /* used for event dates/times */
 
 .demo-app-main {
   flex-grow: 1;
-  padding: 3em;
-  width: 750px;
+  flex-shrink: 1;
+  min-width: 0;
+  padding: 1.5em;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .fc-direction-ltr {
     width: 100%;
     min-width: 100%;
+    height: 100%;
+    flex: 1;
+    min-height: 0;
 }
 
 .fc { /* the calendar root */
   max-width: 1100px;
   margin: 0 auto;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fc-view-harness {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fc-scroller {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 .fc-toolbar-title {
     /* Forzar la primera letra de cada palabra a ser mayúscula */
@@ -250,4 +284,156 @@ b { /* used for event dates/times */
     padding: 8%;
     border-radius: 5%;
     margin: 5%;
+}
+
+/* ============================================
+   MEDIA QUERIES - RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablets (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+  .calendar-container {
+    width: calc(100% - 32px);
+    padding: 20px;
+    gap: 0.75rem;
+    height: 950px;
+  }
+
+  .demo-app-main {
+    padding: 0;
+    margin-bottom: 8px;
+  }
+
+  .demo-app-sidebar {
+    width: 260px;
+    min-width: 220px;
+    flex-shrink: inherit;
+    max-width: 100%;
+  }
+
+  .demo-app-sidebar-section {
+    padding: 1.5em;
+  }
+
+  .fc {
+    max-width: 100%;
+  }
+}
+
+/* Móviles (hasta 768px) */
+@media screen and (max-width: 768px) {
+  .calendar-container {
+    flex-direction: column;
+    width: calc(100% - 24px);
+    padding: 16px;
+    gap: 1rem;
+  }
+
+  .demo-app-main {
+    width: 100%;
+    order: 1;
+  }
+
+  .demo-app-sidebar {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    order: 2;
+  }
+
+  .demo-app-sidebar-section {
+    padding: 1.5em;
+  }
+
+  .demo-app-sidebar-bottom-section {
+    padding: 6%;
+    margin: 3%;
+  }
+
+  .fc {
+    max-width: 100%;
+  }
+
+  /* Optimizar header del calendario para móviles */
+  .fc-header-toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 15px;
+  }
+
+  .fc-toolbar-title {
+    font-size: 1.4em;
+    margin-left: 10px;
+    width: 100%;
+    text-align: center;
+    order: 3;
+  }
+
+  .fc-toolbar-chunk:first-child {
+    order: 1;
+  }
+
+  .fc-toolbar-chunk:last-child {
+    display: flex;
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .fc-button {
+    font-size: 1.2em !important;
+    padding: 4px 8px !important;
+  }
+
+  /* Ajustar tamaño de fuente en móviles */
+  h2 {
+    font-size: 14px;
+  }
+
+  .fc-col-header-cell {
+    font-size: 0.9em;
+    padding-bottom: 10px;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    padding: 8px;
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media screen and (max-width: 480px) {
+  .calendar-container {
+    width: calc(100% - 16px);
+    padding: 12px;
+  }
+
+  .demo-app-sidebar-section {
+    padding: 1em;
+  }
+
+  .fc-toolbar-title {
+    font-size: 1.2em;
+  }
+
+  .fc-button {
+    font-size: 1em !important;
+    padding: 3px 6px !important;
+  }
+
+  .fc-col-header-cell {
+    font-size: 0.8em;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    padding: 6px;
+  }
+
+  .demo-app-sidebar-bottom-section {
+    padding: 5%;
+    margin: 2%;
+  }
+}
+.content-center {
+    width: 80%;
 }

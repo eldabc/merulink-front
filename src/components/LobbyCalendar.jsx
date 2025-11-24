@@ -12,27 +12,6 @@ export default function LobbyCalendar() {
     <>
       <Calendar />
     <br></br>
-    <div className="calendar-card">
-      <div className="calendar-header">
-        <div className="month-nav">
-          <button className="nav-btn">◀</button>
-          <div className="month-title">Octubre 2025</div>
-          <button className="nav-btn">▶</button>
-        </div>
-      </div>
-      
-      <div className="weekdays-grid">
-        {diasSemana.map((d) => (
-          <div key={d} className="weekday-header">{d}</div>
-        ))}
-      </div>
-
-      <div className="calendar-grid-wide">
-        {diasMes.map((dia) => (
-          <div key={dia} className={`day-cell ${dia === hoy ? "today" : ""}`}>{dia}</div>
-        ))}
-      </div>
-    </div>
     </>
   );
 }
