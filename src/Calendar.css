@@ -213,3 +213,41 @@ b { /* used for event dates/times */
     background: linear-gradient(135deg,rgba(83,196,255,0.16),rgba(83,196,255,0.06));
     transform: scale(1.02);
 }
+
+/* Perzonalización del calendario */
+.fc-event, .event-dot {
+    width: 8.5px;
+    height: 8.5px;
+    border-radius: 50%;
+}
+.event-blue{
+    background-color: rgb(13, 0, 128);
+    border-color: rgb(15, 1, 97);
+}
+
+.event-red{
+    background-color: rgb(128, 0, 64);
+    border-color: rgb(100, 0, 0);
+}
+
+.fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
+    margin-left: 15px;
+}
+
+.fc .fc-daygrid-event-harness {
+    height: 13px;
+}
+
+.fc .fc-daygrid-event-harness:hover {
+    background-color: #395260;
+    padding: 1%;
+}
+.fc-daygrid-dot-event.fc-event-mirror, .fc-daygrid-dot-event:hover {
+    background: none !important;
+}
+.demo-app-sidebar-bottom-section {
+    background: linear-gradient(360deg,rgba(188, 191, 194, 1) 0%, rgb(167 172 169 / 55%) 50%, rgb(255 255 245) 100%);
+    padding: 8%;
+    border-radius: 5%;
+    margin: 5%;
+}

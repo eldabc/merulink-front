@@ -5,7 +5,6 @@ import TopBar from "./components/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 
-
 // El componente raíz de la aplicación
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
@@ -31,7 +30,6 @@ export default function App() {
     <div className="merulink-root">
       <BrowserRouter>
       {/* Navegación con React Router DOM */}
-    
 
       {/* 🌐 Definición de las Rutas */}
       <Routes>
@@ -55,7 +53,7 @@ export default function App() {
         currentSubmenu={currentSubmenu} 
       />
 
-      < Footer />
+      <Footer />
     </div>
   );
 }
