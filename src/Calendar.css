@@ -487,3 +487,9 @@ b { /* used for event dates/times */
 .selected-event strong {
   color: #282a2b;
 }
+
+.demo-app-sidebar .demo-app-sidebar-section ul {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0;
+}

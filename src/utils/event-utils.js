@@ -27,6 +27,12 @@ export const INITIAL_EVENTS = [
     id: createEventId(),
     title: 'Evento 4',
     start: todayStr,
+    className: 'event-blue'
+  },
+  {
+    id: createEventId(),
+    title: 'Evento 5',
+    start: todayStr,
     className: 'event-red'
   }
 ]
