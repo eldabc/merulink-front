@@ -232,11 +232,19 @@ b { /* used for event dates/times */
     color: var(--text-primary);
     display: flex;
     justify-content: flex-end;
+    cursor: pointer; /* Indicar que el día es clickeable */
+    transition: all 0.2s ease;
 }
 
 .fc .fc-daygrid-day-frame:hover{
     transform:translateY(-3px);
-    background:rgba(255,255,255,0.035);
+    background:rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.1);
+}
+
+/* Hacer que el área del día sea completamente clickeable */
+.fc .fc-daygrid-day {
+    cursor: pointer;
 }
 .fc .fc-daygrid-day.fc-day-today {
     background-color: transparent;
@@ -253,6 +261,9 @@ b { /* used for event dates/times */
     width: 8.5px;
     height: 8.5px;
     border-radius: 50%;
+    cursor: pointer;
+    z-index: 10; /* Asegurar que el punto esté por encima */
+    position: relative;
 }
 .event-blue{
     background-color: rgb(13, 0, 128);
@@ -436,4 +447,43 @@ b { /* used for event dates/times */
 }
 .content-center {
     width: 80%;
+}
+/* ... existing code ... */
+
+.sidebar-event-item {
+  margin: 0.75em 0;
+  padding: 0.5em;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-event-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-event-item.selected {
+  background-color: rgba(13, 0, 128, 0.1);
+  border-left: 3px solid rgb(13, 0, 128);
+}
+
+.sidebar-event-content {
+  display: flex;
+  align-items: center;
+}
+
+.event-title {
+  font-weight: 500;
+  color: #282a2b;
+}
+
+.selected-event {
+  margin-top: 1em;
+}
+
+.selected-event p {
+  margin: 0.75em 0;
+}
+
+.selected-event strong {
+  color: #282a2b;
 }
