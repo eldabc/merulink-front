@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios'
 import { formatDate } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -14,10 +15,32 @@ import EventContent from './EventContent';
 import '../../Calendar.css';
 
 export default function Calendar() {
+
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [currentEvents, setCurrentEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
+
+  // --- Estados principales ---
+  const [events, setEvents] = useState([]);             // todos los eventos desde API
+
+  // -----------------------------------
+  // 1) Cargar eventos desde backend con AXIOS
+  // -----------------------------------
+  useEffect(() => {
+    axios.get("https://app.ticketmaster.com/discovery/v2/events.json?apikey=EsFHMrENSgZMEQRfre6wUuUZMFJTaWqU")
+      .then(res => {
+        const loadedEvents = res.data._embedded.events.map(e => ({
+          ...e,
+          start: new Date(e.start),
+          end: e.end ? new Date(e.end) : null
+        }));
+        console.log("loadedEvents: ", loadedEvents);
+        setCurrentEvents(loadedEvents);
+        // eventsOfSelectedDay(new Date(), loadedEvents);  // mostrar eventos del día actual
+      })
+      .catch(err => console.error("Error cargando eventos:", err));
+  }, []);
 
   // Filtrar eventos del día seleccionado
   const eventsOfSelectedDay = useMemo(() => {
@@ -83,7 +106,8 @@ export default function Calendar() {
           selectMirror={true}
           dayMaxEvents={true}
           weekends={weekendsVisible}
-          initialEvents={INITIAL_EVENTS}
+          // initialEvents={INITIAL_EVENTS}
+          events={currentEvents}
           eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
           eventClick={handleEventClick}
           dateClick={handleDateClick}
