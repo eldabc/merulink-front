@@ -5,7 +5,6 @@ import TopBar from "./components/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 
-// El componente raíz de la aplicación
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
 
@@ -34,8 +33,7 @@ export default function App() {
       {/* 🌐 Definición de las Rutas */}
       <Routes>
       
-        {/* Ruta para la Propuesta B: http://localhost:3000/diseno-b */}
-
+      {/* Ruta para la Propuesta B: http://localhost:3000/diseno-b */}
 
       </Routes>
     </BrowserRouter>

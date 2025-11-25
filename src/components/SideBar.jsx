@@ -1,8 +1,6 @@
 import React from "react";
 
 export default function SideBar({ currentSubmenu }) {
-  // Nota: El manejo de clics para los submenús no estaba en el original, 
-  // por lo que los botones aún no tienen lógica de navegación.
   
   if (currentSubmenu.length === 0) {
     return <aside className="sidebar hidden" />;
