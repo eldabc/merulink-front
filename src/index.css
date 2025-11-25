@@ -84,7 +84,11 @@ button:focus-visible {
   /* margin-top: 40px; */
 }
 .brand-area{display:flex;align-items:center;gap:16px}
-.logo-text{font-weight:700;font-size:18px;color:var(--text-primary);background:linear-gradient(135deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-img{
+  width: 150px;
+  height: 40px;
+  padding-top: 10px;
+}
 .top-menu{display:flex;gap:8px;align-items:center}
 .top-menu button{background:transparent;border:none;padding:8px 12px;color:var(--text-muted);border-radius:10px;cursor:pointer;font-weight:600}
 .top-menu button:hover{color:var(--text-primary);background:rgba(255,255,255,0.02)}
@@ -105,7 +109,7 @@ button:focus-visible {
 .ia-workspace{width:100%;display:flex;justify-content:center;align-items:flex-start;padding-top:40px}.assistant-card{width:60%;max-width:720px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.10);border-radius:14px;padding:18px 20px;color:#cfeeff;box-shadow:0 12px 40px rgba(5,20,40,0.6);backdrop-filter:blur(12px);position:relative;overflow:hidden;transition:all 0.28s ease}.assistant-card::before{content:'';position:absolute;top:0;left:-80%;width:60%;height:100%;background:linear-gradient(120deg,rgba(83,196,255,0.35),transparent 70%);transform:skewX(-20deg);opacity:0;transition:all 0.5s ease}.assistant-card:hover{transform:translateY(-3px);box-shadow:0 0 30px rgba(83,196,255,0.34)}.assistant-card:hover::before{left:120%;opacity:1}.placeholder-text{color:rgba(200,230,255,0.78)}
 
 .title{font-size:20px;margin-bottom:12px;color:#cfeeff;text-align:center}.muted{color:var(--text-muted);margin-top:8px}
-.footer-muted{color:var(--text-muted);margin:18px;text-align:center}
+.footer-muted{color:var(--text-muted);margin:5px 10px;text-align:center}
 @media (max-width:900px){.sidebar{display:none}.workspace{padding:18px}.calendar-card{max-width:100%}.assistant-card{width:92%}.top-menu{display:none}}
 @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
@@ -136,4 +140,7 @@ button:focus-visible {
 .assistant-card:hover{transform:translateY(-3px);box-shadow:0 0 30px rgba(83,196,255,0.34)}.assistant-card:hover::before{left:120%;opacity:1}
 .placeholder-text{color:rgba(200,230,255,0.78)}
 .title{text-align:center;font-size:20px;margin-bottom:12px;color:#cfeeff}
-@media (max-width:1200px){.sidebar{display:none}.workspace{padding:18px}.calendar-card{width:calc(100% - 32px)}.assistant-card{width:92%}.top-menu{display:none}}
+@media (max-width:1200px){.workspace{padding:18px}.calendar-card{width:calc(100% - 32px)}.assistant-card{width:92%}}
+@media screen and (max-width: 1024px) {
+  .top-menu{display:none}
+}
