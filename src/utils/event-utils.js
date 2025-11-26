@@ -9,7 +9,8 @@ export const INITIAL_EVENTS = [
     start: '2025-11-11',
     allDay: true,
     extendedProps: {
-      category: 'Eventos Merú',
+      category: 'meru-events',
+      label: 'Eventos Merú',
       status: 'active',
     },
     className: 'meru-events'
@@ -21,7 +22,8 @@ export const INITIAL_EVENTS = [
     start: '2025-11-15T09:00:00',
     end:   '2025-11-15T11:00:00',
     extendedProps: {
-      category: 'Cumpleaños Merú',
+      category: 'meru-birthday',
+      label: 'Cumpleañeros Merú',
       status: 'active',
     },
     className: 'meru-birthday'
@@ -31,7 +33,8 @@ export const INITIAL_EVENTS = [
     title: 'Evento 3',
     start: todayStr,
     extendedProps: {
-      category: 'Plan Noche de Bodas',
+      category: 'event-wedding',
+      label: 'Plan Noche de Bodas',
       status: 'active',
     },
     className: 'event-wedding'
@@ -41,7 +44,8 @@ export const INITIAL_EVENTS = [
     title: 'Evento 4',
     start: todayStr,
     extendedProps: {
-      category: 'Ejecutivos MOD',
+      category: 'event-executive',
+      label: 'Ejecutivos MOD',
       status: 'active',
     },
     className: 'event-executive'
@@ -51,7 +55,8 @@ export const INITIAL_EVENTS = [
     title: 'Evento 5',
     start: todayStr,
     extendedProps: {
-      category: 'Festivos Venezolanos',
+      category: 'venezuelan-holidays',
+      label: 'Festivos Venezolanos',
       status: 'active',
     },
     className: 'venezuelan-holidays'
@@ -61,7 +66,8 @@ export const INITIAL_EVENTS = [
     title: 'Evento 6',
     start: todayStr,
     extendedProps: {
-      category: 'Festivos Cristianos',
+      category: 'christian-holidays',
+      label: 'Festivos Cristianos',
       status: 'active',
     },
     className: 'christian-holidays'
@@ -72,7 +78,8 @@ export const INITIAL_EVENTS = [
     start: '2025-11-18T09:00:00',
     end:   '2025-11-18T11:00:00',
     extendedProps: {
-      category: 'Ejecutivos MOD',
+      category: 'event-executive',
+      label: 'Ejecutivos MOD',
       status: 'active',
     },
     className: 'event-executive'
@@ -83,7 +90,8 @@ export const INITIAL_EVENTS = [
     start: '2025-11-30T09:00:00',
     end:   '2025-11-30T11:00:00',
     extendedProps: {
-      category: 'Cumpleaños Merú',
+      category: 'meru-birthday',
+      label: 'Cumpleañeros Merú',
       status: 'active',
     },
     className: 'meru-birthday'
@@ -94,7 +102,8 @@ export const INITIAL_EVENTS = [
     start: '2025-12-01T09:00:00',
     end:   '2025-12-01T11:00:00',
     extendedProps: {
-      category: 'Eventos Merú',
+      category: 'meru-events',
+      label: 'Eventos Merú',
       status: 'active',
     },
     className: 'meru-events'
@@ -103,9 +112,10 @@ export const INITIAL_EVENTS = [
     id: createEventId(),
     title: 'Evento 10',
     start: '2025-12-05T09:00:00',
-    end:   '2025-12-95T11:00:00',
+    end:   '2025-12-05T11:00:00',
     extendedProps: {
-      category: 'Plan Noche de Bodas',
+      category: 'event-wedding',
+      label: 'Plan Noche de Bodas',
       status: 'active',
     },
     className: 'event-wedding'

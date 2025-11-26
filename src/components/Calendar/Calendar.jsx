@@ -51,20 +51,13 @@ export default function Calendar() {
   }, [currentEvents, activeCategories]);
 
   // Filtrar eventos del día seleccionado
-  // const eventsOfSelectedDay = useMemo(() => {
-  //   console.log('eventsOfSelectedDay')
-  //   return filterEventsByDate(filteredEvents, selectedDate);
-  // }, [filteredEvents, selectedDate]);
-
   const eventsOfSelectedDay = useMemo(() => {
-    return filterEventsByDate(currentEvents, selectedDate);
-  }, [currentEvents, selectedDate]);
+    console.log('eventsOfSelectedDay')
+    return filterEventsByDate(filteredEvents, selectedDate);
+  }, [filteredEvents, selectedDate]);
 
 
-  // --- Estados principales ---
-  // const [events, setEvents] = useState([]);             // todos los eventos desde API
-
-  // // -----------------------------------
+  // -----------------------------------
   // // 1) Cargar eventos desde backend con AXIOS
   // // -----------------------------------
   // useEffect(() => {
@@ -81,18 +74,7 @@ export default function Calendar() {
   //     })
   //     .catch(err => console.error("Error cargando eventos:", err));
   // }, []);
-
-  // Filtrar eventos del día seleccionado
- 
- 
-  // Filtrar eventos del día seleccionado
   
-  
-
-  // const eventsOfSelectedDay = useMemo(() => {
-  //   return filterEventsByDate(currentEvents, selectedDate);
-  // }, [currentEvents, selectedDate]);
-
   // Formatear la fecha seleccionada para mostrar en el sidebar
   const formattedSelectedDate = useMemo(() => {
     const today = getTodayNormalized();
@@ -124,10 +106,16 @@ export default function Calendar() {
   function handleEventClick(clickInfo) {
     toggleSelectedEvent(clickInfo.event);
   }
+  
+  // Esta función no se ejecuta nunca si usas events={filteredEvents}
+  // function handleEvents(events) {
+  //   setCurrentEvents(events);
+  // }
 
-  function handleEvents(events) {
-    setCurrentEvents(events);
-  }
+  useEffect(() => {
+    // Carga inicial desde datos estáticos
+    setCurrentEvents(INITIAL_EVENTS);
+  }, []);
 
   function handleDateClick(arg) {
     const clickedDate = new Date(arg.date);
@@ -161,12 +149,12 @@ export default function Calendar() {
             selectMirror={true}
             dayMaxEvents={true}
             weekends={weekendsVisible}
-            initialEvents={INITIAL_EVENTS}
-            // events={filteredEvents}
+            // initialEvents={INITIAL_EVENTS}
+            events={filteredEvents}
             eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
-            eventsSet={handleEvents}
+            // eventsSet={handleEvents}
             locale={esLocale}  
           />
         </div>
