@@ -21,31 +21,77 @@ export default function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
 
-  // --- Estados principales ---
-  const [events, setEvents] = useState([]);             // todos los eventos desde API
+  // Categorías activas
+  const [activeCategories, setActiveCategories] = useState({
+    "meru-events": true,
+    "venezuelan-holidays": true,
+    "event-wedding": true,
+    "event-executive": true,
+    "meru-birthday": true,
+    "christian-holidays": true,
+  });
 
-  // -----------------------------------
-  // 1) Cargar eventos desde backend con AXIOS
-  // -----------------------------------
-  useEffect(() => {
-    axios.get("https://app.ticketmaster.com/discovery/v2/events.json?apikey=EsFHMrENSgZMEQRfre6wUuUZMFJTaWqU")
-      .then(res => {
-        const loadedEvents = res.data._embedded.events.map(e => ({
-          ...e,
-          start: new Date(e.start),
-          end: e.end ? new Date(e.end) : null
-        }));
-        console.log("loadedEvents: ", loadedEvents);
-        setCurrentEvents(loadedEvents);
-        // eventsOfSelectedDay(new Date(), loadedEvents);  // mostrar eventos del día actual
-      })
-      .catch(err => console.error("Error cargando eventos:", err));
-  }, []);
+  // Categorías para la leyenda
+  const categoryLegend = [
+    { key: "meru-events", label: "Eventos Merú", color: "meru-events" },
+    { key: "meru-birthday", label: "Cumpleaños Merú", color: "meru-birthday" },
+    { key: "event-wedding", label: "Plan Noche de Bodas", color: "event-wedding" },
+    { key: "event-executive", label: "Ejecutivos MOD", color: "event-executive" },
+    { key: "venezuelan-holidays", label: "Festivos Venezolanos", color: "venezuelan-holidays" },
+    { key: "christian-holidays", label: "Festivos Cristianos", color: "christian-holidays" }
+  ];
+
+  //  1) Filtrado dinámico según categorías activas
+  // ---------------------------------------------------------
+  const filteredEvents = useMemo(() => {
+    console.log('filteredEvents')
+    return currentEvents.filter(ev =>
+      activeCategories[ev.extendedProps?.category]
+    );
+  }, [currentEvents, activeCategories]);
 
   // Filtrar eventos del día seleccionado
+  // const eventsOfSelectedDay = useMemo(() => {
+  //   console.log('eventsOfSelectedDay')
+  //   return filterEventsByDate(filteredEvents, selectedDate);
+  // }, [filteredEvents, selectedDate]);
+
   const eventsOfSelectedDay = useMemo(() => {
     return filterEventsByDate(currentEvents, selectedDate);
   }, [currentEvents, selectedDate]);
+
+
+  // --- Estados principales ---
+  // const [events, setEvents] = useState([]);             // todos los eventos desde API
+
+  // // -----------------------------------
+  // // 1) Cargar eventos desde backend con AXIOS
+  // // -----------------------------------
+  // useEffect(() => {
+  //   axios.get("https://app.ticketmaster.com/discovery/v2/events.json?apikey=EsFHMrENSgZMEQRfre6wUuUZMFJTaWqU")
+  //     .then(res => {
+  //       const loadedEvents = res.data._embedded.events.map(e => ({
+  //         ...e,
+  //         start: new Date(e.start),
+  //         end: e.end ? new Date(e.end) : null
+  //       }));
+  //       console.log("loadedEvents: ", loadedEvents);
+  //       setCurrentEvents(loadedEvents);
+  //       // eventsOfSelectedDay(new Date(), loadedEvents);  // mostrar eventos del día actual
+  //     })
+  //     .catch(err => console.error("Error cargando eventos:", err));
+  // }, []);
+
+  // Filtrar eventos del día seleccionado
+ 
+ 
+  // Filtrar eventos del día seleccionado
+  
+  
+
+  // const eventsOfSelectedDay = useMemo(() => {
+  //   return filterEventsByDate(currentEvents, selectedDate);
+  // }, [currentEvents, selectedDate]);
 
   // Formatear la fecha seleccionada para mostrar en el sidebar
   const formattedSelectedDate = useMemo(() => {
@@ -90,38 +136,60 @@ export default function Calendar() {
     setSelectedEvent(null);
   }
 
+  // ⭐ NUEVO: Click sobre una categoría en la leyenda
+  function toggleCategory(catKey) {
+    setActiveCategories(prev => ({
+      ...prev,
+      [catKey]: !prev[catKey]
+    }));
+  }
+
   return (
-    <div className='calendar-container'>
-      <div className='demo-app-main'>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          headerToolbar={{
-            left: 'prev,next',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          }}
-          initialView='dayGridMonth'
-          editable={false}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={weekendsVisible}
-          // initialEvents={INITIAL_EVENTS}
-          events={currentEvents}
-          eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
-          eventClick={handleEventClick}
-          dateClick={handleDateClick}
-          eventsSet={handleEvents}
-          locale={esLocale}  
+    <div className='container'>
+      <div className='calendar-container'>
+        <div className='demo-app-main'>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: 'prev,next',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            }}
+            initialView='dayGridMonth'
+            editable={false}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            weekends={weekendsVisible}
+            initialEvents={INITIAL_EVENTS}
+            // events={filteredEvents}
+            eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
+            eventClick={handleEventClick}
+            dateClick={handleDateClick}
+            eventsSet={handleEvents}
+            locale={esLocale}  
+          />
+        </div>
+        
+        <CalendarSidebar
+          eventsOfSelectedDay={eventsOfSelectedDay}
+          selectedEvent={selectedEvent}
+          onSelectEvent={toggleSelectedEvent}
+          selectedDateLabel={formattedSelectedDate}
         />
       </div>
-       
-      <CalendarSidebar
-        eventsOfSelectedDay={eventsOfSelectedDay}
-        selectedEvent={selectedEvent}
-        onSelectEvent={toggleSelectedEvent}
-        selectedDateLabel={formattedSelectedDate}
-      />
+        <div className="calendar-legend">
+          {categoryLegend.map(cat => (
+            <span
+              key={cat.key}
+              className={`legend-item ${cat.color} ${activeCategories[cat.key] ? '' : 'legend-disabled'}`}
+              onClick={() => toggleCategory(cat.key)}
+            >
+              {cat.label}
+            </span>
+          ))}
+        </div>
+      
     </div>
   );
 }

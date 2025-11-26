@@ -262,23 +262,37 @@ b { /* used for event dates/times */
     height: 8.5px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 10; /* Asegurar que el punto esté por encima */
+    z-index: 10;
     position: relative;
 }
-.event-blue{
-    background-color: rgb(13, 0, 128);
-    border-color: rgb(15, 1, 97);
+/* Events Colors */
+.meru-events{
+    background-color: #668CD9;
+    border-color: #5d80c5;
 }
-
-.event-red{
-    background-color: rgb(128, 0, 64);
-    border-color: rgb(100, 0, 0);
+.meru-birthday {
+  background-color: #603F99;
+  border-color: #593a8f;
 }
-
+.event-wedding {
+  background-color: #7EC225;
+  border-color: #77b823;
+}
+.event-executive {
+  background-color: #E0C240;
+  border-color: #cfb43a;
+}
+.venezuelan-holidays{
+  background-color: #AD2D2D;
+  border-color: #962626;
+}
+.christian-holidays{
+  background-color: #C4A883;
+  border-color: #bba07e;
+}
 .fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
     margin-left: 15px;
 }
-
 .fc .fc-daygrid-event-harness {
     height: 13px;
 }
@@ -492,4 +506,27 @@ b { /* used for event dates/times */
   list-style-type: none;
   margin: 0;
   padding-left: 0;
+}
+
+
+.calendar-legend {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.legend-item {
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.legend-disabled {
+  opacity: 0.3;
 }

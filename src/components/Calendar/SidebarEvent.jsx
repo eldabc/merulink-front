@@ -1,5 +1,5 @@
 export default function SidebarEvent({ event, isSelected, onSelectEvent }) {
-  // Obtener la clase CSS del color del evento
+  // Obtener la clase CSS del evento
   const eventColorClass = event.classNames?.[0] || event.className || '';
   
   return (
@@ -12,11 +12,6 @@ export default function SidebarEvent({ event, isSelected, onSelectEvent }) {
         <div 
           className={`event-color-indicator ${eventColorClass}`}
           style={{
-            backgroundColor: eventColorClass === 'event-red' 
-              ? 'rgb(128, 0, 64)' 
-              : eventColorClass === 'event-blue'
-              ? 'rgb(13, 0, 128)'
-              : '#ccc',
             width: '12px',
             height: '12px',
             borderRadius: '50%',

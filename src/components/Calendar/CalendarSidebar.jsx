@@ -85,6 +85,12 @@ export default function CalendarSidebar({
                 {selectedEvent.extendedProps.description}
               </p>
             )}
+            {selectedEvent.extendedProps?.category && (
+              <p>
+                <strong>Tipo de evento: </strong>
+                {selectedEvent.extendedProps.category}
+              </p>
+            )}
           </div>
         ) : (
           <p>Selecciona un evento para ver los detalles.</p>
