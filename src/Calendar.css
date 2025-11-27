@@ -30,7 +30,7 @@ b { /* used for event dates/times */
   display: flex;
   flex-direction: row;
   min-height: 600px;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 250px);
   height: calc(100vh - 200px);
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
@@ -512,7 +512,7 @@ b { /* used for event dates/times */
 .calendar-legend {
   display: flex;
   gap: 10px;
-  margin: 10px 0 20px;
+  margin: 5px 0 0;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;

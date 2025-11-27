@@ -11,7 +11,7 @@ export default function App() {
   // Datos de navegación
   const topMenuItems = ["IA", "Empleados", "Infraestructura", "Inventario", "Whatsapp", "Configuración", "Documentos"];
   const submenus = {
-    Empleados: ["Lista", "Roles", "Casilleros"],
+    Empleados: ["Lista", "Roles", "Casilleros", "Departamentos", "Sub-Departamentos", "Cargos", "Vestuarios"],
     Infraestructura: ["APs Internet", "Domotica", "Mantenimiento"],
     Inventario: ["Stock", "Entradas", "Salidas"],
     Configuración: ["Sistema", "Seguridad", "Notificaciones"],
