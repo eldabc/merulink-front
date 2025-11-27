@@ -76,11 +76,51 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
   return (
     <aside className="sidebar">
       <div className="submenu-title">Secciones</div>
-      {/* breadcrumb: include top-level activeMenu when available */}
+      {/* breadcrumb: include top-level activeMenu when available (clickable) */}
       <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
-        {activeMenu !== 'Lobby'
-          ? [activeMenu, ...(activePath || [])].join(' / ')
-          : 'Inicio'}
+        {activeMenu && activeMenu !== 'Lobby' ? (
+          (() => {
+            const safeActivePath = Array.isArray(activePath) ? activePath : [];
+            const segments = [activeMenu, ...safeActivePath];
+            return segments.map((seg, idx) => {
+              const isLast = idx === segments.length - 1;
+              const handleClick = () => {
+                if (!onItemClick) return;
+                if (idx === 0) {
+                  // top-level clicked -> clear activePath
+                  onItemClick([]);
+                } else {
+                  // build subpath inside activeMenu
+                  const subpath = segments.slice(1, idx + 1);
+                  onItemClick(subpath);
+                }
+              };
+
+              return (
+                <span key={idx} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <button
+                    onClick={handleClick}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      margin: 0,
+                      cursor: 'pointer',
+                      color: isLast ? '#666' : '#1a73e8',
+                      textDecoration: isLast ? 'none' : 'underline',
+                      fontSize: 12
+                    }}
+                  >
+                    {seg}
+                  </button>
+                  {!isLast && <span style={{ margin: '0 6px', color: '#666' }}>/</span>}
+                </span>
+              );
+            });
+          })()
+        ) : (
+          'Inicio'
+        )}
       </div>
       <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
     </aside>
