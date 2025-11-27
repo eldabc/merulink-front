@@ -76,9 +76,11 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
   return (
     <aside className="sidebar">
       <div className="submenu-title">Secciones</div>
-      {/* breadcrumb */}
+      {/* breadcrumb: include top-level activeMenu when available */}
       <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
-        {activePath && activePath.length > 0 ? activePath.join(' / ') : 'Inicio'}
+        {activeMenu !== 'Lobby'
+          ? [activeMenu, ...(activePath || [])].join(' / ')
+          : 'Inicio'}
       </div>
       <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
     </aside>
