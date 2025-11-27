@@ -8,12 +8,18 @@ import { menuTree } from "./components/Menu/menuTree";
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
+  const [activePath, setActivePath] = useState([]); // breadcrumb: ["Empleados", "Vestuarios", "Lockers"]
 
   // Datos de navegación: derive everything desde el árbol `menuTree`
   const topMenuItems = Object.keys(menuTree);
 
   const handleMenuClick = useCallback((menuItem) => {
     setActiveMenu(menuItem);
+    setActivePath([]); // reset breadcrumb when clicking topbar
+  }, []);
+
+  const handleSidebarItemClick = useCallback((itemPath) => {
+    setActivePath(itemPath);
   }, []);
 
   return (
@@ -40,6 +46,8 @@ export default function App() {
 
       <MainArea 
         activeMenu={activeMenu}
+        activePath={activePath}
+        onSidebarClick={handleSidebarItemClick}
       />
 
       <Footer />
