@@ -1,24 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { menuTree } from "./Menu/menuTree";
-
-// Helper to build all possible paths in the tree
-function buildAllPaths(node, path = []) {
-  const paths = {};
-  Object.keys(node)
-    .filter(key => key !== "_meta")
-    .forEach(key => {
-      const child = node[key];
-      const currentPath = [...path, key];
-      const pathKey = JSON.stringify(currentPath);
-      paths[pathKey] = true; // true = collapsed
-      
-      const hasChildren = Object.keys(child).some(k => k !== "_meta");
-      if (hasChildren) {
-        Object.assign(paths, buildAllPaths(child, currentPath));
-      }
-    });
-  return paths;
-}
+import { buildAllPaths } from "../utils/sidebar-menu-utils";
 
 function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
   return Object.keys(node)
