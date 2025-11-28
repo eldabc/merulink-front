@@ -41,8 +41,7 @@ export default function Calendar() {
     { key: "christian-holidays", label: "Festivos Cristianos", color: "christian-holidays" }
   ];
 
-  //  1) Filtrado dinámico según categorías activas
-  // ---------------------------------------------------------
+  //  Filtrado dinámico según categorías activas
   const filteredEvents = useMemo(() => {
     console.log('filteredEvents')
     return currentEvents.filter(ev =>
@@ -57,9 +56,7 @@ export default function Calendar() {
   }, [filteredEvents, selectedDate]);
 
 
-  // -----------------------------------
-  // // 1) Cargar eventos desde backend con AXIOS
-  // // -----------------------------------
+  // Cargar eventos desde backend con AXIOS
   // useEffect(() => {
   //   axios.get("https://app.ticketmaster.com/discovery/v2/events.json?apikey=EsFHMrENSgZMEQRfre6wUuUZMFJTaWqU")
   //     .then(res => {
@@ -75,7 +72,7 @@ export default function Calendar() {
   //     .catch(err => console.error("Error cargando eventos:", err));
   // }, []);
   
-  // Formatear la fecha seleccionada para mostrar en el sidebar
+  // Formatear la fecha seleccionada para mostrar en sidebar
   const formattedSelectedDate = useMemo(() => {
     const today = getTodayNormalized();
     const selected = getTodayNormalized();
@@ -113,7 +110,6 @@ export default function Calendar() {
   // }
 
   useEffect(() => {
-    // Carga inicial desde datos estáticos
     setCurrentEvents(INITIAL_EVENTS);
   }, []);
 
@@ -124,7 +120,7 @@ export default function Calendar() {
     setSelectedEvent(null);
   }
 
-  // ⭐ NUEVO: Click sobre una categoría en la leyenda
+  // Click sobre una categoría en la leyenda
   function toggleCategory(catKey) {
     setActiveCategories(prev => ({
       ...prev,
@@ -149,11 +145,11 @@ export default function Calendar() {
             selectMirror={true}
             dayMaxEvents={true}
             weekends={weekendsVisible}
-            // initialEvents={INITIAL_EVENTS}
             events={filteredEvents}
             eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
+            // initialEvents={INITIAL_EVENTS}
             // eventsSet={handleEvents}
             locale={esLocale}  
           />
@@ -168,13 +164,13 @@ export default function Calendar() {
       </div>
         <div className="calendar-legend">
           {categoryLegend.map(cat => (
-            <span
+            <button
               key={cat.key}
               className={`legend-item ${cat.color} ${activeCategories[cat.key] ? '' : 'legend-disabled'}`}
               onClick={() => toggleCategory(cat.key)}
             >
               {cat.label}
-            </span>
+            </button>
           ))}
         </div>
       
