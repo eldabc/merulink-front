@@ -1,5 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { menuTree } from "./Menu/menuTree";
+
+// Helper to build all possible paths in the tree
+function buildAllPaths(node, path = []) {
+  const paths = {};
+  Object.keys(node)
+    .filter(key => key !== "_meta")
+    .forEach(key => {
+      const child = node[key];
+      const currentPath = [...path, key];
+      const pathKey = JSON.stringify(currentPath);
+      paths[pathKey] = true; // true = collapsed
+      
+      const hasChildren = Object.keys(child).some(k => k !== "_meta");
+      if (hasChildren) {
+        Object.assign(paths, buildAllPaths(child, currentPath));
+      }
+    });
+  return paths;
+}
 
 function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
   return Object.keys(node)
@@ -16,18 +35,8 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
         <div key={key} style={{ marginBottom: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {hasChildren && (
-              <button
+              <button className="arrow-btn"
                 onClick={() => toggleCollapse(JSON.stringify(currentPath))}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  width: 20,
-                  textAlign: "center",
-                  fontSize: 12,
-                  color: "#666"
-                }}
               >
                 {isCollapsed ? "▶" : "▼"}
               </button>
@@ -37,8 +46,6 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
               onClick={() => onItemClick(currentPath)}
               className="submenu-btn"
               style={{
-                flex: 1,
-                
                 color: isActive ? "#fff" : "inherit",
                 fontWeight: isActive ? "bold" : "normal"
               }}
@@ -57,12 +64,19 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
 }
 
 export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
-  const [collapsed, setCollapsed] = useState({});
-
   const node = menuTree[activeMenu] || {};
+  
+  // Memoize the initial collapsed state
+  const initialCollapsed = useMemo(() => buildAllPaths(node), [activeMenu]);
+  const [collapsed, setCollapsed] = useState(initialCollapsed);
+
+  // Reset collapsed state when activeMenu changes
+  useEffect(() => {
+    setCollapsed(initialCollapsed);
+  }, [activeMenu, initialCollapsed]);
 
   // If no sections for this menu, hide the sidebar
-  if (!activeMenu || Object.keys(node).length === 0 || activeMenu === "Lobby") {
+  if (!activeMenu || Object.keys(node).length === 0 || activeMenu === "Lobby" || activeMenu === "IA") {
     return <aside className="sidebar hidden" />;
   }
 
@@ -76,9 +90,9 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
   return (
     <aside className="sidebar">
       <div className="submenu-title">Secciones</div>
-      {/* breadcrumb: include top-level activeMenu when available (clickable) */}
+      {/* Para poder clickar los breadcrumbs */}
       <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
-        {activeMenu && activeMenu !== 'Lobby' ? (
+        {activeMenu !== 'Lobby' ? (
           (() => {
             const safeActivePath = Array.isArray(activePath) ? activePath : [];
             const segments = [activeMenu, ...safeActivePath];
@@ -98,17 +112,11 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
 
               return (
                 <span key={idx} style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  <button
+                  <button className="breadcrumb-btn-link"
                     onClick={handleClick}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      margin: 0,
-                      cursor: 'pointer',
-                      color: isLast ? '#666' : '#1a73e8',
+                      color: isLast ? '#666' : '#cfeeff',
                       textDecoration: isLast ? 'none' : 'underline',
-                      fontSize: 12
                     }}
                   >
                     {seg}
