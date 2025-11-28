@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import EmployeeFilter from './EmployeeFilter';
 
 export default function EmployeeTable() {
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchValue, setSearchValue] = useState('');
+  const [filterStatus, setFilterStatus] = useState('todos');
+  const [hasSearched, setHasSearched] = useState(false);
   const itemsPerPage = 10;
 
   // Datos de ejemplo
@@ -21,10 +25,37 @@ export default function EmployeeTable() {
     { id: 12, noEmpleado: 'EMP012', cedula: '55667788', nombre: 'Gabriela', apellido: 'Ruiz', departamento: 'Marketing', subDepartamento: 'Eventos', cargo: 'Coordinadora', estatus: 'Activo' },
   ];
 
-  // Calcular paginación
-  const totalPages = Math.ceil(employees.length / itemsPerPage);
+  // Función para manejar búsqueda
+  const handleSearch = () => {
+    if (searchValue.trim() || filterStatus !== 'todos') {
+      setHasSearched(true);
+    } else {
+      setHasSearched(false);
+    }
+    setCurrentPage(1);
+  };
+
+  // Filtrar empleados según búsqueda y estado
+  const filteredEmployees = employees.filter(emp => {
+    const matchesSearch = searchValue.trim() === '' || 
+      emp.nombre.toLowerCase().includes(searchValue.toLowerCase()) ||
+      emp.apellido.toLowerCase().includes(searchValue.toLowerCase()) ||
+      emp.cedula.includes(searchValue) ||
+      emp.cargo.toLowerCase().includes(searchValue.toLowerCase()) ||
+      emp.departamento.toLowerCase().includes(searchValue.toLowerCase());
+
+    const matchesStatus = filterStatus === 'todos' ||
+      (filterStatus === 'activo' && emp.estatus === 'Activo') ||
+      (filterStatus === 'inactivo' && emp.estatus === 'Inactivo');
+
+    return matchesSearch && matchesStatus;
+  });
+
+  // Datos para mostrar
+  const dataToDisplay = hasSearched ? filteredEmployees : employees;
+  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedEmployees = employees.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedEmployees = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusColor = (estatus) => {
     return estatus === 'Activo' 
@@ -36,8 +67,23 @@ export default function EmployeeTable() {
     <div className="table-container p-6 bg-white-50 rounded-lg">
       <div className="titles-table flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Listado de Empleados</h2>
-        <div className="text-sm">Total: {employees.length} empleados</div>
+        <div className="text-sm">
+          {hasSearched 
+            ? `Resultados: ${dataToDisplay.length} empleado(s)` 
+            : `Total: ${employees.length} empleados`
+          }
+        </div>
       </div>
+      {/* Filtro de búsqueda */}
+      <EmployeeFilter 
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        onSearch={handleSearch}
+        filterStatus={filterStatus}
+        onFilterStatus={setFilterStatus}
+      />
+
+      
       <div className="hidden lg:block overflow-x-auto rounded-lg shadow">
         <table className="w-full border-collapse">
           <thead>
@@ -79,7 +125,7 @@ export default function EmployeeTable() {
       {/* Paginación */}
       <div className="mt-6 flex items-center justify-between">
         <div className="text-sm text-white-600">
-          Mostrando {startIndex + 1} a {Math.min(startIndex + itemsPerPage, employees.length)} de {employees.length}
+          Mostrando {paginatedEmployees.length > 0 ? startIndex + 1 : 0} a {Math.min(startIndex + itemsPerPage, dataToDisplay.length)} de {dataToDisplay.length}
         </div>
         <div className="flex gap-2">
           <button
