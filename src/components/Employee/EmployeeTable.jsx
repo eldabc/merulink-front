@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import EmployeeFilter from './EmployeeFilter';
+import EmployeeDetail from './EmployeeDetail';
+import '../../Tables.css';
+//  '../../Calendar.css';
 
 export default function EmployeeTable() {
 
@@ -7,6 +10,7 @@ export default function EmployeeTable() {
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('todos');
   const [hasSearched, setHasSearched] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const itemsPerPage = 10;
 
   // Datos de ejemplo
@@ -63,6 +67,11 @@ export default function EmployeeTable() {
       : 'bg-red-100 text-red-800';
   };
 
+  // Si hay empleado seleccionado, mostrar detalle
+  if (selectedEmployee) {
+    return <EmployeeDetail employee={selectedEmployee} onBack={() => setSelectedEmployee(null)} />;
+  }
+
   return (
     <div className="table-container p-6 bg-white-50 rounded-lg">
       <div className="titles-table flex justify-between items-center mb-6">
@@ -83,7 +92,6 @@ export default function EmployeeTable() {
         onFilterStatus={setFilterStatus}
       />
 
-      
       <div className="hidden lg:block overflow-x-auto rounded-lg shadow">
         <table className="w-full border-collapse">
           <thead>
@@ -102,6 +110,7 @@ export default function EmployeeTable() {
             {paginatedEmployees.map((emp) => (
               <tr
                 key={emp.id}
+                onClick={() => setSelectedEmployee(emp)}
                 className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
               >
                 <td className="px-4 py-3 text-white-800 font-medium">{emp.noEmpleado}</td>

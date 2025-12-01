@@ -2,16 +2,16 @@ import React from 'react';
 
 export default function EmployeeFilter({ searchValue, onSearchChange, onSearch, filterStatus, onFilterStatus }) {
   return (
-    <div className="mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div className="mb-6 p-4 rounded-lg search-container shadow-sm">
       <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
         {/* Label y Input de búsqueda */}
         <div className="flex-1">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Búsqueda por:
+            Buscar Empleado:
           </label>
           <input
             type="text"
-            placeholder="Buscar empleado"
+            placeholder="Ingrese nombre, apellido, cédula, departamento o Sub-departamento"
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && onSearch()}

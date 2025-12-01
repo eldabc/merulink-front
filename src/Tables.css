@@ -1,0 +1,31 @@
+.thead-custom-table {
+   background-color: #cfeeff;
+}
+.table-container{
+  background:linear-gradient(180deg,rgb(60 64 66),rgb(45 45 45));
+  border-radius: 20px;
+  padding: 20px;
+  border: none;
+  box-shadow: none;
+}
+.titles-table{
+  /* color: #fff; */
+  /* #cfeeff; */
+}
+.tr-table, .search-container {
+  border-color: rgba(255,255,255,0.1);
+}
+.tr-table:hover{
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-1px);
+}
+.tr-thead-table{
+    padding: 2px 4px;
+    text-align: center;
+    font-weight: 700;
+    color: #9fd8ff;
+    padding: 6px 0;
+}
+.tr-thead-table{
+  background: rgb(255 255 255 / 13%)
+}
