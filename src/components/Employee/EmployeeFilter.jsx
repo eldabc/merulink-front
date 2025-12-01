@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function EmployeeFilter({ searchValue, onSearchChange, onSearch, filterStatus, onFilterStatus }) {
+export default function EmployeeFilter({ searchValue, onSearchChange, filterStatus, onFilterStatus }) {
   return (
     <div className="mb-6 p-4 rounded-lg search-container shadow-sm">
       <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
@@ -14,21 +14,19 @@ export default function EmployeeFilter({ searchValue, onSearchChange, onSearch, 
             placeholder="Ingrese nombre, apellido, cédula, departamento o Sub-departamento"
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && onSearch()}
             className="w-full px-4 py-2 rounded-lg filter-input focus:outline-none transition-all"
           />
         </div>
 
-        {/* Botón Buscar */}
-        <button
-          onClick={onSearch}
-          className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors duration-150 whitespace-nowrap"
-        >
-          Buscar
-        </button>
-
-        {/* Filtros de Estado */}
+        {/* Filtros por Estado */}
         <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => onFilterStatus('all')}
+            className={`status-btn ${filterStatus === 'all' ? 'status-btn--all' : 'status-btn--neutral'}`}
+            aria-pressed={filterStatus === 'all'}
+          >
+            Todos
+          </button>
           <button
             onClick={() => onFilterStatus('activo')}
             className={`status-btn ${filterStatus === 'activo' ? 'status-btn--active' : 'status-btn--neutral'}`}

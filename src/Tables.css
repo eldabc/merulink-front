@@ -28,7 +28,7 @@
   color: inherit;
 }
 .filter-input:focus {
-  border-color: #d1d5db; /* gray-300 */
+  border-color: #d1d5db;
   box-shadow: none;
   outline: none;
 }
@@ -45,22 +45,26 @@
   cursor: pointer;
   transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
 }
+.status-btn--all{
+  background: #6f7376;
+  color: #9fd8ff;
+  border-color: rgba(22,101,52,0.12);
+}
 .status-btn:active { transform: translateY(0); }
 
-/* Cuando está seleccionado: usar los mismos colores que las etiquetas de estatus */
 .status-btn--active {
-  background: #dcfce7; /* green-100 */
-  color: #166534; /* green-800 */
+  background: #dcfce7;
+  color: #166534;
   border-color: rgba(22,101,52,0.12);
 }
 .status-btn--inactive {
-  background: #fee2e2; /* red-100 */
-  color: #991b1b; /* red-800 */
+  background: #fee2e2;
+  color: #991b1b;
   border-color: rgba(153,27,27,0.10);
 }
 .status-btn--neutral {
   background: rgba(255,255,255,0.02);
-  color: #cfeeff; /* ligero azul acorde con tema */
+  color: #cfeeff;
   border-color: rgba(255,255,255,0.04);
 }
 .status-btn:hover {
