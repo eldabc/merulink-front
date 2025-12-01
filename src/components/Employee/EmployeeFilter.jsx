@@ -6,7 +6,7 @@ export default function EmployeeFilter({ searchValue, onSearchChange, onSearch, 
       <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
         {/* Label y Input de búsqueda */}
         <div className="flex-1">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold mb-2 font-bold">
             Buscar Empleado:
           </label>
           <input
@@ -15,7 +15,7 @@ export default function EmployeeFilter({ searchValue, onSearchChange, onSearch, 
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && onSearch()}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-2 rounded-lg filter-input focus:outline-none transition-all"
           />
         </div>
 
@@ -31,21 +31,15 @@ export default function EmployeeFilter({ searchValue, onSearchChange, onSearch, 
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => onFilterStatus('activo')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterStatus === 'activo'
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
-            }`}
+            className={`status-btn ${filterStatus === 'activo' ? 'status-btn--active' : 'status-btn--neutral'}`}
+            aria-pressed={filterStatus === 'activo'}
           >
             Activos
           </button>
           <button
             onClick={() => onFilterStatus('inactivo')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterStatus === 'inactivo'
-                ? 'bg-red-500 text-white'
-                : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
-            }`}
+            className={`status-btn ${filterStatus === 'inactivo' ? 'status-btn--inactive' : 'status-btn--neutral'}`}
+            aria-pressed={filterStatus === 'inactivo'}
           >
             Inactivos
           </button>

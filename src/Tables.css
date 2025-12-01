@@ -12,11 +12,58 @@
   /* color: #fff; */
   /* #cfeeff; */
 }
-.tr-table, .search-container {
-  border-color: rgba(255,255,255,0.1);
+.tr-table {
+  border-bottom-color: rgba(255,255,255,0.1);
 }
 .tr-table:hover{
   background: rgba(255,255,255,0.08);
+  transform: translateY(-1px);
+}
+.search-container {
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.filter-input {
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: inherit;
+}
+.filter-input:focus {
+  border-color: #d1d5db; /* gray-300 */
+  box-shadow: none;
+  outline: none;
+}
+
+/* Botones de estado (Activos / Inactivos) */
+.status-btn {
+  padding: 6px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+.status-btn:active { transform: translateY(0); }
+
+/* Cuando está seleccionado: usar los mismos colores que las etiquetas de estatus */
+.status-btn--active {
+  background: #dcfce7; /* green-100 */
+  color: #166534; /* green-800 */
+  border-color: rgba(22,101,52,0.12);
+}
+.status-btn--inactive {
+  background: #fee2e2; /* red-100 */
+  color: #991b1b; /* red-800 */
+  border-color: rgba(153,27,27,0.10);
+}
+.status-btn--neutral {
+  background: rgba(255,255,255,0.02);
+  color: #cfeeff; /* ligero azul acorde con tema */
+  border-color: rgba(255,255,255,0.04);
+}
+.status-btn:hover {
   transform: translateY(-1px);
 }
 .tr-thead-table{
