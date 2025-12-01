@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
+import EmployeeAdd from './EmployeeAdd';
 import '../../Tables.css';
 import { employees } from '../../utils/employee-utils';
 
@@ -11,6 +12,7 @@ export default function EmployeeTable() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [addEmployee, setAddEmployee] = useState(null);
   const itemsPerPage = 10;
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
@@ -55,19 +57,25 @@ export default function EmployeeTable() {
   if (selectedEmployee) {
     return <EmployeeDetail employee={selectedEmployee} onBack={() => setSelectedEmployee(null)} />;
   }
+  if (addEmployee) {
+    return <EmployeeAdd employee={addEmployee} onBack={() => setAddEmployee(null)} />;
+  }
 
   return (
     <div className="table-container p-6 bg-white-50 rounded-lg">
       <div className="titles-table flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Listado de Empleados</h2>
         <div className="text-sm">         
-          {hasSearched  
-            ? `Resultados: ${dataToDisplay.length} empleado(s)` 
-            : `Total: ${employees.length} empleados`
-          }
+          <button
+            onClick={() => setAddEmployee({})}
+            className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
+          >
+            ← Nuevo Registro
+          </button>
+          
         </div>
       </div>
-      {/* Filtro de búsqueda */}
+      {/* Filtro */}
       <EmployeeFilter 
         searchValue={searchValue}
         onSearchChange={setSearchValue}
@@ -118,6 +126,12 @@ export default function EmployeeTable() {
       <div className="mt-6 flex items-center justify-between">
         <div className="text-sm text-white-600">
           Mostrando {paginatedEmployees.length > 0 ? startIndex + 1 : 0} a {Math.min(startIndex + itemsPerPage, dataToDisplay.length)} de {dataToDisplay.length}
+          <b>
+            {hasSearched  
+              ? ` Resultados: ${dataToDisplay.length} empleado(s)` 
+              : ` Total: ${employees.length} empleados`
+            }
+          </b>
         </div>
         <div className="flex gap-2">
           <button
@@ -135,7 +149,7 @@ export default function EmployeeTable() {
                 className={`px-3 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === page
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                    : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
                 }`}
               >
                 {page}

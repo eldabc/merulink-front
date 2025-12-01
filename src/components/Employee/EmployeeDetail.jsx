@@ -6,7 +6,7 @@ export default function EmployeeDetail({ employee, onBack }) {
       {/* Botón Atrás */}
       <button
         onClick={onBack}
-        className="mb-6 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
+        className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
       >
         ← Volver
       </button>
