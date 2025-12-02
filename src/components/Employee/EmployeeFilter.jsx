@@ -11,7 +11,7 @@ export default function EmployeeFilter({ searchValue, onSearchChange, filterStat
           </label>
           <input
             type="text"
-            placeholder="Ingrese nombre, apellido, cédula, departamento o Sub-departamento"
+            placeholder="Ingrese nombre, apellido, cédula, departamento o sub-departamento"
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full px-4 py-2 rounded-lg filter-input focus:outline-none transition-all"

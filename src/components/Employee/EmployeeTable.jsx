@@ -25,21 +25,32 @@ export default function EmployeeTable() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
-  // Filtrar empleados según búsqueda y estado
-  const filteredEmployees = employees.filter(emp => {
-    const matchesSearch = searchValue.trim() === '' || 
-      emp.nombre.toLowerCase().includes(searchValue.toLowerCase()) ||
-      emp.apellido.toLowerCase().includes(searchValue.toLowerCase()) ||
-      emp.cedula.includes(searchValue) ||
-      emp.cargo.toLowerCase().includes(searchValue.toLowerCase()) ||
-      emp.departamento.toLowerCase().includes(searchValue.toLowerCase());
+  // Normalizar strings para la busqueda
+  function normalizeText(text) {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
 
-    const matchesStatus = filterStatus === 'all' ||
-      (filterStatus === 'activo' && emp.estatus === 'Activo') ||
-      (filterStatus === 'inactivo' && emp.estatus === 'Inactivo');
+// Filtrar empleados según búsqueda y estado
+const filteredEmployees = employees.filter(emp => {
+  const value = normalizeText(searchValue);
 
-    return matchesSearch && matchesStatus;
-  });
+  const matchesSearch = value === '' ||
+    normalizeText(emp.name).includes(value) ||
+    normalizeText(emp.lastName).includes(value) ||
+    normalizeText(emp.ci).includes(value) ||
+    normalizeText(emp.position).includes(value) ||
+    normalizeText(emp.department).includes(value) ||
+    normalizeText(emp.subDepartment).includes(value);
+
+  const matchesStatus = filterStatus === 'all' ||
+    (filterStatus === 'activo' && emp.status === 'Activo') ||
+    (filterStatus === 'inactivo' && emp.status === 'Inactivo');
+
+  return matchesSearch && matchesStatus;
+});
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredEmployees : employees;
@@ -47,8 +58,8 @@ export default function EmployeeTable() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
-  const getStatusColor = (estatus) => {
-    return estatus === 'Activo' 
+  const getStatusColor = (status) => {
+    return status === 'Activo' 
       ? 'bg-green-100 text-green-800' 
       : 'bg-red-100 text-red-800';
   };
@@ -104,16 +115,16 @@ export default function EmployeeTable() {
                 onClick={() => setSelectedEmployee(emp)}
                 className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
               >
-                <td className="px-4 py-3 text-white-800 font-medium">{emp.noEmpleado}</td>
-                <td className="px-4 py-3 text-white-700">{emp.cedula}</td>
-                <td className="px-4 py-3 text-white-700">{emp.nombre}</td>
-                <td className="px-4 py-3 text-white-700">{emp.apellido}</td>
-                <td className="px-4 py-3 text-white-700">{emp.departamento}</td>
-                <td className="px-4 py-3 text-white-700">{emp.subDepartamento}</td>
-                <td className="px-4 py-3 text-white-700">{emp.cargo}</td>
+                <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
+                <td className="px-4 py-3 text-white-700">{emp.ci}</td>
+                <td className="px-4 py-3 text-white-700">{emp.name}</td>
+                <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
+                <td className="px-4 py-3 text-white-700">{emp.department}</td>
+                <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
+                <td className="px-4 py-3 text-white-700">{emp.position}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(emp.estatus)}`}>
-                    {emp.estatus}
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(emp.status)}`}>
+                    {emp.status}
                   </span>
                 </td>
               </tr>

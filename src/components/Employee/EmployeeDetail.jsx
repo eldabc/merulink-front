@@ -13,8 +13,8 @@ export default function EmployeeDetail({ employee, onBack }) {
 
       {/* Encabezado */}
       <div className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white p-6 rounded-lg mb-6">
-        <h2 className="text-3xl font-bold">{employee.nombre} {employee.apellido}</h2>
-        <p className="text-blue-100 text-lg">{employee.cargo}</p>
+        <h2 className="text-3xl font-bold">{employee.name} {employee.lastName}</h2>
+        <p className="text-blue-100 text-lg">{employee.position}</p>
       </div>
 
       {/* Información Personal */}
@@ -23,19 +23,19 @@ export default function EmployeeDetail({ employee, onBack }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="text-sm text-gray-500 font-semibold">No. Empleado</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.noEmpleado}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.numEmployee}</p>
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold">Cédula</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.cedula}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.ci}</p>
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold">Nombre</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.nombre}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.name}</p>
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold">Apellido</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.apellido}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.lastName}</p>
           </div>
         </div>
       </div>
@@ -46,25 +46,25 @@ export default function EmployeeDetail({ employee, onBack }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="text-sm text-gray-500 font-semibold">Departamento</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.departamento}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.department}</p>
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold">Sub-Departamento</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.subDepartamento}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.subDepartment}</p>
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold">Cargo</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.cargo}</p>
+            <p className="text-gray-800 font-medium text-lg">{employee.position}</p>
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold">Estatus</label>
             <div>
               <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-                employee.estatus === 'Activo'
+                employee.status === 'Activo'
                   ? 'bg-green-100 text-green-800'
                   : 'bg-red-100 text-red-800'
               }`}>
-                {employee.estatus}
+                {employee.status}
               </span>
             </div>
           </div>
