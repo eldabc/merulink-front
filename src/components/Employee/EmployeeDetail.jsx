@@ -1,5 +1,5 @@
 import {React, useState }from "react";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft, User } from "lucide-react";
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
@@ -29,12 +29,15 @@ const EmployeeDetail = ({ employee, onBack }) => {
   return (
     <div className="p-2 rounded-lg">
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        <button className="buttons-bar-btn flex text-3xl font-semibold">
+        <button className="buttons-bar-btn flex  font-semibold" title="Cambiar Estatus">
+          <CheckBadgeIcon  className={`w-5 h-5 text-9xl ${employee.status === 'Activo' ? 'text-green-500' : 'text-red-500'}`} />
+        </button>
+        <button className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
           <PencilIcon className="w-4 h-4 text-white-500" />
         </button>
           <button 
             onClick={onBack}
-            className="buttons-bar-btn flex text-3xl font-semibold">
+            className="buttons-bar-btn flex text-3xl font-semibold" title="Volver">
           <ArrowLeft className="w-4 h-4 text-white-500" />
         </button>
       </div>
