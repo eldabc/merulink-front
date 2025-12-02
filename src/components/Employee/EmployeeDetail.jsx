@@ -29,12 +29,12 @@ const EmployeeDetail = ({ employee, onBack }) => {
   return (
     <div className="p-2 rounded-lg">
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        <button className="buttons-bar-btn flex text-3xl font-semibold text-white-800">
+        <button className="buttons-bar-btn flex text-3xl font-semibold">
           <PencilIcon className="w-4 h-4 text-white-500" />
         </button>
           <button 
             onClick={onBack}
-            className="buttons-bar-btn flex text-3xl font-semibold text-white-800">
+            className="buttons-bar-btn flex text-3xl font-semibold">
           <ArrowLeft className="w-4 h-4 text-white-500" />
         </button>
       </div>

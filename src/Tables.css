@@ -15,7 +15,7 @@
 .tr-table {
   border-bottom-color: rgba(255,255,255,0.1);
 }
-.tr-table:hover{
+.tr-table:hover, .tags-work-btn:hover{
   background: rgba(255,255,255,0.08);
   transform: translateY(-1px);
 }
@@ -67,7 +67,10 @@
   color: #cfeeff;
   border-color: rgba(255,255,255,0.04);
 }
-.status-btn:hover {
+.status-tag {
+  display: inline-block;
+}
+.status-btn:hover, .status-tag:hover {
   transform: translateY(-1px);
 }
 .tr-thead-table{
@@ -80,6 +83,12 @@
 .tr-thead-table{
   background: rgb(255 255 255 / 13%);
 }
-.buttons-bar-btn{
+.buttons-bar-btn, .tags-work-btn{
   background-color: #ffffff21;
+}
+.tags-work-btn{
+  padding: 2% !important;
+}
+.tags-work-btn:hover {
+  border-color: #dcfce7;
 }

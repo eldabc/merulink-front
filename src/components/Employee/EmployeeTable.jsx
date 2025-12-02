@@ -3,6 +3,7 @@ import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
 import '../../Tables.css';
+import { getStatusColor } from '../../utils/statusColor';
 import { employees } from '../../utils/employee-utils';
 
 export default function EmployeeTable() {
@@ -57,12 +58,6 @@ const filteredEmployees = employees.filter(emp => {
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-
-  const getStatusColor = (status) => {
-    return status === 'Activo' 
-      ? 'bg-green-100 text-green-800' 
-      : 'bg-red-100 text-red-800';
-  };
 
   // Si hay empleado seleccionado, mostrar detalle
   if (selectedEmployee) {
@@ -123,7 +118,7 @@ const filteredEmployees = employees.filter(emp => {
                 <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
                 <td className="px-4 py-3 text-white-700">{emp.position}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(emp.status)}`}>
+                  <span className={getStatusColor(emp.status)}>
                     {emp.status}
                   </span>
                 </td>
