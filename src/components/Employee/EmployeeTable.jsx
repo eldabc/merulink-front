@@ -74,7 +74,7 @@ const filteredEmployees = employees.filter(emp => {
 
   return (
     <div className="table-container p-6 bg-white-50 rounded-lg">
-      <div className="titles-table flex justify-between items-center mb-6">
+      <div className="titles-table flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Listado de Empleados</h2>
         <div className="text-sm">         
           <button

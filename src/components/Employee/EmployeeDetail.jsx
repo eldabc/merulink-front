@@ -1,91 +1,79 @@
-import React from 'react';
+import {React, useState }from "react";
+import { PencilIcon } from "@heroicons/react/24/solid";
+import { ArrowLeft, User } from "lucide-react";
+import PersonalData from "./tabs/PersonalData";
+import WorkData from "./tabs/WorkData";
+import ContactData from "./tabs/ContactData";
 
-export default function EmployeeDetail({ employee, onBack }) {
+const EmployeeDetail = ({ employee, onBack }) => {
+  const [activeTab, setActiveTab] = useState("personal");
+  
+  const tabs = [
+    { id: "personal", label: "Datos personales" },
+    { id: "work", label: "Datos laborales" },
+    { id: "contact", label: "Datos de contactos" },
+  ];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "personal":
+        return <PersonalData employee={employee} />;
+      case "work":
+        return <WorkData employee={employee} />;
+      case "contact":
+        return <ContactData employee={employee} />;
+      default:
+        return null;
+    }
+  };
   return (
-    <div className="p-6 bg-white rounded-lg">
-      {/* Botón Atrás */}
-      <button
-        onClick={onBack}
-        className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
-      >
-        ← Volver
-      </button>
-
-      {/* Encabezado */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white p-6 rounded-lg mb-6">
-        <h2 className="text-3xl font-bold">{employee.name} {employee.lastName}</h2>
-        <p className="text-blue-100 text-lg">{employee.position}</p>
+    <div className="p-2 rounded-lg">
+      <div className="buttons-bar flex gap-2 aling-items-right justify-end">
+        <button className="buttons-bar-btn flex text-3xl font-semibold text-white-800">
+          <PencilIcon className="w-4 h-4 text-white-500" />
+        </button>
+          <button 
+            onClick={onBack}
+            className="buttons-bar-btn flex text-3xl font-semibold text-white-800">
+          <ArrowLeft className="w-4 h-4 text-white-500" />
+        </button>
       </div>
+      <div className="table-container rounded-lg mt-4 shadow-md p-6 min-w-230 min-h-150 max-w-230 max-h-150">
+        <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21]">
+          <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center ml-2.5">
+            <User className="w-26 h-26 text-white" />
+          </div>
 
-      {/* Información Personal */}
-      <div className="mb-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">Información Personal</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="text-sm text-gray-500 font-semibold">No. Empleado</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.numEmployee}</p>
+            <h3 className="text-3xl font-semibold text-white-800">
+             { `${employee.numEmployee} ${employee.name} ${employee.lastName}`}
+            </h3>
+            <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
+            <p className="text-white-600 mt-1"> Departamento: {employee.department} </p>
+            <p className="text-white-600 mt-1">   </p>
           </div>
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Cédula</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.ci}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Nombre</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.name}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Apellido</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.lastName}</p>
-          </div>
+          
         </div>
-      </div>
-
-      {/* Información Laboral */}
-      <div className="mb-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">Información Laboral</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Departamento</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.department}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Sub-Departamento</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.subDepartment}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Cargo</label>
-            <p className="text-gray-800 font-medium text-lg">{employee.position}</p>
-          </div>
-          <div>
-            <label className="text-sm text-gray-500 font-semibold">Estatus</label>
-            <div>
-              <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-                employee.status === 'Activo'
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                {employee.status}
-              </span>
-            </div>
-          </div>
+      
+        <div className="flex gap-4 mt-6 border-b border-gray-700">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mt-6 mb-2 p-2
+                ${activeTab === tab.id
+                  ? "border-blue-500 text-[#9fd8ff]"
+                  : "border-transparent text-gray-400 hover:text-gray-200"}
+              `}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      </div>
-
-      {/* Botones de Acción */}
-      <div className="flex gap-3 flex-wrap">
-        <button className="flex-1 min-w-32 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition">
-          ✏️ Editar
-        </button>
-        <button className="flex-1 min-w-32 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition">
-          📄 Descargar CV
-        </button>
-        <button
-          onClick={onBack}
-          className="flex-1 min-w-32 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold transition"
-        >
-          ✕ Cerrar
-        </button>
+        <div className="mt-6">{renderTabContent()}</div>
       </div>
     </div>
   );
-}
+};
+
+export default EmployeeDetail;

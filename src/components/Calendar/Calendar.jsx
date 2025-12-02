@@ -43,7 +43,6 @@ export default function Calendar() {
 
   //  Filtrado dinámico según categorías activas
   const filteredEvents = useMemo(() => {
-    console.log('filteredEvents')
     return currentEvents.filter(ev =>
       activeCategories[ev.extendedProps?.category]
     );
@@ -51,7 +50,6 @@ export default function Calendar() {
 
   // Filtrar eventos del día seleccionado
   const eventsOfSelectedDay = useMemo(() => {
-    console.log('eventsOfSelectedDay')
     return filterEventsByDate(filteredEvents, selectedDate);
   }, [filteredEvents, selectedDate]);
 

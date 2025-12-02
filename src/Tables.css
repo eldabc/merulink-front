@@ -78,5 +78,8 @@
     padding: 6px 0;
 }
 .tr-thead-table{
-  background: rgb(255 255 255 / 13%)
+  background: rgb(255 255 255 / 13%);
+}
+.buttons-bar-btn{
+  background-color: #ffffff21;
 }

@@ -23,7 +23,7 @@ export default function Workspace({ activeMenu }) {
 
    if (activeMenu === 'Empleados') {
     return (
-      <div className="ia-workspace">
+      <div className="">
         <EmployeeTable />
       </div>
     );
