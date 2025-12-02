@@ -26,7 +26,9 @@ export const employees = [
     useTransport: true,
     contacts: [
       {
-        name: 'María Pérez',
+        id: 1,
+        name: 'María',
+        lastName: 'Pérez',
         relationship: 'Esposa',
         phone: '0414-7654321',
         address: 'Caracas, Los Ruices'
@@ -60,7 +62,9 @@ export const employees = [
     useTransport: false,
     contacts: [
       {
-        name: 'Rosa García',
+        id: 2,
+        name: 'Rosa',
+        lastName: 'García',
         relationship: 'Madre',
         phone: '0412-6677889',
         address: 'Valencia, Prebo'
@@ -94,7 +98,9 @@ export const employees = [
     useTransport: false,
     contacts: [
       {
-        name: 'Diego López',
+        id: 3,
+        name: 'Diego',
+        lastName: 'López',
         relationship: 'Hermano',
         phone: '0414-5566778',
         address: 'Maracay, El Limón'
@@ -128,7 +134,9 @@ export const employees = [
     useTransport: true,
     contacts: [
       {
-        name: 'Luis Martínez',
+        id: 4,
+        name: 'Luis',
+        lastName: 'Martínez Ruiz',
         relationship: 'Padre',
         phone: '0426-3344556',
         address: 'Barquisimeto, Centro'
@@ -162,7 +170,9 @@ export const employees = [
     useTransport: true,
     contacts: [
       {
-        name: 'Laura Rodríguez',
+        id: 5,
+        name: 'Laura',
+        lastName: 'Rodríguez Ruiz',
         relationship: 'Esposa',
         phone: '0416-9988776',
         address: 'Caracas, Chacao'
@@ -196,7 +206,9 @@ export const employees = [
     useTransport: false,
     contacts: [
       {
-        name: 'Andrea Fernández',
+        id: 6,
+        name: 'Andrea',
+        lastName: 'Ruiz Fernández',
         relationship: 'Hermana',
         phone: '0414-3344556',
         address: 'Mérida, Campo Claro'
@@ -230,7 +242,9 @@ export const employees = [
     useTransport: true,
     contacts: [
       {
-        name: 'Mónica Sánchez',
+        id: 7,
+        name: 'Mónica',
+        lastName: 'Sánchez Ruiz',
         relationship: 'Madre',
         phone: '0416-4433221',
         address: 'Caracas, La California'
@@ -264,7 +278,9 @@ export const employees = [
     useTransport: false,
     contacts: [
       {
-        name: 'Daniel González',
+        id: 8,
+        name: 'Daniel',
+        lastName: 'González Ruiz',
         relationship: 'Hermano',
         phone: '0424-2211445',
         address: 'Valencia, Naguanagua'
@@ -298,7 +314,9 @@ export const employees = [
     useTransport: true,
     contacts: [
       {
-        name: 'Carolina Jiménez',
+        id: 9,
+        name: 'Carolina ',
+        lastName: 'Jiménez',
         relationship: 'Esposa',
         phone: '0412-8899775',
         address: 'Barinas, Alto Barinas'
@@ -332,7 +350,9 @@ export const employees = [
     useTransport: true,
     contacts: [
       {
-        name: 'Sofía Morales',
+        id: 10,
+        name: 'Sofía ',
+        lastName: 'Morales',
         relationship: 'Hermana',
         phone: '0416-6677889',
         address: 'Lechería'
@@ -366,7 +386,9 @@ export const employees = [
     useTransport: false,
     contacts: [
       {
-        name: 'Julio Castro',
+        id: 11,
+        name: 'Julio',
+        lastName: 'Castro',
         relationship: 'Hermano',
         phone: '0412-4433661',
         address: 'Carúpano, Centro'
@@ -400,9 +422,19 @@ export const employees = [
     useTransport: false,
     contacts: [
       {
-        name: 'Carla Ruiz',
+        id: 12,
+        name: 'Carla',
+        lastName: 'Ruiz',
         relationship: 'Hermana',
         phone: '0416-1100992',
+        address: 'Maturín, Tipuro'
+      },
+      {
+        id: 13,
+        name: 'Ana',
+        lastName: 'Ruiz',
+        relationship: 'Hermana',
+        phone: '0416-6506992',
         address: 'Maturín, Tipuro'
       }
     ]

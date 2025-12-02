@@ -12,13 +12,15 @@ export default function ContactData({ employee }) {
         </thead>
 
         <tbody>
-        <tr className="tr-table">
-            <td className="p-2"><input className="border p-1 w-full rounded" /></td>
-            <td className="p-2"><input className="border p-1 w-full rounded" /></td>
-            <td className="p-2"><input className="border p-1 w-full rounded" /></td>
-            <td className="p-2"><input className="border p-1 w-full rounded" /></td>
-            <td className="p-2"><input className="border p-1 w-full rounded" /></td>
-        </tr>
+        {employee.contacts.map((contact) => (
+            <tr key={contact.id} className="tr-table">
+                <td className="p-2"><span className="p-1 w-full">{contact.name}</span> </td>
+                <td className="p-2"><span className="p-1 w-full">{contact.lastName}</span> </td>
+                <td className="p-2"><span className="p-1 w-full">{contact.relationship}</span> </td>
+                <td className="p-2"><span className="p-1 w-full">{contact.phone}</span> </td>
+                <td className="p-2"><span className="p-1 w-full">{contact.address}</span> </td>
+            </tr>
+        ))}      
     </tbody>
     </table>
   );
