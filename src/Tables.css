@@ -92,3 +92,8 @@
 .tags-work-btn:hover {
   border-color: #dcfce7;
 }
+.table-tags-check{
+  width: 50%;
+  border-collapse: separate;
+  border-spacing: 0px 5px;
+}

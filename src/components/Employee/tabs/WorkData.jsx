@@ -29,48 +29,63 @@ export default function WorkData({ employee }) {
       </div>
 
       <div className="flex items-center gap-4">
-        <label className="font-semibold">¿Usa Meru Link?</label>
-        <button className='tags-work-btn'>
-          {employee.useMeruLink ? (
-            <CheckCircleIcon className='w-5 h-5 text-green-400' />
-          ) : (
-            <XCircleIcon className='w-5 h-5 text-red-400' />
-          )}
-        </button>
+        <table className='table-tags-check'>
+          <tr>
+            <td><label className="font-semibold">¿Usa Meru Link?</label></td>
+            <td>
+              <button className='tags-work-btn'>
+                {employee.useMeruLink ? (
+                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
+                ) : (
+                  <XCircleIcon className='w-5 h-5 text-red-400' />
+                )}
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td> <label className="font-semibold">¿Usa Locker?</label></td>
+            <td>
+              <button className='tags-work-btn'>
+                {employee.useLocker ? (
+                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
+                ) : (
+                  <XCircleIcon className='w-5 h-5 text-red-400' />
+                )}
+              </button>
+            </td>
+          </tr>
+        </table>
       </div>
 
       <div className="flex items-center gap-4">
-        <label className="font-semibold">¿Usa Tarjeta HID?</label>
-        <button className='tags-work-btn'>
-          {employee.hidCard ? (
-            <CheckCircleIcon className='w-5 h-5 text-green-400' />
-          ) : (
-            <XCircleIcon className='w-5 h-5 text-red-400' />
-          )}
-        </button>
+        <table className='table-tags-check'>
+          <tr>
+            <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
+            <td>
+              <button className='tags-work-btn'>
+                {employee.hidCard ? (
+                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
+                ) : (
+                  <XCircleIcon className='w-5 h-5 text-red-400' />
+                )}
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td><label className="font-semibold">¿Usa Transporte?</label></td>
+            <td>
+              <button className='tags-work-btn'>
+                {employee.useTransport ? (
+                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
+                ) : (
+                  <XCircleIcon className='w-5 h-5 text-red-400' />
+                )}
+              </button>
+            </td>
+          </tr>
+        </table>     
       </div>
-
-      <div className="flex items-center gap-4">
-        <label className="font-semibold">¿Usa Locker?</label>
-        <button className='tags-work-btn'>
-          {employee.useLocker ? (
-            <CheckCircleIcon className='w-5 h-5 text-green-400' />
-          ) : (
-            <XCircleIcon className='w-5 h-5 text-red-400' />
-          )}
-        </button>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <label className="font-semibold">¿Usa Transporte?</label>
-        <button className='tags-work-btn'>
-          {employee.useTransport ? (
-            <CheckCircleIcon className='w-5 h-5 text-green-400' />
-          ) : (
-            <XCircleIcon className='w-5 h-5 text-red-400' />
-          )}
-        </button>
-      </div>
+      
       <div>
         <label className="font-semibold">Estatus: </label>
         <span className={`status-tag ${getStatusColor(employee.status)}`}>
