@@ -67,110 +67,107 @@ const filteredEmployees = employees.filter(emp => {
     return <EmployeeAdd employee={addEmployee} onBack={() => setAddEmployee(null)} />;
   }
 
-  return (
-    <div className="table-container p-6 bg-white-50 rounded-lg">
-      <div className="titles-table flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Listado de Empleados</h2>
-        <div className="text-sm">         
-          <button
-            onClick={() => setAddEmployee({})}
-            className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
-          >
-            ← Nuevo Registro
-          </button>
-          
-        </div>
-      </div>
-      {/* Filtro */}
-      <EmployeeFilter 
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-        filterStatus={filterStatus}
-        onFilterStatus={setFilterStatus}
-      />
-
-      <div className="hidden lg:block overflow-x-auto rounded-lg shadow">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="tr-thead-table">
-              <th className="px-4 py-3 text-left font-semibold">No. Empleado</th>
-              <th className="px-4 py-3 text-left font-semibold">Cédula</th>
-              <th className="px-4 py-3 text-left font-semibold">Nombre</th>
-              <th className="px-4 py-3 text-left font-semibold">Apellido</th>
-              <th className="px-4 py-3 text-left font-semibold">Departamento</th>
-              <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
-              <th className="px-4 py-3 text-left font-semibold">Cargo</th>
-              <th className="px-4 py-3 text-left font-semibold">Estatus</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedEmployees.map((emp) => (
-              <tr
-                key={emp.id}
-                onClick={() => setSelectedEmployee(emp)}
-                className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
-              >
-                <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
-                <td className="px-4 py-3 text-white-700">{emp.ci}</td>
-                <td className="px-4 py-3 text-white-700">{emp.name}</td>
-                <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
-                <td className="px-4 py-3 text-white-700">{emp.department}</td>
-                <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
-                <td className="px-4 py-3 text-white-700">{emp.position}</td>
-                <td className="px-4 py-3">
-                  <span className={getStatusColor(emp.status)}>
-                    {emp.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Paginación */}
-      <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-white-600">
-          Mostrando {paginatedEmployees.length > 0 ? startIndex + 1 : 0} a {Math.min(startIndex + itemsPerPage, dataToDisplay.length)} de {dataToDisplay.length}
-          <b>
-            {hasSearched  
-              ? ` Resultados: ${dataToDisplay.length} empleado(s)` 
-              : ` Total: ${employees.length} empleados`
-            }
-          </b>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          >
-            Anterior
-          </button>
-          <div className="flex items-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-2 rounded-lg font-medium transition-colors ${
-                  currentPage === page
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          >
-            Siguiente
-          </button>
-        </div>
+return (
+  <div className="table-container p-4 bg-white-50 rounded-lg">
+    <div className="titles-table flex justify-between items-center mb-4">
+      <h2 className="text-2xl font-bold">Listado de Empleados</h2>
+      <div className="text-sm">
+        <button
+          onClick={() => setAddEmployee({})}
+          className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
+        >
+          ← Nuevo Registro
+        </button>
       </div>
     </div>
-  );
+    {/* Filtro */}
+    <EmployeeFilter
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      filterStatus={filterStatus}
+      onFilterStatus={setFilterStatus}
+    />
+
+    <div className="-mx-6 px-6 overflow-x-auto rounded-lg shadow">
+      <table className="min-w-max border-collapse text-sm sm:text-base">
+        <thead>
+          <tr className="tr-thead-table">
+            <th className="px-4 py-3 text-left font-semibold">No. Empleado</th>
+            <th className="px-4 py-3 text-left font-semibold">Cédula</th>
+            <th className="px-4 py-3 text-left font-semibold">Nombre</th>
+            <th className="px-4 py-3 text-left font-semibold">Apellido</th>
+            <th className="px-4 py-3 text-left font-semibold">Departamento</th>
+            <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
+            <th className="px-4 py-3 text-left font-semibold">Cargo</th>
+            <th className="px-4 py-3 text-left font-semibold">Estatus</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedEmployees.map((emp) => (
+            <tr
+              key={emp.id}
+              onClick={() => setSelectedEmployee(emp)}
+              className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
+            >
+              <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
+              <td className="px-4 py-3 text-white-700">{emp.ci}</td>
+              <td className="px-4 py-3 text-white-700">{emp.name}</td>
+              <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
+              <td className="px-4 py-3 text-white-700">{emp.department}</td>
+              <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
+              <td className="px-4 py-3 text-white-700">{emp.position}</td>
+              <td className="px-4 py-3">
+                <span className={getStatusColor(emp.status)}>{emp.status}</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* Paginación */}
+    <div className="mt-6 flex items-center justify-between">
+      <div className="text-sm text-white-600">
+        Mostrando {paginatedEmployees.length > 0 ? startIndex + 1 : 0} a {Math.min(startIndex + itemsPerPage, dataToDisplay.length)} de {dataToDisplay.length}
+        <b>
+          {hasSearched
+            ? ` Resultados: ${dataToDisplay.length} empleado(s)`
+            : ` Total: ${employees.length} empleados`
+          }
+        </b>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          Anterior
+        </button>
+        <div className="flex items-center gap-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 rounded-lg font-medium transition-colors ${
+                currentPage === page
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+);
 }

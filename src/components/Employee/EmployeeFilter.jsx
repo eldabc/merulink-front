@@ -6,7 +6,7 @@ export default function EmployeeFilter({ searchValue, onSearchChange, filterStat
       <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
         {/* Label y Input de búsqueda */}
         <div className="flex-1">
-          <label className="block text-sm font-semibold mb-2 font-bold">
+          <label className="block text-sm mb-2 font-bold">
             Buscar Empleado:
           </label>
           <input

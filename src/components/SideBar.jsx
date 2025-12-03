@@ -45,7 +45,7 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
     });
 }
 
-export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
+export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen }) {
   const node = menuTree[activeMenu] || {};
   
   // Memoize the initial collapsed state
@@ -70,7 +70,12 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick }) {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={` sidebar
+        bg-gray-800 text-white h-full transition-transform duration-300
+        lg:translate-x-0 lg:static lg:block
+        fixed top-0 left-0 w-64 z-40
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}  text-sm sm:text-base
+      `}>
       <div className="submenu-title">Secciones</div>
       {/* Para poder clickar los breadcrumbs */}
       <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>

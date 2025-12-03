@@ -8,7 +8,7 @@ import { menuTree } from "./components/Menu/menuTree";
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
-  const [activePath, setActivePath] = useState([]); // breadcrumb: ["Empleados", "Vestuarios", "Lockers"]
+  const [activePath, setActivePath] = useState([]); // breadcrumb
 
   // Datos de navegación: derive everything desde el árbol `menuTree`
   const topMenuItems = Object.keys(menuTree);

@@ -56,7 +56,10 @@ button:focus-visible {
 }
 .merulink-root{min-height:100vh;width:100vw;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto;color:var(--text-primary);background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3));background-size:300% 300%;animation:bgShift 18s linear infinite;display:flex;flex-direction:column;overflow:hidden;position:relative}
 @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@media (max-width:900px){.sidebar{display:none}.workspace{padding:18px}.calendar-card{max-width:100%}.assistant-card{width:92%}.top-menu{display:none}}
+@media (max-width:900px){
+  /* .sidebar{display:none} */
+  .workspace{padding:18px}.calendar-card{max-width:100%}.assistant-card{width:92%}.top-menu{display:none}
+}
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -69,9 +72,14 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-@media (max-width:1200px){.workspace{padding:18px}.calendar-card{width:calc(100% - 32px)}.assistant-card{width:92%}}
+@media (max-width:1200px){
+  .workspace{padding:18px}.calendar-card{width:calc(100% - 32px)}.assistant-card{width:92%}
+  body {
+    height: auto;
+  }
+}
 @media screen and (max-width: 1024px) {
-  .top-menu{display:none}
+  /* .top-menu{display:none} */
 }
 
 .particles-layer{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.92}
@@ -101,8 +109,9 @@ button:focus-visible {
 .user-block{text-align:right}.user-block .name{font-weight:700}.user-block .dept{color:var(--text-muted);font-size:13px}
 
 .main-area{position:relative;z-index:2;display:flex;flex:1;min-height:0}
-.sidebar{width:260px;padding:20px;border-right:1px solid var(--glass-border);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(6px)}
-.sidebar.hidden{display:none}.submenu-title{color:var(--text-muted);font-size:12px;margin-bottom:8px;text-transform:uppercase}
+.sidebar{width:210px;padding:10px;border-right:1px solid var(--glass-border);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(6px)}
+/* .sidebar.hidden{display:none} */
+.submenu-title{color:var(--text-muted);font-size:12px;margin-bottom:8px;text-transform:uppercase}
 .submenu-btn{flex: 1;display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:8px;border-radius:10px;background:transparent;color:var(--text-primary);border:none;cursor:pointer;font-weight:600}
 .submenu-btn:hover{background:rgba(255,255,255,0.02)}
 .submenu-btn.active{background:rgba(83,196,255,0.12);color:#fff}
@@ -120,10 +129,7 @@ button:focus-visible {
 .particles-layer{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.92}
 
 .user-block{text-align:right}.user-block .name{font-weight:700}.user-block .dept{color:var(--text-muted);font-size:13px}
-
 .main-area{position:relative;z-index:3;display:flex;flex:1;min-height:0}
-.sidebar{flex:0 0 260px;padding:20px;border-right:1px solid var(--glass-border);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(6px)}
-.sidebar.hidden{display:none}.submenu-title{color:var(--text-muted);font-size:12px;margin-bottom:8px;text-transform:uppercase}
 
 /* calendar classes*/
 .calendar-card{max-width:1820px;width:calc(100% - 48px);margin:0 auto;display:block;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:16px;padding:26px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 16px 50px rgba(2,6,23,0.6);backdrop-filter:blur(10px)}
