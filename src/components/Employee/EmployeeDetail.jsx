@@ -4,8 +4,9 @@ import { ArrowLeft, User } from "lucide-react";
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
+import { getStatusColor, getStatusName } from '../../utils/statusColor';
 
-const EmployeeDetail = ({ employee, onBack }) => {
+const EmployeeDetail = ({ employee, onBack, onChangeStatus }) => {
   const [activeTab, setActiveTab] = useState("personal");
   
   const tabs = [
@@ -29,9 +30,9 @@ const EmployeeDetail = ({ employee, onBack }) => {
   return (
     <div className="p-2 rounded-lg">
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        <button className="buttons-bar-btn flex  font-semibold" title="Cambiar Estatus">
-          <CheckBadgeIcon  className={`w-5 h-5 text-9xl ${employee.status === 'Activo' ? 'text-green-500' : 'text-red-500'}`} />
-        </button>
+        {/* <button className="buttons-bar-btn flex  font-semibold" title="Cambiar Estatus">
+          <CheckBadgeIcon  className={`w-5 h-5 text-9xl ${employee.status === true ? 'text-green-500' : 'text-red-500'}`} />
+        </button> */}
         <button className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
           <PencilIcon className="w-4 h-4 text-white-500" />
         </button>
@@ -53,7 +54,19 @@ const EmployeeDetail = ({ employee, onBack }) => {
             </h3>
             <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
             <p className="text-white-600 mt-1"> Departamento: {employee.department} </p>
-            <p className="text-white-600 mt-1">   </p>
+            <p className="text-white-600 mt-1"></p>
+          </div>
+          <div>
+            <label className="font-semibold">Estatus: </label>
+            <span 
+              className={`status-tag ${getStatusColor(employee.status)}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChangeStatus(employee.id);
+              }}
+              >
+             {getStatusName(employee.status)}
+            </span>
           </div>
           
         </div>

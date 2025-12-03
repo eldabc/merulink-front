@@ -1,5 +1,4 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
-import { getStatusColor } from '../../../utils/statusColor';
 
 export default function WorkData({ employee }) {
   return (
@@ -30,6 +29,7 @@ export default function WorkData({ employee }) {
 
       <div className="flex items-center gap-4">
         <table className='table-tags-check'>
+          <tbody>
           <tr>
             <td><label className="font-semibold">¿Usa Meru Link?</label></td>
             <td>
@@ -54,11 +54,13 @@ export default function WorkData({ employee }) {
               </button>
             </td>
           </tr>
+          </tbody>
         </table>
       </div>
 
       <div className="flex items-center gap-4">
         <table className='table-tags-check'>
+          <tbody>
           <tr>
             <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
             <td>
@@ -83,14 +85,8 @@ export default function WorkData({ employee }) {
               </button>
             </td>
           </tr>
+          </tbody>
         </table>     
-      </div>
-      
-      <div>
-        <label className="font-semibold">Estatus: </label>
-        <span className={`status-tag ${getStatusColor(employee.status)}`}>
-          {employee.status}
-        </span>
       </div>
     </div>
   );

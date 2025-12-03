@@ -3,10 +3,10 @@ import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
 import '../../Tables.css';
-import { getStatusColor } from '../../utils/statusColor';
+import { getStatusColor, getStatusName } from '../../utils/statusColor';
 import { employees } from '../../utils/employee-utils';
 
-export default function EmployeeTable() {
+export default function EmployeeList() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
@@ -15,6 +15,15 @@ export default function EmployeeTable() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [addEmployee, setAddEmployee] = useState(null);
   const itemsPerPage = 10;
+  const [employeeData, setEmployeeData] = useState(employees);
+
+  const changeStatus = (id) => {
+    setEmployeeData((prev) =>
+      prev.map(emp =>
+        emp.id === id ? { ...emp, status: !emp.status } : emp
+      )
+    );
+  };
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
@@ -35,7 +44,7 @@ export default function EmployeeTable() {
   }
 
 // Filtrar empleados según búsqueda y estado
-const filteredEmployees = employees.filter(emp => {
+const filteredEmployees = employeeData.filter(emp => {
   const value = normalizeText(searchValue);
 
   const matchesSearch = value === '' ||
@@ -47,21 +56,23 @@ const filteredEmployees = employees.filter(emp => {
     normalizeText(emp.subDepartment).includes(value);
 
   const matchesStatus = filterStatus === 'all' ||
-    (filterStatus === 'activo' && emp.status === 'Activo') ||
-    (filterStatus === 'inactivo' && emp.status === 'Inactivo');
+    (filterStatus === 'activo' && emp.status === true) ||
+    (filterStatus === 'inactivo' && emp.status === false);
 
   return matchesSearch && matchesStatus;
 });
 
   // Datos para mostrar
-  const dataToDisplay = hasSearched ? filteredEmployees : employees;
+  const dataToDisplay = hasSearched ? filteredEmployees : employeeData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
+  const employeeSelected = employeeData.find(e => e.id === selectedEmployee);
+
   // Si hay empleado seleccionado, mostrar detalle
   if (selectedEmployee) {
-    return <EmployeeDetail employee={selectedEmployee} onBack={() => setSelectedEmployee(null)} />;
+    return <EmployeeDetail employee={employeeSelected} onBack={() => setSelectedEmployee(null)} onChangeStatus={changeStatus} />
   }
   if (addEmployee) {
     return <EmployeeAdd employee={addEmployee} onBack={() => setAddEmployee(null)} />;
@@ -106,7 +117,7 @@ return (
           {paginatedEmployees.map((emp) => (
             <tr
               key={emp.id}
-              onClick={() => setSelectedEmployee(emp)}
+              onClick={() => setSelectedEmployee(emp.id)}
               className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
             >
               <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
@@ -117,7 +128,12 @@ return (
               <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
               <td className="px-4 py-3 text-white-700">{emp.position}</td>
               <td className="px-4 py-3">
-                <span className={getStatusColor(emp.status)}>{emp.status}</span>
+                <span className={getStatusColor(emp.status)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    changeStatus(emp.id);
+                  }}
+                >{getStatusName(emp.status)}</span>
               </td>
             </tr>
           ))}

@@ -1,7 +1,7 @@
 import React from "react";
 import LobbyCalendar from "./LobbyCalendar";
 import AssistantInput from "./AssistantInput";
-import EmployeeTable from "./Employee/EmployeeTable";
+import EmployeeList from "./Employee/EmployeeList";
 
 export default function Workspace({ activeMenu }) {
   if (activeMenu === 'Lobby') {
@@ -24,7 +24,7 @@ export default function Workspace({ activeMenu }) {
    if (activeMenu === 'Empleados') {
     return (
       <div className="">
-        <EmployeeTable />
+        <EmployeeList />
       </div>
     );
   }
