@@ -5,8 +5,10 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import { getStatusColor, getStatusName } from '../../utils/statusColor';
+import { useNotification } from "../Context/NotificationContext";   
 
 const EmployeeDetail = ({ employee, onBack, onToggleField }) => {
+  const { showNotification } = useNotification();
   const [activeTab, setActiveTab] = useState("personal");
   
   const tabs = [

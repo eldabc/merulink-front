@@ -5,6 +5,7 @@ import TopBar from "./components/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 import { menuTree } from "./components/Menu/menuTree";
+import { NotificationProvider } from "./components/Context/NotificationContext";
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
@@ -25,32 +26,35 @@ export default function App() {
   return (
     
     <div className="merulink-root">
-      <BrowserRouter>
-      {/* Navegación con React Router DOM */}
-
-      {/* 🌐 Definición de las Rutas */}
-      <Routes>
+      <NotificationProvider>
       
-      {/* Ruta para la Propuesta B: http://localhost:3000/diseno-b */}
+        <BrowserRouter>
+        {/* Navegación con React Router DOM */}
 
-      </Routes>
-    </BrowserRouter>
+        {/* 🌐 Definición de las Rutas */}
+        <Routes>
+        
+        {/* Ruta para la Propuesta B: http://localhost:3000/diseno-b */}
 
-      <ParticlesCanvas />
+        </Routes>
+      </BrowserRouter>
 
-      <TopBar 
-        activeMenu={activeMenu}
-        topMenuItems={topMenuItems}
-        setActiveMenu={handleMenuClick} 
-      />
+        <ParticlesCanvas />
 
-      <MainArea 
-        activeMenu={activeMenu}
-        activePath={activePath}
-        onSidebarClick={handleSidebarItemClick}
-      />
+        <TopBar 
+          activeMenu={activeMenu}
+          topMenuItems={topMenuItems}
+          setActiveMenu={handleMenuClick} 
+        />
 
-      <Footer />
+        <MainArea 
+          activeMenu={activeMenu}
+          activePath={activePath}
+          onSidebarClick={handleSidebarItemClick}
+        />
+
+        <Footer />
+      </NotificationProvider>
     </div>
   );
 }
