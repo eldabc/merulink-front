@@ -1,6 +1,6 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 
-export default function WorkData({ employee }) {
+export default function WorkData({ employee, onToggleField }) {
   return (
     <div className="
       grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
@@ -33,7 +33,7 @@ export default function WorkData({ employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Meru Link?</label></td>
             <td>
-              <button className='tags-work-btn'>
+              <button className='tags-work-btn' onClick={() => onToggleField(employee.id, "useMeruLink")}>
                 {employee.useMeruLink ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -43,9 +43,9 @@ export default function WorkData({ employee }) {
             </td>
           </tr>
           <tr>
-            <td> <label className="font-semibold">¿Usa Locker?</label></td>
+            <td><label className="font-semibold">¿Usa Locker?</label></td>
             <td>
-              <button className='tags-work-btn'>
+              <button className='tags-work-btn' onClick={() => onToggleField(employee.id, "useLocker")}>
                 {employee.useLocker ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -64,7 +64,7 @@ export default function WorkData({ employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
             <td>
-              <button className='tags-work-btn'>
+              <button className='tags-work-btn' onClick={() => onToggleField(employee.id, "hidCard")}>
                 {employee.hidCard ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -76,7 +76,7 @@ export default function WorkData({ employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Transporte?</label></td>
             <td>
-              <button className='tags-work-btn'>
+              <button className='tags-work-btn' onClick={() => onToggleField(employee.id, "useTransport")}>
                 {employee.useTransport ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (

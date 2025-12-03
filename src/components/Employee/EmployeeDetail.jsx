@@ -6,7 +6,7 @@ import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import { getStatusColor, getStatusName } from '../../utils/statusColor';
 
-const EmployeeDetail = ({ employee, onBack, onChangeStatus }) => {
+const EmployeeDetail = ({ employee, onBack, onChangeStatus, onToggleField }) => {
   const [activeTab, setActiveTab] = useState("personal");
   
   const tabs = [
@@ -20,7 +20,7 @@ const EmployeeDetail = ({ employee, onBack, onChangeStatus }) => {
       case "personal":
         return <PersonalData employee={employee} />;
       case "work":
-        return <WorkData employee={employee} />;
+        return <WorkData employee={employee} onToggleField={onToggleField} />;
       case "contact":
         return <ContactData employee={employee} />;
       default:

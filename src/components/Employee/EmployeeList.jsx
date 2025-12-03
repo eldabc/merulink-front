@@ -25,6 +25,14 @@ export default function EmployeeList() {
     );
   };
 
+  const toggleEmployeeField = (id, field) => {
+    setEmployeeData(prev =>
+      prev.map(emp =>
+        emp.id === id ? { ...emp, [field]: !emp[field] } : emp
+      )
+    );
+  };
+
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
     if (searchValue.trim() || filterStatus !== 'all') {
@@ -68,11 +76,16 @@ const filteredEmployees = employeeData.filter(emp => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
-  const employeeSelected = employeeData.find(e => e.id === selectedEmployee);
 
   // Si hay empleado seleccionado, mostrar detalle
   if (selectedEmployee) {
-    return <EmployeeDetail employee={employeeSelected} onBack={() => setSelectedEmployee(null)} onChangeStatus={changeStatus} />
+    const employeeSelected = employeeData.find(e => e.id === selectedEmployee);
+    return <EmployeeDetail 
+      employee={employeeSelected} 
+      onBack={() => setSelectedEmployee(null)} 
+      onChangeStatus={changeStatus}
+      onToggleField={toggleEmployeeField}
+    />
   }
   if (addEmployee) {
     return <EmployeeAdd employee={addEmployee} onBack={() => setAddEmployee(null)} />;
