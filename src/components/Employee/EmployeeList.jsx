@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
-import '../../Tables.css';
+import Notification from '../Notification'; 
 import { getStatusColor, getStatusName } from '../../utils/statusColor';
 import { employees } from '../../utils/employee-utils';
-
+import '../../Tables.css';
 export default function EmployeeList() {
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +16,12 @@ export default function EmployeeList() {
   const [addEmployee, setAddEmployee] = useState(null);
   const itemsPerPage = 10;
   const [employeeData, setEmployeeData] = useState(employees);
+  const [show, setShow] = useState(false);
 
+  const showNotification = (title, message) => {
+    setShow({ title, message });
+    setTimeout(() => setShow(null), 2500);
+  };
 
   const toggleEmployeeField = (id, field) => {
     setEmployeeData(prev =>
@@ -24,6 +29,7 @@ export default function EmployeeList() {
         emp.id === id ? { ...emp, [field]: !emp[field] } : emp
       )
     );
+    showNotification( "Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);
   };
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
@@ -85,6 +91,11 @@ const filteredEmployees = employeeData.filter(emp => {
 
 return (
   <div className="table-container p-4 bg-white-50 rounded-lg">
+    
+    {show && (
+      <Notification title={show.title} message={show.message} onClose={() => setShow(null)} />
+    )}
+
     <div className="titles-table flex justify-between items-center mb-4">
       <h2 className="text-2xl font-bold">Listado de Empleados</h2>
       <div className="text-sm">
