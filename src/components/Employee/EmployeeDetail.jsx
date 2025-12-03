@@ -6,7 +6,7 @@ import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import { getStatusColor, getStatusName } from '../../utils/statusColor';
 
-const EmployeeDetail = ({ employee, onBack, onChangeStatus, onToggleField }) => {
+const EmployeeDetail = ({ employee, onBack, onToggleField }) => {
   const [activeTab, setActiveTab] = useState("personal");
   
   const tabs = [
@@ -62,7 +62,7 @@ const EmployeeDetail = ({ employee, onBack, onChangeStatus, onToggleField }) => 
               className={`status-tag ${getStatusColor(employee.status)}`}
               onClick={(e) => {
                 e.stopPropagation();
-                onChangeStatus(employee.id);
+                onToggleField(employee.id, "status");
               }}
               >
              {getStatusName(employee.status)}

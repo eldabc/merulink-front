@@ -17,13 +17,6 @@ export default function EmployeeList() {
   const itemsPerPage = 10;
   const [employeeData, setEmployeeData] = useState(employees);
 
-  const changeStatus = (id) => {
-    setEmployeeData((prev) =>
-      prev.map(emp =>
-        emp.id === id ? { ...emp, status: !emp.status } : emp
-      )
-    );
-  };
 
   const toggleEmployeeField = (id, field) => {
     setEmployeeData(prev =>
@@ -83,7 +76,6 @@ const filteredEmployees = employeeData.filter(emp => {
     return <EmployeeDetail 
       employee={employeeSelected} 
       onBack={() => setSelectedEmployee(null)} 
-      onChangeStatus={changeStatus}
       onToggleField={toggleEmployeeField}
     />
   }
@@ -144,7 +136,7 @@ return (
                 <span className={getStatusColor(emp.status)}
                   onClick={(e) => {
                     e.stopPropagation();
-                    changeStatus(emp.id);
+                    toggleEmployeeField(emp.id, "status");
                   }}
                 >{getStatusName(emp.status)}</span>
               </td>
