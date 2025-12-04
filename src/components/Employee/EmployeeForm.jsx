@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft, User } from "lucide-react";
@@ -21,6 +21,15 @@ const schema = yup.object().shape({
   department: yup.string().required('Departamento es requerido'),
   position: yup.string().required('Cargo es requerido'),
   joinDate: yup.string().required('Fecha de ingreso es requerida'),
+  contacts: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required('Nombre del contacto es requerido'),
+      lastName: yup.string().required('Apellido del contacto es requerido'),
+      relationship: yup.string().required('Parentesco es requerido'),
+      phone: yup.string().required('Teléfono es requerido'),
+      address: yup.string().required('Dirección es requerida'),
+    })
+  ),
 });
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
@@ -57,7 +66,13 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
       useHidCard: false,
       useLocker: false,
       useTransport: false,
+      contacts: [],
     }
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'contacts',
   });
 
 
@@ -87,6 +102,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         useHidCard: !!employee.useHidCard,
         useLocker: !!employee.useLocker,
         useTransport: !!employee.useTransport,
+        contacts: employee.contacts ?? [],
       });
     } else {
       reset();
@@ -156,7 +172,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         <div className="mt-6">     
             {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
             {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} onToggleField={false} /> )}
-            {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} /> )}
+            {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">
