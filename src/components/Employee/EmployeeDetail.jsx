@@ -4,10 +4,12 @@ import { ArrowLeft, User } from "lucide-react";
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
+import EmployeeForm from './EmployeeForm';
 import { getStatusColor, getStatusName } from '../../utils/statusColor';  
 
-const EmployeeDetail = ({ employee, onBack, onToggleField }) => {
+const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
   const [activeTab, setActiveTab] = useState("personal");
+  const [isEditing, setIsEditing] = useState(false);
   
   const tabs = [
     { id: "personal", label: "Datos personales" },
@@ -27,18 +29,24 @@ const EmployeeDetail = ({ employee, onBack, onToggleField }) => {
         return null;
     }
   };
+  const handleEditSave = async (formData) => {
+    // Llamar al backend para actualizar aquí (PUT)
+    if (onUpdate) onUpdate(formData);
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return <EmployeeForm mode="edit" employee={employee} onSave={handleEditSave} onCancel={() => setIsEditing(false)} />;
+  }
   return (
     <div className="p-2 rounded-lg">
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        {/* <button className="buttons-bar-btn flex  font-semibold" title="Cambiar Estatus">
-          <CheckBadgeIcon  className={`w-5 h-5 text-9xl ${employee.status === true ? 'text-green-500' : 'text-red-500'}`} />
-        </button> */}
-        <button className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
+        <button onClick={() => setIsEditing(true)} className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
           <PencilIcon className="w-4 h-4 text-white-500" />
         </button>
-          <button 
-            onClick={onBack}
-            className="buttons-bar-btn flex text-3xl font-semibold" title="Volver">
+        <button 
+          onClick={onBack}
+          className="buttons-bar-btn flex text-3xl font-semibold" title="Volver">
           <ArrowLeft className="w-4 h-4 text-white-500" />
         </button>
       </div>

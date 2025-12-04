@@ -81,10 +81,26 @@ const filteredEmployees = employeeData.filter(emp => {
       employee={employeeSelected} 
       onBack={() => setSelectedEmployee(null)} 
       onToggleField={toggleEmployeeField}
+      onUpdate={(updated) => {
+        setEmployeeData(prev => prev.map(e => e.id === employeeSelected.id ? { ...e, ...updated } : e));
+        showNotification('Éxito', 'Empleado actualizado correctamente.');
+        setSelectedEmployee(null);
+      }}
     />
   }
   if (addEmployee) {
-    return <EmployeeAdd employee={addEmployee} onBack={() => setAddEmployee(null)} />;
+    return (
+      <EmployeeAdd
+        employee={addEmployee}
+        onBack={() => setAddEmployee(null)}
+        onCreated={(newEmp) => {
+          // assign an id and prepend to list
+          setEmployeeData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
+          setAddEmployee(null);
+          showNotification('Éxito', 'Empleado creado correctamente.');
+        }}
+      />
+    );
   }
 
 return (
