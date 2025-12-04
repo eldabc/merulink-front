@@ -5,7 +5,9 @@ import EmployeeAdd from './EmployeeAdd';
 import Notification from '../Notification'; 
 import { getStatusColor, getStatusName } from '../../utils/statusColor';
 import { employees } from '../../utils/employee-utils';
+import { useNotification } from "../Context/NotificationContext";   
 import '../../Tables.css';
+
 export default function EmployeeList() {
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,11 +19,7 @@ export default function EmployeeList() {
   const itemsPerPage = 10;
   const [employeeData, setEmployeeData] = useState(employees);
   const [show, setShow] = useState(false);
-
-  const showNotification = (title, message) => {
-    setShow({ title, message });
-    setTimeout(() => setShow(null), 2500);
-  };
+  const { showNotification } = useNotification();
 
   const toggleEmployeeField = (id, field) => {
     setEmployeeData(prev =>

@@ -4,11 +4,9 @@ import { ArrowLeft, User } from "lucide-react";
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
-import { getStatusColor, getStatusName } from '../../utils/statusColor';
-import { useNotification } from "../Context/NotificationContext";   
+import { getStatusColor, getStatusName } from '../../utils/statusColor';  
 
 const EmployeeDetail = ({ employee, onBack, onToggleField }) => {
-  const { showNotification } = useNotification();
   const [activeTab, setActiveTab] = useState("personal");
   
   const tabs = [
