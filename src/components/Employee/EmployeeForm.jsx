@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { PencilIcon } from "@heroicons/react/24/solid";
+import { ArrowLeft, User } from "lucide-react";
+import { getStatusColor, getStatusName } from '../../utils/statusColor';  
+import PersonalData from "./tabs/PersonalData";
+import WorkData from "./tabs/WorkData";
+import ContactData from "./tabs/ContactData";
 import * as yup from 'yup';
 import '../../Tables.css';
 
@@ -18,6 +24,14 @@ const schema = yup.object().shape({
 });
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
+  const [activeTab, setActiveTab] = useState('personal');
+
+  const tabs = [
+      { id: "personal", label: "Datos personales" },
+      { id: "work", label: "Datos laborales" },
+      { id: "contact", label: "Datos de contactos" },
+    ];
+
   const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -46,7 +60,6 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     }
   });
 
-  const [activeTab, setActiveTab] = useState('personal');
 
   useEffect(() => {
     if (employee) {
@@ -88,132 +101,69 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   };
 
   return (
-    <div className="table-container">
-      <h2 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? 'Editar Empleado' : 'Registrar Empleado'}</h2>
+    <div className="p-2 rounded-lg">
+     <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="buttons-bar flex gap-2 aling-items-right justify-end">
+        <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
+            <ArrowLeft className="w-4 h-4 text-white-500" />
+        </button>
+      </div>
+      <div className="table-container rounded-lg mt-4 shadow-md p-6 min-w-230 min-h-150 max-w-230 max-h-150">
+        <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21]">
+          <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center ml-2.5">
+            <User className="w-20 h-20 text-white" />
+          </div>
 
-      <div className="mb-4">
-        <div className="flex gap-2">
-          <button type="button" className={`px-4 py-2 rounded-t-lg ${activeTab === 'personal' ? 'bg-white text-sky-300' : 'bg-gray-300 text-gray-300'}`} onClick={() => setActiveTab('personal')}>Personal</button>
-          <button type="button" className={`px-4 py-2 rounded-t-lg ${activeTab === 'laboral' ? 'bg-white text-sky-300' : 'bg-gray-700 text-gray-300'}`} onClick={() => setActiveTab('laboral')}>Laboral</button>
-          <button type="button" className={`px-4 py-2 rounded-t-lg ${activeTab === 'contacto' ? 'bg-white text-sky-300' : 'bg-gray-700 text-gray-300'}`} onClick={() => setActiveTab('contacto')}>Contacto</button>
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? 'Editar Empleado' : 'Registrar Empleado'}</h2>
+            <h3 className="text-3xl font-semibold text-white-800">
+             { `${employee.numEmployee} ${employee.name} ${employee.lastName}`}
+            </h3>
+            <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
+            <p className="text-white-600 mt-1"> Departamento: {employee.department} </p>
+          </div>
+          {mode === 'edit' && (
+            <div><label className="font-semibold">Estatus: </label>
+                <span 
+                className={`status-tag ${getStatusColor(employee.status)}`}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleField(employee.id, "status");
+                }}
+                >
+                {getStatusName(employee.status)}
+                </span>
+            </div>
+          )}
+        </div>
+      
+        <div className="flex gap-4 mt-6 border-b border-gray-700">
+          {tabs.map((tab) => (
+            <button
+              type='button'
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mt-6 mb-2 p-2
+                ${activeTab === tab.id
+                  ? "border-blue-500 text-[#9fd8ff]"
+                  : "border-transparent text-gray-400 hover:text-gray-200"}
+              `}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-6">     
+            {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
+            {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} onToggleField={false} /> )}
+            {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} /> )}
         </div>
       </div>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="rounded-b-lg p-4">
-          {activeTab === 'personal' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">No. Empleado *</label>
-                <input {...register('numEmployee')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.numEmployee ? 'border-red-500' : ''}`} />
-                {errors.numEmployee && <p className="text-red-400 text-xs mt-1">{errors.numEmployee.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Cédula *</label>
-                <input {...register('ci')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.ci ? 'border-red-500' : ''}`} />
-                {errors.ci && <p className="text-red-400 text-xs mt-1">{errors.ci.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Nombre *</label>
-                <input {...register('name')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.name ? 'border-red-500' : ''}`} />
-                {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Apellido *</label>
-                <input {...register('lastName')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.lastName ? 'border-red-500' : ''}`} />
-                {errors.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName.message}</p>}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'laboral' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Departamento *</label>
-                <select {...register('department')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${errors.department ? 'border-red-500' : ''}`}>
-                  <option value="">Seleccionar...</option>
-                  <option value="TI">TI</option>
-                  <option value="RRHH">RRHH</option>
-                  <option value="Ventas">Ventas</option>
-                  <option value="Finanzas">Finanzas</option>
-                  <option value="Marketing">Marketing</option>
-                </select>
-                {errors.department && <p className="text-red-400 text-xs mt-1">{errors.department.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Sub-Departamento</label>
-                <input {...register('subDepartment')} className="w-full px-3 py-2 rounded-lg filter-input" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Cargo *</label>
-                <input {...register('position')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.position ? 'border-red-500' : ''}`} />
-                {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Fecha de Ingreso *</label>
-                <input type="date" {...register('joinDate')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${errors.joinDate ? 'border-red-500' : ''}`} />
-                {errors.joinDate && <p className="text-red-400 text-xs mt-1">{errors.joinDate.message}</p>}
-              </div>
-
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-                  <input type="checkbox" {...register('status')} className="w-4 h-4 rounded" />
-                  <span className="text-sm">Activo</span>
-                </label>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-                  <input type="checkbox" {...register('useMeruLink')} className="w-4 h-4 rounded" />
-                  <span className="text-sm">Usar MeruLink</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-                  <input type="checkbox" {...register('useHidCard')} className="w-4 h-4 rounded" />
-                  <span className="text-sm">Usar HID Card</span>
-                </label>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-                  <input type="checkbox" {...register('useLocker')} className="w-4 h-4 rounded" />
-                  <span className="text-sm">Usar Locker</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-                  <input type="checkbox" {...register('useTransport')} className="w-4 h-4 rounded" />
-                  <span className="text-sm">Usar Transporte</span>
-                </label>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'contacto' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Email *</label>
-                <input {...register('email')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.email ? 'border-red-500' : ''}`} />
-                {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Teléfono Móvil *</label>
-                <input {...register('mobilePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.mobilePhone ? 'border-red-500' : ''}`} />
-                {errors.mobilePhone && <p className="text-red-400 text-xs mt-1">{errors.mobilePhone.message}</p>}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-6 flex justify-end gap-3">
+      <div className="mt-6 flex justify-end gap-3">
           <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
           <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">{mode === 'edit' ? 'Guardar cambios' : 'Crear empleado'}</button>
         </div>
-      </form>
+     </form>
     </div>
   );
 }
