@@ -4,8 +4,8 @@ export default function PersonalData({ employee = {}, register, errors }) {
 
   if (isForm) {
    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 rounded border-[#ffffff21] border">
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">
+        <div className="w-full">
           <label className="block text-sm font-medium text-gray-300 mb-1">Lugar de Nacimiento: </label>
             <input {...register('placeOfBirth')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.placeOfBirth ? 'border-red-500' : ''}`} />
           {errors?.placeOfBirth && <p className="text-red-400 text-xs mt-1">{errors.placeOfBirth.message}</p>}
@@ -49,12 +49,12 @@ export default function PersonalData({ employee = {}, register, errors }) {
            <input {...register('homePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.homePhone ? 'border-red-500' : ''}`} />
           {errors?.homePhone && <p className="text-red-400 text-xs mt-1">{errors.homePhone.message}</p>}
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 lg:col-span-3 w-full">
           <label className="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico: </label>
              <input {...register('email')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.email ? 'border-red-500' : ''}`} />
           {errors?.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 lg:col-span-3 w-full">
           <label className="block text-sm font-medium text-gray-300 mb-1">Dirección: </label>
            <input {...register('address')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.address ? 'border-red-500' : ''}`} />
           {errors?.address && <p className="text-red-400 text-xs mt-1">{errors.address.message}</p>}
