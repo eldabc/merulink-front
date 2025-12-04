@@ -1,5 +1,5 @@
 import {React, useState} from "react";
-import SideBar from "./SideBar";
+import SideBar from "./Menu/SideBar";
 import Workspace from "./Workspace";
 
 export default function MainArea({ activeMenu, activePath, onSidebarClick }) {

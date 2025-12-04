@@ -5,7 +5,7 @@ import EmployeeAdd from './EmployeeAdd';
 import Notification from '../Notification'; 
 import { getStatusColor, getStatusName } from '../../utils/statusColor';
 import { employees } from '../../utils/employee-utils';
-import { useNotification } from "../Context/NotificationContext";   
+import { useNotification } from "../../context/NotificationContext";   
 import '../../Tables.css';
 
 export default function EmployeeList() {

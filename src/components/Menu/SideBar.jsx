@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { menuTree } from "./Menu/menuTree";
-import { buildAllPaths } from "../utils/sidebar-menu-utils";
+import { menuTree } from "./menuTree";
+import { buildAllPaths } from "../../utils/sidebar-menu-utils";
 
 function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
   return Object.keys(node)

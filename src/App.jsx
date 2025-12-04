@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import ParticlesCanvas from "./components/ParticlesCanvas";
-import TopBar from "./components/TopBar";
+import TopBar from "./components/Menu/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 import { menuTree } from "./components/Menu/menuTree";
-import { NotificationProvider } from "./components/Context/NotificationContext";
+import { NotificationProvider } from "./context/NotificationContext";
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
