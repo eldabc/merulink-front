@@ -124,7 +124,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             <ArrowLeft className="w-4 h-4 text-white-500" />
         </button>
       </div>
-      <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+      <div className="table-container md:w-[1300px] md:min-h-[700px] rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center ml-2.5">
             <User className="w-20 h-20 text-white" />
