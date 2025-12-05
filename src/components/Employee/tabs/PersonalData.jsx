@@ -30,7 +30,7 @@ export default function PersonalData({ employee = {}, register, errors }) {
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Edad: </label>
-             <input {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.age ? 'border-red-500' : ''}`} />
+             <input {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 cursor-not-allowed ${errors?.age ? 'border-red-500' : ''}`} disabled/>
           {errors?.age && <p className="text-red-400 text-xs mt-1">{errors.age.message}</p>}
         </div>
 

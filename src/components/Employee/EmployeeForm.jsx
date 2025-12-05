@@ -9,6 +9,7 @@ import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
+import { calculateAge } from '../../utils/calculateAge-utils';
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
@@ -20,7 +21,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
       { id: "contact", label: "Datos de contactos" },
     ];
 
-  const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
     defaultValues: {
       numEmployee: '',
@@ -56,6 +57,12 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     control,
     name: 'contacts',
   });
+
+  // calcular edad automáticamente cuando cambie birthDate
+  const watchedBirthDate = watch('birthDate');
+  useEffect(() => {
+    calculateAge(watchedBirthDate, setValue);
+  }, [watchedBirthDate, setValue]);
 
   useEffect(() => {
     if (employee && mode === 'edit') {
