@@ -9,7 +9,7 @@ import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
-import { calculateAge, todayFormatted } from '../../utils/calculateAge-utils';
+import { calculateAge } from '../../utils/calculateAge-utils';
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
@@ -122,7 +122,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         mobilePhone: '',
         homePhone: '',
         address: '',
-        joinDate: todayFormatted(new Date()),
+        joinDate: new Date().toISOString().split('T')[0],
         department: '',
         subDepartment: '',
         position: '',
@@ -144,15 +144,36 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   const onError = (formErrors) => {
     console.warn('EmployeeForm validation errors:', formErrors);
     if (!formErrors) return;
-    if (formErrors.contacts) {
-      setActiveTab('contact');
-      return;
-    }
 
-    const workKeys = ['joinDate', 'department', 'position'];
-    for (const k of workKeys) {
-      if (formErrors[k]) {
-        setActiveTab('work');
+    // Define which fields belong to each tab (order matters)
+    const tabFieldMap = {
+      personal: [
+        'numEmployee', 'firstName', 'secondName', 'lastName', 'secondLastName',
+        'birthDate', 'placeOfBirth', 'nationality', 'age', 'ci', 'maritalStatus',
+        'bloodType', 'email', 'mobilePhone', 'homePhone', 'address'
+      ],
+      work: [ 'joinDate', 'department', 'subDepartment', 'position' ],
+      contact: [ 'contacts' ]
+    };
+
+    // Helper to check if errors object has any key for given list
+    const hasAnyError = (errs, keys) => {
+      if (!errs) return false;
+      for (const k of keys) {
+        if (k === 'contacts') {
+          if (errs.contacts) return true;
+          continue;
+        }
+        if (Object.prototype.hasOwnProperty.call(errs, k)) return true;
+      }
+      return false;
+    };
+
+    // Choose first tab (in order tabs[]) that has errors
+    for (const t of tabs) {
+      const keyList = tabFieldMap[t.id] || [];
+      if (hasAnyError(formErrors, keyList)) {
+        setActiveTab(t.id);
         return;
       }
     }
@@ -253,20 +274,35 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         </div>
       
         <div className="flex gap-4 mt-6 border-b border-gray-700">
-          {tabs.map((tab) => (
-            <button
-              type='button'
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mt-6 mb-2 p-2
-                ${activeTab === tab.id
-                  ? "border-blue-500 text-[#9fd8ff]"
-                  : "border-transparent text-gray-400 hover:text-gray-200"}
-              `}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            // determine if this tab currently has errors from formState.errors
+            const tabError = (() => {
+              if (!errors) return false;
+              if (tab.id === 'contact') return !!errors.contacts;
+              const personalKeys = ['numEmployee','firstName','secondName','lastName','secondLastName','birthDate','placeOfBirth','nationality','age','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
+              const workKeys = ['joinDate','department','subDepartment','position'];
+              if (tab.id === 'personal') return personalKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
+              if (tab.id === 'work') return workKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
+              return false;
+            })();
+
+            return (
+              <div key={tab.id} className="flex flex-col items-start"> 
+                <button
+                  type='button'
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mt-6 mb-2 p-2
+                    ${activeTab === tab.id
+                      ? "border-blue-500 text-[#9fd8ff]"
+                      : "border-transparent text-gray-400 hover:text-gray-200"}
+                  `}
+                >
+                  {tab.label}
+                  {tabError && ( <p className="px-2 py-1 rounded-full text-xs font-semibold bg-red-255 text-red-400 hover:text-red-800">Tienes campos erróneos en esta pestaña</p> )}
+                </button>
+              </div>
+            );
+          })}
         </div>
         <div className="mt-6">     
             {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
