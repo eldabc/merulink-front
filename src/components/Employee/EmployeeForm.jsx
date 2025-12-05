@@ -4,33 +4,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft, User } from "lucide-react";
 import { getStatusColor, getStatusName } from '../../utils/statusColor';  
+import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
-import * as yup from 'yup';
 import '../../Tables.css';
-
-// Validation schema (yup)
-const schema = yup.object().shape({
-  numEmployee: yup.string().required('No. Empleado es requerido'),
-  ci: yup.string().required('Cédula es requerida'),
-  name: yup.string().required('Nombre es requerido'),
-  lastName: yup.string().required('Apellido es requerido'),
-  email: yup.string().email('Email inválido').required('Email es requerido'),
-  mobilePhone: yup.string().required('Teléfono móvil es requerido'),
-  department: yup.string().required('Departamento es requerido'),
-  position: yup.string().required('Cargo es requerido'),
-  joinDate: yup.string().required('Fecha de ingreso es requerida'),
-  contacts: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required('Nombre del contacto es requerido'),
-      lastName: yup.string().required('Apellido del contacto es requerido'),
-      relationship: yup.string().required('Parentesco es requerido'),
-      phone: yup.string().required('Teléfono es requerido'),
-      address: yup.string().required('Dirección es requerida'),
-    })
-  ),
-});
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
   const [activeTab, setActiveTab] = useState('personal');
@@ -42,11 +20,12 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     ];
 
   const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(employeeValidationSchema),
     defaultValues: {
       numEmployee: '',
       ci: '',
-      name: '',
+      firstName: '',
+      secondName: '',
       lastName: '',
       placeOfBirth: '',
       nationality: 'Venezolana',
@@ -82,7 +61,8 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
       reset({
         numEmployee: employee.numEmployee ?? employee.numEmployee ?? '',
         ci: employee.ci ?? '',
-        name: employee.name ?? '',
+        firstName: employee.firstName ?? '',
+        secondName: employee.secondName ?? '',
         lastName: employee.lastName ?? '',
         placeOfBirth: employee.placeOfBirth ?? '',
         nationality: employee.nationality ?? 'Venezolana',
@@ -131,12 +111,65 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? 'Editar Empleado' : 'Registrar Empleado'}</h2>
-            <h3 className="text-3xl font-semibold text-white-800">
-             { `${employee.numEmployee} ${employee.name} ${employee.lastName}`}
-            </h3>
-            <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
-            <p className="text-white-600 mt-1"> Departamento: {employee.department} </p>
+            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? 'Editar Empleado' : 'Registrar Empleado'}</h3>
+              {typeof register === 'function' ? (
+                <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Nombre:</label>
+                  </div>
+                  <div>
+                    <input
+                      {...register('firstName', { required: true, maxLength: 20 })}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.firstName ? 'border-red-500' : ''}`}
+                    />
+                    {errors?.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}  
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Segundo Nombre:</label>
+                  </div>
+                  <div>
+                    <input
+                      {...register('secondName', { required: true })}
+                      defaultValue={employee?.secondName ?? ''}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondName ? 'border-red-500' : ''}`}
+                    />
+                    {errors?.secondName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Apellido:</label>
+                  </div>
+                  <div>
+                    <input
+                      {...register('firstLastName')}
+                      defaultValue={employee?.firstLastName ?? employee?.lastName ?? ''}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.firstLastName ? 'border-red-500' : ''}`}
+                    />
+                    {errors?.firstLastName && <p className="text-red-400 text-xs mt-1">{errors.firstLastName.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Segundo Apellido:</label>
+                  </div>
+                  <div>
+                    <input
+                      {...register('secondLastName')}
+                      defaultValue={employee?.secondLastName ?? ''}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondLastName ? 'border-red-500' : ''}`}
+                    />
+                    {errors?.secondLastName && <p className="text-red-400 text-xs mt-1">{errors.secondLastName.message}</p>}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                <h3 className="text-3xl font-semibold text-white-800">
+                  {`${employee?.numEmployee ?? ''} ${employee?.firstName ?? employee?.firstName ?? ''} ${employee?.secondName ?? ''} ${employee?.firstLastName ?? employee?.lastName ?? ''} ${employee?.secondLastName ?? ''}`}
+                </h3>
+                <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
+                <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div>
+              )}
+            
           </div>
           {mode === 'edit' && (
             <div><label className="font-semibold">Estatus: </label>

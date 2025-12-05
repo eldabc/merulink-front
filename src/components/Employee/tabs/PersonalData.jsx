@@ -5,6 +5,11 @@ export default function PersonalData({ employee = {}, register, errors }) {
   if (isForm) {
    return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Fecha de Nacimiento: *</label>
+          <input type="date" {...register('birthDate')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${errors.birthDate ? 'border-red-500' : ''}`} />
+          {errors.birthDate && <p className="text-red-400 text-xs mt-1">{errors.birthDate.message}</p>}
+        </div>
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-300 mb-1">Lugar de Nacimiento: </label>
             <input {...register('placeOfBirth')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.placeOfBirth ? 'border-red-500' : ''}`} />

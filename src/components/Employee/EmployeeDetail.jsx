@@ -58,7 +58,7 @@ const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
 
           <div>
             <h3 className="text-3xl font-semibold text-white-800">
-             { `${employee.numEmployee} ${employee.name} ${employee.lastName}`}
+             { `${employee.numEmployee} ${employee.firstName} ${employee.lastName}`}
             </h3>
             <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
             <p className="text-white-600 mt-1"> Departamento: {employee.department} </p>

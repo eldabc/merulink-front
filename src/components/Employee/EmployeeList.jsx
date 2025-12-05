@@ -53,7 +53,7 @@ const filteredEmployees = employeeData.filter(emp => {
   const value = normalizeText(searchValue);
 
   const matchesSearch = value === '' ||
-    normalizeText(emp.name).includes(value) ||
+    normalizeText(emp.firstName).includes(value) ||
     normalizeText(emp.lastName).includes(value) ||
     normalizeText(emp.ci).includes(value) ||
     normalizeText(emp.position).includes(value) ||
@@ -152,7 +152,7 @@ return (
             >
               <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
               <td className="px-4 py-3 text-white-700">{emp.ci}</td>
-              <td className="px-4 py-3 text-white-700">{emp.name}</td>
+              <td className="px-4 py-3 text-white-700">{emp.firstName}</td>
               <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
               <td className="px-4 py-3 text-white-700">{emp.department}</td>
               <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
