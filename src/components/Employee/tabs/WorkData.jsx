@@ -10,31 +10,31 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
         md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
         md:[&>*:nth-child(2n)]:pl-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Fecha de Ingreso *</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Fecha de Ingreso: *</label>
           <input type="date" {...register('joinDate')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${errors.joinDate ? 'border-red-500' : ''}`} />
           {errors.joinDate && <p className="text-red-400 text-xs mt-1">{errors.joinDate.message}</p>}
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Departamento *</label>
-          <select {...register('department')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${errors.department ? 'border-red-500' : ''}`}>
-            <option value="">Seleccionar...</option>
-            <option value="TI">TI</option>
-            <option value="RRHH">RRHH</option>
-            <option value="Ventas">Ventas</option>
-            <option value="Finanzas">Finanzas</option>
-            <option value="Marketing">Marketing</option>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Departamento: *</label>
+          <select {...register('department')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}`}>
+            <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+            <option className='bg-[#3c4042]' value="TI">TI</option>
+            <option className='bg-[#3c4042]' value="RRHH">RRHH</option>
+            <option className='bg-[#3c4042]' value="Ventas">Ventas</option>
+            <option className='bg-[#3c4042]' value="Finanzas">Finanzas</option>
+            <option className='bg-[#3c4042]' value="Marketing">Marketing</option>
           </select>
           {errors.department && <p className="text-red-400 text-xs mt-1">{errors.department.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Sub-Departamento</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Sub-Departamento:</label>
           <input {...register('subDepartment')} className="w-full px-3 py-2 rounded-lg filter-input" />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Cargo *</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Cargo: *</label>
           <input {...register('position')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors.position ? 'border-red-500' : ''}`} />
           {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
         </div>
@@ -64,13 +64,6 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
             <input type="checkbox" {...register('useTransport')} className="w-4 h-4 rounded" />
           </label>
         </div>
-        
-        {/* <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">Activo</span>
-            <input type="checkbox" {...register('status')} className="w-4 h-4 rounded" />
-          </label>
-        </div> */}
       </div>
     );
   }

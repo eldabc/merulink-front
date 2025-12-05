@@ -10,14 +10,14 @@ export const employeeValidationSchema = yup.object().shape({
   secondLastName: yup.string(),
   birthDate: yup
     .date()
-    .nullable() // Permite que el valor sea null (si el campo no es requerido)
-    .max(new Date(), 'La fecha de nacimiento no puede ser futura') // No permite fechas futuras
+    .optional()
+    .nullable() // Permite que el valor sea null (si el campo no es requerido)
+    .max(new Date(), 'La fecha de nacimiento no puede ser futura') // No permite fechas futuras
     .test( // Añadimos una prueba personalizada para verificar la edad mínima
       'is-adult',
       'Debe ser mayor de 18 años',
       (value) => {
         if (!value) return true; // Si no hay valor, la validación de 'required' se encarga
-
         const today = new Date();
         const birth = new Date(value);
         

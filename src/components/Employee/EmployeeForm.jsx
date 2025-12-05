@@ -9,7 +9,7 @@ import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
-import { calculateAge } from '../../utils/calculateAge-utils';
+import { calculateAge, todayFormatted } from '../../utils/calculateAge-utils';
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
@@ -30,7 +30,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
       secondName: '',
       lastName: '',
       secondLastName: '',
-      birthDate: '',
+      birthDate: null,
       placeOfBirth: '',
       nationality: 'Venezolana',
       age: '',
@@ -40,7 +40,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
       mobilePhone: '',
       homePhone: '',
       address: '',
-      joinDate: '',
+      joinDate: null,
       department: '',
       subDepartment: '',
       position: '',
@@ -74,7 +74,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         secondName: employee.secondName ?? '',
         lastName: employee.lastName ?? '',
         secondLastName: employee.secondLastName ?? '',
-        birthDate: employee.birthDate ?? '',
+        birthDate: employee.birthDate ?? null,
         placeOfBirth: employee.placeOfBirth ?? '',
         nationality: employee.nationality ?? 'Venezolana',
         age: employee.age ?? '',
@@ -84,7 +84,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         mobilePhone: employee.mobilePhone ?? '',
         homePhone: employee.homePhone ?? '',
         address: employee.address ?? '',
-        joinDate: employee.joinDate ?? '',
+        joinDate: employee.joinDate ?? null,
         department: employee.department ?? '',
         subDepartment: employee.subDepartment ?? '',
         position: employee.position ?? '',
@@ -112,7 +112,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         secondName: '',
         lastName: '',
         secondLastName: '',
-        birthDate: '',
+        birthDate: null,
         placeOfBirth: '',
         nationality: 'Venezolana',
         age: '',
@@ -122,7 +122,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         mobilePhone: '',
         homePhone: '',
         address: '',
-        joinDate: '',
+        joinDate: todayFormatted(new Date()),
         department: '',
         subDepartment: '',
         position: '',
@@ -179,7 +179,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
               {typeof register === 'function' ? (
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Nombre:</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Nombre: *</label>
                   </div>
                   <div>
                     <input
@@ -201,7 +201,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Apellido:</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Apellido: *</label>
                   </div>
                   <div>
                     <input
@@ -222,7 +222,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                     {errors?.secondLastName && <p className="text-red-400 text-xs mt-1">{errors.secondLastName.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">No. Empleado:</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">No. Empleado: *</label>
                   </div>
                   <div>
                     <input

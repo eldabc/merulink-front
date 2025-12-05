@@ -23,7 +23,7 @@ export default function PersonalData({ employee = {}, register, errors }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Cédula: </label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Cédula: *</label>
              <input {...register('ci')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.ci ? 'border-red-500' : ''}`} />
           {errors?.ci && <p className="text-red-400 text-xs mt-1">{errors.ci.message}</p>}
         </div>
@@ -41,11 +41,21 @@ export default function PersonalData({ employee = {}, register, errors }) {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Tipo de Sangre: </label>
-           <input {...register('bloodType')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.bloodType ? 'border-red-500' : ''}`} />
+           <select {...register('bloodType')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.bloodType ? 'border-red-500' : ''}`}>
+                <option className='bg-[#3c4042]' value="">Seleccionar...</option> 
+                <option className='bg-[#3c4042]' value="A+">A+</option>
+                <option className='bg-[#3c4042]' value="A-">A-</option>
+                <option className='bg-[#3c4042]' value="B+">B+</option>
+                <option className='bg-[#3c4042]' value="B-">B-</option>
+                <option className='bg-[#3c4042]' value="AB+">AB+</option>
+                <option className='bg-[#3c4042]' value="AB-">AB-</option>
+                <option className='bg-[#3c4042]' value="O+">O+</option>
+                <option className='bg-[#3c4042]' value="O-">O-</option>
+              </select>
           {errors?.bloodType && <p className="text-red-400 text-xs mt-1">{errors.bloodType.message}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Teléfono Móvil: </label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Teléfono Móvil: *</label>
            <input {...register('mobilePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.mobilePhone ? 'border-red-500' : ''}`} />
           {errors?.mobilePhone && <p className="text-red-400 text-xs mt-1">{errors.mobilePhone.message}</p>}
         </div>
@@ -55,7 +65,7 @@ export default function PersonalData({ employee = {}, register, errors }) {
           {errors?.homePhone && <p className="text-red-400 text-xs mt-1">{errors.homePhone.message}</p>}
         </div>
         <div className="md:col-span-2 lg:col-span-3 w-full">
-          <label className="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico: </label>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico: *</label>
              <input {...register('email')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.email ? 'border-red-500' : ''}`} />
           {errors?.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
         </div>
