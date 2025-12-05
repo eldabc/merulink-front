@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft, User } from "lucide-react";
+import { employees } from '../../utils/employee-utils';
 import { getStatusColor, getStatusName } from '../../utils/statusColor';  
 import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
@@ -27,6 +28,8 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
       firstName: '',
       secondName: '',
       lastName: '',
+      secondLastName: '',
+      birthDate: '',
       placeOfBirth: '',
       nationality: 'Venezolana',
       age: '',
@@ -54,16 +57,17 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     name: 'contacts',
   });
 
-
   useEffect(() => {
-    if (employee) {
-      // normalize keys from employee-utils
+    if (employee && mode === 'edit') {
+      // Modo edición: cargar datos del empleado
       reset({
-        numEmployee: employee.numEmployee ?? employee.numEmployee ?? '',
+        numEmployee: employee.numEmployee ?? '',
         ci: employee.ci ?? '',
         firstName: employee.firstName ?? '',
         secondName: employee.secondName ?? '',
         lastName: employee.lastName ?? '',
+        secondLastName: employee.secondLastName ?? '',
+        birthDate: employee.birthDate ?? '',
         placeOfBirth: employee.placeOfBirth ?? '',
         nationality: employee.nationality ?? 'Venezolana',
         age: employee.age ?? '',
@@ -84,34 +88,87 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         useTransport: !!employee.useTransport,
         contacts: employee.contacts ?? [],
       });
-    } else {
-      reset();
-    }
-  }, [employee, reset]);
+    } else if (mode === 'create') {
+      // Modo creación: generar número de empleado automáticamente
+      const maxNum = Math.max( 0,
+        ...employees.map(e => {
+          const num = parseInt(e.numEmployee) || 0;
+          return num;
+        })
+      );
+      const newNumEmployee = String(maxNum + 1);
 
-  // If mode is 'view', we won't render the form (parent can render EmployeeDetail)
-  // But to keep API simple, we still provide the form; caller can choose mode.
+      reset({
+        numEmployee: newNumEmployee,
+        ci: '',
+        firstName: '',
+        secondName: '',
+        lastName: '',
+        secondLastName: '',
+        birthDate: '',
+        placeOfBirth: '',
+        nationality: 'Venezolana',
+        age: '',
+        maritalStatus: 'Soltero',
+        bloodType: 'O+',
+        email: '',
+        mobilePhone: '',
+        homePhone: '',
+        address: '',
+        joinDate: '',
+        department: '',
+        subDepartment: '',
+        position: '',
+        status: true,
+        useMeruLink: false,
+        useHidCard: false,
+        useLocker: false,
+        useTransport: false,
+        contacts: [],
+      });
+    }
+  }, [employee, mode, reset]);
 
   const onSubmit = async (data) => {
+    console.log('EmployeeForm onSubmit data:', data);
     if (onSave) await onSave(data);
+  };
+
+  const onError = (formErrors) => {
+    console.warn('EmployeeForm validation errors:', formErrors);
+    if (!formErrors) return;
+    if (formErrors.contacts) {
+      setActiveTab('contact');
+      return;
+    }
+
+    const workKeys = ['joinDate', 'department', 'position'];
+    for (const k of workKeys) {
+      if (formErrors[k]) {
+        setActiveTab('work');
+        return;
+      }
+    }
+
+    setActiveTab('personal');
   };
 
   return (
     <div className="p-2 rounded-lg">
-     <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
         <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
             <ArrowLeft className="w-4 h-4 text-white-500" />
         </button>
       </div>
-      <div className="table-container md:w-[1300px] md:min-h-[700px] rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+      <div className="table-container md:w-[1200px] md:min-h-[700px] rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center ml-2.5">
             <User className="w-20 h-20 text-white" />
           </div>
 
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? 'Editar Empleado' : 'Registrar Empleado'}</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Empleado'):( 'Registrar Empleado')}</h3>
               {typeof register === 'function' ? (
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                   <div>
@@ -119,7 +176,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                   </div>
                   <div>
                     <input
-                      {...register('firstName', { required: true, maxLength: 20 })}
+                      {...register('firstName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.firstName ? 'border-red-500' : ''}`}
                     />
                     {errors?.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}  
@@ -130,11 +187,10 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                   </div>
                   <div>
                     <input
-                      {...register('secondName', { required: true })}
-                      defaultValue={employee?.secondName ?? ''}
+                      {...register('secondName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondName ? 'border-red-500' : ''}`}
                     />
-                    {errors?.secondName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}
+                    {errors?.secondName && <p className="text-red-400 text-xs mt-1">{errors.secondName.message}</p>}
                   </div>
 
                   <div>
@@ -142,11 +198,10 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                   </div>
                   <div>
                     <input
-                      {...register('firstLastName')}
-                      defaultValue={employee?.firstLastName ?? employee?.lastName ?? ''}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.firstLastName ? 'border-red-500' : ''}`}
+                      {...register('lastName')}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.lastName ? 'border-red-500' : ''}`}
                     />
-                    {errors?.firstLastName && <p className="text-red-400 text-xs mt-1">{errors.firstLastName.message}</p>}
+                    {errors?.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName.message}</p>}
                   </div>
 
                   <div>
@@ -155,16 +210,24 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                   <div>
                     <input
                       {...register('secondLastName')}
-                      defaultValue={employee?.secondLastName ?? ''}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondLastName ? 'border-red-500' : ''}`}
                     />
                     {errors?.secondLastName && <p className="text-red-400 text-xs mt-1">{errors.secondLastName.message}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">No. Empleado:</label>
+                  </div>
+                  <div>
+                    <input
+                      {...register('numEmployee')}
+                      className={`w-20 px-2 py-1 text-sm rounded-lg filter-input bg-gray-700 cursor-not-allowed`}
+                    />
                   </div>
                 </div>
               ) : (
                 <div>
                 <h3 className="text-3xl font-semibold text-white-800">
-                  {`${employee?.numEmployee ?? ''} ${employee?.firstName ?? employee?.firstName ?? ''} ${employee?.secondName ?? ''} ${employee?.firstLastName ?? employee?.lastName ?? ''} ${employee?.secondLastName ?? ''}`}
+                  {`${employee?.numEmployee ?? ''} ${employee?.firstName ?? ''} ${employee?.secondName ?? ''} ${employee?.lastName ?? ''} ${employee?.secondLastName ?? ''}`}
                 </h3>
                 <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
                 <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div>
@@ -175,10 +238,6 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             <div><label className="font-semibold">Estatus: </label>
                 <span 
                 className={`status-tag ${getStatusColor(employee.status)}`}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleField(employee.id, "status");
-                }}
                 >
                 {getStatusName(employee.status)}
                 </span>
@@ -204,7 +263,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         </div>
         <div className="mt-6">     
             {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
-            {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} onToggleField={false} /> )}
+            {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} /> )}
             {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
         </div>
       </div>

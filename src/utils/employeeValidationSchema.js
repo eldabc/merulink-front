@@ -4,13 +4,34 @@ import * as yup from 'yup';
 export const employeeValidationSchema = yup.object().shape({
   numEmployee: yup.string().required('No. Empleado es requerido'),
   ci: yup.string().required('Cédula es requerida'),
-  name: yup.string().required('Nombre es requerido'),
   firstName: yup.string().required('Primer nombre es requerido'),
   secondName: yup.string(),
-  lastName: yup.string().required('Apellido es requerido'),
-  firstLastName: yup.string().required('Primer apellido es requerido'),
+  lastName: yup.string().required('Primer apellido es requerido'),
   secondLastName: yup.string(),
-  birthDate: yup.string(),
+  birthDate: yup
+    .date()
+    .nullable() // Permite que el valor sea null (si el campo no es requerido)
+    .max(new Date(), 'La fecha de nacimiento no puede ser futura') // No permite fechas futuras
+    .test( // Añadimos una prueba personalizada para verificar la edad mínima
+      'is-adult',
+      'Debe ser mayor de 18 años',
+      (value) => {
+        if (!value) return true; // Si no hay valor, la validación de 'required' se encarga
+
+        const today = new Date();
+        const birth = new Date(value);
+        
+        // Calcula la fecha que sería 18 años después del nacimiento
+        const eighteenYearsAgo = new Date(
+          birth.getFullYear() + 18,
+          birth.getMonth(),
+          birth.getDate()
+        );
+
+        // Si la fecha de hoy es posterior o igual a la fecha de los 18 años, es mayor de 18
+        return today >= eighteenYearsAgo;
+      }
+    ),
   placeOfBirth: yup.string(),
   nationality: yup.string(),
   age: yup.string(),

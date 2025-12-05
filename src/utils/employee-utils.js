@@ -2,10 +2,12 @@
 export const employees = [
   {
     id: 1,
-    numEmployee: 'EMP001',
+    numEmployee: '999',
     ci: '12345678',
     firstName: 'Juan',
+    secondName: 'Antonio',
     lastName: 'Pérez',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Caracas',
     nationality: 'Venezolana',
@@ -39,10 +41,12 @@ export const employees = [
 
   {
     id: 2,
-    numEmployee: 'EMP002',
+    numEmployee: '1000',
     ci: '87654321',
     firstName: 'María',
+    secondName: 'Antonio',
     lastName: 'García',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Valencia',
     nationality: 'Venezolana',
@@ -76,10 +80,12 @@ export const employees = [
 
   {
     id: 3,
-    numEmployee: 'EMP003',
+    numEmployee: '1001',
     ci: '11223344',
     firstName: 'Carlos',
+    secondName: 'Antonio',
     lastName: 'López',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Maracay',
     nationality: 'Venezolana',
@@ -113,10 +119,12 @@ export const employees = [
 
   {
     id: 4,
-    numEmployee: 'EMP004',
+    numEmployee: '1002',
     ci: '55667788',
     firstName: 'Ana',
+    secondName: 'Antonio',
     lastName: 'Martínez',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Barquisimeto',
     nationality: 'Venezolana',
@@ -150,10 +158,12 @@ export const employees = [
 
   {
     id: 5,
-    numEmployee: 'EMP005',
+    numEmployee: '1003',
     ci: '99887766',
     firstName: 'Pedro',
+    secondName: 'Antonio',
     lastName: 'Rodríguez',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Caracas',
     nationality: 'Venezolana',
@@ -187,10 +197,12 @@ export const employees = [
 
   {
     id: 6,
-    numEmployee: 'EMP006',
+    numEmployee: '1004',
     ci: '44332211',
     firstName: 'Laura',
+    secondName: 'Antonio',
     lastName: 'Fernández',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Mérida',
     nationality: 'Venezolana',
@@ -224,10 +236,12 @@ export const employees = [
 
   {
     id: 7,
-    numEmployee: 'EMP007',
+    numEmployee: '1005',
     ci: '22334455',
     firstName: 'Diego',
+    secondName: 'Antonio',
     lastName: 'Sánchez',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Caracas',
     nationality: 'Venezolana',
@@ -261,10 +275,12 @@ export const employees = [
 
   {
     id: 8,
-    numEmployee: 'EMP008',
+    numEmployee: '1006',
     ci: '66778899',
     firstName: 'Sofia',
+    secondName: 'Antonio',
     lastName: 'González',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Valencia',
     nationality: 'Venezolana',
@@ -298,10 +314,12 @@ export const employees = [
 
   {
     id: 9,
-    numEmployee: 'EMP009',
+    numEmployee: '1007',
     ci: '33445566',
     firstName: 'Ricardo',
+    secondName: 'Antonio',
     lastName: 'Jiménez',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Barinas',
     nationality: 'Venezolana',
@@ -335,10 +353,12 @@ export const employees = [
 
   {
     id: 10,
-    numEmployee: 'EMP010',
+    numEmployee: '1008',
     ci: '77889900',
     firstName: 'Valentina',
+    secondName: 'Antonio',
     lastName: 'Morales',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Puerto La Cruz',
     nationality: 'Venezolana',
@@ -372,10 +392,12 @@ export const employees = [
 
   {
     id: 11,
-    numEmployee: 'EMP011',
+    numEmployee: '1009',
     ci: '11223344',
     firstName: 'Miguel',
+    secondName: 'Antonio',
     lastName: 'Castro',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Carúpano',
     nationality: 'Venezolana',
@@ -409,10 +431,12 @@ export const employees = [
 
   {
     id: 12,
-    numEmployee: 'EMP012',
+    numEmployee: '1009',
     ci: '55667788',
     firstName: 'Gabriela',
+    secondName: 'Antonio',
     lastName: 'Ruiz',
+    secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Maturín',
     nationality: 'Venezolana',
