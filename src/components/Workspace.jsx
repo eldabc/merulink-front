@@ -23,7 +23,7 @@ export default function Workspace({ activeMenu }) {
 
    if (activeMenu === 'Empleados') {
     return (
-      <div className="">
+      <div className="main-workspace">
         <EmployeeList />
       </div>
     );

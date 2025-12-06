@@ -104,7 +104,7 @@ const filteredEmployees = employeeData.filter(emp => {
   }
 
 return (
-  <div className="table-container p-4 bg-white-50 rounded-lg">
+  <div className="overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
     
     {show && (
       <Notification title={show.title} message={show.message} onClose={() => setShow(null)} />
@@ -129,8 +129,8 @@ return (
       onFilterStatus={setFilterStatus}
     />
 
-    <div className="-mx-6 px-6 overflow-x-auto rounded-lg shadow">
-      <table className="min-w-max border-collapse text-sm sm:text-base">
+    <div className="rounded-lg shadow">
+      <table className="border-collapse text-sm sm:text-base">
         <thead>
           <tr className="tr-thead-table">
             <th className="px-4 py-3 text-left font-semibold">No. Empleado</th>
