@@ -72,16 +72,18 @@ export const employeeValidationSchema = yup.object().shape({
   mobilePhoneCode: yup.string(),
   mobilePhone: yup
     .string()
+    .nullable()
     .required('Teléfono móvil es requerido')
-    .matches(/^[0-9]{7}$/, 'Formato inválido. Debe ser 04XX seguida de 7 dígitos (ej: 04121234567).')
+    .matches(/^[0-9]{7}$/, 'Formato inválido. Debe ser 7 dígitos (ej: 1234567).')
     .min(7, 'Debe contener 7 dígitos')
     .max(7, 'Debe contener 7 dígitos'), 
 
   homePhoneCode: yup.string(),
   homePhone: yup
     .string()
+    .nullable()
     .matches(/^[0-9]+$/, 'Solo se permiten números.')
-    .max(15, 'Máximo 15 dígitos')
+    .max(8, 'Máximo 8 dígitos')
     .optional(),
     
   address: yup.string(),
@@ -89,6 +91,15 @@ export const employeeValidationSchema = yup.object().shape({
   department: yup.string().required('Departamento es requerido'),
   subDepartment: yup.string(),
   position: yup.string().required('Cargo es requerido'),
+  userName: yup
+    .string()
+    .required('Nombre de usuario es requerido')
+    .min(4, 'Mínimo 4 caracteres'),
+  userPass: yup
+    .string()
+    .required('Contraseña es requerida')
+    .min(10, 'Mínimo 10 caracteres entre números y letras')
+    .max(20, 'Máximo 20 caracteres entre números y letras'),
   status: yup.boolean(),
   useMeruLink: yup.boolean(),
   useHidCard: yup.boolean(),

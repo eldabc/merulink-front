@@ -61,12 +61,15 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         mobilePhoneCode: mobileCode || '0414',
         mobilePhone: mobileNumber ?? '',
         homePhoneCode: homeCode ?? '0286',
-        homePhone: homeNumber ?? '',
+        homePhone: homeNumber ?? null,
         address: employee.address ?? '',
         joinDate: employee.joinDate ?? null,
         department: employee.department ?? '',
         subDepartment: employee.subDepartment ?? '',
         position: employee.position ?? '',
+        userName: employee.userName ?? '',
+        userPass: employee.userPass ?? '',
+        changePassNextLogin: !!employee.changePassNextLogin,
         status: !!employee.status,
         useMeruLink: !!employee.useMeruLink,
         useHidCard: !!employee.useHidCard,
@@ -102,12 +105,15 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         mobilePhoneCode: '0414',
         mobilePhone: '',
         homePhoneCode: '0286',
-        homePhone: '',
+        homePhone: null,
         address: '',
         joinDate: new Date().toISOString().split('T')[0],
         department: '',
         subDepartment: '',
         position: '',
+        userName: '',
+        userPass: '',
+        changePassNextLogin: false,
         status: true,
         useMeruLink: false,
         useHidCard: false,
@@ -134,7 +140,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         'birthDate', 'placeOfBirth', 'nationality', 'age', 'sex', 'ci', 'maritalStatus',
         'bloodType', 'email', 'mobilePhoneCode', 'mobilePhone', 'homePhoneCode', 'homePhone', 'address'
       ],
-      work: [ 'joinDate', 'department', 'subDepartment', 'position' ],
+      work: [ 'joinDate', 'department', 'subDepartment', 'position', 'userName', 'userPass' ],
       contact: [ 'contacts' ]
     };
 
@@ -260,7 +266,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
               if (!errors) return false;
               if (tab.id === 'contact') return !!errors.contacts;
               const personalKeys = ['numEmployee','firstName','secondName','lastName','secondLastName','birthDate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
-              const workKeys = ['joinDate','department','subDepartment','position'];
+              const workKeys = ['joinDate','department','subDepartment','position', 'userName', 'userPass'];
               if (tab.id === 'personal') return personalKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
               if (tab.id === 'work') return workKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
               return false;

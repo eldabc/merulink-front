@@ -39,30 +39,48 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
           {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa MeruLink?</span>
             <input type="checkbox" {...register('useMeruLink')} className="w-4 h-4 rounded" />
           </label>
-        </div>
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">¿Usa HID Card?</span>
-            <input type="checkbox" {...register('useHidCard')} className="w-4 h-4 rounded" />
-          </label>
-        </div>
+        </div> */}
+        <div className='flex flex-row'>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
+              <span className="text-sm">¿Usa HID Card?</span>
+              <input type="checkbox" {...register('useHidCard')} className="w-4 h-4 rounded" />
+            </label>
+          </div>
 
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-           <span className="text-sm">¿Usa Locker?</span>
-           <input type="checkbox" {...register('useLocker')} className="w-4 h-4 rounded" /> 
-          </label>
+          <div className="flex items-center gap-4 pl-4">
+            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
+            <span className="text-sm">¿Usa Locker?</span>
+            <input type="checkbox" {...register('useLocker')} className="w-4 h-4 rounded" /> 
+            </label>
+          </div>
+          <div className="flex items-center gap-4 pl-4">
+            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
+              <span className="text-sm">¿Usa Transporte?</span>
+              <input type="checkbox" {...register('useTransport')} className="w-4 h-4 rounded" />
+            </label>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">¿Usa Transporte?</span>
-            <input type="checkbox" {...register('useTransport')} className="w-4 h-4 rounded" />
-          </label>
+        <div>
+          <div className='flex flex-row'>
+            <label className="block text-sm font-medium text-gray-300 mb-1 min-w-35 max-w-35">Nombre Usuario: *</label>
+              <div><input {...register('userName')} className={`w-2xs px-3 py-1 rounded-lg filter-input ml-5 ${errors.userName ? 'border-red-500' : ''}`} />
+            {errors.userName && <p className="text-red-400 text-xs mt-1 ml-5 ">{errors.userName.message}</p>}</div>
+          </div>
+          <div className='flex flex-row'>
+            <label className="block text-sm font-medium text-gray-300 mb-1 min-w-35 max-w-35">Contraseña: *</label>
+              <div><input {...register('userPass')} className={`w-2xs px-3 py-1 rounded-lg filter-input ml-5 mt-1.5 ${errors.userPass ? 'border-red-500' : ''}`} />
+            {errors.userPass && <p className="text-red-400 text-xs mt-1 ml-5 ">{errors.userPass.message}</p>}</div>
+          </div>
+          <div className='flex flex-row'>
+              <input type="checkbox" {...register('changePassNextLogin')} className="w-4 align-text-bottom rounded-lg" />
+              <label className="block text-sm font-medium text-gray-300 ml-2"> Cambia la contraseña al próximo inicio.</label>
+            </div>
         </div>
       </div>
     );
