@@ -65,10 +65,17 @@ button:focus-visible {
   animation:bgShift 18s linear infinite;
   display:flex;
   flex-direction:column;
+  justify-content:space-between;
   overflow:visible;
   position:relative
 }
 @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+footer {
+  margin-top: auto;
+  padding: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+}
 @media (max-width:900px){
   /* .sidebar{display:none} */
   .workspace{padding:18px}.calendar-card{max-width:100%}.assistant-card{width:92%}.top-menu{display:none}
