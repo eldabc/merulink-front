@@ -104,7 +104,7 @@ const filteredEmployees = employeeData.filter(emp => {
   }
 
 return (
-  <div className="overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
+  <div className="md:min-w-5xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
     
     {show && (
       <Notification title={show.title} message={show.message} onClose={() => setShow(null)} />

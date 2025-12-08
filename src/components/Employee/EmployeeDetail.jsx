@@ -39,7 +39,7 @@ const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
     return <EmployeeForm mode="edit" employee={employee} onSave={handleEditSave} onCancel={() => setIsEditing(false)} />;
   }
   return (
-    <div className="p-2 rounded-lg">
+    <div className="md:min-w-5xl overflow-x-auto p-2 rounded-lg">
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
         <button onClick={() => setIsEditing(true)} className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
           <PencilIcon className="w-4 h-4 text-white-500" />

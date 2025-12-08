@@ -182,7 +182,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   };
 
   return (
-    <div className="p-2 rounded-lg">
+    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
         <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
@@ -273,7 +273,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
           )}
         </div>
       
-        <div className="flex gap-4 mt-6 border-b border-gray-700">
+        <div className="flex flex-col md:flex-row gap-4 mt-6 border-b border-gray-700">
           {tabs.map((tab) => {
             // determine if this tab currently has errors from formState.errors
             const tabError = (() => {
@@ -287,7 +287,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             })();
 
             return (
-              <div key={tab.id} className="flex flex-col items-start"> 
+              <div key={tab.id} className="flex flex-col items-center sm:items-center"> 
                 <button
                   type='button'
                   onClick={() => setActiveTab(tab.id)}
