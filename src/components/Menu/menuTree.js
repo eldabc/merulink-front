@@ -2,7 +2,7 @@ export const menuTree = {
     IA: {
       _meta: { label: "IA", path: "/ia" }
     },
-    Empleados: {
+    RRHH: {
       _meta: { label: "Empleados", path: "/empleados" },
       Roles: { _meta: { label: "Roles", path: "/empleados/roles" } },
       Casilleros: { _meta: { label: "Casilleros", path: "/empleados/casilleros" } },
@@ -20,11 +20,11 @@ export const menuTree = {
         Candados: { _meta: { label: "Candados", path: "/empleados/vestuarios/candados" } }
       }
     },
-    Infraestructura: {
-      _meta: { label: "Infraestructura", path: "/infraestructura" },
-      "APs Internet": { _meta: { label: "APs Internet", path: "/infraestructura/aps-internet" } },
-      Domotica: { _meta: { label: "Domotica", path: "/infraestructura/domotica" } },
-      Mantenimiento: { _meta: { label: "Mantenimiento", path: "/infraestructura/mantenimiento" } }
+    Sistemas: {
+      _meta: { label: "Sistemas", path: "/sistemas" },
+      "APs Internet": { _meta: { label: "APs Internet", path: "/sistemas/aps-internet" } },
+      Domotica: { _meta: { label: "Domotica", path: "/sistemas/domotica" } },
+      Mantenimiento: { _meta: { label: "Mantenimiento", path: "/sistemas/mantenimiento" } }
     },
     Inventario: {
       _meta: { label: "Inventario", path: "/inventario" },
@@ -32,11 +32,22 @@ export const menuTree = {
       Entradas: { _meta: { label: "Entradas", path: "/inventario/entradas" } },
       Salidas: { _meta: { label: "Salidas", path: "/inventario/salidas" } }
     },
-    Whatsapp: {
+    Recepcion: {
       _meta: { label: "Whatsapp", path: "/whatsapp" },
-      Recepcion: { _meta: { label: "Recepcion", path: "/whatsapp/recepcion" } },
+      // Recepcion: { _meta: { label: "Recepcion", path: "/whatsapp/recepcion" } },
       Ventas: { _meta: { label: "Ventas", path: "/whatsapp/ventas" } },
       AyB: { _meta: { label: "AyB", path: "/whatsapp/ayb" } }
+    },
+    Ventas: {
+      _meta: { label: "Ventas", path: "/ventas" },
+      Productos: { _meta: { label: "Productos", path: "/ventas/productos" } },
+    },
+    "Alimentos y Bebidas": {
+      _meta: { label: "Alimentos y Bebidas", path: "/ayb" },
+      Menu: { _meta: { label: "Menú", path: "/ayb/menu" } },
+    },
+    Mantenimiento: {
+      _meta: { label: "Mantenimiento", path: "/mantenimiento" },
     },
     Configuración: {
       _meta: { label: "Configuración", path: "/configuracion" },

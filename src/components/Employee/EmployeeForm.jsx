@@ -66,7 +66,6 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
 
   useEffect(() => {
     if (employee && mode === 'edit') {
-      // Modo edición: cargar datos del empleado
       reset({
         numEmployee: employee.numEmployee ?? '',
         ci: employee.ci ?? '',
