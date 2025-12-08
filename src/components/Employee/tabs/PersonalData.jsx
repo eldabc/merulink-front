@@ -1,3 +1,5 @@
+import { phoneCodes } from "../../../utils/phoneCodes-utils"; 
+
 export default function PersonalData({ employee = {}, register, errors }) {
   // If register is provided, render form inputs (edit/create). Otherwise render read-only.
   const isForm = typeof register === 'function';
@@ -18,7 +20,11 @@ export default function PersonalData({ employee = {}, register, errors }) {
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Nacionalidad: </label>
-            <input {...register('nationality')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.nationality ? 'border-red-500' : ''}`} />
+            <select {...register('nationality')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.nationality ? 'border-red-500' : ''}`}>
+              <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+              <option className='bg-[#3c4042]' value="V">Venezolano/a</option>
+              <option className='bg-[#3c4042]' value="E">Extranjero/a</option>
+            </select>
           {errors?.nationality && <p className="text-red-400 text-xs mt-1">{errors.nationality.message}</p>}
         </div>
 
@@ -33,10 +39,27 @@ export default function PersonalData({ employee = {}, register, errors }) {
              <input {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 cursor-not-allowed ${errors?.age ? 'border-red-500' : ''}`} disabled/>
           {errors?.age && <p className="text-red-400 text-xs mt-1">{errors.age.message}</p>}
         </div>
-
+        
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">Estado Civil: </label>
-           <input {...register('maritalStatus')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.maritalStatus ? 'border-red-500' : ''}`} />
+          <label className="block text-sm font-medium text-gray-300 mb-1">Sexo: </label>
+            <select {...register('sex')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.sex ? 'border-red-500' : ''}`}>
+              <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+              <option className='bg-[#3c4042]' value="M">Masculino</option>
+              <option className='bg-[#3c4042]' value="F">Femenino</option>
+          </select>
+          {errors?.sex && <p className="text-red-400 text-xs mt-1">{errors.sex.message}</p>}
+        </div>
+        <div>
+           <label className="block text-sm font-medium text-gray-300 mb-1">Estado Civil: </label>
+            <select {...register('maritalStatus')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.maritalStatus ? 'border-red-500' : ''}`}>
+              <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+              <option className='bg-[#3c4042]' value="Soltero">Soltero/a</option>
+              <option className='bg-[#3c4042]' value="Casado">Casado/a</option>
+              <option className='bg-[#3c4042]' value="Divorciado">Divorciado/a</option>
+              <option className='bg-[#3c4042]' value="Viudo">Viudo/a</option>
+              <option className='bg-[#3c4042]' value="UnionLibre">Unión Libre / Concubinato</option>
+              <option className='bg-[#3c4042]' value="Separado">Separado/a</option>
+            </select>
           {errors?.maritalStatus && <p className="text-red-400 text-xs mt-1">{errors.maritalStatus.message}</p>}
         </div>
         <div>
@@ -56,15 +79,35 @@ export default function PersonalData({ employee = {}, register, errors }) {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Teléfono Móvil: *</label>
-           <input {...register('mobilePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.mobilePhone ? 'border-red-500' : ''}`} />
+           <div className="flex flex-row">
+              <select {...register('mobilePhoneCode')} className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.sex ? 'border-red-500' : ''}`}>
+                  <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                  <option className='bg-[#3c4042]' value="0414">0414</option>
+                  <option className='bg-[#3c4042]' value="0424">0424</option>
+                  <option className='bg-[#3c4042]' value="0416">0416</option>
+                  <option className='bg-[#3c4042]' value="0426">0426</option>
+                  <option className='bg-[#3c4042]' value="0412">0412</option>
+                  <option className='bg-[#3c4042]' value="0422">0422</option>
+              </select>
+              <input {...register('mobilePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.mobilePhone ? 'border-red-500' : ''}`} />
+          </div>
           {errors?.mobilePhone && <p className="text-red-400 text-xs mt-1">{errors.mobilePhone.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Teléfono Habitación: </label>
-           <input {...register('homePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.homePhone ? 'border-red-500' : ''}`} />
+           <div className="flex flex-row">
+              <select {...register('homePhoneCode')} className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.sex ? 'border-red-500' : ''}`}>
+                  {phoneCodes.map(code => (
+                    <option key={`phoneHome-${code.id}`} className='bg-[#3c4042]' value={code.areaCode}>
+                      {code.areaCode}
+                    </option>
+                  ))}
+              </select>
+              <input {...register('homePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.mobilePhone ? 'border-red-500' : ''}`} />
+          </div>
           {errors?.homePhone && <p className="text-red-400 text-xs mt-1">{errors.homePhone.message}</p>}
         </div>
-        <div className="md:col-span-2 lg:col-span-3 w-full">
+        <div className="">
           <label className="block text-sm font-medium text-gray-300 mb-1">Correo Electrónico: *</label>
              <input {...register('email')} className={`w-full px-3 py-2 rounded-lg filter-input ${errors?.email ? 'border-red-500' : ''}`} />
           {errors?.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}

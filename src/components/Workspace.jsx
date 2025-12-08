@@ -21,7 +21,7 @@ export default function Workspace({ activeMenu }) {
     );
   }
 
-   if (activeMenu === 'Empleados') {
+   if (activeMenu === 'RRHH') {
     return (
       <div className="main-workspace">
         <EmployeeList />

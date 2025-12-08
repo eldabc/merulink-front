@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft, User } from "lucide-react";
 import { employees } from '../../utils/employee-utils';
 import { getStatusColor, getStatusName } from '../../utils/statusColor';  
@@ -10,6 +9,7 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import { calculateAge } from '../../utils/calculateAge-utils';
+import { splitPhone } from '../../utils/phoneCodes-utils';
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
@@ -23,34 +23,6 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
-    defaultValues: {
-      numEmployee: '',
-      ci: '',
-      firstName: '',
-      secondName: '',
-      lastName: '',
-      secondLastName: '',
-      birthDate: null,
-      placeOfBirth: '',
-      nationality: 'Venezolana',
-      age: '',
-      maritalStatus: 'Soltero',
-      bloodType: 'O+',
-      email: '',
-      mobilePhone: '',
-      homePhone: '',
-      address: '',
-      joinDate: null,
-      department: '',
-      subDepartment: '',
-      position: '',
-      status: true,
-      useMeruLink: false,
-      useHidCard: false,
-      useLocker: false,
-      useTransport: false,
-      contacts: [],
-    }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -66,6 +38,11 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
 
   useEffect(() => {
     if (employee && mode === 'edit') {
+      const fullMobilePhone = employee.mobilePhone || '';
+      const { code: mobileCode, number: mobileNumber } = splitPhone(fullMobilePhone);
+
+      const fullHomePhone = employee.homePhone || '';
+      const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
       reset({
         numEmployee: employee.numEmployee ?? '',
         ci: employee.ci ?? '',
@@ -75,13 +52,16 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         secondLastName: employee.secondLastName ?? '',
         birthDate: employee.birthDate ?? null,
         placeOfBirth: employee.placeOfBirth ?? '',
-        nationality: employee.nationality ?? 'Venezolana',
+        nationality: employee.nationality ?? 'V',
         age: employee.age ?? '',
+        sex: employee.sex ?? 'M',
         maritalStatus: employee.maritalStatus ?? 'Soltero',
         bloodType: employee.bloodType ?? 'O+',
         email: employee.email ?? '',
-        mobilePhone: employee.mobilePhone ?? '',
-        homePhone: employee.homePhone ?? '',
+        mobilePhoneCode: mobileCode || '0414',
+        mobilePhone: mobileNumber ?? '',
+        homePhoneCode: homeCode ?? '0286',
+        homePhone: homeNumber ?? '',
         address: employee.address ?? '',
         joinDate: employee.joinDate ?? null,
         department: employee.department ?? '',
@@ -113,12 +93,15 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         secondLastName: '',
         birthDate: null,
         placeOfBirth: '',
-        nationality: 'Venezolana',
+        nationality: 'V',
         age: '',
+        sex: 'M',
         maritalStatus: 'Soltero',
         bloodType: 'O+',
         email: '',
+        mobilePhoneCode: '0414',
         mobilePhone: '',
+        homePhoneCode: '0286',
         homePhone: '',
         address: '',
         joinDate: new Date().toISOString().split('T')[0],
@@ -148,8 +131,8 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     const tabFieldMap = {
       personal: [
         'numEmployee', 'firstName', 'secondName', 'lastName', 'secondLastName',
-        'birthDate', 'placeOfBirth', 'nationality', 'age', 'ci', 'maritalStatus',
-        'bloodType', 'email', 'mobilePhone', 'homePhone', 'address'
+        'birthDate', 'placeOfBirth', 'nationality', 'age', 'sex', 'ci', 'maritalStatus',
+        'bloodType', 'email', 'mobilePhoneCode', 'mobilePhone', 'homePhoneCode', 'homePhone', 'address'
       ],
       work: [ 'joinDate', 'department', 'subDepartment', 'position' ],
       contact: [ 'contacts' ]
@@ -188,7 +171,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             <ArrowLeft className="w-4 h-4 text-white-500" />
         </button>
       </div>
-      <div className="table-container md:w-[1200px] md:min-h-[700px] rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+      <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center ml-2.5">
             <User className="w-20 h-20 text-white" />
@@ -263,10 +246,8 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
           </div>
           {mode === 'edit' && (
             <div><label className="font-semibold">Estatus: </label>
-                <span 
-                className={`status-tag ${getStatusColor(employee.status)}`}
-                >
-                {getStatusName(employee.status)}
+                <span className={`status-tag ${getStatusColor(employee.status)}`}>
+                  {getStatusName(employee.status)}
                 </span>
             </div>
           )}
@@ -278,7 +259,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             const tabError = (() => {
               if (!errors) return false;
               if (tab.id === 'contact') return !!errors.contacts;
-              const personalKeys = ['numEmployee','firstName','secondName','lastName','secondLastName','birthDate','placeOfBirth','nationality','age','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
+              const personalKeys = ['numEmployee','firstName','secondName','lastName','secondLastName','birthDate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
               const workKeys = ['joinDate','department','subDepartment','position'];
               if (tab.id === 'personal') return personalKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
               if (tab.id === 'work') return workKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
