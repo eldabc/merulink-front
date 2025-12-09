@@ -12,7 +12,7 @@ import { calculateAge } from '../../utils/calculateAge-utils';
 import { splitPhone } from '../../utils/phoneCodes-utils';
 import '../../Tables.css';
 
-export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
+export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel, onToggleField }) {
   const [activeTab, setActiveTab] = useState('personal');
 
   const tabs = [
@@ -264,7 +264,11 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
           </div>
           {mode === 'edit' && (
             <div><label className="font-semibold">Estatus: </label>
-                <span className={`status-tag ${getStatusColor(employee.status)}`}>
+                <span className={`status-tag ${getStatusColor(employee.status)}`}  
+                  onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleField(employee.id, "status");
+                }}>
                   {getStatusName(employee.status)}
                 </span>
             </div>

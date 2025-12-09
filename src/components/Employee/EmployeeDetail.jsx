@@ -5,9 +5,12 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import EmployeeForm from './EmployeeForm';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';  
+import { getStatusColor, getStatusName } from '../../utils/status-utils';
+import { useEmployees } from '../../context/EmployeeContext';
 
-const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
+const EmployeeDetail = ({ employee, onBack, onUpdate }) => {
+  // Obtener toggleEmployeeField del contexto
+  const { toggleEmployeeField } = useEmployees();
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
   
@@ -22,7 +25,7 @@ const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
       case "personal":
         return <PersonalData employee={employee} />;
       case "work":
-        return <WorkData employee={employee} onToggleField={onToggleField} />;
+        return <WorkData employee={employee} />;
       case "contact":
         return <ContactData employee={employee} />;
       default:
@@ -70,7 +73,7 @@ const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
               className={`status-tag ${getStatusColor(employee.status)}`}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleField(employee.id, "status");
+                toggleEmployeeField(employee.id, "status");
               }}
               >
              {getStatusName(employee.status)}
