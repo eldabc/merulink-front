@@ -8,20 +8,16 @@ import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
+import MeruLinkData from "./tabs/meruLinkData";
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { splitPhone } from '../../utils/phoneCodes-utils';
 import { useEmployees } from '../../context/EmployeeContext';
+import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
   const { toggleEmployeeField } = useEmployees();
   const [activeTab, setActiveTab] = useState('personal');
-
-  const tabs = [
-      { id: "personal", label: "Datos personales" },
-      { id: "work", label: "Datos laborales" },
-      { id: "contact", label: "Datos de contactos" },
-    ];
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
@@ -198,7 +194,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
           </div>
 
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Empleado'):( 'Registrar Empleado')}</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Empleado' ):( 'Registrar Empleado')}</h3>
               {typeof register === 'function' ? (
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                   <div>
@@ -312,6 +308,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
             {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} /> )}
             {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
+            {activeTab === 'meruLink' && ( <MeruLinkData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">

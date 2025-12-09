@@ -4,34 +4,18 @@ import { ArrowLeft, User } from "lucide-react";
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
+import MeruLinkData from "./tabs/meruLinkData";
 import EmployeeForm from './EmployeeForm';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { useEmployees } from '../../context/EmployeeContext';
+import { tabs } from '../../utils/tabs-utils';
 
 const EmployeeDetail = ({ employee, onBack, onUpdate }) => {
   // Obtener toggleEmployeeField del contexto
   const { toggleEmployeeField } = useEmployees();
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
-  
-  const tabs = [
-    { id: "personal", label: "Datos personales" },
-    { id: "work", label: "Datos laborales" },
-    { id: "contact", label: "Datos de contactos" },
-  ];
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "personal":
-        return <PersonalData employee={employee} />;
-      case "work":
-        return <WorkData employee={employee} />;
-      case "contact":
-        return <ContactData employee={employee} />;
-      default:
-        return null;
-    }
-  };
   const handleEditSave = async (formData) => {
     // Llamar al backend para actualizar aquí (PUT)
     if (onUpdate) onUpdate(formData);
@@ -98,7 +82,22 @@ const EmployeeDetail = ({ employee, onBack, onUpdate }) => {
               </button>
           ))}
         </div>
-        <div className="mt-6">{renderTabContent()}</div>
+        <div className="mt-6">
+          {(() => {
+            switch (activeTab) {
+              case 'personal':
+                return <PersonalData employee={employee} />;
+              case 'work':
+                return <WorkData employee={employee} />;
+              case 'contact':
+                return <ContactData employee={employee} />;
+               case 'meruLink':
+                return <MeruLinkData employee={employee} />;
+              default:
+                return null;
+            }
+          })()}
+        </div>
       </div>
     </div>
   );
