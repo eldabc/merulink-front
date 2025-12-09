@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, User } from "lucide-react";
 import { employees } from '../../utils/employee-utils';
-import { getStatusColor, getStatusName } from '../../utils/statusColor';  
+import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";

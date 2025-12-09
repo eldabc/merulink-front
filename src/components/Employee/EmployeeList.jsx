@@ -3,7 +3,7 @@ import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
 import Notification from '../Notification'; 
-import { getStatusColor, getStatusName } from '../../utils/statusColor';
+import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { employees } from '../../utils/employee-utils';
 import { useNotification } from "../../context/NotificationContext";   
 import '../../Tables.css';

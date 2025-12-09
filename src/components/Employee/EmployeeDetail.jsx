@@ -5,7 +5,7 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import EmployeeForm from './EmployeeForm';
-import { getStatusColor, getStatusName } from '../../utils/statusColor';  
+import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 
 const EmployeeDetail = ({ employee, onBack, onToggleField, onUpdate }) => {
   const [activeTab, setActiveTab] = useState("personal");

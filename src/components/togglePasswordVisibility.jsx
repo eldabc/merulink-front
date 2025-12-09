@@ -25,9 +25,9 @@ export function PasswordInputEye({ register, errors }) {
                 aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             >
                 {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5" /> // Ojo tachado
+                    <EyeSlashIcon className="h-5 w-5" /> // Ojo tachado
                 ) : (
-                <EyeIcon className="h-5 w-5" /> // Ojo abierto
+                    <EyeIcon className="h-5 w-5" /> // Ojo abierto
                 )}
             </button>
         </div>
