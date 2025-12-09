@@ -30,7 +30,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     name: 'contacts',
   });
 
-  // calcular edad automáticamente cuando cambie birthDate
+  // calcular edad cuando cambie birthDate
   const watchedBirthDate = watch('birthDate');
   useEffect(() => {
     calculateAge(watchedBirthDate, setValue);
@@ -78,7 +78,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         contacts: employee.contacts ?? [],
       });
     } else if (mode === 'create') {
-      // Modo creación: generar número de empleado automáticamente
+      // generar número de empleado automáticamente
       const maxNum = Math.max( 0,
         ...employees.map(e => {
           const num = parseInt(e.numEmployee) || 0;
@@ -125,8 +125,20 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   }, [employee, mode, reset]);
 
   const onSubmit = async (data) => {
-    console.log('EmployeeForm onSubmit data:', data);
-    if (onSave) await onSave(data);
+    const submissionData = { ...data };
+
+    //Armado números de teléfono
+    if (submissionData.mobilePhone) { submissionData.mobilePhone = `${submissionData.mobilePhoneCode}-${submissionData.mobilePhone}`; }
+
+    if (submissionData.homePhone) { 
+        submissionData.homePhone = `${submissionData.homePhoneCode}-${submissionData.homePhone}`;
+    } else {
+        submissionData.homePhone = null; 
+    }
+
+    console.log('EmployeeForm data final:', submissionData);
+
+    if (onSave) await onSave(submissionData);
   };
 
   const onError = (formErrors) => {
