@@ -3,12 +3,22 @@ import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
 import Notification from '../Notification'; 
-import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { employees } from '../../utils/employee-utils';
 import { useNotification } from "../../context/NotificationContext";  
 import { EmployeeProvider, useEmployees } from '../../context/EmployeeContext'; 
 import EmployeeRow from './EmployeeRow';
 import '../../Tables.css';
+
+
+// Componente wrapper que proporciona el contexto
+export default function EmployeeList() {
+  const { showNotification } = useNotification();
+  return (
+    <EmployeeProvider initialData={employees} showNotification={showNotification}>
+      <EmployeeListContent />
+    </EmployeeProvider>
+  );
+}
 
 // Componente interno que usa el contexto
 function EmployeeListContent() {
@@ -194,14 +204,4 @@ return (
       </div>
     </div>
 );
-}
-
-// Componente wrapper que proporciona el contexto
-export default function EmployeeList() {
-  const { showNotification } = useNotification();
-  return (
-    <EmployeeProvider initialData={employees} showNotification={showNotification}>
-      <EmployeeListContent />
-    </EmployeeProvider>
-  );
 }

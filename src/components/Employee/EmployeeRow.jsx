@@ -1,10 +1,9 @@
-// EmployeeRow.jsx
 import React from 'react';
-import { useEmployees } from '../../context/EmployeeContext'; // Asegúrate de la ruta correcta
+import { useEmployees } from '../../context/EmployeeContext';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 
 export default function EmployeeRow({ emp, setSelectedEmployee }) {
-  // 1. Obtener la función del contexto
+  // Obtener la función del contexto
   const { toggleEmployeeField } = useEmployees(); 
 
   return (
@@ -21,7 +20,6 @@ export default function EmployeeRow({ emp, setSelectedEmployee }) {
       <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
       <td className="px-4 py-3 text-white-700">{emp.position}</td>
       <td className="px-4 py-3">
-        {/* 2. Llamada directa y correcta a la función del Context */}
         <span 
           className={getStatusColor(emp.status)}
           onClick={(e) => {

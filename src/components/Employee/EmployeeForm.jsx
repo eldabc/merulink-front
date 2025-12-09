@@ -10,9 +10,11 @@ import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { splitPhone } from '../../utils/phoneCodes-utils';
+import { useEmployees } from '../../context/EmployeeContext';
 import '../../Tables.css';
 
-export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel, onToggleField }) {
+export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
+  const { toggleEmployeeField } = useEmployees();
   const [activeTab, setActiveTab] = useState('personal');
 
   const tabs = [
@@ -267,7 +269,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
                 <span className={`status-tag ${getStatusColor(employee.status)}`}  
                   onClick={(e) => {
                   e.stopPropagation();
-                  onToggleField(employee.id, "status");
+                  toggleEmployeeField(employee.id, "status");
                 }}>
                   {getStatusName(employee.status)}
                 </span>

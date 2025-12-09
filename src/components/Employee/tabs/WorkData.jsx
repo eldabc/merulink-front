@@ -1,7 +1,9 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
+import { useEmployees } from '../../../context/EmployeeContext';
 
-export default function WorkData({ register, errors, employee, onToggleField }) {
+export default function WorkData({ register, errors, employee }) {
+  const { toggleEmployeeField } = useEmployees();
   const isForm = typeof register === 'function';
 
   if (isForm) {
@@ -118,7 +120,7 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
           <tr>
             <td><label className="font-semibold">¿Usa Meru Link?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => onToggleField(employee.id, "useMeruLink")}>
+                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useMeruLink")}>
                 {employee.useMeruLink ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -130,7 +132,7 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
           <tr>
             <td><label className="font-semibold">¿Usa Locker?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => onToggleField(employee.id, "useLocker")}>
+                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useLocker")}>
                 {employee.useLocker ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -149,7 +151,7 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
           <tr>
             <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => onToggleField(employee.id, "useHidCard")}>
+                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useHidCard")}>
                 {employee.useHidCard ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -161,7 +163,7 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
           <tr>
             <td><label className="font-semibold">¿Usa Transporte?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => onToggleField(employee.id, "useTransport")}>
+                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useTransport")}>
                 {employee.useTransport ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
