@@ -1,4 +1,5 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
 
 export default function WorkData({ register, errors, employee, onToggleField }) {
   const isForm = typeof register === 'function';
@@ -74,10 +75,9 @@ export default function WorkData({ register, errors, employee, onToggleField }) 
           </div>
           <div className='flex flex-row'>
             <label className="block text-sm font-medium text-gray-300 mb-1 min-w-35 max-w-35">Contraseña: *</label>
-              <div><input {...register('userPass')} className={`w-2xs px-3 py-1 rounded-lg filter-input ml-5 mt-1.5 ${errors.userPass ? 'border-red-500' : ''}`} />
-            {errors.userPass && <p className="text-red-400 text-xs mt-1 ml-5 ">{errors.userPass.message}</p>}</div>
+              <div><PasswordInputEye register={register} errors={errors} /></div>
           </div>
-          <div className='flex flex-row'>
+          <div className='flex flex-row mt-1.5'>
               <input type="checkbox" {...register('changePassNextLogin')} className="w-4 align-text-bottom rounded-lg" />
               <label className="block text-sm font-medium text-gray-300 ml-2"> Cambia la contraseña al próximo inicio.</label>
             </div>
