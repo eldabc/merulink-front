@@ -126,7 +126,7 @@ export const employeeValidationSchema = yup.object().shape({
       phone: yup
         .string()
         .required('Teléfono es requerido')
-        .matches(/^[0-9]+$/, 'Solo se permiten números.'),
+        .matches(/^[0-9-]+$/, 'Solo se permiten números.'),
         
       address: yup.string().required('Dirección es requerida'),
     })

@@ -7,21 +7,43 @@ export const useEmployees = () => {
   return useContext(EmployeeContext);
 };
 
-// Proveedor con la lógica y el estado)
+// Provider con la lógica y el estado
 export const EmployeeProvider = ({ initialData, showNotification, children }) => {
-  const [employeeData, setEmployeeData] = useState(initialData);
+    
+    const [employeeData, setEmployeeData] = useState(initialData);
 
-  const toggleEmployeeField = (id, field) => {
-    setEmployeeData(prev =>
-      prev.map(emp =>
-        emp.id === id ? { ...emp, [field]: !emp[field] } : emp
-      )
+    const toggleEmployeeField = (id, field) => {       
+        setEmployeeData(prev =>
+            prev.map(emp => {
+                if (emp.id !== id) {
+                    return emp;
+                }
+
+                let updatedEmployee = { ...emp };
+
+                if (field === 'status') {
+                    
+                    // Aplicar el toggle
+                    const newStatus = !emp.status;
+                    updatedEmployee.status = newStatus;
+                    
+                    if (newStatus === false) {
+                        updatedEmployee.useMeruLink = false;
+                        updatedEmployee.useLocker = false;
+                        updatedEmployee.useHidCard = false;
+                        updatedEmployee.useTransport = false;
+                    }
+                    
+                } else {
+                    updatedEmployee[field] = !emp[field];
+                }
+
+                return updatedEmployee;
+        })
     );
-
-    if (showNotification && typeof showNotification === 'function') {
-      showNotification("Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);
-    }
-  };
+    
+    showNotification("Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);
+};
   
   // Se puede añadir más funciones (ojo)
   const contextValue = {

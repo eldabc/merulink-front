@@ -5,6 +5,8 @@ import { useEmployees } from '../../../context/EmployeeContext';
 export default function WorkData({ register, errors, employee }) {
   const { toggleEmployeeField } = useEmployees();
   const isForm = typeof register === 'function';
+  const isEmployeeActive = employee.status;
+  const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
 
   if (isForm) {
      return (
@@ -52,20 +54,20 @@ export default function WorkData({ register, errors, employee }) {
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa HID Card?</span>
-              <input type="checkbox" {...register('useHidCard')} className="w-4 h-4 rounded" />
+              <input type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${disabledClasses}`} disabled={!isEmployeeActive} />
             </label>
           </div>
 
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa Locker?</span>
-            <input type="checkbox" {...register('useLocker')} className="w-4 h-4 rounded" /> 
+            <input type="checkbox" {...register('useLocker')} className={`w-4 h-4 rounded ${disabledClasses}`} disabled={!isEmployeeActive} /> 
             </label>
           </div>
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa Transporte?</span>
-              <input type="checkbox" {...register('useTransport')} className="w-4 h-4 rounded" />
+              <input type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${disabledClasses}`} disabled={!isEmployeeActive} />
             </label>
           </div>
         </div>
@@ -120,7 +122,7 @@ export default function WorkData({ register, errors, employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Meru Link?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useMeruLink")}>
+                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useMeruLink")} disabled={!isEmployeeActive}>
                 {employee.useMeruLink ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -132,7 +134,7 @@ export default function WorkData({ register, errors, employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Locker?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useLocker")}>
+                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useLocker")} disabled={!isEmployeeActive}>
                 {employee.useLocker ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -151,7 +153,7 @@ export default function WorkData({ register, errors, employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useHidCard")}>
+                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useHidCard")} disabled={!isEmployeeActive}>
                 {employee.useHidCard ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -163,7 +165,7 @@ export default function WorkData({ register, errors, employee }) {
           <tr>
             <td><label className="font-semibold">¿Usa Transporte?</label></td>
             <td>
-                <button type="button" className='tags-work-btn' onClick={() => toggleEmployeeField(employee.id, "useTransport")}>
+                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useTransport")} disabled={!isEmployeeActive}>
                 {employee.useTransport ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
