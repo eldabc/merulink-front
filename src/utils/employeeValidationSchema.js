@@ -93,8 +93,18 @@ export const employeeValidationSchema = yup.object().shape({
   position: yup.string().required('Cargo es requerido'),
   userName: yup
     .string()
-    .required('Nombre de usuario es requerido')
-    .min(4, 'Mínimo 4 caracteres'),
+    .nullable()
+    .when('useMeruLink', {
+      is: true,
+      then: (schema) => 
+        schema.required('Nombre de usuario es requerido.'),
+      
+      otherwise: (schema) => 
+        schema.notRequired().nullable()
+      .min(4, 'Mínimo 4 caracteres'),
+        }),
+    // .required('Nombre de usuario es requerido')
+    
   userPass: yup
     .string()
     .required('Contraseña es requerida')

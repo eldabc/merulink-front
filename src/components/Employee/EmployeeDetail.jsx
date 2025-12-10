@@ -5,6 +5,7 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import MeruLinkData from "./tabs/meruLinkData";
+import TabButtonsManager from './tabs/TabButtonsManager';
 import EmployeeForm from './EmployeeForm';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { useEmployees } from '../../context/EmployeeContext';
@@ -66,22 +67,12 @@ const EmployeeDetail = ({ employee, onBack, onUpdate }) => {
           
         </div>
       
-        <div className="flex gap-4 mt-6 border-b border-gray-700">
-          {tabs.map((tab) => (
-            <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mt-6 mb-2 p-2
-                  ${activeTab === tab.id
-                    ? "border-blue-500 text-[#9fd8ff]"
-                    : "border-transparent text-gray-400 hover:text-gray-200"}
-                `}
-              >
-                {tab.label}
-              </button>
-          ))}
-        </div>
+        <TabButtonsManager 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          employee={employee}
+          // tabErrors={errors}
+        />
         <div className="mt-6">
           {(() => {
             switch (activeTab) {
