@@ -121,7 +121,7 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
           <tr>
             <td><label className="font-semibold">¿Usa Meru Link?</label></td>
             <td>
-                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useMeruLink")} disabled={!isEmployeeActive}>
+              <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useMeruLink")} disabled={!isEmployeeActive}>
                 {employee.useMeruLink ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -133,7 +133,7 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
           <tr>
             <td><label className="font-semibold">¿Usa Locker?</label></td>
             <td>
-                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useLocker")} disabled={!isEmployeeActive}>
+              <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useLocker")} disabled={!isEmployeeActive}>
                 {employee.useLocker ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -152,7 +152,7 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
           <tr>
             <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
             <td>
-                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useHidCard")} disabled={!isEmployeeActive}>
+              <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useHidCard")} disabled={!isEmployeeActive}>
                 {employee.useHidCard ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (
@@ -164,7 +164,7 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
           <tr>
             <td><label className="font-semibold">¿Usa Transporte?</label></td>
             <td>
-                <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useTransport")} disabled={!isEmployeeActive}>
+              <button type="button" className={`tags-work-btn ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useTransport")} disabled={!isEmployeeActive}>
                 {employee.useTransport ? (
                   <CheckCircleIcon className='w-5 h-5 text-green-400' />
                 ) : (

@@ -31,4 +31,26 @@ export default function MeruLinkData({ register, errors, employee }) {
         </div>
     );
   }
+
+  return (
+    <div className="
+      grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
+      md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
+      md:[&>*:nth-child(2n)]:pl-4">
+
+      <h2>Meru Link permisos para {employee.firstName} {employee.lastName}</h2>
+      <div>
+        <div className='flex flex-row'>
+          <label className="block text-sm font-medium text-gray-300 mb-1 min-w-35 max-w-35">Nombre Usuario: *</label>
+          <div>{employee.userName}</div>
+        </div>
+        <div className='flex flex-row'>
+          <label className="block text-sm font-medium text-gray-300 mb-1 min-w-35 max-w-35">Contraseña: *</label>
+          <label className="block text-sm font-medium text-red-300 mt-1"> La ingresada.</label>
+        </div>
+        <div className='flex flex-row mt-1.5'>
+        </div>
+      </div>
+    </div>
+    );
 };
