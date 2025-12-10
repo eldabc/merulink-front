@@ -1,10 +1,7 @@
 import React from 'react';
 import { tabs } from '../../../utils/tabs-utils';
 
-export default function TabButtonsManager({ activeTab, setActiveTab, employee, errors }) {
-    
-    // **NOTA:** Aquí puedes definir taError si es necesario, pero si es un cálculo local, mejor mantenerlo aquí
-    // const taError = () => { /* ... tu lógica de taError ... */ };
+export default function TabButtonsManager({ activeTab, setActiveTab, employee, errors, tempFlags }) {
     return (
         <div className="flex flex-col md:flex-row gap-4 mt-6 border-b border-gray-700">
           {tabs.map((tab) => {
@@ -21,7 +18,10 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
               return false;
             })();
 
-            const isTabDisabled = tab.id === 'meruLink' && !employee.useMeruLink;
+            // const isTabDisabled = tab.id === 'meruLink' && !employee.useMeruLink;
+            const useMeruLinkEnabled = employee?.useMeruLink ?? tempFlags.useMeruLink;
+            const isTabDisabled = tab.id === 'meruLink' && !useMeruLinkEnabled;
+
             return (
               <div key={tab.id} className="flex flex-col items-center sm:items-center"> 
                 <button

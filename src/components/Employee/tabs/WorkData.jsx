@@ -1,15 +1,18 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useEmployees } from '../../../context/EmployeeContext';
 
-export default function WorkData({ register, errors, employee }) {
+export default function WorkData({ register, errors, employee, tempFlags, setTempFlags }) {
   const { toggleEmployeeField } = useEmployees();
   const isForm = typeof register === 'function';
-console.log('employee.status:', employee.status);
-  const isEmployeeActive = employee.status;
+  const isObjectEmpty = (obj) => obj && Object.keys(obj).length === 0;
+  const isCreateMode = isForm && (!employee || isObjectEmpty(employee));
+  let isEmployeeActive;
+  
+  const flags = isCreateMode ? tempFlags : employee;
+  (isCreateMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false)
   const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
 
   if (isForm) {
-
      return (
       <div className="
         grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
@@ -48,7 +51,15 @@ console.log('employee.status:', employee.status);
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa MeruLink?</span>
-            <input type="checkbox" {...register('useMeruLink')} className={`w-4 h-4 rounded ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useMeruLink")} disabled={!isEmployeeActive} />
+            <input type="checkbox" {...register('useMeruLink')} className={`w-4 h-4 rounded ${disabledClasses}`}  checked={flags.useMeruLink} disabled={!isEmployeeActive} 
+              onChange={(e) => {
+                if (isCreateMode) {
+                 setTempFlags({ ...tempFlags, useMeruLink: e.target.checked });
+                } else {
+                 toggleEmployeeField(employee.id, "useMeruLink");
+                }
+              }}
+            />
           </label>
         </div>
 

@@ -12,7 +12,7 @@ export default function MeruLinkData({ register, errors, employee }) {
           md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
           md:[&>*:nth-child(2n)]:pl-4">
 
-          <h2>Meru Link Permissions para {employee.firstName} {employee.lastName}</h2>
+          <h2>Meru Link permisos para {employee.firstName} {employee.lastName}</h2>
           <div>
             <div className='flex flex-row'>
               <label className="block text-sm font-medium text-gray-300 mb-1 min-w-35 max-w-35">Nombre Usuario: *</label>

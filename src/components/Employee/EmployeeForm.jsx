@@ -20,6 +20,13 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   const { toggleEmployeeField } = useEmployees();
   const [activeTab, setActiveTab] = useState('personal');
 
+  const [tempFlags, setTempFlags] = useState({
+    useMeruLink: false,
+    useHidCard: false,
+    useLocker: false,
+    useTransport: false
+  });
+
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
   });
@@ -280,10 +287,11 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             setActiveTab={setActiveTab} 
             employee={employee}
             tabErrors={errors}
+            tempFlags={tempFlags}
         />
         <div className="mt-6">     
             {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
-            {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} /> )}
+            {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} tempFlags={tempFlags} setTempFlags={setTempFlags}/> )}
             {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
             {activeTab === 'meruLink' && ( <MeruLinkData register={register} errors={errors} employee={employee} /> )}
         </div>
