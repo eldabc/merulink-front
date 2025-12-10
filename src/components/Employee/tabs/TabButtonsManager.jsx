@@ -8,7 +8,7 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
             // determine if this tab currently has errors from formState.errors
             const tabError = (() => {
               if (!errors) return false;
-              const personalKeys = ['numEmployee','firstName','secondName','lastName','secondLastName','birthDate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
+              const personalKeys = ['numEmployee','birthDate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
               const workKeys = ['joinDate','department','subDepartment','position'];
               const meruLinkKeys = ['userName', 'userPass'];
               if (tab.id === 'personal') return personalKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
@@ -17,7 +17,6 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
               if (tab.id === 'meruLink') return meruLinkKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
               return false;
             })();
-
             // const isTabDisabled = tab.id === 'meruLink' && !employee.useMeruLink;
             const useMeruLinkEnabled = employee?.useMeruLink ?? tempFlags.useMeruLink;
             const isTabDisabled = tab.id === 'meruLink' && !useMeruLinkEnabled;
@@ -39,7 +38,7 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
                   {tabError && ( <p className="px-2 py-1 rounded-full text-xs font-semibold bg-red-255 text-red-400 hover:text-red-800">Tienes campos erróneos en esta pestaña</p> )}
                 </button>
               </div>
-            );
+            );      
           })}
         </div>
     );

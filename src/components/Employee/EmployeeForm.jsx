@@ -286,7 +286,7 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
             activeTab={activeTab} 
             setActiveTab={setActiveTab} 
             employee={employee}
-            tabErrors={errors}
+            errors={errors}
             tempFlags={tempFlags}
         />
         <div className="mt-6">     

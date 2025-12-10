@@ -1,5 +1,5 @@
 export const splitPhone = (fullNumber) => {
-  if (!fullNumber) return { code: null, number: '' };
+  if (!fullNumber) return { code: null, number: null };
     const cleanedNumber = fullNumber ? String(fullNumber).replace(/[^0-9]/g, '') : '';
     const code = cleanedNumber.substring(0, 4); 
     const number = cleanedNumber.substring(4); 
