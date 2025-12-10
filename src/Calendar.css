@@ -220,6 +220,7 @@ b { /* used for event dates/times */
 .fc .fc-daygrid-day-frame .fc-daygrid-day-top a, .fc .fc-daygrid-day-frame .fc-daygrid-day-events {
     color: #fff !important;
     font-weight: 600;
+    font-size: 22px;
 }
 
 .fc .fc-daygrid-day-frame {
@@ -347,11 +348,18 @@ b { /* used for event dates/times */
 
 /* Móviles (hasta 768px) */
 @media screen and (max-width: 768px) {
+  .fc .fc-daygrid-body {
+     width: 100% !important;
+  }
+  .fc .fc-scrollgrid-section-body table, .fc .fc-scrollgrid-section-footer table {
+    width: 100% !important;
+  }
   .calendar-container {
     flex-direction: column;
     width: calc(100% - 24px);
     padding: 16px;
     gap: 1rem;
+    min-height: 1000px;
   }
 
   .demo-app-main {

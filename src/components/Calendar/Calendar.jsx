@@ -135,7 +135,7 @@ export default function Calendar() {
             headerToolbar={{
               left: 'prev,next',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              right: ''
             }}
             initialView='dayGridMonth'
             editable={false}

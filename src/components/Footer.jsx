@@ -5,7 +5,7 @@ export default function Footer() {
     const fullYear = currentDate.getFullYear();
   return (
     <>
-    <footer className="mt-6 footer-muted">Hotel Plaza Meru — {fullYear} V1.0  </footer>
+    <footer className="mt-8 footer-muted">Hotel Plaza Meru — {fullYear} V1.0  </footer>
     </>
   );
 }
