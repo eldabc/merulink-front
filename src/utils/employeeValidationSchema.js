@@ -94,22 +94,34 @@ export const employeeValidationSchema = yup.object().shape({
   userName: yup
     .string()
     .nullable()
+    .optional()
     .when('useMeruLink', {
       is: true,
       then: (schema) => 
-        schema.required('Nombre de usuario es requerido.'),
+        schema
+          .required('Nombre de usuario es requerido.')
+          .min(4, 'Mínimo 4 caracteres'),
+
+      otherwise: (schema) => 
+        schema.notRequired().nullable()
+        
+    }),
+  userPass: yup
+    .string()
+    .nullable()
+    .optional()
+    .when('useMeruLink', {
+      is: true,
+      then: (schema) => 
+        schema
+          .required('Contraseña es requerida.')
+          .min(10, 'Mínimo 10 caracteres entre números y letras')
+          .max(20, 'Máximo 20 caracteres entre números y letras'),
       
       otherwise: (schema) => 
         schema.notRequired().nullable()
-      .min(4, 'Mínimo 4 caracteres'),
-        }),
-    // .required('Nombre de usuario es requerido')
-    
-  userPass: yup
-    .string()
-    .required('Contraseña es requerida')
-    .min(10, 'Mínimo 10 caracteres entre números y letras')
-    .max(20, 'Máximo 20 caracteres entre números y letras'),
+      
+    }),
   status: yup.boolean(),
   useMeruLink: yup.boolean(),
   useHidCard: yup.boolean(),
