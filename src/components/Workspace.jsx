@@ -7,7 +7,6 @@ export default function Workspace({ activeMenu }) {
   if (activeMenu === 'Lobby') {
     return (
       <div className="content-center">
-        <h2 className="title">Calendario Plaza Meru</h2>
         <LobbyCalendar />
       </div>
     );
