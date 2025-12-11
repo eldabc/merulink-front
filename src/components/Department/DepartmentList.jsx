@@ -4,7 +4,6 @@ import { DepartmentProvider, useDepartments } from "../../context/DepartmentCont
 import { departments } from '../../utils/ExampleData/departments-utils';
 import DepartmentRow from './DepartmentRow';
 import Pagination from '../Pagination';
-import DepartmentDetail from './DepartmentDetail';
 import DepartmentForm from './DepartmentForm';
 import DepartmentAdd from './DepartmentAdd';
 

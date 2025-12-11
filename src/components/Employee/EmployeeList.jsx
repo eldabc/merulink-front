@@ -111,9 +111,7 @@ const filteredEmployees = employeeData.filter(emp => {
 return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
       
-      {show && (
-        <Notification title={show.title} message={show.message} onClose={() => setShow(null)} />
-      )}
+      {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
       <div className="titles-table flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Listado de Empleados</h2>
