@@ -3,14 +3,14 @@ import { useDepartments } from '../../context/DepartmentContext';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function EmployeeRow({ dep, setSelectedEmployee }) {
+export default function EmployeeRow({ dep, setSelectedDepartment }) {
   // Obtener la función del contexto
   const { toggleEmployeeField } = useDepartments(); 
 
   return (
     <tr
       key={dep.id}
-      onClick={() => setSelectedEmployee(dep.id)}
+      onClick={() => setSelectedDepartment(dep.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
       <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>

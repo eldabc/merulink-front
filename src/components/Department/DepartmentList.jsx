@@ -4,6 +4,8 @@ import { DepartmentProvider, useDepartments } from "../../context/DepartmentCont
 import { departments } from '../../utils/ExampleData/departments-utils';
 import DepartmentRow from './DepartmentRow';
 import Pagination from '../Pagination';
+import DepartmentDetail from './DepartmentDetail';
+import DepartmentForm from './DepartmentForm';
 
 export default function DepartmentList() {
 	const { showNotification } = useNotification();
@@ -75,8 +77,8 @@ const filteredDepartments = departmentData.filter(emp => {
 
   // Si hay empleado seleccionado, mostrar detalle
   if (selectedDepartment) {
-    const departmentSelected = departmentData.find(e => e.id === selectedDepartment);
-    return <DepartmentDetail 
+    const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
+    return <DepartmentForm 
       department={departmentSelected} 
       onBack={() => setSelectedDepartment(null)} 
       onUpdate={(updated) => {
@@ -84,7 +86,16 @@ const filteredDepartments = departmentData.filter(emp => {
         showNotification('Éxito', 'Empleado actualizado correctamente.');
         setSelectedDepartment(null);
       }}
+			mode="view" 
     />
+		// return <DepartmentForm 
+		// 				mode="view" 
+		// 				// department={department} 
+		// 				onSave={handleEditSave} 
+		// 				onCancel={() => setIsEditing(false)} 
+		// 			/>;
+		
+    // />
   }
   if (addDepartment) {
     return (
@@ -104,9 +115,7 @@ const filteredDepartments = departmentData.filter(emp => {
 return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
       
-      {show && (
-        <Notification title={show.title} message={show.message} onClose={() => setShow(null)} />
-      )}
+			{show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
       <div className="titles-table flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Listado de Departamentos</h2>
