@@ -8,6 +8,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { EmployeeProvider, useEmployees } from '../../context/EmployeeContext'; 
 import EmployeeRow from './EmployeeRow';
 import '../../Tables.css';
+import Pagination from '../Pagination';
 
 
 // Componente wrapper que proporciona el contexto
@@ -76,7 +77,7 @@ const filteredEmployees = employeeData.filter(emp => {
   const dataToDisplay = hasSearched ? filteredEmployees : employeeData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedEmployees = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
 
   // Si hay empleado seleccionado, mostrar detalle
@@ -148,7 +149,7 @@ return (
             </tr>
           </thead>
           <tbody>
-            {paginatedEmployees.map((emp) => (
+            {paginatedData.map((emp) => (
               <EmployeeRow 
                 key={emp.id}
                 emp={emp} 
@@ -160,48 +161,18 @@ return (
       </div>
 
       {/* Paginación */}
-      <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-white-600">
-          Mostrando {paginatedEmployees.length > 0 ? startIndex + 1 : 0} a {Math.min(startIndex + itemsPerPage, dataToDisplay.length)} de {dataToDisplay.length}
-          <b>
-            {hasSearched
-              ? ` Resultados: ${dataToDisplay.length} empleado(s)`
-              : ` Total: ${employees.length} empleados`
-            }
-          </b>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          >
-            Anterior
-          </button>
-          <div className="flex items-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-2 rounded-lg font-medium transition-colors ${
-                  currentPage === page
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-          >
-            Siguiente
-          </button>
-        </div>
-      </div>
+      <Pagination
+				paginatedData={paginatedData}
+				startIndex={startIndex}
+				itemsPerPage={itemsPerPage}
+				dataToDisplay={dataToDisplay}
+				hasSearched={hasSearched}
+				data={employeeData}
+				setCurrentPage={setCurrentPage}
+				currentPage={currentPage}
+				totalPages={totalPages}
+				moduleName={'Empleado'}
+			/>
     </div>
 );
 }
