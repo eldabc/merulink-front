@@ -1,14 +1,15 @@
 import * as yup from 'yup';
 
-// Validation schema for Employee form
+// Validation schema for Department form
 export const departmentValidationSchema = yup.object().shape({
    
   code: yup
     .string()
-    .required('Cédula es requerida')
+    .required('Código es requerido')
     .matches(/^[0-9]+$/, 'Solo se permiten números.')
-    .min(8, 'Debe contener 8 dígitos')
-    .max(8, 'Debe contener 8 dígitos'), 
+    // .min(3, 'Debe contener 3 dígitos')
+    // .max(3, 'Debe contener 3 dígitos')
+    , 
     
   departmentName: yup
     .string()

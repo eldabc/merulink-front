@@ -79,6 +79,7 @@ const filteredDepartments = departmentData.filter(emp => {
   if (selectedDepartment) {
     const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
     return <DepartmentForm 
+			mode="view"
       department={departmentSelected} 
       onBack={() => setSelectedDepartment(null)} 
       onUpdate={(updated) => {
@@ -86,16 +87,7 @@ const filteredDepartments = departmentData.filter(emp => {
         showNotification('Éxito', 'Empleado actualizado correctamente.');
         setSelectedDepartment(null);
       }}
-			mode="view" 
     />
-		// return <DepartmentForm 
-		// 				mode="view" 
-		// 				// department={department} 
-		// 				onSave={handleEditSave} 
-		// 				onCancel={() => setIsEditing(false)} 
-		// 			/>;
-		
-    // />
   }
   if (addDepartment) {
     return (
