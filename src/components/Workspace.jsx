@@ -2,6 +2,7 @@ import React from "react";
 import LobbyCalendar from "./LobbyCalendar";
 import AssistantInput from "./AssistantInput";
 import EmployeeList from "./Employee/EmployeeList";
+import DepartmentList from "./Department/DepartmentList";
 
 export default function Workspace({ activeMenu }) {
   if (activeMenu === 'Lobby') {
@@ -27,6 +28,13 @@ export default function Workspace({ activeMenu }) {
       </div>
     );
   }
+    if (activeMenu === 'Departamentos') {
+      return (
+        <div className="main-workspace">
+          <DepartmentList />
+        </div>
+      );
+    }
 
   // Vista por defecto para otros menús
   return (
