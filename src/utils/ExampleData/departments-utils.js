@@ -1,42 +1,52 @@
 export const departments = [
   {
-    "codigo": 1,
-    "departamento": "Administración"
+    id: 1,
+    "code": 1,
+    "departmentName": "Administración"
   },
   {
-    "codigo": 2,
-    "departamento": "Recepción"
+    id: 2,
+    "code": 2,
+    "departmentName": "Recepción"
   },
   {
-    "codigo": 3,
-    "departamento": "Ama de Llaves"
+    id: 3,
+    "code": 3,
+    "departmentName": "Ama de Llaves"
   },
   {
-    "codigo": 4,
-    "departamento": "Alimentos y Bebidas"
+    id: 4,
+    "code": 4,
+    "departmentName": "Alimentos y Bebidas"
   },
   {
-    "codigo": 5,
-    "departamento": "Ventas"
+    id: 5,
+    "code": 5,
+    "departmentName": "Ventas"
   },
   {
-    "codigo": 6,
-    "departamento": "RRHH"
+    id: 6,
+    "code": 6,
+    "departmentName": "RRHH"
   },
   {
-    "codigo": 7,
-    "departamento": "Seguridad"
+    id: 7,
+    "code": 7,
+    "departmentName": "Seguridad"
   },
   {
-    "codigo": 8,
-    "departamento": "Mantenimiento"
+    id: 8,
+    "code": 8,
+    "departmentName": "Mantenimiento"
   },
   {
-    "codigo": 9,
-    "departamento": "Sistemas"
+    id: 9,
+    "code": 9,
+    "departmentName": "Sistemas"
   },
   {
-    "codigo": 10,
-    "departamento": "Externo"
+    id: 10,
+    "code": 10,
+    "departmentName": "Externo"
   }
 ];

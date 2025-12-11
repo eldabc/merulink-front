@@ -4,7 +4,7 @@ import AssistantInput from "./AssistantInput";
 import EmployeeList from "./Employee/EmployeeList";
 import DepartmentList from "./Department/DepartmentList";
 
-export default function Workspace({ activeMenu }) {
+export default function Workspace({ activeMenu, activePath }) {
   if (activeMenu === 'Lobby') {
     return (
       <div className="content-center">
@@ -21,20 +21,21 @@ export default function Workspace({ activeMenu }) {
     );
   }
 
-   if (activeMenu === 'RRHH') {
-    return (
-      <div className="main-workspace">
-        <EmployeeList />
-      </div>
-    );
-  }
-    if (activeMenu === 'Departamentos') {
+  if (activeMenu === 'RRHH') {
+    if (activePath.length === 0) {
+      return (
+        <div className="main-workspace">
+          <EmployeeList />
+        </div>
+      );
+    }else if (activePath[0] === 'Departamentos') {
       return (
         <div className="main-workspace">
           <DepartmentList />
         </div>
       );
     }
+  }
 
   // Vista por defecto para otros menús
   return (

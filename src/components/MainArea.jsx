@@ -18,9 +18,11 @@ export default function MainArea({ activeMenu, activePath, onSidebarClick }) {
         activeMenu={activeMenu}
         activePath={activePath} 
         onItemClick={onSidebarClick}
-        isSidebarOpen={isSidebarOpen} />
+        isSidebarOpen={isSidebarOpen} 
+      />
+      
       <main className="workspace">
-        <Workspace activeMenu={activeMenu} />
+        <Workspace activeMenu={activeMenu} activePath={activePath} />
       </main>
     </div>
   );
