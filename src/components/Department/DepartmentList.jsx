@@ -6,6 +6,7 @@ import DepartmentRow from './DepartmentRow';
 import Pagination from '../Pagination';
 import DepartmentDetail from './DepartmentDetail';
 import DepartmentForm from './DepartmentForm';
+import DepartmentAdd from './DepartmentAdd';
 
 export default function DepartmentList() {
 	const { showNotification } = useNotification();
@@ -49,7 +50,7 @@ function DepartmentListContent() {
       .toLowerCase();
   }
 
-// Filtrar empleados según búsqueda y estado
+// Filtrar Despartamentos según búsqueda y estado
 const filteredDepartments = departmentData.filter(emp => {
   const value = normalizeText(searchValue);
 
@@ -75,7 +76,7 @@ const filteredDepartments = departmentData.filter(emp => {
   const paginatedDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
 
-  // Si hay empleado seleccionado, mostrar detalle
+  // Si hay departamento seleccionado, mostrar detalle
   if (selectedDepartment) {
     const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
     return <DepartmentForm 
@@ -84,7 +85,7 @@ const filteredDepartments = departmentData.filter(emp => {
       onBack={() => setSelectedDepartment(null)} 
       onUpdate={(updated) => {
         setDepartmentData(prev => prev.map(e => e.id === departmentSelected.id ? { ...e, ...updated } : e));
-        showNotification('Éxito', 'Empleado actualizado correctamente.');
+        showNotification('Éxito', 'Departamento actualizado correctamente.');
         setSelectedDepartment(null);
       }}
     />
@@ -98,7 +99,7 @@ const filteredDepartments = departmentData.filter(emp => {
           // assign an id and prepend to list
           setDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
           setAddDepartment(null);
-          showNotification('Éxito', 'Empleado creado correctamente.');
+          showNotification('Éxito', 'Departamento creado correctamente.');
         }}
       />
     );

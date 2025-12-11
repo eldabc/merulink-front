@@ -12,8 +12,6 @@ import '../../Tables.css';
 export default function DepartmentForm({ mode = 'create', department = null, onBack, onSave, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   
-  
-
   const { toggleDepartmentField } = useDepartments();
   const [activeTab, setActiveTab] = useState('personal');
   
@@ -61,7 +59,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
 
     setActiveTab('personal');
   };
-
+  
   const handleEditSave = async (formData) => {
     // Llamar al backend para actualizar aquí (PUT)
     if (onUpdate) onUpdate(formData);
@@ -124,7 +122,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
           <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
           {mode !== 'view' && (
             <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-              {mode === 'edit' ? 'Guardar cambios' : 'Crear empleado'}
+              {mode === 'edit' ? 'Guardar cambios' : 'Crear Departamento'}
             </button>
           )}
         </div>
