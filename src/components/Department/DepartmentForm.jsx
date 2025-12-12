@@ -35,14 +35,14 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
 
       // generar número de departamento automáticamente
       const maxNum = Math.max( 0,
-        ...departments.map(e => {
-          const num = parseInt(e.code) || 0;
+        ...departments.map(d => {
+          const num = parseInt(d.code) || 0;
           return num;
         })
       );
       const newNumDepartment = String(maxNum + 1);
       reset({
-        code: '',
+        code: newNumDepartment,
         departmentName: '',
       });
     }
@@ -55,7 +55,6 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
   const onError = (formErrors) => {
     console.warn('DepartmentForm validation errors:', formErrors);
     if (!formErrors) return;
-
   };
   
   const handleEditSave = async (formData) => {
@@ -112,16 +111,36 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
             </div>
           </div>
         </div>
-        <div className="mt-6"></div>
+        <div className="mt-6">
+          <h3 className="text-2xl font-bold mb-4 text-white">Sub-Departamentos</h3>
+          <div className="rounded-lg shadow">
+                  <table className="min-w-full border-collapse text-sm sm:text-base">
+                    <thead>
+                      <tr className="tr-thead-table">
+                        <th className="px-4 py-3 text-left font-semibold">Código</th>
+                        <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {department.subDepartments.map((dep) => (
+                        <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                          <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>
+                          <td className="px-4 py-3 text-white-700">{dep.subDepartmentName}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+        </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
-          {mode !== 'view' && (
-            <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-              {mode === 'edit' ? 'Guardar cambios' : 'Crear Departamento'}
-            </button>
-          )}
-        </div>
+        <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
+        {mode !== 'view' && (
+          <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
+            {mode === 'edit' ? 'Guardar cambios' : 'Crear Departamento'}
+          </button>
+        )}
+      </div>
      </form>
     </div>
   );

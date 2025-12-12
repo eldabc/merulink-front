@@ -7,8 +7,8 @@ export const departmentValidationSchema = yup.object().shape({
     .string()
     .required('Código es requerido')
     .matches(/^[0-9]+$/, 'Solo se permiten números.')
+    .max(2, 'Debe contener 2 dígitos')
     // .min(3, 'Debe contener 3 dígitos')
-    // .max(3, 'Debe contener 3 dígitos')
     , 
     
   departmentName: yup
