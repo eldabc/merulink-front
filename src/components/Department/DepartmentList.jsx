@@ -6,6 +6,10 @@ import DepartmentRow from './DepartmentRow';
 import Pagination from '../Pagination';
 import DepartmentForm from './DepartmentForm';
 import DepartmentAdd from './DepartmentAdd';
+import { filterData } from '../../utils/filter-utils';
+import { normalizeText } from '../../utils/text-utils';
+import DepartmentFilter from './DepartmentFilter';
+import { useMemo } from 'react';
 
 export default function DepartmentList() {
 	const { showNotification } = useNotification();
@@ -41,32 +45,16 @@ function DepartmentListContent() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
-  // Normalizar strings para la busqueda
-  function normalizeText(text) {
-    return text
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-  }
-
-// Filtrar Despartamentos según búsqueda y estado
-const filteredDepartments = departmentData.filter(emp => {
-  const value = normalizeText(searchValue);
-
-  const matchesSearch = value === '' ||
-    normalizeText(emp.firstName).includes(value) ||
-    normalizeText(emp.lastName).includes(value) ||
-    normalizeText(emp.ci).includes(value) ||
-    normalizeText(emp.position).includes(value) ||
-    normalizeText(emp.department).includes(value) ||
-    normalizeText(emp.subDepartment).includes(value);
-
-  const matchesStatus = filterStatus === 'all' ||
-    (filterStatus === 'activo' && emp.status === true) ||
-    (filterStatus === 'inactivo' && emp.status === false);
-
-  return matchesSearch && matchesStatus;
-});
+  
+  // Filtrar empleados
+  const filteredDepartments = useMemo(() => {
+      return filterData(
+          departmentData,
+          searchValue,
+          filterStatus,
+          normalizeText
+      );
+  }, [departmentData, searchValue, filterStatus]);
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredDepartments : departmentData;
@@ -121,12 +109,12 @@ return (
         </div>
       </div>
       {/* Filtro */}
-      {/* <DepartmentFilter
+      <DepartmentFilter
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         filterStatus={filterStatus}
         onFilterStatus={setFilterStatus}
-      /> */}
+      />
 
       <div className="rounded-lg shadow">
         <table className="min-w-full border-collapse text-sm sm:text-base">

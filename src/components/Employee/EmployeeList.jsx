@@ -9,6 +9,10 @@ import { EmployeeProvider, useEmployees } from '../../context/EmployeeContext';
 import EmployeeRow from './EmployeeRow';
 import '../../Tables.css';
 import Pagination from '../Pagination';
+import { normalizeText } from '../../utils/text-utils';
+// import { filterData } from '../../utils/filter-utils';
+// import { useMemo } from 'react';
+
 
 
 // Componente wrapper que proporciona el contexto
@@ -46,13 +50,15 @@ function EmployeeListContent() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
-  // Normalizar strings para la busqueda
-  function normalizeText(text) {
-    return text
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-  }
+  // Filtrar empleados
+    // const filteredEmployees = useMemo(() => {
+    //     return filterData(
+    //         employeeData,
+    //         searchValue,
+    //         filterStatus,
+    //         normalizeText
+    //     );
+    // }, [employeeData, searchValue, filterStatus]);
 
 // Filtrar empleados según búsqueda y estado
 const filteredEmployees = employeeData.filter(emp => {

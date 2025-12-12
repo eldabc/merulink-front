@@ -13,7 +13,6 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
   const [isEditing, setIsEditing] = useState(false);
   
   const { toggleDepartmentField } = useDepartments();
-  const [activeTab, setActiveTab] = useState('personal');
   
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
@@ -57,7 +56,6 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
     console.warn('DepartmentForm validation errors:', formErrors);
     if (!formErrors) return;
 
-    setActiveTab('personal');
   };
   
   const handleEditSave = async (formData) => {
@@ -84,7 +82,6 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-30 h-10 overflow-hidden flex items-center justify-center ml-2.5"></div>
-
           <div>
             <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')}</h3>
             <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
@@ -115,8 +112,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
             </div>
           </div>
         </div>
-        <div className="mt-6">     
-        </div>
+        <div className="mt-6"></div>
       </div>
       <div className="mt-6 flex justify-end gap-3">
           <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
