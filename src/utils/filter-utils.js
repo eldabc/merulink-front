@@ -1,26 +1,47 @@
+/**
+ * Filtra un array de datos basándose en un valor de búsqueda y campos específicos.
+ *
+ * @param {Array<Object>} data - El array de objetos a filtrar (Empleados, Departamentos, etc.).
+ * @param {string} searchValue - El texto de búsqueda.
+ * @param {Array<string>} searchableFields - Lista de nombres de propiedades a buscar (ej: ['code', 'departmentName']).
+ * @param {string} [filterStatus] - Opcional. El estado para filtrar ('all', 'activo', 'inactivo').
+ * @param {function} normalizeText - Función de utilidad para normalizar el texto.
+ * @returns {Array<Object>} El array de datos filtrado.
+ */
+export const filterData = (data, searchValue, searchableFields, filterStatus, normalizeText) => {
 
-// Filtrar Despartamentos según búsqueda y estado
-export const filterData = (employees, searchValue, filterStatus, normalizeText) => {
+  const normalizedValue = normalizeText(searchValue);
+
+  if (normalizedValue === '' && (filterStatus === 'all' || !filterStatus)) {
+    return data;
+  }
+
+  return data.filter(item => {
+      
+    let matchesSearch = true; 
     
-    const normalizedValue = normalizeText(searchValue);
-
-    return employees.filter(emp => {
+    if (normalizedValue !== '') {
+      // Verifica si ALGUNO de los campos definidos en searchableFields coincide con el valor de búsqueda.
+      matchesSearch = searchableFields.some(field => {
+        const fieldValue = item[field];
         
-        // 2. Lógica de Búsqueda de Texto (matchesSearch)
-        const matchesSearch = normalizedValue === '' ||
-            normalizeText(emp.code).includes(normalizedValue) ||
-            normalizeText(emp.departmentName).includes(normalizedValue) //||
-            // normalizeText(emp.ci).includes(normalizedValue) ||
-            // normalizeText(emp.position).includes(normalizedValue) ||
-            // normalizeText(emp.department).includes(normalizedValue) ||
-            // normalizeText(emp.subDepartment).includes(normalizedValue);
+        // Si el campo existe en el objeto, normalizar y comprobar si incluye el valor.
+        return fieldValue && normalizeText(fieldValue).includes(normalizedValue);
+      });
+    }
+    
+    let matchesStatus = true;
+    
+    if (filterStatus && filterStatus !== 'all') {
+        const itemStatus = item.status;
+        
+        if (filterStatus === 'activo') {
+          matchesStatus = itemStatus === true;
+        } else if (filterStatus === 'inactivo') {
+          matchesStatus = itemStatus === false;
+        }
+    }
 
-        // 3. Lógica de Filtrado por Estado (matchesStatus)
-        // const matchesStatus = filterStatus === 'all' ||
-        //     (filterStatus === 'activo' && emp.status === true) ||
-        //     (filterStatus === 'inactivo' && emp.status === false);
-
-        // 4. Retorna si cumple ambas condiciones
-        return matchesSearch; // && matchesStatus;
-    });
+    return matchesSearch && matchesStatus;
+  });
 };

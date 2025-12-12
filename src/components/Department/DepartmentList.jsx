@@ -45,12 +45,17 @@ function DepartmentListContent() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
-  
+  const DEPARTMENTS_SEARCH_FIELDS = [
+    'code', 
+    'departmentName'
+  ];
+
   // Filtrar empleados
   const filteredDepartments = useMemo(() => {
       return filterData(
           departmentData,
           searchValue,
+          DEPARTMENTS_SEARCH_FIELDS,
           filterStatus,
           normalizeText
       );

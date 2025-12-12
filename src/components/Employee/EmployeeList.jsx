@@ -10,8 +10,8 @@ import EmployeeRow from './EmployeeRow';
 import '../../Tables.css';
 import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
-// import { filterData } from '../../utils/filter-utils';
-// import { useMemo } from 'react';
+import { filterData } from '../../utils/filter-utils';
+import { useMemo } from 'react';
 
 
 
@@ -50,34 +50,26 @@ function EmployeeListContent() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
+  const EMPLOYEE_SEARCH_FIELDS = [
+      'numEmployee', 
+      'firstName', 
+      'lastName', 
+      'ci', 
+      'position', 
+      'department', 
+      'subDepartment'
+  ];
+
   // Filtrar empleados
-    // const filteredEmployees = useMemo(() => {
-    //     return filterData(
-    //         employeeData,
-    //         searchValue,
-    //         filterStatus,
-    //         normalizeText
-    //     );
-    // }, [employeeData, searchValue, filterStatus]);
-
-// Filtrar empleados según búsqueda y estado
-const filteredEmployees = employeeData.filter(emp => {
-  const value = normalizeText(searchValue);
-
-  const matchesSearch = value === '' ||
-    normalizeText(emp.firstName).includes(value) ||
-    normalizeText(emp.lastName).includes(value) ||
-    normalizeText(emp.ci).includes(value) ||
-    normalizeText(emp.position).includes(value) ||
-    normalizeText(emp.department).includes(value) ||
-    normalizeText(emp.subDepartment).includes(value);
-
-  const matchesStatus = filterStatus === 'all' ||
-    (filterStatus === 'activo' && emp.status === true) ||
-    (filterStatus === 'inactivo' && emp.status === false);
-
-  return matchesSearch && matchesStatus;
-});
+  const filteredEmployees = useMemo(() => {
+      return filterData(
+          employeeData,
+          searchValue,
+          EMPLOYEE_SEARCH_FIELDS,
+          filterStatus,
+          normalizeText
+      );
+  }, [employeeData, searchValue, filterStatus]);
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredEmployees : employeeData;
