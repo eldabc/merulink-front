@@ -3,6 +3,7 @@ import LobbyCalendar from "./LobbyCalendar";
 import AssistantInput from "./AssistantInput";
 import EmployeeList from "./Employee/EmployeeList";
 import DepartmentList from "./Department/DepartmentList";
+import SubDepartmentList from "./SubDepartment/SubDepartmentList";
 
 export default function Workspace({ activeMenu, activePath }) {
   if (activeMenu === 'Lobby') {
@@ -34,7 +35,14 @@ export default function Workspace({ activeMenu, activePath }) {
           <DepartmentList />
         </div>
       );
+    }else if (activePath[0] === 'Sub-Departamentos') {
+      return (
+        <div className="main-workspace">
+          <SubDepartmentList />
+        </div>
+      );
     }
+
   }
 
   // Vista por defecto para otros menús

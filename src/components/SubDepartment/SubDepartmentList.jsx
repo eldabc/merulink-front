@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from "../../context/NotificationContext";  
 import { DepartmentProvider, useDepartments } from "../../context/DepartmentContext";
-import { departments } from '../../utils/StaticData/departments-utils';
-import DepartmentRow from './DepartmentRow';
+import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
+import SubDepartmentRow from './SubDepartmentRow';
 import Pagination from '../Pagination';
 import DepartmentForm from './DepartmentForm';
 import DepartmentAdd from './DepartmentAdd';
@@ -11,17 +11,17 @@ import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
 import { useMemo } from 'react';
 
-export default function DepartmentList() {
+export default function SubDepartmentList() {
 	const { showNotification } = useNotification();
 		return (
-			<DepartmentProvider initialData={departments} showNotification={showNotification}>
-				<DepartmentListContent />
+			<DepartmentProvider initialData={subDepartments} showNotification={showNotification}>
+				<SubDepartmentListContent />
 			</DepartmentProvider>
 		);
 }
 
 // Componente interno que usa el contexto
-function DepartmentListContent() {
+function SubDepartmentListContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
@@ -47,6 +47,7 @@ function DepartmentListContent() {
 
   const DEPARTMENTS_SEARCH_FIELDS = [
     'code', 
+    'subDepartmentName',
     'departmentName'
   ];
 
@@ -77,7 +78,7 @@ function DepartmentListContent() {
       onBack={() => setSelectedDepartment(null)} 
       onUpdate={(updated) => {
         setDepartmentData(prev => prev.map(e => e.id === departmentSelected.id ? { ...e, ...updated } : e));
-        showNotification('Éxito', 'Departamento actualizado correctamente.');
+        showNotification('Éxito', 'Sub-Departamento actualizado correctamente.');
         setSelectedDepartment(null);
       }}
     />
@@ -91,7 +92,7 @@ function DepartmentListContent() {
           // assign an id and prepend to list
           setDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
           setAddDepartment(null);
-          showNotification('Éxito', 'Departamento creado correctamente.');
+          showNotification('Éxito', 'Sub-Departamento creado correctamente.');
         }}
       />
     );
@@ -103,7 +104,7 @@ function DepartmentListContent() {
         {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
         <div className="titles-table flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Listado de Departamentos</h2>
+          <h2 className="text-2xl font-bold">Listado de Sub-Departamentos</h2>
           <div className="text-sm">
             <button
               onClick={() => setAddDepartment({})}
@@ -119,8 +120,8 @@ function DepartmentListContent() {
           onSearchChange={setSearchValue}
           filterStatus={filterStatus}
           onFilterStatus={setFilterStatus}
-          moduleName='Departamento'
-          placeholder='Ingrese código o nombre de departamento'
+          moduleName='Sub-Departamento'
+          placeholder='Ingrese código o nombre de Sub-departamento'
         />
 
         <div className="rounded-lg shadow">
@@ -128,13 +129,14 @@ function DepartmentListContent() {
             <thead>
               <tr className="tr-thead-table">
                 <th className="px-4 py-3 text-left font-semibold">Código</th>
+                <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
                 <th className="px-4 py-3 text-left font-semibold">Departamento</th>
                 <th className="px-4 py-3 text-left font-semibold">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {paginatedDepartments.map((dep) => (
-                <DepartmentRow 
+                <SubDepartmentRow 
                   key={dep.id}
                   dep={dep} 
                   setSelectedDepartment={setSelectedDepartment}
