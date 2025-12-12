@@ -1,4 +1,4 @@
-import { phoneCodes } from "../../../utils/phoneCodes-utils"; 
+import { phoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
 
 export default function PersonalData({ employee = {}, register, errors }) {
   // If register is provided, render form inputs (edit/create). Otherwise render read-only.

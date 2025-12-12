@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, User } from "lucide-react";
-import { departments } from '../../utils/ExampleData/departments-utils';
+import { departments } from '../../utils/StaticData/departments-utils';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { departmentValidationSchema } from '../../utils/departmentValidationSchema';
 import { useDepartments } from '../../context/DepartmentContext';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
-import { employees } from '../../utils/ExampleData/employee-utils';
+import { employees } from '../../utils/StaticData/employee-utils';
 import { useNotification } from "../../context/NotificationContext";  
 import { EmployeeProvider, useEmployees } from '../../context/EmployeeContext'; 
 import EmployeeRow from './EmployeeRow';

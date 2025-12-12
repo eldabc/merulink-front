@@ -5,7 +5,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { INITIAL_EVENTS } from '../../utils/event-utils';
+import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
 import esLocale from '@fullcalendar/core/locales/es';
 import { capitalizeDateString } from '../../utils/date-utils';
 import { filterEventsByDate } from '../../utils/calendar-utils';

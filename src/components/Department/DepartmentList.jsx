@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from "../../context/NotificationContext";  
 import { DepartmentProvider, useDepartments } from "../../context/DepartmentContext";
-import { departments } from '../../utils/ExampleData/departments-utils';
+import { departments } from '../../utils/StaticData/departments-utils';
 import DepartmentRow from './DepartmentRow';
 import Pagination from '../Pagination';
 import DepartmentForm from './DepartmentForm';
