@@ -8,7 +8,7 @@ import DepartmentForm from './DepartmentForm';
 import DepartmentAdd from './DepartmentAdd';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
-import DepartmentFilter from './DepartmentFilter';
+import FilterByFields from '../Filters/FilterByFields';
 import { useMemo } from 'react';
 
 export default function DepartmentList() {
@@ -114,11 +114,13 @@ return (
         </div>
       </div>
       {/* Filtro */}
-      <DepartmentFilter
+      <FilterByFields
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         filterStatus={filterStatus}
         onFilterStatus={setFilterStatus}
+        moduleName='Departamento'
+        placeholder='Ingrese código o nombre de departamento'
       />
 
       <div className="rounded-lg shadow">

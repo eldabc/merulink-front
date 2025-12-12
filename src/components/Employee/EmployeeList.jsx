@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import EmployeeFilter from './EmployeeFilter';
+// import EmployeeFilter from './EmployeeFilter';
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
-// import Notification from '../Notification'; 
 import { employees } from '../../utils/ExampleData/employee-utils';
 import { useNotification } from "../../context/NotificationContext";  
 import { EmployeeProvider, useEmployees } from '../../context/EmployeeContext'; 
@@ -11,6 +10,7 @@ import '../../Tables.css';
 import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
+import FilterByFields from '../Filters/FilterByFields';
 import { useMemo } from 'react';
 
 
@@ -123,11 +123,14 @@ return (
         </div>
       </div>
       {/* Filtro */}
-      <EmployeeFilter
+      <FilterByFields
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         filterStatus={filterStatus}
         onFilterStatus={setFilterStatus}
+        showFilterStatus={true}
+        moduleName='Empleado'
+        placeholder='Ingrese nombre, apellido, cédula, departamento o sub-departamento'
       />
 
       <div className="rounded-lg shadow">
