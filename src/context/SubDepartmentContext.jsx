@@ -11,10 +11,29 @@ export const useSubDepartments = () => {
 export const SubDepartmentProvider = ({ initialData, showNotification, children }) => {
   const [subDepartmentData, setSubDepartmentData] = useState(initialData);
   
-  // Se puede añadir más funciones (ojo)
+    const toggleSubDepartmentStatus = (id) => {       
+      setSubDepartmentData(prev =>
+        prev.map(subDep => {
+          if (subDep.id !== id) {
+            return subDep;
+          }
+  
+          let updatedSubDepartment = { ...subDep };
+
+          // Aplicar el toggle
+          const newStatus = !subDep.status;
+          updatedSubDepartment.status = newStatus;
+  
+          return updatedSubDepartment;
+      })
+      );
+      
+      showNotification("Éxito", `Sub-departamento eliminado.`); // Esto será diferente una vez se migre a API
+  };
+  
   const contextValue = {
     subDepartmentData,
-    // toggleSubDepartmentField,
+    toggleSubDepartmentStatus,
     setSubDepartmentData, 
   };
 

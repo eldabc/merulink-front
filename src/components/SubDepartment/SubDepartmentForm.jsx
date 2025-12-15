@@ -47,29 +47,14 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
     }
   };
 
-  // const { fields, append, remove } = useFieldArray({
-  //   control,
-  //   name: 'contacts',
-  // });
-
   useEffect(() => {
     if (subDepartment && mode === 'edit' || mode === 'view') {
-      console.log(subDepartment);
       reset({
         code: subDepartment?.code ?? '',
         subDepartmentName: subDepartment?.subDepartmentName ?? '',
         departmentId: subDepartment?.departmentId ?? '',
       });
     } else if (mode === 'create') {
-
-      // generar número de departamento automáticamente
-      // const maxNum = Math.max( 0,
-      //   ...subDepartments.map(d => {
-      //     const num = parseInt(d.code) || 0;
-      //     return num;
-      //   })
-      // );
-      // const newNumDepartment = String(maxNum + 1);
       reset({
         code: '',
         subDepartmentName: '',
@@ -79,8 +64,6 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   }, [subDepartment, mode, reset]);
 
   const onSubmit = async (data) => {
-    const submissionData = { ...data };
-
     if (onSave) await onSave(data);
   };
 
@@ -90,7 +73,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   };
   
   const handleEditSave = async (formData) => {
-    // Llamar al backend para actualizar aquí (PUT)
+    // Llamar al backend para actualizar (PUT)
     if (onUpdate) onUpdate(formData);
     setIsEditing(false);
   };

@@ -135,11 +135,13 @@ function SubDepartmentListContent() {
             </thead>
             <tbody>
               {paginatedSubDepartments.map((subDep) => (
-                <SubDepartmentRow 
-                  key={subDep.id}
-                  subDep={subDep} 
-                  setSelectedSubDepartment={setSelectedSubDepartment}
-                />
+                subDep.status && (
+                  <SubDepartmentRow 
+                    key={subDep.id}
+                    subDep={subDep} 
+                    setSelectedSubDepartment={setSelectedSubDepartment}
+                  />
+                )
               ))}
             </tbody>
           </table>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { useDepartments } from '../../context/DepartmentContext';
+import { useSubDepartments } from '../../context/SubDepartmentContext';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { getDepartmentNameById } from '../../utils/Departments/departments-utils'
 
 export default function SubDepartmentRow({ subDep, setSelectedSubDepartment }) {
   // Obtener la función del contexto
-  // const { toggleEmployeeField } = useDepartments(); 
+  const { toggleSubDepartmentStatus } = useSubDepartments(); 
 
   return (
     <tr
@@ -18,11 +18,11 @@ export default function SubDepartmentRow({ subDep, setSelectedSubDepartment }) {
       <td className="px-4 py-3 text-white-700">{getDepartmentNameById(subDep.departmentId)}</td>
       <td className="px-4 py-3">
         <button 
-          // onClick={(e) => {
-          //   e.stopPropagation();
-          //   toggleStatusDepartment(subDep.id);
-          // }}
-          type="button" className={`tags-work-btn }`}>
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSubDepartmentStatus(subDep.id);
+          }}
+          type="button" className={`tags-work-btn }`} title='Elimar Sub-Departamento'>
          <XMarkIcon className='w-5 h-5 text-red-400' />
         </button>
       </td>
