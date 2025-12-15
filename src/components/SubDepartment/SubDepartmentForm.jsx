@@ -54,11 +54,11 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
 
   useEffect(() => {
     if (subDepartment && mode === 'edit' || mode === 'view') {
- 
+      console.log(subDepartment);
       reset({
         code: subDepartment?.code ?? '',
         subDepartmentName: subDepartment?.subDepartmentName ?? '',
-        departmentName: subDepartment?.departmentName ?? '',
+        departmentId: subDepartment?.departmentId ?? '',
       });
     } else if (mode === 'create') {
 
@@ -73,12 +73,14 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
       reset({
         code: '',
         subDepartmentName: '',
-        departmentName: '',
+        departmentId: '',
       });
     }
   }, [subDepartment, mode, reset]);
 
   const onSubmit = async (data) => {
+    const submissionData = { ...data };
+
     if (onSave) await onSave(data);
   };
 
@@ -120,7 +122,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
               <div>
                 <select 
                   disabled= {mode === 'view'}
-                  {...register('department', { onChange: handleDepartmentChange })} 
+                  {...register('departmentId', { onChange: handleDepartmentChange })} 
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}
                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
@@ -128,7 +130,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
                       <option key={`department-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
                     ))}
                 </select>
-                {errors?.department && <p className="text-red-400 text-xs mt-1">{errors.department.message}</p>}  
+                {errors?.departmentId && <p className="text-red-400 text-xs mt-1">{errors.departmentId.message}</p>}  
               </div>
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1">Nombre Sub-Departamento: *</label>

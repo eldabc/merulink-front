@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDepartments } from '../../context/DepartmentContext';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { getDepartmentNameById } from '../../utils/Departments/departments-utils'
 
 export default function SubDepartmentRow({ subDep, setSelectedSubDepartment }) {
   // Obtener la función del contexto
@@ -14,7 +15,7 @@ export default function SubDepartmentRow({ subDep, setSelectedSubDepartment }) {
     >
       <td className="px-4 py-3 text-white-800 font-medium">{subDep.code}</td>
       <td className="px-4 py-3 text-white-700">{subDep.subDepartmentName}</td>
-      <td className="px-4 py-3 text-white-700">{subDep.departmentName}</td>
+      <td className="px-4 py-3 text-white-700">{getDepartmentNameById(subDep.departmentId)}</td>
       <td className="px-4 py-3">
         <button 
           // onClick={(e) => {
