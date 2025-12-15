@@ -1,11 +1,10 @@
 import React from 'react';
 import { useDepartments } from '../../context/DepartmentContext';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function EmployeeRow({ subDep, setSelectedSubDepartment }) {
+export default function SubDepartmentRow({ subDep, setSelectedSubDepartment }) {
   // Obtener la función del contexto
-  const { toggleEmployeeField } = useDepartments(); 
+  // const { toggleEmployeeField } = useDepartments(); 
 
   return (
     <tr

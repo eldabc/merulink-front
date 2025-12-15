@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNotification } from "../../context/NotificationContext";  
-import { DepartmentProvider, useDepartments } from "../../context/DepartmentContext";
+import { SubDepartmentProvider, useSubDepartments } from "../../context/SubDepartmentContext";
 import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
 import SubDepartmentRow from './SubDepartmentRow';
 import Pagination from '../Pagination';
-import DepartmentForm from './DepartmentForm';
-import DepartmentAdd from './DepartmentAdd';
+import SubDepartmentForm from './SubDepartmentForm';
+import SubDepartmentAdd from './SubDepartmentAdd';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
 import { useMemo } from 'react';
 
-export default function SubDepartmentList() {
+export default function SubSubDepartmentList() {
 	const { showNotification } = useNotification();
 		return (
-			<DepartmentProvider initialData={subDepartments} showNotification={showNotification}>
+			<SubDepartmentProvider initialData={subDepartments} showNotification={showNotification}>
 				<SubDepartmentListContent />
-			</DepartmentProvider>
+			</SubDepartmentProvider>
 		);
 }
 
@@ -26,14 +26,14 @@ function SubDepartmentListContent() {
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
   const [hasSearched, setHasSearched] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [addDepartment, setAddDepartment] = useState(null);
+  const [selectedSubDepartment, setSelectedSubDepartment] = useState(null);
+  const [addSubDepartment, setAddSubDepartment] = useState(null);
   const itemsPerPage = 10;
   const [show, setShow] = useState(false);
   const { showNotification } = useNotification();
   
   // Leer del contexto (fuente única de verdad)
-  const { departmentData, setDepartmentData } = useDepartments();
+  const { subDepartmentData, setSubDepartmentData } = useSubDepartments();
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
@@ -45,53 +45,52 @@ function SubDepartmentListContent() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
-  const DEPARTMENTS_SEARCH_FIELDS = [
+  const SUB_DEPARTMENTS_SEARCH_FIELDS = [
     'code', 
     'subDepartmentName',
     'departmentName'
   ];
 
   // Filtrar empleados
-  const filteredDepartments = useMemo(() => {
+  const filteredSubDepartments = useMemo(() => {
       return filterData(
-          departmentData,
+          subDepartmentData,
           searchValue,
-          DEPARTMENTS_SEARCH_FIELDS,
+          SUB_DEPARTMENTS_SEARCH_FIELDS,
           filterStatus,
           normalizeText
       );
-  }, [departmentData, searchValue, filterStatus]);
+  }, [subDepartmentData, searchValue, filterStatus]);
 
   // Datos para mostrar
-  const dataToDisplay = hasSearched ? filteredDepartments : departmentData;
+  const dataToDisplay = hasSearched ? filteredSubDepartments : subDepartmentData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-
+  const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
   // Si hay departamento seleccionado, mostrar detalle
-  if (selectedDepartment) {
-    const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
-    return <DepartmentForm 
+  if (selectedSubDepartment) {
+    const subDepartmentSelected = subDepartmentData .find(d => d.id === selectedSubDepartment);
+    return <SubDepartmentForm 
 			mode="view"
-      department={departmentSelected} 
-      onBack={() => setSelectedDepartment(null)} 
+      subDepartment={subDepartmentSelected} 
+      onBack={() => setSelectedSubDepartment(null)} 
       onUpdate={(updated) => {
-        setDepartmentData(prev => prev.map(e => e.id === departmentSelected.id ? { ...e, ...updated } : e));
+        setSubDepartmentData(prev => prev.map(e => e.id === subDepartmentSelected.id ? { ...e, ...updated } : e));
         showNotification('Éxito', 'Sub-Departamento actualizado correctamente.');
-        setSelectedDepartment(null);
+        setSelectedSubDepartment(null);
       }}
     />
   }
-  if (addDepartment) {
+  if (addSubDepartment) {
     return (
-      <DepartmentAdd
-        department={addDepartment}
-        onBack={() => setAddDepartment(null)}
+      <SubDepartmentAdd
+        subDepartment={addSubDepartment}
+        onBack={() => setAddSubDepartment(null)}
         onCreated={(newEmp) => {
           // assign an id and prepend to list
-          setDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
-          setAddDepartment(null);
+          setSubDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
+          setAddSubDepartment(null);
           showNotification('Éxito', 'Sub-Departamento creado correctamente.');
         }}
       />
@@ -107,7 +106,7 @@ function SubDepartmentListContent() {
           <h2 className="text-2xl font-bold">Listado de Sub-Departamentos</h2>
           <div className="text-sm">
             <button
-              onClick={() => setAddDepartment({})}
+              onClick={() => setAddSubDepartment({})}
               className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
             >
               ← Nuevo Registro
@@ -135,11 +134,11 @@ function SubDepartmentListContent() {
               </tr>
             </thead>
             <tbody>
-              {paginatedDepartments.map((dep) => (
+              {paginatedSubDepartments.map((subDep) => (
                 <SubDepartmentRow 
-                  key={dep.id}
-                  dep={dep} 
-                  setSelectedDepartment={setSelectedDepartment}
+                  key={subDep.id}
+                  subDep={subDep} 
+                  setSelectedSubDepartment={setSelectedSubDepartment}
                 />
               ))}
             </tbody>
@@ -148,12 +147,12 @@ function SubDepartmentListContent() {
 
         {/* Paginación */}
         <Pagination
-          paginatedData={paginatedDepartments}
+          paginatedData={paginatedSubDepartments }
           startIndex={startIndex}
           itemsPerPage={itemsPerPage}
           dataToDisplay={dataToDisplay}
           hasSearched={hasSearched}
-          data={departmentData}
+          data={subDepartmentData }
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
           totalPages={totalPages}

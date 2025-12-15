@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, User } from "lucide-react";
+import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
 import { departments } from '../../utils/StaticData/departments-utils';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';  
-import { departmentValidationSchema } from '../../utils/departmentValidationSchema';
-import { useDepartments } from '../../context/DepartmentContext';
+// import { getStatusColor, getStatusName } from '../../utils/status-utils';  
+import { subDepartmentValidationSchema } from '../../utils/Validations/subDepartmentValidationSchema';
+import { useSubDepartments } from '../../context/SubDepartmentContext';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import '../../Tables.css';
 
-export default function DepartmentForm({ mode = 'create', department = null, onBack, onSave, onUpdate }) {
+export default function SubDepartmentForm({ mode = 'create', subDepartment = null, onBack, onSave, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   
-  const { toggleDepartmentField } = useDepartments();
+  const { toggleDepartmentField } = useSubDepartments();
   
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
-    resolver: yupResolver(departmentValidationSchema),
+    resolver: yupResolver(subDepartmentValidationSchema),
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -25,17 +26,18 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
   });
 
   useEffect(() => {
-    if (department && mode === 'edit' || mode === 'view') {
+    if (subDepartment && mode === 'edit' || mode === 'view') {
  
       reset({
-        code: department?.code ?? '',
-        departmentName: department?.departmentName ?? '',
+        code: subDepartment?.code ?? '',
+        subDepartmentName: subDepartment?.subDepartmentName ?? '',
+        departmentName: subDepartment?.departmentName ?? '',
       });
     } else if (mode === 'create') {
 
       // generar número de departamento automáticamente
       const maxNum = Math.max( 0,
-        ...departments.map(d => {
+        ...subDepartments.map(d => {
           const num = parseInt(d.code) || 0;
           return num;
         })
@@ -43,17 +45,18 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
       const newNumDepartment = String(maxNum + 1);
       reset({
         code: newNumDepartment,
+        subDepartmentName: '',
         departmentName: '',
       });
     }
-  }, [department, mode, reset]);
+  }, [subDepartment, mode, reset]);
 
   const onSubmit = async (data) => {
     if (onSave) await onSave(data);
   };
 
   const onError = (formErrors) => {
-    console.warn('DepartmentForm validation errors:', formErrors);
+    console.warn('SubDepartmentForm validation errors:', formErrors);
     if (!formErrors) return;
   };
   
@@ -64,7 +67,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
   };
 
   if (isEditing) {
-    return <DepartmentForm mode="edit" department={department} onBack={() => setIsEditing(false)} onSave={handleEditSave} />;
+    return <SubDepartmentForm mode="edit" subDepartment={subDepartment} onBack={() => setIsEditing(false)} onSave={handleEditSave} />;
   }
 
   return (
@@ -85,19 +88,38 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
             <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')}</h3>
             <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
               <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1">Nombre Departamento: *</label>
+                <label className="block text-xl font-medium text-gray-300 mt-1"> Departamento: *</label>
+              </div>
+              <div>
+                {/* <input
+                  readOnly={true}
+                  {...register('departmentName')}
+                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.departmentName ? 'border-red-500' : ''} bg-gray-700 text-gray-300 cursor-not-allowed`}
+                /> */}
+                <select 
+                  readOnly={mode !== 'create'} {...register('department')} 
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}`}>
+                  <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                    {departments.map(dep => (
+                      <option key={`department-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
+                    ))}
+                </select>
+                {errors?.department && <p className="text-red-400 text-xs mt-1">{errors.department.message}</p>}  
+              </div>
+              <div>
+                <label className="block text-xl font-medium text-gray-300 mt-1">Nombre Sub-Departamento: *</label>
               </div>
               <div>
                 <input
                   readOnly={mode === 'view'}
-                  {...register('departmentName')}
-                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.departmentName ? 'border-red-500' : ''}
+                  {...register('subDepartmentName')}
+                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.subDepartmentName ? 'border-red-500' : ''}
                   ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
                 />
-                {errors?.departmentName && <p className="text-red-400 text-xs mt-1">{errors.departmentName.message}</p>}  
+                {errors?.subDepartmentName && <p className="text-red-400 text-xs mt-1">{errors.subDepartmentName.message}</p>}  
               </div>
               <div>
-                <label className="block text-xl font-medium text-right text-gray-300 mt-1">Código: *</label>
+                <label className="block text-xl font-medium text-gray-300 mt-1">Código: *</label>
               </div>
               <div>
                 <input
@@ -111,7 +133,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
             </div>
           </div>
         </div>
-        {department?.subDepartments && (
+        {subDepartment?.useSubDepartments && (
           <div className="mt-6">
             <h3 className="text-2xl font-bold mb-4 text-white">Sub-Departamentos</h3>
             <div className="rounded-lg shadow">
@@ -123,7 +145,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
                   </tr>
                 </thead>
                 <tbody>
-                  {department.subDepartments.map((dep) => (
+                  {subDepartment.useSubDepartments.map((dep) => (
                     <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
                       <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>
                       <td className="px-4 py-3 text-white-700">{dep.subDepartmentName}</td>
