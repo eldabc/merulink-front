@@ -4,6 +4,7 @@ import AssistantInput from "./AssistantInput";
 import EmployeeList from "./Employee/EmployeeList";
 import DepartmentList from "./Department/DepartmentList";
 import SubDepartmentList from "./SubDepartment/SubDepartmentList";
+import PositionList from "./Positions/PositionList";
 
 export default function Workspace({ activeMenu, activePath }) {
   if (activeMenu === 'Lobby') {
@@ -39,6 +40,12 @@ export default function Workspace({ activeMenu, activePath }) {
       return (
         <div className="main-workspace">
           <SubDepartmentList />
+        </div>
+      );
+    }else if (activePath[0] === 'Cargos') {
+      return (
+        <div className="main-workspace">
+          <PositionList />
         </div>
       );
     }
