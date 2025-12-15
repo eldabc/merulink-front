@@ -11,19 +11,46 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import '../../Tables.css';
 
 export default function SubDepartmentForm({ mode = 'create', subDepartment = null, onBack, onSave, onUpdate }) {
-  const [isEditing, setIsEditing] = useState(false);
-  
+  const [isEditing, setIsEditing] = useState(false); 
   const { toggleDepartmentField } = useSubDepartments();
-  
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(subDepartmentValidationSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'contacts',
-  });
+  // Generar código subdepartamento
+  const generateNewCode = (departmentId) => {
+    // convertir a número
+    const depIdNum = parseInt(departmentId, 10);
+    if (isNaN(depIdNum) || depIdNum <= 0) return '';
+
+    const countSubDepartments = subDepartments.filter(sub => sub.departmentId === depIdNum).length;
+
+    const newSubCodeSuffix = countSubDepartments + 1;
+    const newCode = `${depIdNum}${newSubCodeSuffix}`;
+
+    return String(newCode);
+  };
+
+  // Al seleccionar departamento
+  const handleDepartmentChange = (e) => {
+    const selectedDepartmentId = e.target.value;
+    
+    // establecer valor en react-hook-form
+    setValue('department', selectedDepartmentId, { shouldValidate: true });
+
+    if (selectedDepartmentId) {       
+      const newCode = generateNewCode(selectedDepartmentId);
+      setValue('code', newCode, { shouldValidate: true });
+    } else {
+      setValue('code', '', { shouldValidate: true });
+    }
+  };
+
+  // const { fields, append, remove } = useFieldArray({
+  //   control,
+  //   name: 'contacts',
+  // });
 
   useEffect(() => {
     if (subDepartment && mode === 'edit' || mode === 'view') {
@@ -36,15 +63,15 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
     } else if (mode === 'create') {
 
       // generar número de departamento automáticamente
-      const maxNum = Math.max( 0,
-        ...subDepartments.map(d => {
-          const num = parseInt(d.code) || 0;
-          return num;
-        })
-      );
-      const newNumDepartment = String(maxNum + 1);
+      // const maxNum = Math.max( 0,
+      //   ...subDepartments.map(d => {
+      //     const num = parseInt(d.code) || 0;
+      //     return num;
+      //   })
+      // );
+      // const newNumDepartment = String(maxNum + 1);
       reset({
-        code: newNumDepartment,
+        code: '',
         subDepartmentName: '',
         departmentName: '',
       });
@@ -85,20 +112,17 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-30 h-10 overflow-hidden flex items-center justify-center ml-2.5"></div>
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')}</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Sub-Departamento' ):( 'Datos Sub-Departamento')}</h3>
             <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Departamento: *</label>
               </div>
               <div>
-                {/* <input
-                  readOnly={true}
-                  {...register('departmentName')}
-                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.departmentName ? 'border-red-500' : ''} bg-gray-700 text-gray-300 cursor-not-allowed`}
-                /> */}
                 <select 
-                  readOnly={mode !== 'create'} {...register('department')} 
-                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}`}>
+                  disabled= {mode === 'view'}
+                  {...register('department', { onChange: handleDepartmentChange })} 
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}
+                   ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                     {departments.map(dep => (
                       <option key={`department-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
@@ -123,10 +147,9 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
               </div>
               <div>
                 <input
-                  readOnly={mode === 'view'}
+                  readOnly={true}
                   {...register('code')}
-                  className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${errors?.code ? 'border-red-500' : ''}
-                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                  className={`w-20 px-1 py-1 text-xl rounded-lg filter-input bg-gray-700 text-gray-300 cursor-not-allowed ${errors?.code ? 'border-red-500' : ''}`}
                 />
                 {errors?.code && <p className="text-red-400 text-xs mt-1">{errors.code.message}</p>}  
               </div>
@@ -161,7 +184,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
         <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
         {mode !== 'view' && (
           <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-            {mode === 'edit' ? 'Guardar cambios' : 'Crear Departamento'}
+            {mode === 'edit' ? 'Guardar cambios' : 'Crear Sub-Departamento'}
           </button>
         )}
       </div>

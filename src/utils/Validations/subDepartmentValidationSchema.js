@@ -7,16 +7,15 @@ export const subDepartmentValidationSchema = yup.object().shape({
     .string()
     .required('Código es requerido')
     .matches(/^[0-9]+$/, 'Solo se permiten números.')
-    .max(2, 'Debe contener 2 dígitos'), 
+    .max(3, 'Debe contener 3 dígitos'), 
 
   subDepartmentName: yup
     .string()
     .required('Nombre del subdepartamento es requerido')
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
 
-  departmentName: yup
+  department: yup
     .string()
-    .required('Nombre del departamento es requerido')
-    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
+    .required('Debe seleccionar un departamento')
     
 });
