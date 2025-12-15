@@ -160,7 +160,4 @@ export const subDepartments = [
     "departmentName": "Ventas",
     "status": true
   }
-
-  // Nota: Los departamentos 6 a 10 (RRHH, Seguridad, etc.) no tenían subdepartamentos definidos
-  // en la lista original, por lo que no se incluyen aquí.
 ];

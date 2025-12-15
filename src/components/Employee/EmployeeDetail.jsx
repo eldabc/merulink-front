@@ -18,7 +18,7 @@ const EmployeeDetail = ({ employee, onBack, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditSave = async (formData) => {
-    // Llamar al backend para actualizar aquí (PUT)
+    // Llamar al backend para actualizar (PUT)
     if (onUpdate) onUpdate(formData);
     setIsEditing(false);
   };

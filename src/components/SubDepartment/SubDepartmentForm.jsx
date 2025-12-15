@@ -64,7 +64,10 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   }, [subDepartment, mode, reset]);
 
   const onSubmit = async (data) => {
-    if (onSave) await onSave(data);
+    const dataSubDepartment = { ...data };
+    dataSubDepartment.status = true;
+
+    if (onSave) await onSave(dataSubDepartment);
   };
 
   const onError = (formErrors) => {
@@ -106,7 +109,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
                 <select 
                   disabled= {mode === 'view'}
                   {...register('departmentId', { onChange: handleDepartmentChange })} 
-                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.departmentId ? 'border-red-500' : ''}
                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                     {departments.map(dep => (
