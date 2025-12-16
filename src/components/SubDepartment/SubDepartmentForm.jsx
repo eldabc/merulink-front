@@ -37,7 +37,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
     const selectedDepartmentId = e.target.value;
     
     // establecer valor en react-hook-form
-    setValue('department', selectedDepartmentId, { shouldValidate: true });
+    setValue('departmentId', selectedDepartmentId, { shouldValidate: true });
 
     if (selectedDepartmentId) {       
       const newCode = generateNewCode(selectedDepartmentId);
@@ -77,6 +77,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   
   const handleEditSave = async (formData) => {
     // Llamar al backend para actualizar (PUT)
+    console.log('Actualizabndo', formData);
     if (onUpdate) onUpdate(formData);
     setIsEditing(false);
   };
@@ -113,7 +114,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                     {departments.map(dep => (
-                      <option key={`department-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
+                      <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
                     ))}
                 </select>
                 {errors?.departmentId && <p className="text-red-400 text-xs mt-1">{errors.departmentId.message}</p>}  
@@ -144,30 +145,28 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
             </div>
           </div>
         </div>
-        {subDepartment?.useSubDepartments && (
+        {mode === 'view' && (
           <div className="mt-6">
-            <h3 className="text-2xl font-bold mb-4 text-white">Sub-Departamentos</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">Departamento</h3>
             <div className="rounded-lg shadow">
               <table className="min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">
                     <th className="px-4 py-3 text-left font-semibold">Código</th>
-                    <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
+                    <th className="px-4 py-3 text-left font-semibold">Nombre Departamento</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {subDepartment.useSubDepartments.map((dep) => (
-                    <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
-                      <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>
-                      <td className="px-4 py-3 text-white-700">{dep.subDepartmentName}</td>
-                    </tr>
-                  ))}
+                  <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                    <td className="px-4 py-3 text-white-800 font-medium">{subDepartment.departmentCode}</td>
+                    <td className="px-4 py-3 text-white-700">{subDepartment.departmentName}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
         )}
-      </div>
+        </div>
       <div className="mt-6 flex justify-end gap-3">
         <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
         {mode !== 'view' && (

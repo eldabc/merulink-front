@@ -124,7 +124,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
                 </thead>
                 <tbody>
                   {department.subDepartments.map((dep) => (
-                    <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                    <tr key={dep.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
                       <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>
                       <td className="px-4 py-3 text-white-700">{dep.subDepartmentName}</td>
                     </tr>

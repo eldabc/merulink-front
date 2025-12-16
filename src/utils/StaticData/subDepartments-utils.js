@@ -6,6 +6,7 @@ export const subDepartments = [
     "subDepartmentName": "Contabilidad",
     "departmentId": 1,
     "departmentName": "Administración",
+    "departmentCode": 1,
     "status": true
   },
   {
@@ -14,6 +15,7 @@ export const subDepartments = [
     "subDepartmentName": "Auditoría",
     "departmentId": 1,
     "departmentName": "Administración",
+    "departmentCode": 1,
     "status": true
   },
   {
@@ -22,6 +24,7 @@ export const subDepartments = [
     "subDepartmentName": "Cobranza",
     "departmentId": 1,
     "departmentName": "Administración",
+    "departmentCode": 1,
     "status": true
   },
   {
@@ -30,6 +33,7 @@ export const subDepartments = [
     "subDepartmentName": "Tributos",
     "departmentId": 1,
     "departmentName": "Administración",
+    "departmentCode": 1,
     "status": true
   },
   {
@@ -38,6 +42,7 @@ export const subDepartments = [
     "subDepartmentName": "Compras",
     "departmentId": 1,
     "departmentName": "Administración",
+    "departmentCode": 1,
     "status": true
   },
   {
@@ -46,6 +51,7 @@ export const subDepartments = [
     "subDepartmentName": "Almacen",
     "departmentId": 1,
     "departmentName": "Administración",
+    "departmentCode": 1,
     "status": true
   },
 
@@ -56,6 +62,7 @@ export const subDepartments = [
     "subDepartmentName": "Front Desk",
     "departmentId": 2,
     "departmentName": "Recepción",
+    "departmentCode": 2,
     "status": true
   },
   {
@@ -64,6 +71,7 @@ export const subDepartments = [
     "subDepartmentName": "Reserva",
     "departmentId": 2,
     "departmentName": "Recepción",
+    "departmentCode": 2,
     "status": true
   },
   {
@@ -72,6 +80,7 @@ export const subDepartments = [
     "subDepartmentName": "Botones",
     "departmentId": 2,
     "departmentName": "Recepción",
+    "departmentCode": 2,
     "status": true
   },
 
@@ -82,6 +91,7 @@ export const subDepartments = [
     "subDepartmentName": "Supervisoras",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
+    "departmentCode": 3,
     "status": true
   },
   {
@@ -90,6 +100,7 @@ export const subDepartments = [
     "subDepartmentName": "Aseadora",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
+    "departmentCode": 3,
     "status": true
   },
   {
@@ -98,6 +109,7 @@ export const subDepartments = [
     "subDepartmentName": "Camareras",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
+    "departmentCode": 3,
     "status": true
   },
   {
@@ -106,6 +118,7 @@ export const subDepartments = [
     "subDepartmentName": "Lavanderia",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
+    "departmentCode": 3,
     "status": true
   },
 
@@ -116,6 +129,7 @@ export const subDepartments = [
     "subDepartmentName": "Cocina",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
+    "departmentCode": 4,
     "status": true
   },
   {
@@ -124,6 +138,7 @@ export const subDepartments = [
     "subDepartmentName": "Restaurante",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
+    "departmentCode": 4,
     "status": true
   },
   {
@@ -132,6 +147,7 @@ export const subDepartments = [
     "subDepartmentName": "Barra",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
+    "departmentCode": 4,
     "status": true
   },
   {
@@ -140,6 +156,7 @@ export const subDepartments = [
     "subDepartmentName": "Cajero",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
+    "departmentCode": 4,
     "status": true
   },
 
@@ -150,6 +167,7 @@ export const subDepartments = [
     "subDepartmentName": "Ventas",
     "departmentId": 5,
     "departmentName": "Ventas",
+    "departmentCode": 5,
     "status": true
   },
   {
@@ -158,6 +176,7 @@ export const subDepartments = [
     "subDepartmentName": "Banquetes",
     "departmentId": 5,
     "departmentName": "Ventas",
+    "departmentCode": 5,
     "status": true
   }
 ];
