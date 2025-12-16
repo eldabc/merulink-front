@@ -8,5 +8,5 @@ import { departments } from '../../utils/StaticData/departments-utils';
 export const getDepartmentNameById = (departmentId) => {
     const department = departments.find(dep => String(dep.id) === String(departmentId));
     
-    return department ? department.departmentName : 'N/A';
+    return department ? department : { departmentName: null, code: null, id: null };
 };

@@ -14,14 +14,16 @@ export const SubDepartmentProvider = ({ initialData, showNotification, children 
 
   // ***   ***   ***   ***   ***   ***   ***
   // *** Crear Sub-departamento
-  const createSubDepartment = async (formData) => { 
-    
+  const createSubDepartment = async (formData) => {
+    const departmentData =  getDepartmentNameById(formData.departmentId);
+
     const newSubDep = {
       id: Date.now(), // ID temporal
       code: formData.code,
       subDepartmentName: formData.subDepartmentName,
       departmentId: formData.departmentId,
-      departmentName: getDepartmentNameById(formData.departmentId),
+      departmentCode: departmentData.code,
+      departmentName: departmentData.departmentName,
       status: true
     };
 
@@ -46,11 +48,12 @@ export const SubDepartmentProvider = ({ initialData, showNotification, children 
   // ***   ***   ***   ***   ***   ***   ***
   // *** Actualizar Sub-departamento
   const updateSubDepartment = async (formData) => {
+    const departmentData =  getDepartmentNameById(formData.departmentId);
 
-    const departmentName = getDepartmentNameById(formData.departmentId);
     const finalData = {
         ...formData,
-        departmentName: departmentName 
+        departmentCode: departmentData.code, 
+        departmentName: departmentData.departmentName, 
     };
     
     try {
