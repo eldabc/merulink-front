@@ -15,13 +15,7 @@ export default function SubDepartmentRow({ subDep, setSelectedSubDepartment }) {
     >
       <td className="px-4 py-3 text-white-800 font-medium">{subDep.code}</td>
       <td className="px-4 py-3 text-white-700">{subDep.subDepartmentName}</td>
-      <td className="px-4 py-3 text-white-700">
-        { subDep.departmentName ? (
-          subDep.departmentName
-        ) : (
-          getDepartmentNameById(subDep.departmentId)
-        )}
-      </td>
+      <td className="px-4 py-3 text-white-700">{subDep.departmentName}</td>
       <td className="px-4 py-3">
         <button 
           onClick={(e) => {

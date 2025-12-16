@@ -11,7 +11,7 @@ import '../../Tables.css';
 
 export default function SubDepartmentForm({ mode = 'create', subDepartment = null, onBack, onSave, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false); 
-  const { updateSubDepartment } = useSubDepartments();
+  const { createSubDepartment, updateSubDepartment } = useSubDepartments();
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(subDepartmentValidationSchema),
@@ -63,10 +63,19 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   }, [subDepartment, mode, reset]);
 
   const onSubmit = async (data) => {
-    const dataSubDepartment = { ...data };
-    dataSubDepartment.status = true;
+    let success = false;
+    
+    if (mode === 'edit' && subDepartment) {
+        console.log("Actualizando:", data);
+        
+        const updatedData = { ...subDepartment, ...data };
+        success = await updateSubDepartment(updatedData);
+    } else {
+        console.log("Creando:", data);
+        success = await createSubDepartment(data);
+    }
 
-    if (onSave) await onSave(dataSubDepartment);
+    if (success) onBack();
   };
 
   const onError = (formErrors) => {
@@ -74,18 +83,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
     if (!formErrors) return;
   };
   
-  const handleEditSave = async (formData) => {
-    console.log('Actualizando', formData);  
-    const success = await updateSubDepartment({ ...subDepartment, ...formData }); 
-    
-    if (success) {
-      setIsEditing(false);
-    }
-  };
-
-  if (isEditing) {
-    return <SubDepartmentForm mode="edit" subDepartment={subDepartment} onBack={() => setIsEditing(false)} onSave={handleEditSave} />;
-  }
+  if (isEditing){ return <SubDepartmentForm mode="edit" subDepartment={subDepartment} onBack={() => setIsEditing(false)} />;}
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
