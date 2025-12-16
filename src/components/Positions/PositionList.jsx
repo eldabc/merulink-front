@@ -68,7 +68,7 @@ function PositionListContent() {
   const paginatedPositions = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
 
-  // Si hay departamento seleccionado, mostrar detalle
+  // Si hay seleccionado, mostrar detalle
   if (selectedPosition) {
     const positionSelected = positionData.find(d => d.id === selectedPosition);
     return <PositionForm 
@@ -120,7 +120,7 @@ function PositionListContent() {
           filterStatus={filterStatus}
           onFilterStatus={setFilterStatus}
           moduleName='Cargo'
-          placeholder='Ingrese código o nombre de departamento'
+          placeholder={'Ingrese código o nombre del cargo'}
         />
 
         <div className="rounded-lg shadow">
@@ -133,10 +133,10 @@ function PositionListContent() {
               </tr>
             </thead>
             <tbody>
-              {paginatedPositions.map((dep) => (
+              {paginatedPositions.map((position) => (
                 <PositionRow 
-                  key={dep.id}
-                  dep={dep} 
+                  key={position.id}
+                  position={position} 
                   setSelectedPosition={setSelectedPosition}
                 />
               ))}
