@@ -3,8 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, User } from "lucide-react";
 import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
-import { departments } from '../../utils/StaticData/departments-utils';
-// import { getStatusColor, getStatusName } from '../../utils/status-utils';  
+import { departments } from '../../utils/StaticData/departments-utils';;  
 import { subDepartmentValidationSchema } from '../../utils/Validations/subDepartmentValidationSchema';
 import { useSubDepartments } from '../../context/SubDepartmentContext';
 import { PencilIcon } from "@heroicons/react/24/solid";
@@ -12,13 +11,13 @@ import '../../Tables.css';
 
 export default function SubDepartmentForm({ mode = 'create', subDepartment = null, onBack, onSave, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false); 
-  const { toggleDepartmentField } = useSubDepartments();
+  const { updateSubDepartment } = useSubDepartments();
 
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(subDepartmentValidationSchema),
   });
 
-  // Generar código subdepartamento
+  // Generar código
   const generateNewCode = (departmentId) => {
     // convertir a número
     const depIdNum = parseInt(departmentId, 10);
@@ -32,7 +31,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
     return String(newCode);
   };
 
-  // Al seleccionar departamento
+  // Al seleccionar
   const handleDepartmentChange = (e) => {
     const selectedDepartmentId = e.target.value;
     
@@ -71,15 +70,17 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   };
 
   const onError = (formErrors) => {
-    console.warn('SubDepartmentForm validation errors:', formErrors);
+    console.warn('Validation errors:', formErrors);
     if (!formErrors) return;
   };
   
   const handleEditSave = async (formData) => {
-    // Llamar al backend para actualizar (PUT)
-    console.log('Actualizabndo', formData);
-    if (onUpdate) onUpdate(formData);
-    setIsEditing(false);
+    console.log('Actualizando', formData);  
+    const success = await updateSubDepartment({ ...subDepartment, ...formData }); 
+    
+    if (success) {
+      setIsEditing(false);
+    }
   };
 
   if (isEditing) {
