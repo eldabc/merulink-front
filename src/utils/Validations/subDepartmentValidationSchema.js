@@ -13,7 +13,7 @@ export const subDepartmentValidationSchema = yup.object().shape({
     .string()
     .required('Nombre del subdepartamento es requerido')
     .max(30, 'Debe contener máximo 30 caracteres')
-    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
+    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-\/]+$/, "Solo se permiten letras y los signos '-','/'."),
 
   departmentId: yup
     .string()

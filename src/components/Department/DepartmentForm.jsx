@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, User } from "lucide-react";
 import { departments } from '../../utils/StaticData/departments-utils';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
-import { departmentValidationSchema } from '../../utils/departmentValidationSchema';
+import { departmentValidationSchema } from '../../utils/Validations/departmentValidationSchema';
 import { useDepartments } from '../../context/DepartmentContext';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import '../../Tables.css';
