@@ -6,6 +6,8 @@ import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 import { menuTree } from "./components/Menu/menuTree";
 import { NotificationProvider } from "./context/NotificationContext";
+import Calendar from "./components/Calendar/Calendar";
+import EventList from "./components/Events/EventList"
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState("Lobby");
@@ -29,15 +31,7 @@ export default function App() {
       <NotificationProvider>
       
         <BrowserRouter>
-        {/* Navegación con React Router DOM */}
-
-        {/* 🌐 Definición de las Rutas */}
-        <Routes>
-        
-        {/* Ruta para la Propuesta B: http://localhost:3000/diseno-b */}
-
-        </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
 
         <ParticlesCanvas />
 

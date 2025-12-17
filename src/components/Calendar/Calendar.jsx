@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import axios from 'axios'
 import { formatDate } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
@@ -14,6 +14,7 @@ import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
 import '../../Calendar.css';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+// import { useNavigate } from 'react-router-dom';
 
 export default function Calendar() {
 
@@ -22,6 +23,16 @@ export default function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const calendarRef = useRef(null);
+  // Funciones para controlar el calendario manualmente
+  const handlePrev = () => calendarRef.current.getApi().prev();
+  const handleNext = () => calendarRef.current.getApi().next();
+  // const navigate = useNavigate();
+
+  // const goToEventos = () => {
+  //   setIsMenuOpen(false); // Cerramos el menú
+  //   navigate('/eventos'); // 🚀 ¡Saltamos al módulo de eventos!
+  // }; 
 
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
@@ -131,47 +142,28 @@ export default function Calendar() {
   return (
     <div className='container'>
       <div className='calendar-container'>
-        <div className='demo-app-main'><h2 className="title">Calendario Plaza Meru</h2>
-          <div className='relative inline-block mb-2'> 
-            <div className='relative inline-block mb-2'> 
+        <div className='demo-app-main'>
+          <div className='w-full flex justify-around mb-2'> 
+            <div className="flex gap-2">
+              <button onClick={handlePrev} className="bg-gray-700 p-2 rounded">Ant.</button>
+              <button onClick={handleNext} className="bg-gray-700 p-2 rounded">Sig.</button>
+            </div>
+            <h2 className="text-2xl font-bold text-white">Calendario Plaza Meru</h2>
+
+            <div className='relative'>
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className='flex items-center bg-gray-600 p-1.5 rounded-xl hover:text-[#9fd8ff] transition-colors'
               >
                 <Cog6ToothIcon className="size-6 text-gray-300" />
               </button>
-
-              {isMenuOpen && (
-                <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)}></div>
-              )}
-
-              <div className={`
-                absolute left-0 mt-2 w-48 bg-[#3c4042] border border-gray-500 rounded-lg shadow-xl z-20 overflow-hidden
-                /* Clases de transición */
-                transition-all duration-300 ease-out transform
-                /* Lógica de visibilidad */
-                ${isMenuOpen 
-                    ? 'opacity-100 translate-y-0 scale-100' 
-                    : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'}
-              `}>
-                <div className="py-1">
-                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-500 transition-colors">
-                    Configurar Eventos
-                  </button>
-                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-500 transition-colors">
-                    Exportar Calendario
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
+         
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            headerToolbar={{
-              left: 'prev,next',
-              center: 'title',
-              right: ''
-            }}
+            ref={calendarRef}
+            headerToolbar={false}
             initialView='dayGridMonth'
             editable={false}
             selectable={true}

@@ -9,7 +9,7 @@ body > div { /* the react root */
 
 h2 {
   margin: 0;
-  font-size: 16px;
+  /* font-size: 19px; */
 }
 
 ul {
@@ -344,6 +344,9 @@ b { /* used for event dates/times */
   .fc {
     max-width: 100%;
   }
+  h2 {
+    font-size: 12px;
+  }
 }
 
 /* Móviles (hasta 768px) */
@@ -421,7 +424,7 @@ b { /* used for event dates/times */
 
   /* Ajustar tamaño de fuente en móviles */
   h2 {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .fc-col-header-cell {
