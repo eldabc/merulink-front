@@ -1,53 +1,72 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowLeft, User } from "lucide-react";
-import { positions } from '../../utils/StaticData/positions-utils';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';  
+import { ArrowLeft } from "lucide-react";
 import { positionValidationSchema } from '../../utils/Validations/positionValidationSchema';
 import { usePositions } from '../../context/PositionContext';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import '../../Tables.css';
+import { departments } from '../../utils/StaticData/departments-utils';
+import { subDepartments } from '../../utils/StaticData/subDepartments-utils'; 
+import { newCodePosition } from '../../utils/Positions/positions-utils'
 
-export default function PositionForm({ mode = 'create', position = null, onBack, onSave, onUpdate }) {
+export default function PositionForm({ mode = 'create', position = null, onBack }) {
+  const { positionData } = usePositions();
   const [isEditing, setIsEditing] = useState(false);
-  
-  const { togglePositionField } = usePositions();
-  
-
-  const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(positionValidationSchema),
+    // 1. Valores por defecto al cargar
+    defaultValues: {
+      code: '',
+      positionName: '',
+      departmentId: '',
+      subDepartmentId: ''
+    }
   });
 
-  // const { fields, append, remove } = useFieldArray({
-  //   control,
-  //   name: 'contacts',
-  // });
+  const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
+  const selectedDepartmentId = watch('departmentId');
+  const selectedSubDepartmentId = watch('subDepartmentId');
 
+  // --- EFECTO 1: Inicialización (Solo cuando entra en edición o carga inicial) ---
   useEffect(() => {
-    if (position && mode === 'edit' || mode === 'view') {
- 
-      reset({
-        code: position?.code ?? '',
-        positionName: position?.positionName ?? '',
-      });
-    } else if (mode === 'create') {
-
-      // generar número automáticamente
-      const maxNum = Math.max( 0,
-        ...positions.map(d => {
-          const num = parseInt(d.code) || 0;
-          return num;
-        })
-      );
-      const newNumPosition = String(maxNum + 1);
-      reset({
-        code: newNumPosition,
-        positionName: '',
-      });
+    if ((mode === 'edit' || mode === 'view') && position) {
+      reset(position);
+      // Cargar subdepartamentos filtrados si ya hay un departamento
+      const filtered = subDepartments.filter(sd => String(sd.departmentId) === String(position.departmentId));
+      setFilteredSubDepartments(filtered);
     }
-  }, [position, mode, reset]);
+  }, [mode, position, reset]);
 
+  // --- EFECTO 2: Lógica de Filtrado de Sub-departamentos ---
+  useEffect(() => {
+    if (selectedDepartmentId) {
+      const filtered = subDepartments.filter(sd => String(sd.departmentId) === String(selectedDepartmentId));
+      setFilteredSubDepartments(filtered);
+      
+      // Si el departamento NO tiene subdepartamentos, generamos código ya mismo
+      if (filtered.length === 0) {
+        const newCode = newCodePosition(selectedDepartmentId, 0, positionData);
+        setValue('code', newCode);
+      } else {
+        // Si hay subdepartamentos, limpiamos el código hasta que elijan uno
+        setValue('code', '');
+      }
+    } else {
+      setFilteredSubDepartments([]);
+      setValue('code', '');
+    }
+  }, [selectedDepartmentId, positionData, setValue]);
+
+  // --- EFECTO 3: Lógica de Código por Sub-departamento ---
+  useEffect(() => {
+    if (selectedSubDepartmentId) {
+      const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData);
+      setValue('code', newCode);
+    }
+  }, [selectedSubDepartmentId, selectedDepartmentId, positionData, setValue]);
+
+  // ... resto del componente
   const onSubmit = async (data) => {
     if (onSave) await onSave(data);
   };
@@ -83,6 +102,44 @@ export default function PositionForm({ mode = 'create', position = null, onBack,
                 <div className="w-30 h-10 overflow-hidden flex items-center justify-center ml-2.5"></div>
                 <div>
                   <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Cargo' ):( 'Datos del Cargo')}</h3>
+                  <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full mb-3">
+                    <div>
+                      <label className="block text-xl font-medium text-gray-300 mt-1">Departamento: *</label>
+                    </div>
+                    <div>
+                      <select 
+                        disabled= {mode === 'view'}
+                        {...register('departmentId')} 
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.departmentId ? 'border-red-500' : ''}
+                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
+                        <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                          {departments.map(dep => (
+                            <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
+                          ))}
+                      </select>
+                      {errors?.departmentId && <p className="text-red-400 text-xs mt-1">{errors.departmentId.message}</p>}  
+                    </div>
+
+                    <div>
+                      <label className="block text-xl font-medium text-right text-gray-300 mt-1">Sub-departamento: </label>
+                    </div>
+                    <div>
+                      <select 
+                        disabled={mode === 'view' || !selectedDepartmentId}
+                        {...register('subDepartmentId')} 
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.subDepartmentId ? 'border-red-500' : ''}
+                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                      >
+                        <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                        {filteredSubDepartments.map(subDep => (
+                          <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
+                            {subDep.subDepartmentName}
+                          </option>
+                        ))}
+                      </select>
+                      {errors?.code && <p className="text-red-400 text-xs mt-1">{errors.code.message}</p>}  
+                    </div>
+                  </div>
                   <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                     <div>
                       <label className="block text-xl font-medium text-gray-300 mt-1">Nombre Cargo: *</label>
@@ -119,7 +176,7 @@ export default function PositionForm({ mode = 'create', position = null, onBack,
                       <thead>
                         <tr className="tr-thead-table">
                           <th className="px-4 py-3 text-left font-semibold">Código</th>
-                          <th className="px-4 py-3 text-left font-semibold">Sub-Cargo</th>
+                          <th className="px-4 py-3 text-left font-semibold">Cargo</th>
                         </tr>
                       </thead>
                       <tbody>
