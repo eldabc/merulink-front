@@ -4,20 +4,20 @@ export const menuTree = {
     },
     RRHH: {
       _meta: { label: "Empleados", path: "/empleados" },
+      Departamentos: { _meta: { label: "Departamentos", path: "/empleados/departamentos" } },
+      "Sub-Departamentos": { _meta: { label: "Sub-Departamentos", path: "/empleados/sub-departamentos" } },
+      Cargos: { _meta: { label: "Cargos", path: "/empleados/cargos" } },
       Roles: { _meta: { label: "Roles", path: "/empleados/roles" } },
-      Casilleros: { _meta: { label: "Casilleros", path: "/empleados/casilleros" } },
       Horarios: {
         _meta: { label: "Horarios", path: "/empleados/horarios" },
         "Crear Turno": { _meta: { label: "Crear Turno", path: "/empleados/horarios/crear-turno" } },
         Asignar: { _meta: { label: "Asignar", path: "/empleados/horarios/asignar" } }
       },
-      Departamentos: { _meta: { label: "Departamentos", path: "/empleados/departamentos" } },
-      "Sub-Departamentos": { _meta: { label: "Sub-Departamentos", path: "/empleados/sub-departamentos" } },
-      Cargos: { _meta: { label: "Cargos", path: "/empleados/cargos" } },
       Vestuarios: {
         _meta: { label: "Vestuarios", path: "/empleados/vestuarios" },
         Lockers: { _meta: { label: "Lockers", path: "/empleados/vestuarios/lockers" } },
-        Candados: { _meta: { label: "Candados", path: "/empleados/vestuarios/candados" } }
+        Candados: { _meta: { label: "Candados", path: "/empleados/vestuarios/candados" } },
+        Casilleros: { _meta: { label: "Casilleros", path: "/empleados/casilleros" } },
       }
     },
     Sistemas: {
