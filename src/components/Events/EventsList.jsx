@@ -1,18 +1,35 @@
 import React, { useMemo } from 'react';
 import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
+import { useNotification } from "../../context/NotificationContext";  
+import { EventProvider, useEvents } from "../../context/EventContext";
+import EventRow from './EventRow';
+
 
 export default function EventsList({ categoryKey }) {
+
+  const { showNotification } = useNotification();
+      return (
+        <EventProvider initialData={INITIAL_EVENTS} showNotification={showNotification}>
+          <EventListContent categoryKey={categoryKey} />
+        </EventProvider>
+      );   
+}
+
+  // Componente interno que usa el contexto
+function EventListContent({ categoryKey }) {
+  console.log("EventsList categoryKey:", categoryKey);
   // categoryKey can be 'meru-events', 'wedding-nights' or 'otros'
   const items = useMemo(() => {
-    if (categoryKey === 'otros') {
-      // everything not meru-events nor wedding-nights
-      return INITIAL_EVENTS.filter(ev => {
-        const cat = ev.extendedProps?.category;
-        return cat && cat !== 'meru-events' && cat !== 'wedding-nights';
-      });
-    }
+    // if (categoryKey === 'otros') {
+    //   // everything not meru-events nor wedding-nights
+    //   return INITIAL_EVENTS.filter(ev => {
+    //     const cat = ev.extendedProps?.category;
+    //     return cat && cat !== 'meru-events' && cat !== 'wedding-nights';
+    //   });
+    // }
     return INITIAL_EVENTS.filter(ev => ev.extendedProps?.category === categoryKey);
   }, [categoryKey]);
+  console.log("items:", items);
 
   if (!items || items.length === 0) {
     return <div className="p-4">No hay eventos en esta categoría.</div>;
@@ -55,13 +72,9 @@ export default function EventsList({ categoryKey }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {paginatedDepartments.map((dep) => (
-                    <DepartmentRow 
-                      key={dep.id}
-                      dep={dep} 
-                      setSelectedDepartment={setSelectedDepartment}
-                    />
-                  ))} */}
+                  {items.map((item) => (
+                    <EventRow key={item.id} event={item} />
+                  ))}
                 </tbody>
               </table>
             </div>
