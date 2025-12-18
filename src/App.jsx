@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useCallback, useEffect } from "react";
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import ParticlesCanvas from "./components/ParticlesCanvas";
 import TopBar from "./components/Menu/TopBar";
 import MainArea from "./components/MainArea";
@@ -10,15 +10,81 @@ import Calendar from "./components/Calendar/Calendar";
 import EventList from "./components/Events/EventList"
 
 export default function App() {
-  const [activeMenu, setActiveMenu] = useState("Lobby");
-  const [activePath, setActivePath] = useState([]); // breadcrumb
+  return (
+    <div className="merulink-root">
+      <NotificationProvider>
+        <BrowserRouter>
+          <AppRouterSync />
+        </BrowserRouter>
 
-  // Datos de navegación: derive everything desde el árbol `menuTree`
+        <ParticlesCanvas />
+        <Footer />
+      </NotificationProvider>
+    </div>
+  );
+}
+
+function AppRouterSync() {
+  // This component lives inside the Router so it can use hooks
+  const location = useLocation();
+  const [activeMenu, setActiveMenu] = useState("Lobby");
+  const [activePath, setActivePath] = useState([]);
+
+  // derive menu state from current location.pathname
+  useEffect(() => {
+    const pathname = location.pathname || '/';
+
+    // find matching node in menuTree
+    const findInNode = (node, pathSoFar = []) => {
+      for (const key of Object.keys(node)) {
+        if (key === '_meta') continue;
+        const child = node[key];
+        const meta = child._meta || {};
+        if (meta.path === pathname) {
+          return [...pathSoFar, key];
+        }
+        const hasChildren = Object.keys(child).some(k => k !== '_meta');
+        if (hasChildren) {
+          const res = findInNode(child, [...pathSoFar, key]);
+          if (res) return res;
+        }
+      }
+      return null;
+    };
+
+    // search top-level menus
+    let matchedTop = null;
+    let matchedPath = null;
+    for (const topKey of Object.keys(menuTree)) {
+      const topNode = menuTree[topKey];
+      if (topNode && topNode._meta && pathname === topNode._meta.path) {
+        matchedTop = topKey;
+        matchedPath = [];
+        break;
+      }
+      const res = findInNode(topNode, []);
+      if (res) {
+        matchedTop = topKey;
+        matchedPath = res;
+        break;
+      }
+    }
+
+    if (matchedTop) {
+      setActiveMenu(matchedTop);
+      setActivePath(matchedPath || []);
+    } else {
+      // default to Lobby if nothing matches
+      setActiveMenu('Lobby');
+      setActivePath([]);
+    }
+  }, [location.pathname]);
+
   const topMenuItems = Object.keys(menuTree);
 
   const handleMenuClick = useCallback((menuItem) => {
     setActiveMenu(menuItem);
-    setActivePath([]); // reset breadcrumb when clicking topbar
+    setActivePath([]);
   }, []);
 
   const handleSidebarItemClick = useCallback((itemPath) => {
@@ -26,29 +92,18 @@ export default function App() {
   }, []);
 
   return (
-    
-    <div className="merulink-root">
-      <NotificationProvider>
-      
-        <BrowserRouter>
-        </BrowserRouter>
+    <>
+      <TopBar 
+        activeMenu={activeMenu}
+        topMenuItems={topMenuItems}
+        setActiveMenu={handleMenuClick} 
+      />
 
-        <ParticlesCanvas />
-
-        <TopBar 
-          activeMenu={activeMenu}
-          topMenuItems={topMenuItems}
-          setActiveMenu={handleMenuClick} 
-        />
-
-        <MainArea 
-          activeMenu={activeMenu}
-          activePath={activePath}
-          onSidebarClick={handleSidebarItemClick}
-        />
-
-        <Footer />
-      </NotificationProvider>
-    </div>
+      <MainArea 
+        activeMenu={activeMenu}
+        activePath={activePath}
+        onSidebarClick={handleSidebarItemClick}
+      />
+    </>
   );
 }

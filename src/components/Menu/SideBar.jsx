@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { menuTree } from "./menuTree";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
+import { useNavigate, useLocation } from 'react-router-dom';
 
-function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
+function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed, navigate) {
   return Object.keys(node)
     .filter(key => key !== "_meta") // Skip metadata
     .map((key) => {
@@ -25,7 +26,13 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
             )}
             {!hasChildren && <div style={{ width: 20 }}></div>}
             <button
-              onClick={() => onItemClick(currentPath)}
+              onClick={() => {
+                if (childMeta.path) {
+                  navigate(childMeta.path);
+                } else if (onItemClick) {
+                  onItemClick(currentPath);
+                }
+              }}
               className="submenu-btn"
               style={{
                 color: isActive ? "#fff" : "inherit",
@@ -35,9 +42,9 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
               {childMeta.label || key}
             </button>
           </div>
-          {hasChildren && !isCollapsed && (
+            {hasChildren && !isCollapsed && (
             <div style={{ marginLeft: 20 }}>
-              {renderNode(child, currentPath, onItemClick, activePath, toggleCollapse, collapsed)}
+              {renderNode(child, currentPath, onItemClick, activePath, toggleCollapse, collapsed, navigate)}
             </div>
           )}
         </div>
@@ -47,6 +54,8 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
 
 export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen }) {
   const node = menuTree[activeMenu] || {};
+  const navigate = useNavigate();
+  const location = useLocation();
   
   // Memoize the initial collapsed state
   const initialCollapsed = useMemo(() => buildAllPaths(node), [activeMenu]);
@@ -117,7 +126,7 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
           'Inicio'
         )}
       </div>
-      <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
+      <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed, navigate)}</div>
     </aside>
   );
 }
