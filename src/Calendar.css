@@ -271,15 +271,15 @@ b { /* used for event dates/times */
     background-color: #668CD9;
     border-color: #5d80c5;
 }
-.meru-birthday {
+.meru-birthdays {
   background-color: #603F99;
   border-color: #593a8f;
 }
-.event-wedding {
+.wedding-nights {
   background-color: #7EC225;
   border-color: #77b823;
 }
-.event-executive {
+.executive-mod {
   background-color: #E0C240;
   border-color: #cfb43a;
 }

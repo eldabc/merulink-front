@@ -33,18 +33,18 @@ export default function Calendar() {
   const [activeCategories, setActiveCategories] = useState({
     "meru-events": true,
     "venezuelan-holidays": true,
-    "event-wedding": true,
-    "event-executive": true,
-    "meru-birthday": true,
+    "wedding-nights": true,
+    "executive-mod": true,
+    "meru-birthdays": true,
     "christian-holidays": true,
   });
 
   // Categorías para la leyenda
   const categoryLegend = [
     { key: "meru-events", label: "Eventos Merú", color: "meru-events" },
-    { key: "meru-birthday", label: "Cumpleaños Merú", color: "meru-birthday" },
-    { key: "event-wedding", label: "Plan Noche de Bodas", color: "event-wedding" },
-    { key: "event-executive", label: "Ejecutivos MOD", color: "event-executive" },
+    { key: "meru-birthdays", label: "Cumpleaños Merú", color: "meru-birthdays" },
+    { key: "wedding-nights", label: "Plan Noche de Bodas", color: "wedding-nights" },
+    { key: "executive-mod", label: "Ejecutivos MOD", color: "executive-mod" },
     { key: "venezuelan-holidays", label: "Festivos Venezolanos", color: "venezuelan-holidays" },
     { key: "christian-holidays", label: "Festivos Cristianos", color: "christian-holidays" }
   ];

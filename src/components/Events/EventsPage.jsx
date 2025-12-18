@@ -9,7 +9,7 @@ export default function EventsPage() {
         <Routes>
           <Route path="/" element={<EventsList categoryKey="meru-events" />} />
           <Route path="" element={<EventsList categoryKey="meru-events" />} />
-          <Route path="bodas" element={<EventsList categoryKey="event-wedding" />} />
+          <Route path="bodas" element={<EventsList categoryKey="wedding-nights" />} />
           <Route path="otros" element={<EventsList categoryKey="otros" />} />
         </Routes>
       </main>

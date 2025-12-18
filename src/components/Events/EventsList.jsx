@@ -2,13 +2,13 @@ import React, { useMemo } from 'react';
 import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
 
 export default function EventsList({ categoryKey }) {
-  // categoryKey can be 'meru-events', 'event-wedding' or 'otros'
+  // categoryKey can be 'meru-events', 'wedding-nights' or 'otros'
   const items = useMemo(() => {
     if (categoryKey === 'otros') {
-      // everything not meru-events nor event-wedding
+      // everything not meru-events nor wedding-nights
       return INITIAL_EVENTS.filter(ev => {
         const cat = ev.extendedProps?.category;
-        return cat && cat !== 'meru-events' && cat !== 'event-wedding';
+        return cat && cat !== 'meru-events' && cat !== 'wedding-nights';
       });
     }
     return INITIAL_EVENTS.filter(ev => ev.extendedProps?.category === categoryKey);
