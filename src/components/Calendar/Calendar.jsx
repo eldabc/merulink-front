@@ -14,10 +14,11 @@ import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
 import '../../Calendar.css';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Calendar() {
 
+  const navigate = useNavigate();
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [currentEvents, setCurrentEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -26,13 +27,7 @@ export default function Calendar() {
   const calendarRef = useRef(null);
   // Funciones para controlar el calendario manualmente
   const handlePrev = () => calendarRef.current.getApi().prev();
-  const handleNext = () => calendarRef.current.getApi().next();
-  // const navigate = useNavigate();
-
-  // const goToEventos = () => {
-  //   setIsMenuOpen(false); // Cerramos el menú
-  //   navigate('/eventos'); // 🚀 ¡Saltamos al módulo de eventos!
-  // }; 
+  const handleNext = () => calendarRef.current.getApi().next(); 
 
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
@@ -152,7 +147,7 @@ export default function Calendar() {
 
             <div className='relative'>
               <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={() => { navigate('/eventos'); }}
                 className='flex items-center bg-gray-600 p-1.5 rounded-xl hover:text-[#9fd8ff] transition-colors'
               >
                 <Cog6ToothIcon className="size-6 text-gray-300" />

@@ -7,6 +7,7 @@ const EmployeeList = lazy(() => import("./Employee/EmployeeList"));
 const DepartmentList = lazy(() => import("./Department/DepartmentList"));
 const SubDepartmentList = lazy(() => import("./SubDepartment/SubDepartmentList"));
 const PositionList = lazy(() => import("./Positions/PositionList"));
+const EventsPage = lazy(() => import("./Events/EventsPage"));
 
 export default function Workspace({ activeMenu, activePath }) {
   return (
@@ -20,6 +21,8 @@ export default function Workspace({ activeMenu, activePath }) {
         <Route path="/empleados/departamentos" element={<div className="main-workspace"><DepartmentList /></div>} />
         <Route path="/empleados/sub-departamentos" element={<div className="main-workspace"><SubDepartmentList /></div>} />
         <Route path="/empleados/cargos" element={<div className="main-workspace"><PositionList /></div>} />
+        {/* Eventos */}
+        <Route path="/eventos/*" element={<EventsPage />} />
 
         {/* Fallback to existing behavior when route not matched */}
         <Route path="*" element={<DefaultWorkspace activeMenu={activeMenu} />} />

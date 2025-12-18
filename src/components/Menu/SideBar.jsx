@@ -63,8 +63,9 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
     });
 }
 
-export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen }) {
-  const node = menuTree[activeMenu] || {};
+export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen, menu, toggleSidebar }) {
+  // Allow passing a custom `menu` object (useful for modules with their own sidebar)
+  const node = menu ? menu : (menuTree[activeMenu] || {});
   
   // Memoize the initial collapsed state
   const initialCollapsed = useMemo(() => buildAllPaths(node), [activeMenu]);
@@ -74,9 +75,9 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
   useEffect(() => {
     setCollapsed(initialCollapsed);
   }, [activeMenu, initialCollapsed]);
-
+  // console.log('SideBar render:', { activeMenu, activePath, isSidebarOpen, toggleSidebar, node });
   // If no sections for this menu, hide the sidebar
-  if (!activeMenu || Object.keys(node).length === 0 || activeMenu === "Lobby" || activeMenu === "IA") {
+  if ((!activeMenu || Object.keys(node).length === 0 || activeMenu === "Lobby" || activeMenu === "IA") && !toggleSidebar) {
     return <aside className="sidebar hidden" />;
   }
 
