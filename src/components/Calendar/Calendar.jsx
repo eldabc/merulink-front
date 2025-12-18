@@ -146,7 +146,7 @@ export default function Calendar() {
             <h2 className="text-2xl font-bold text-white">Calendario Plaza Meru</h2>
 
             <div className='relative'>
-              <button 
+              <button title='Gestionar Eventos' 
                 onClick={() => { navigate('/eventos'); }}
                 className='flex items-center bg-gray-600 p-1.5 rounded-xl hover:text-[#9fd8ff] transition-colors'
               >

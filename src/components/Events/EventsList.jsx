@@ -19,23 +19,66 @@ export default function EventsList({ categoryKey }) {
   }
 
   return (
-    <div className="events-list">
-      <ul className="space-y-3">
-        {items.map(ev => (
-          <li key={ev.id} className="p-3 bg-[#0f1720] rounded-md border border-[#ffffff0d]">
-            <div className="flex justify-between items-start gap-4">
-              <div>
-                <div className="text-lg font-semibold">{ev.title}</div>
-                <div className="text-sm text-gray-400">{new Date(ev.start).toLocaleString()}</div>
+     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
+            
+            {/* {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )} */}
+    
+            <div className="titles-table flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Listado de </h2>
+              <div className="text-sm">
+                <button
+                  onClick={() => setAddDepartment({})}
+                  className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
+                >
+                  ← Nuevo Registro
+                </button>
               </div>
-              <div className="text-sm text-gray-400">{ev.extendedProps?.category || '-'}</div>
             </div>
-            {ev.extendedProps?.description && (
-              <p className="mt-2 text-sm text-gray-300">{ev.extendedProps.description}</p>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+            {/* Filtro */}
+            {/* <FilterByFields
+              searchValue={searchValue}
+              onSearchChange={setSearchValue}
+              filterStatus={filterStatus}
+              onFilterStatus={setFilterStatus}
+              moduleName='Departamento'
+              placeholder='Ingrese código o nombre de departamento'
+            /> */}
+    
+            <div className="rounded-lg shadow">
+              <table className="min-w-full border-collapse text-sm sm:text-base">
+                <thead>
+                  <tr className="tr-thead-table">
+                    <th className="px-4 py-3 text-left font-semibold">Fecha</th>
+                    <th className="px-4 py-3 text-left font-semibold">Hora</th>
+                    <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
+                    <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* {paginatedDepartments.map((dep) => (
+                    <DepartmentRow 
+                      key={dep.id}
+                      dep={dep} 
+                      setSelectedDepartment={setSelectedDepartment}
+                    />
+                  ))} */}
+                </tbody>
+              </table>
+            </div>
+    
+            {/* Paginación */}
+            {/* <Pagination
+              paginatedData={paginatedDepartments}
+              startIndex={startIndex}
+              itemsPerPage={itemsPerPage}
+              dataToDisplay={dataToDisplay}
+              hasSearched={hasSearched}
+              data={departmentData}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              moduleName={'Departamento'}
+            /> */}
+  </div>
   );
 }
