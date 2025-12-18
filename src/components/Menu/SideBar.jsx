@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { menuTree } from "./menuTree";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
-function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed, navigate) {
+function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
   return Object.keys(node)
     .filter(key => key !== "_meta") // Skip metadata
     .map((key) => {
@@ -25,26 +25,34 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
               </button>
             )}
             {!hasChildren && <div style={{ width: 20 }}></div>}
-            <button
-              onClick={() => {
-                if (childMeta.path) {
-                  navigate(childMeta.path);
-                } else if (onItemClick) {
-                  onItemClick(currentPath);
-                }
-              }}
-              className="submenu-btn"
-              style={{
-                color: isActive ? "#fff" : "inherit",
-                fontWeight: isActive ? "bold" : "normal"
-              }}
-            >
-              {childMeta.label || key}
-            </button>
+            {childMeta.path ? (
+              <NavLink
+                to={childMeta.path}
+                className={({ isActive: navActive }) =>
+                  `submenu-btn`}
+                style={({ isActive: navActive }) => ({
+                  color: (isActive || navActive) ? "#fff" : "inherit",
+                  fontWeight: (isActive || navActive) ? "bold" : "normal"
+                })}
+              >
+                {childMeta.label || key}
+              </NavLink>
+            ) : (
+              <button
+                onClick={() => onItemClick && onItemClick(currentPath)}
+                className="submenu-btn"
+                style={{
+                  color: isActive ? "#fff" : "inherit",
+                  fontWeight: isActive ? "bold" : "normal"
+                }}
+              >
+                {childMeta.label || key}
+              </button>
+            )}
           </div>
             {hasChildren && !isCollapsed && (
             <div style={{ marginLeft: 20 }}>
-              {renderNode(child, currentPath, onItemClick, activePath, toggleCollapse, collapsed, navigate)}
+              {renderNode(child, currentPath, onItemClick, activePath, toggleCollapse, collapsed)}
             </div>
           )}
         </div>
@@ -54,7 +62,6 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
 
 export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen }) {
   const node = menuTree[activeMenu] || {};
-  const navigate = useNavigate();
   const location = useLocation();
   
   // Memoize the initial collapsed state
@@ -126,7 +133,7 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
           'Inicio'
         )}
       </div>
-      <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed, navigate)}</div>
+      <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
     </aside>
   );
 }

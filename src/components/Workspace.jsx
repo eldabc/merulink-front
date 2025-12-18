@@ -1,58 +1,34 @@
-import React from "react";
-import LobbyCalendar from "./LobbyCalendar";
-import AssistantInput from "./AssistantInput";
-import EmployeeList from "./Employee/EmployeeList";
-import DepartmentList from "./Department/DepartmentList";
-import SubDepartmentList from "./SubDepartment/SubDepartmentList";
-import PositionList from "./Positions/PositionList";
+import React, { Suspense, lazy } from "react";
+import { Routes, Route } from 'react-router-dom';
+
+const LobbyCalendar = lazy(() => import("./LobbyCalendar"));
+const AssistantInput = lazy(() => import("./AssistantInput"));
+const EmployeeList = lazy(() => import("./Employee/EmployeeList"));
+const DepartmentList = lazy(() => import("./Department/DepartmentList"));
+const SubDepartmentList = lazy(() => import("./SubDepartment/SubDepartmentList"));
+const PositionList = lazy(() => import("./Positions/PositionList"));
 
 export default function Workspace({ activeMenu, activePath }) {
-  if (activeMenu === 'Lobby') {
-    return (
-      <div className="content-center">
-        <LobbyCalendar />
-      </div>
-    );
-  }
+  return (
+    <Suspense fallback={<div className="p-6">Cargando...</div>}>
+      <Routes>
+        <Route path="/" element={<div className="content-center"><LobbyCalendar /></div>} />
+        <Route path="/ia" element={<div className="ia-workspace"><AssistantInput /></div>} />
 
-  if (activeMenu === 'IA') {
-    return (
-      <div className="ia-workspace">
-        <AssistantInput />
-      </div>
-    );
-  }
+        {/* RRHH */}
+        <Route path="/empleados" element={<div className="main-workspace"><EmployeeList /></div>} />
+        <Route path="/empleados/departamentos" element={<div className="main-workspace"><DepartmentList /></div>} />
+        <Route path="/empleados/sub-departamentos" element={<div className="main-workspace"><SubDepartmentList /></div>} />
+        <Route path="/empleados/cargos" element={<div className="main-workspace"><PositionList /></div>} />
 
-  if (activeMenu === 'RRHH') {
-    if (activePath.length === 0) {
-      return (
-        <div className="main-workspace">
-          <EmployeeList />
-        </div>
-      );
-    }else if (activePath[0] === 'Departamentos') {
-      return (
-        <div className="main-workspace">
-          <DepartmentList />
-        </div>
-      );
-    }else if (activePath[0] === 'Sub-Departamentos') {
-      return (
-        <div className="main-workspace">
-          <SubDepartmentList />
-        </div>
-      );
-    }else if (activePath[0] === 'Cargos') {
-      return (
-        <div className="main-workspace">
-          <PositionList />
-        </div>
-      );
-    }
+        {/* Fallback to existing behavior when route not matched */}
+        <Route path="*" element={<DefaultWorkspace activeMenu={activeMenu} />} />
+      </Routes>
+    </Suspense>
+  );
+}
 
-  }
-
-  // Vista por defecto para otros menús
+function DefaultWorkspace({ activeMenu }) {
   return (
     <div className="content-center">
       <h2 className="title">{activeMenu}</h2>
