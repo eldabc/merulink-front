@@ -9,7 +9,7 @@ export const menuTree = {
       Horarios: {
         _meta: { label: "Horarios", path: "/empleados/horarios" },
         "Crear Turno": { _meta: { label: "Crear Turno", path: "/empleados/horarios/crear-turno" } },
-        Asignar: { _meta: { label: "Asignar", path: "/empleados/vestuarios/candados" } }
+        Asignar: { _meta: { label: "Asignar", path: "/empleados/horarios/asignar" } }
       },
       Departamentos: { _meta: { label: "Departamentos", path: "/empleados/departamentos" } },
       "Sub-Departamentos": { _meta: { label: "Sub-Departamentos", path: "/empleados/sub-departamentos" } },
