@@ -3,22 +3,22 @@ import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
 import { useNotification } from "../../context/NotificationContext";  
 import { EventProvider, useEvents } from "../../context/EventContext";
 import EventRow from './EventRow';
-
+import { stringCategoryEvents } from '../../utils/Events/events-utils';
 
 export default function EventsList({ categoryKey }) {
   console.log("EventsList categoryKey:", categoryKey);
 
   const { showNotification } = useNotification();
-      return (
-        <EventProvider initialData={INITIAL_EVENTS} showNotification={showNotification}>
-          <EventListContent categoryKey={categoryKey} />
-        </EventProvider>
-      );   
+    return (
+      <EventProvider initialData={INITIAL_EVENTS} showNotification={showNotification}>
+        <EventListContent categoryKey={categoryKey} />
+      </EventProvider>
+    );   
 }
 
   // Componente interno que usa el contexto
 function EventListContent({ categoryKey }) {
-  console.log("EventsList categoryKey:", categoryKey);
+  const strignCategory = stringCategoryEvents(categoryKey);
   const { eventData, setEventData } = useEvents();
 
   const items = useMemo(() => {
@@ -31,7 +31,7 @@ function EventListContent({ categoryKey }) {
       {/* {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )} */}
 
       <div className="titles-table flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Listado de {categoryKey} </h2>
+        <h2 className="text-2xl font-bold">Listado de {strignCategory} </h2>
         <div className="text-sm">
           <button
             onClick={() => setAddDepartment({})}
@@ -66,7 +66,7 @@ function EventListContent({ categoryKey }) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <EventRow key={item.id} event={item} />
+              <EventRow key={item.id} event={item} strignCategory={strignCategory} />
             ))}
           </tbody>
         </table>

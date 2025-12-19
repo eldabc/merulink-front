@@ -15,6 +15,7 @@ import EventContent from './EventContent';
 import '../../Calendar.css';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from 'react-router-dom';
+import { categoryLegend } from '../../utils/Events/events-utils';
 
 export default function Calendar() {
 
@@ -39,15 +40,6 @@ export default function Calendar() {
     "christian-holidays": true,
   });
 
-  // Categorías para la leyenda
-  const categoryLegend = [
-    { key: "meru-events", label: "Eventos Merú", color: "meru-events" },
-    { key: "meru-birthdays", label: "Cumpleaños Merú", color: "meru-birthdays" },
-    { key: "wedding-nights", label: "Plan Noche de Bodas", color: "wedding-nights" },
-    { key: "executive-mod", label: "Ejecutivos MOD", color: "executive-mod" },
-    { key: "venezuelan-holidays", label: "Festivos Venezolanos", color: "venezuelan-holidays" },
-    { key: "christian-holidays", label: "Festivos Cristianos", color: "christian-holidays" }
-  ];
 
   //  Filtrado dinámico según categorías activas
   const filteredEvents = useMemo(() => {
