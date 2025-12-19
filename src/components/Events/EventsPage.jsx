@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import EventsList from './EventsList';
+import EventForm from './EventForm';
 
 export default function EventsPage() {
   return (
@@ -14,6 +15,8 @@ export default function EventsPage() {
           <Route path="calendario-google" element={<EventsList categoryKeys={["google-calendar"]} />} />
           <Route path="cumpleaños-merú" element={<EventsList categoryKeys={["meru-birthdays"]} />} />
           <Route path="executive-mod" element={<EventsList categoryKeys={["executive-mod"]} />} />
+
+          <Route path="nuevo" element={<EventForm />} />
         </Routes>
       </main>
     </>

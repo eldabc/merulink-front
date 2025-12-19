@@ -15,7 +15,7 @@ import EventContent from './EventContent';
 import '../../Calendar.css';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from 'react-router-dom';
-import { categoryLegend } from '../../utils/Events/events-utils';
+import { categoryLegend } from '../../utils/StaticData/typeEvent-utils';
 
 export default function Calendar() {
 

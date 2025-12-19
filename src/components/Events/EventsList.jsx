@@ -4,6 +4,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { EventProvider, useEvents } from "../../context/EventContext";
 import EventRow from './EventRow';
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
+import { useNavigate } from 'react-router-dom';
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
@@ -20,6 +21,7 @@ export default function EventsList({ categoryKeys }) {
  function EventListContent({ categoryKeys }) {
   const stringCategory = stringCategoryEvents(categoryKeys);
   const { eventData } = useEvents();
+  const navigate = useNavigate();
 
   const items = useMemo(() => {
     if (!categoryKeys || categoryKeys.length === 0) return [];
@@ -48,7 +50,7 @@ export default function EventsList({ categoryKeys }) {
         <h2 className="text-2xl font-bold">Listado de {stringCategory} </h2>
         <div className="text-sm">
           <button
-            onClick={() => setAddDepartment({})}
+            onClick={() => navigate('/eventos/nuevo')}
             className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
           >
             ← Nuevo Registro
