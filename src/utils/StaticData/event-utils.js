@@ -15,7 +15,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'meru-events',
-    type: 'meru-events',
 
   },
   {
@@ -30,7 +29,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'meru-birthdays',
-    type: 'meru-birthdays',
   },
   {
     id: createEventId(),
@@ -43,7 +41,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'wedding-nights',
-    type: 'wedding-nights',
   },
   {
     id: createEventId(),
@@ -56,7 +53,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'executive-mod',
-    type: 'executive-mod',
   },
   {
     id: createEventId(),
@@ -69,7 +65,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'venezuelan-holidays',
-    type: 'venezuelan-holidays',
   },
   {
     id: createEventId(),
@@ -82,7 +77,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'christian-holidays',
-    type: 'christian-holidays',
   },
   {
     id: createEventId(),
@@ -96,7 +90,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'executive-mod',
-    type: 'executive-mod',
   },
   {
     id: createEventId(),
@@ -110,7 +103,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'meru-birthdays',
-    type: 'meru-birthdays',
   },
   {
     id: createEventId(),
@@ -124,7 +116,6 @@ export const INITIAL_EVENTS = [
       location: 'Oficinas Merú',
     },
     className: 'meru-events',
-    type: 'meru-events',
   },
   {
     id: createEventId(),
@@ -132,13 +123,12 @@ export const INITIAL_EVENTS = [
     start: '2025-12-05T09:00:00',
     end:   '2025-12-05T11:00:00',
     extendedProps: {
-      category: 'wedding-nights',
+      category: 'dinner-heights',
       label: 'Plan Noche de Bodas',
       status: 'active',
       location: 'Oficinas Merú',
     },
-    className: 'wedding-nights',
-    type: 'wedding-nights',
+    className: 'dinner-heights',
   }
 ]
 

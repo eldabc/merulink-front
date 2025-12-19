@@ -3,24 +3,21 @@ export const menuEvents = {
     _meta: { label: 'Eventos Merú', path: '/eventos' },
   },
   EventWedding: {
-    _meta: { label: 'Noches de Bodas', path: '/eventos?type=wedding-nights' },
+    _meta: { label: 'Noches de Bodas', path: '/eventos/bodas' },
   },
   DinnerHeights: {
-    _meta: { label: 'Cena en las Alturas', path: '/eventos?type=dinner-heights' },
+    _meta: { label: 'Cena en las Alturas', path: '/eventos/cena-alturas' },
   },
   VenezuelanHolidays: {
-    _meta: { label: 'Feriados Venezolanos', path: '/eventos?type=venezuelan-holidays' },
+    _meta: { label: 'Feriados Venezolanos', path: '/eventos/feriados-venezolanos' },
   },
    GoogleHolidays: {
-    _meta: { label: 'Calendario Google', path: '/eventos?type=google-holidays' },
+    _meta: { label: 'Calendario Google', path: '/eventos/calendario-google' },
   },
    MeruBirthDays: {
-    _meta: { label: 'Cumpleaños Merú', path: '/eventos?type=meru-birthdays' },
+    _meta: { label: 'Cumpleaños Merú', path: '/eventos/cumpleaños-merú' },
   },
    ExecutiveMod: {
-    _meta: { label: 'Ejecutivos MOD', path: '/eventos?type=executive-mod' },
-  },
-   GoogleHolidays: {
-    _meta: { label: 'Calendario Google', path: '/eventos?type=google-holidays' },
+    _meta: { label: 'Ejecutivos MOD', path: '/eventos/executive-mod' },
   },
 };
