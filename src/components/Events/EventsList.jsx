@@ -5,25 +5,38 @@ import { EventProvider, useEvents } from "../../context/EventContext";
 import EventRow from './EventRow';
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
 
-export default function EventsList({ categoryKey }) {
-  console.log("EventsList categoryKey:", categoryKey);
+export default function EventsList({ categoryKeys }) {
 
   const { showNotification } = useNotification();
     return (
       <EventProvider initialData={INITIAL_EVENTS} showNotification={showNotification}>
-        <EventListContent categoryKey={categoryKey} />
+        <EventListContent categoryKeys={categoryKeys} />
       </EventProvider>
     );   
 }
 
   // Componente interno que usa el contexto
-function EventListContent({ categoryKey }) {
-  const strignCategory = stringCategoryEvents(categoryKey);
-  const { eventData, setEventData } = useEvents();
+ function EventListContent({ categoryKeys }) {
+  const stringCategory = stringCategoryEvents(categoryKeys);
+  const { eventData } = useEvents();
 
   const items = useMemo(() => {
-    return eventData.filter(ev => ev.extendedProps?.category === categoryKey);
-  }, [categoryKey]);
+    if (!categoryKeys || categoryKeys.length === 0) return [];
+
+    return eventData
+    .filter(ev => categoryKeys.includes(ev.extendedProps?.category))
+    .map(ev => {
+      
+      const categoryId = ev.extendedProps?.category;
+      return {
+        ...ev,
+        extendedProps: {
+          ...ev.extendedProps,
+          categoryDisplayName: stringCategoryEvents([categoryId])
+        }
+      };
+    });
+  }, [eventData, categoryKeys]);
 
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -31,7 +44,7 @@ function EventListContent({ categoryKey }) {
       {/* {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )} */}
 
       <div className="titles-table flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Listado de {strignCategory} </h2>
+        <h2 className="text-2xl font-bold">Listado de {stringCategory} </h2>
         <div className="text-sm">
           <button
             onClick={() => setAddDepartment({})}
@@ -66,7 +79,7 @@ function EventListContent({ categoryKey }) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <EventRow key={item.id} event={item} strignCategory={strignCategory} />
+              <EventRow key={item.id} event={item} stringCategory={stringCategory} />
             ))}
           </tbody>
         </table>

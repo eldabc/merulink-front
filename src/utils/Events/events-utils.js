@@ -2,7 +2,7 @@
 export const categoryLegend = [
   { key: "meru-events", label: "Eventos Merú", color: "meru-events" },
   { key: "wedding-nights", label: "Plan Noche de Bodas", color: "wedding-nights" },
-  // { key: "dinner-heights", label: "Cena en las Alturas", color: "dinner-heights" },
+  { key: "dinner-heights", label: "Cena en las Alturas", color: "dinner-heights" },
   { key: "venezuelan-holidays", label: "Festivos Venezolanos", color: "venezuelan-holidays" },
   { key: "google-calendar", label: "Calendario Google", color: "google-calendar" },
   { key: "meru-birthdays", label: "Cumpleaños Merú", color: "meru-birthdays" },
@@ -11,6 +11,12 @@ export const categoryLegend = [
   
 ];
 
-export const stringCategoryEvents = (eventCategory) => {
-    return categoryLegend.find(cat => cat.key === eventCategory)?.label || 'Categoría Desconocida';
+export const stringCategoryEvents = (eventCategories) => {
+  if (eventCategories.length > 1) {
+    return "Noches de Bodas / Cena en Alturas";
+  }
+  
+  const categoryKey = eventCategories[0];
+  
+  return categoryLegend.find(cat => cat.key === categoryKey)?.label ?? 'Categoría Desconocida';
 };

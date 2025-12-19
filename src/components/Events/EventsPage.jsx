@@ -7,13 +7,13 @@ export default function EventsPage() {
     <>
       <main className="flex-1 rounded p-4 min-h-[60vh]">
         <Routes>
-          <Route path="/" element={<EventsList categoryKey="meru-events" />} />
-          <Route path="bodas" element={<EventsList categoryKey="wedding-nights" />} />
-          <Route path="cena-alturas" element={<EventsList categoryKey="dinner-heights" />} />
-          <Route path="feriados-venezolanos" element={<EventsList categoryKey="venezuelan-holidays" />} />
-          <Route path="calendario-google" element={<EventsList categoryKey="google-calendar" />} />
-          <Route path="cumpleaños-merú" element={<EventsList categoryKey="meru-birthdays" />} />
-          <Route path="executive-mod" element={<EventsList categoryKey="executive-mod" />} />
+          <Route path="/" element={<EventsList categoryKeys={["meru-events"]} />} />
+          <Route path="noche-bodas-cena-alturas" element={<EventsList categoryKeys={["wedding-nights", "dinner-heights"]} />} />
+          {/* <Route path="cena-alturas" element={<EventsList categoryKeys="dinner-heights" />} /> */}
+          <Route path="feriados-venezolanos" element={<EventsList categoryKeys={["venezuelan-holidays"]} />} />
+          <Route path="calendario-google" element={<EventsList categoryKeys={["google-calendar"]} />} />
+          <Route path="cumpleaños-merú" element={<EventsList categoryKeys={["meru-birthdays"]} />} />
+          <Route path="executive-mod" element={<EventsList categoryKeys={["executive-mod"]} />} />
         </Routes>
       </main>
     </>

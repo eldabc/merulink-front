@@ -3,7 +3,8 @@ import { useEvents } from '../../context/EventContext';
 // import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function EmployeeRow( {event, strignCategory} ) {
+export default function EmployeeRow( {event, stringCategory} ) {
+  const { setSelectedEvent } = useEvents();
   // Obtener la función del contexto
   const { toggleEmployeeField } = useEvents(); 
 
@@ -17,7 +18,7 @@ export default function EmployeeRow( {event, strignCategory} ) {
       <td className="px-4 py-3 text-white-800 font-medium">{event.start}</td>
       <td className="px-4 py-3 text-white-700">{event.start}</td>
       <td className="px-4 py-3 text-white-700">{event.extendedProps.location}</td>
-      <td className="px-4 py-3 text-white-700">{strignCategory}</td>
+      <td className="px-4 py-3 text-white-700">{event.extendedProps.categoryDisplayName}</td>
       <td className="px-4 py-3">
         <button 
           // onClick={(e) => {
