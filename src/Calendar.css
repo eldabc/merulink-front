@@ -287,6 +287,10 @@ b { /* used for event dates/times */
   background-color: #AD2D2D;
   border-color: #962626;
 }
+.google-calendar{
+  background-color: #d76418;
+  border-color: #be5916;
+}
 .christian-holidays{
   background-color: #C4A883;
   border-color: #bba07e;

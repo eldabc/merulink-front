@@ -1,4 +1,4 @@
-// Categorías para la leyenda
+// Categorías dinámicas
 export const categoryLegend = [
   { id: 1,
     key: "meru-events", 
