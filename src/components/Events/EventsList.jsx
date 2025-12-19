@@ -4,6 +4,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { EventProvider, useEvents } from "../../context/EventContext";
 import EventRow from './EventRow';
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
+import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
 
@@ -75,6 +76,7 @@ export default function EventsList({ categoryKeys }) {
               <th className="px-4 py-3 text-left font-semibold">Hora</th>
               <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
               <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
+              <th className="px-4 py-3 text-left font-semibold">Acciones</th>
             </tr>
           </thead>
           <tbody>

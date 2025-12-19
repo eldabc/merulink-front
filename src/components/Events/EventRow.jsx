@@ -25,6 +25,7 @@ export default function EmployeeRow( {event, stringCategory} ) {
           //   e.stopPropagation();
           //   toggleStatusEvent(event.id);
           // }}
+          title='Eliminar Evento'
           type="button" className={`tags-work-btn }`}>
          <XMarkIcon className='w-5 h-5 text-red-400' />
         </button>
