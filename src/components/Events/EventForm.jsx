@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { categoryLegend } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { locations } from '../../utils/StaticData/location-utils';
+import { useEvents } from '../../context/EventContext';
 import { useEffect } from 'react';
 
 export default function EventForm({ mode = 'create', event = null, onBack }) { // , onSave, onCancel
@@ -14,6 +15,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const isRepeatEvent = watch('repeatEvent');
   const navigate = useNavigate();
   const meruEventsFlag = selectedType === 'meru-events';
+  const { createEvent, updateEvent } = useEvents();
+  
 
   // Al seleccionar
   const handleEventChange = (e) => {
@@ -41,7 +44,22 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
     }, [event, mode, reset]);
 
     const onSubmit = async (data) => {
-      if (onSave) await onSave(data);
+      let success = false;
+      
+      if (mode === 'edit' && event) {
+          console.log("Actualizando:", data);
+
+          const updatedData = { ...event, ...data };
+          success = await updateEvent(updatedData);
+      } else {
+          console.log("Creando:", data);
+          success = await createEvent(data);
+      }
+
+      if (success) {
+        if (typeof onBack === 'function') onBack();
+        else navigate(-1);
+      }
     };
 
     const onError = (formErrors) => {

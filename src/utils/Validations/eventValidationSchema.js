@@ -20,7 +20,7 @@ export const eventValidationSchema = yup.object().shape({
     .date()
     .required('Fecha de inicio es requerida'),
 
-  startTime: yup.date()
+  startTime: yup.string()
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('typeEventId', {
@@ -38,7 +38,7 @@ export const eventValidationSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  endTime: yup.date()
+  endTime: yup.string()
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('typeEventId', {
