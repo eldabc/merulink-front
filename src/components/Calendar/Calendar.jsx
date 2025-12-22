@@ -15,7 +15,7 @@ import EventContent from './EventContent';
 import '../../Calendar.css';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from 'react-router-dom';
-import { categoryLegend } from '../../utils/StaticData/typeEvent-utils';
+import { categoryLegend } from '../../utils/Events/events-utils';
 
 export default function Calendar() {
 
@@ -24,8 +24,9 @@ export default function Calendar() {
   const [currentEvents, setCurrentEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const calendarRef = useRef(null);
+  const [currentTitle, setCurrentTitle] = useState('');
+
   // Funciones para controlar el calendario manualmente
   const handlePrev = () => calendarRef.current.getApi().prev();
   const handleNext = () => calendarRef.current.getApi().next(); 
@@ -33,7 +34,7 @@ export default function Calendar() {
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
     "meru-events": true,
-    "venezuelan-holidays": true,
+    "ve-holidays": true,
     "wedding-nights": true,
     "executive-mod": true,
     "meru-birthdays": true,
@@ -135,8 +136,12 @@ export default function Calendar() {
               <button onClick={handlePrev} className="bg-gray-700 p-2 rounded">Ant.</button>
               <button onClick={handleNext} className="bg-gray-700 p-2 rounded">Sig.</button>
             </div>
-            <h2 className="text-2xl font-bold text-white">Calendario Plaza Meru</h2>
-
+            <div className='flex flex-col items-center'>
+              <h3 className="text-2xl font-bold text-white">Calendario Plaza Meru</h3>
+              <span className="text-2xl font-bold text-white capitalize">
+                {currentTitle}
+              </span>
+            </div>
             <div className='relative'>
               <button title='Gestionar Eventos' 
                 onClick={() => { navigate('/eventos'); }}
@@ -163,7 +168,11 @@ export default function Calendar() {
             dateClick={handleDateClick}
             // initialEvents={INITIAL_EVENTS}
             // eventsSet={handleEvents}
-            locale={esLocale}  
+            locale={esLocale}
+            datesSet={(arg) => {
+              // arg.view.title contiene el string formateado (ej: "diciembre de 2025")
+              setCurrentTitle(arg.view.title);
+            }} 
           />
         </div>
         

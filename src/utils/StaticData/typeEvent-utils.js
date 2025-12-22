@@ -16,9 +16,9 @@ export const categoryLegend = [
     color: "dinner-heights" 
   },
   { id: 4,
-    key: "venezuelan-holidays", 
+    key: "ve-holidays", 
     label: "Festivos Venezolanos", 
-    color: "venezuelan-holidays" 
+    color: "ve-holidays" 
   },
   { id: 5,
     key: "google-calendar", 

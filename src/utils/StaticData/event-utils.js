@@ -59,12 +59,12 @@ export const INITIAL_EVENTS = [
     title: 'Evento 5',
     start: todayStr,
     extendedProps: {
-      category: 'venezuelan-holidays',
+      category: 've-holidays',
       label: 'Festivos Venezolanos',
       status: 'active',
       location: 'Oficinas Merú',
     },
-    className: 'venezuelan-holidays',
+    className: 've-holidays',
   },
   {
     id: createEventId(),

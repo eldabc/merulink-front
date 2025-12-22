@@ -283,7 +283,7 @@ b { /* used for event dates/times */
   background-color: #E0C240;
   border-color: #cfb43a;
 }
-.venezuelan-holidays{
+.ve-holidays{
   background-color: #AD2D2D;
   border-color: #962626;
 }
@@ -544,4 +544,7 @@ b { /* used for event dates/times */
 
 .legend-disabled {
   opacity: 0.3;
+}
+.fc-day-sun {
+    background-color: #be16167a !important;
 }

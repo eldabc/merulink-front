@@ -18,7 +18,7 @@ export const locations = [
   { id: 4,
     key: "salon-4", 
     label: "Salon 4", 
-    // color: "venezuelan-holidays" 
+    // color: "ve-holidays" 
   },
   { id: 5,
     key: "salon-5", 
