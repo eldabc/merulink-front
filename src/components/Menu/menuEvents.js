@@ -5,19 +5,16 @@ export const menuEvents = {
   EventWeddingAndDinnerHeights: {
     _meta: { label: 'Noches Bodas / Cena en Alturas', path: '/eventos/noche-bodas-cena-alturas' },
   },
-  // DinnerHeights: {
-  //   _meta: { label: 'Cena en las Alturas', path: '/eventos/cena-alturas' },
-  // },
-  VenezuelanHolidays: {
-    _meta: { label: 'Feriados Venezolanos', path: '/eventos/feriados-venezolanos' },
-  },
-   GoogleHolidays: {
-    _meta: { label: 'Calendario Google', path: '/eventos/calendario-google' },
+  VeHolidaysGoogleCalendar: {
+    _meta: { label: 'Feriados VE / Calendario Google', path: '/eventos/feriados-venezolanos' },
   },
    MeruBirthDays: {
     _meta: { label: 'Cumpleaños Merú', path: '/eventos/cumpleaños-merú' },
   },
    ExecutiveMod: {
     _meta: { label: 'Ejecutivos MOD', path: '/eventos/executive-mod' },
+  },
+   BankingMondays: {
+    _meta: { label: 'Lunes Bancarios', path: '/eventos/lunes-bancarios' },
   },
 };
