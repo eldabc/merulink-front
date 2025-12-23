@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
-import { useNotification } from "../../context/NotificationContext";  
-import { EventProvider, useEvents } from "../../context/EventContext";
+import { useEvents } from "../../context/EventContext";
 import EventRow from './EventRow';
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { useNavigate } from 'react-router-dom';
@@ -9,12 +7,7 @@ import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
 
-  const { showNotification } = useNotification();
-    return (
-      <EventProvider initialData={INITIAL_EVENTS} showNotification={showNotification}>
-        <EventListContent categoryKeys={categoryKeys} />
-      </EventProvider>
-    );   
+  return <EventListContent categoryKeys={categoryKeys} />;
 }
 
   // Componente interno que usa el contexto
