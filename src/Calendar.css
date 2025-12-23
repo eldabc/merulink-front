@@ -545,6 +545,14 @@ b { /* used for event dates/times */
 .legend-disabled {
   opacity: 0.3;
 }
-.fc-day-sun {
-    background-color: #be16167a !important;
+
+.fc .fc-day-sun .fc-daygrid-day-frame {
+    border: 1px solid #892020 !important;
+    box-shadow: 0 0 2px #ff5353a1;
+    background: linear-gradient(51deg,#ff535324,#ff53530f);
+    transform: scale(1.02);
+}
+a[aria-label="domingo"] {
+    color: #892020 !important;
+    font-weight: 600 !important;
 }

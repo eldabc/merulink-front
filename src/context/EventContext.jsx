@@ -48,7 +48,7 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
           return [newEvent, ...prevData]; 
         });
   
-        showNotification(`Evento ${newEvent.eventName} creado con éxito`);
+        showNotification(`Evento ${newEvent.title} creado con éxito`);
         
         return true;
       } catch (error) {

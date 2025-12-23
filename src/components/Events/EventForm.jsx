@@ -79,7 +79,6 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 rounded-lg">
         <form onSubmit={handleSubmit(onSubmit, onError)}>
           <h2 className="text-2xl font-bold">Registrar Fecha  </h2>       
-          {/* {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )} */}
           <div className="titles-table flex justify-center items-center mb-4">
           <div className="text-sm justify-center w-64">
             <div>
