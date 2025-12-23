@@ -16,27 +16,34 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
     // *** Crear Sub-departamento
     const createEvent = async (formData) => {
       // const departmentData =  getEventNameById(formData.departmentId);
-  
-      const newSubDep = {
+  console.log("createEvent - formData:", formData);
+      const newEvent = {
         id: Date.now(), // ID temporal
-        // code: formData.code,
-        // eventName: formData.eventName,
-        // departmentId: formData.departmentId,
-        // departmentCode: departmentData.code,
-        // departmentName: departmentData.departmentName,
-        status: true
+        eventName: formData.eventName,
+        startDate: formData.startDate,
+        startTime: formData.startTime,
+        endDate: formData.endDate,
+        endTime: formData.endTime,
+        location: formData.location,
+        repeatEvent: formData.repeatEvent,
+        repeatInterval: formData.repeatInterval,
+        typeEventId: formData.typeEventId,
+        description: formData.description,
+        comments: formData.comments,
+        status: true,
+        code: formData.code,
       };
   
       try {
         // Llamado a API
-        // const response = await api.post('/subdepartments', newSubDep); 
+        // const response = await api.post('/subdepartments', newEvent); 
         // const createdRecord = await response.json(); 
   
         setEventData(prevData => { // Actualiza el estado centralizado
-          return [newSubDep, ...prevData]; 
+          return [newEvent, ...prevData]; 
         });
   
-        showNotification(`Evento ${newSubDep.eventName} creado con éxito`);
+        showNotification(`Evento ${newEvent.eventName} creado con éxito`);
         
         return true;
       } catch (error) {
