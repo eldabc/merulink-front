@@ -35,10 +35,18 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         });
       } else if (mode === 'create') {
         reset({
-          typeEventId: '',
+          eventName: '',
           startDate: null,
+          startTime: null,
           endDate: null,
-          // departmentId: '',
+          endTime: null,
+          locationEvent: '',
+          repeatEvent: false,
+          repeatInterval: '',
+          createAlert: false,
+          description: '',
+          comments: '',
+          typeEventId: '',
         });
       }
     }, [event, mode, reset]);
@@ -111,22 +119,6 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   </div>
                 </div>
 
-                <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
-                  <div className="md:w-32 md:text-right">
-                    <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: *</label>
-                  </div>
-                  
-                  <div className="w-full max-w-2xl">
-                    <textarea
-                      {...register('description')}
-                      placeholder="Detalles adicionales..."
-                      className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${
-                        errors.description ? 'border-red-500' : ''
-                      }`}
-                    />
-                    {errors?.description && <p className="text-red-400 text-xs mt-1">{errors.description.message}</p>}  
-                  </div>
-                </div>
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">   
                   <div>
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && 'Inicio'}: *</label>
@@ -171,7 +163,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   <div>
                     <select 
                       disabled= {mode === 'view'}
-                      {...register('location')} // , { onChange: handleEventChange }
+                      {...register('location')}
                       className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.location ? 'border-red-500' : ''}
                         ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
                       <option className='bg-[#3c4042]' value="">Seleccionar...</option>
@@ -202,16 +194,49 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       {errors?.repeatInterval && <p className="text-red-400 text-xs mt-1">{errors.repeatInterval.message}</p>}  
                     </div>
                   </div> 
-                  {/* <div className='col-span-4 flex flex-row gap-2'> */}
-                    <div>
-                      <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: *</label>
-                    </div>
-                    <div className='flex flex-row items-center gap-2'>
-                      <input type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
-                      {errors?.createAlert && <p className="text-red-400 text-xs mt-1">{errors.createAlert.message}</p>}  
-                    </div>
-                  {/* </div> */}
-                   
+                  
+                  <div>
+                    <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: *</label>
+                  </div>
+                  <div className='flex flex-row items-center gap-2'>
+                    <input type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                    {errors?.createAlert && <p className="text-red-400 text-xs mt-1">{errors.createAlert.message}</p>}  
+                  </div>
+ 
+                </div>
+                <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
+                                md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
+                                md:[&>*:nth-child(2n)]:pl-4 p-7'
+                >
+                  <div className="md:w-32 md:text-right">
+                    <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: </label>
+                  </div>
+                  
+                  <div className="w-full max-w-2xl">
+                    <textarea
+                      {...register('description')}
+                      placeholder="Ingrese detalles adicionales..."
+                      className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${
+                        errors.description ? 'border-red-500' : ''
+                      }`}
+                    />
+                    {errors?.description && <p className="text-red-400 text-xs mt-1">{errors.description.message}</p>}  
+                  </div>
+
+                  <div className="md:w-32 md:text-right">
+                    <label className="block text-lg font-medium text-gray-300 mt-1">Comentarios: </label>
+                  </div>
+                  
+                  <div className="w-full max-w-2xl">
+                    <textarea
+                      {...register('comments')}
+                      placeholder="Ingrese comentarios, cambios, observaciones..."
+                      className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${
+                        errors.comments ? 'border-red-500' : ''
+                      }`}
+                    />
+                    {errors?.comments && <p className="text-red-400 text-xs mt-1">{errors.comments.message}</p>}  
+                  </div>
                 </div>
               </div>
             )}

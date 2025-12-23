@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
-
+import { formatDateToEvent } from './../utils/date-utils';
+import { categoryLegend } from '../utils/StaticData/typeEvent-utils';
 const EventContext = createContext();
 
 // hook personalizado para usar el contexto
@@ -15,24 +16,28 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
   // ***   ***   ***   ***   ***   ***   ***
     // *** Crear Sub-departamento
     const createEvent = async (formData) => {
-      // const departmentData =  getEventNameById(formData.departmentId);
-  console.log("createEvent - formData:", formData);
+      const typeEvent = categoryLegend.find(te => te.key === formData.typeEventId);
+  
       const newEvent = {
         id: Date.now(), // ID temporal
-        eventName: formData.eventName,
-        startDate: formData.startDate,
-        startTime: formData.startTime,
-        endDate: formData.endDate,
-        endTime: formData.endTime,
-        location: formData.location,
-        repeatEvent: formData.repeatEvent,
-        repeatInterval: formData.repeatInterval,
-        typeEventId: formData.typeEventId,
-        description: formData.description,
-        comments: formData.comments,
-        status: true,
-        code: formData.code,
+        title: formData.eventName,
+        start: formatDateToEvent(formData.startDate, formData.startTime),
+        end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+        extendedProps: {
+          category: formData.typeEventId,
+          label: typeEvent.label,
+          status: 'active',
+          location: formData.location,
+          repeatEvent: formData.repeatEvent,
+          repeatInterval: formData.repeatInterval,
+          typeEventId: formData.typeEventId,
+          description: formData.description,
+          comments: formData.comments,
+        }
+        
       };
+
+      console.log("datos", newEvent);
   
       try {
         // Llamado a API

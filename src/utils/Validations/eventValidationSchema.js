@@ -47,7 +47,7 @@ export const eventValidationSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  location: yup.date()
+  location: yup.string()
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('typeEventId', {
@@ -70,6 +70,14 @@ export const eventValidationSchema = yup.object().shape({
       otherwise: (schema) => schema.notRequired(),
     }),
   
-    createAlert: yup.boolean(),
+  createAlert: yup.boolean(),
+
+  description: yup.string()
+  .nullable()
+  .optional(),
+
+  comments: yup.string()
+  .nullable()
+  .optional(),
     
 });

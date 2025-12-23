@@ -37,3 +37,11 @@ export function getTodayNormalized() {
   return normalizeDate(new Date());
 }
 
+export function formatDateToEvent(dateEvent, timeEvent) {
+  const datePart = new Date(dateEvent).toISOString().split('T')[0];
+  const timePart = timeEvent ? `${timeEvent}:00` : "00:00:00";
+
+  // Concatenar en formato ISO
+  return `${datePart}T${timePart}`;
+}
+
