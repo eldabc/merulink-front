@@ -549,7 +549,7 @@ b { /* used for event dates/times */
 .fc .fc-day-sun .fc-daygrid-day-frame {
     border: 1px solid #892020 !important;
     box-shadow: 0 0 2px #ff5353a1;
-    background: linear-gradient(51deg,#ff535324,#ff53530f);
+    background: linear-gradient(51deg,#ff53530f,#ff535303);
     transform: scale(1.02);
 }
 a[aria-label="domingo"] {
