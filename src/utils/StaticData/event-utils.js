@@ -11,8 +11,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'meru-events',
       label: 'Eventos Merú',
-      status: 'active',
+      status: 'Tentativo',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'meru-events',
 
@@ -25,8 +26,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
-      status: 'active',
+      status: 'Tentativo',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'meru-birthdays',
   },
@@ -37,8 +39,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'wedding-nights',
       label: 'Plan Noche de Bodas',
-      status: 'active',
+      status: 'Tentativo',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'wedding-nights',
   },
@@ -49,8 +52,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
-      status: 'active',
+      status: 'Tentativo',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'executive-mod',
   },
@@ -61,8 +65,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 've-holidays',
       label: 'Festivos Venezolanos',
-      status: 'active',
+      status: 'Tentativo',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 've-holidays',
   },
@@ -73,8 +78,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'christian-holidays',
       label: 'Festivos Cristianos',
-      status: 'active',
+      status: 'Confirmado',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'christian-holidays',
   },
@@ -86,8 +92,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
-      status: 'active',
+      status: 'Confirmado',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'executive-mod',
   },
@@ -99,8 +106,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
-      status: 'active',
+      status: 'Confirmado',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'meru-birthdays',
   },
@@ -112,8 +120,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'meru-events',
       label: 'Eventos Merú',
-      status: 'active',
+      status: 'Confirmado',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'meru-events',
   },
@@ -125,8 +134,9 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'dinner-heights',
       label: 'Plan Noche de Bodas',
-      status: 'active',
+      status: 'Confirmado',
       location: 'Oficinas Merú',
+      coloringDay: true,
     },
     className: 'dinner-heights',
   }

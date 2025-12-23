@@ -79,5 +79,11 @@ export const eventValidationSchema = yup.object().shape({
   comments: yup.string()
   .nullable()
   .optional(),
+
+  status: yup.string()
+    .required('El estado es requerido')
+    .oneOf(['tentative', 'confirmed'], 'Estado inválido'),
     
+  coloringDay: yup.boolean(),
+  
 });

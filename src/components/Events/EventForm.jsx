@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { categoryLegend } from '../../utils/StaticData/typeEvent-utils';
+import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
@@ -14,7 +14,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const selectedType = watch('typeEventId');
   const isRepeatEvent = watch('repeatEvent');
   const navigate = useNavigate();
-  const meruEventsFlag = selectedType === 'meru-events';
+  const meruEventsFlag = selectedType === 'meru-events' || selectedType === 'wedding-nights' || selectedType === 'dinner-heights';
+  const eventOneDayWithEndTime = selectedType === 'dinner-heights';
   const { createEvent, updateEvent } = useEvents();
   
 
@@ -91,8 +92,10 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
               className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.typeEventId ? 'border-red-500' : ''}
                 ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                {categoryLegend.map(typeEvent => (
-                  <option key={`typeEventId-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
+                {categoryEvents
+                  .filter(typeEvent => typeEvent.key !== 'meru-birthdays')
+                  .map(typeEvent => (
+                    <option key={`typeEventId-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
                 ))}
             </select>
             {errors?.typeEventId && <p className="text-red-400 text-xs mt-1">{errors.typeEventId.message}</p>}  
@@ -118,9 +121,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">   
+                <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">                    
                   <div>
-                    <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && 'Inicio'}: *</label>
+                    <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && !eventOneDayWithEndTime && 'Inicio'}: *</label>
                   </div>
                   <div>
                     <input {...register('startDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
@@ -136,16 +139,17 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         {errors?.startTime && <p className="text-red-400 text-xs mt-1">{errors.startTime.message}</p>}  
 
                       </div>
-                      
+                    {!eventOneDayWithEndTime && ( 
+                    <>
                       <div>
                         <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
                       </div>
                       <div>
                         <input {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
                         {errors?.endDate && <p className="text-red-400 text-xs mt-1">{errors.endDate.message}</p>}  
-
                       </div> 
-
+                    </>
+                  )}
                       <div>
                         <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Fin: *</label>
                       </div>
@@ -154,6 +158,20 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         {errors?.endTime && <p className="text-red-400 text-xs mt-1">{errors.endTime.message}</p>}  
 
                       </div> 
+                       <div>
+                        <label className="block text-xl font-medium text-gray-300 mt-1"> Estado: *</label>
+                      </div>
+                      <div className='items-center gap-2'>
+                        <select 
+                          disabled= {mode === 'view' }
+                          {...register('status')} // , { onChange: handleEventChange }
+                          className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
+                            ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                            <option className='bg-[#3c4042]' value='tentative'>Tentativo</option>
+                            <option className='bg-[#3c4042]' value='confirmed'>Confirmado</option>
+                          </select>
+                        {errors?.status && <p className="text-red-400 text-xs mt-1">{errors.status.message}</p>}  
+                      </div>
                     </> 
                   )}
                   <div>
@@ -174,7 +192,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   </div> 
 
                   <div>
-                    <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: *</label>
+                    <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: </label>
                   </div>
                   <div className='flex flex-row items-center gap-2'>
                     <input {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
@@ -195,13 +213,20 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   </div> 
                   
                   <div>
-                    <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: *</label>
+                    <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: </label>
                   </div>
                   <div className='flex flex-row items-center gap-2'>
                     <input type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
                     {errors?.createAlert && <p className="text-red-400 text-xs mt-1">{errors.createAlert.message}</p>}  
                   </div>
- 
+
+                  <div>
+                    <label className="block text-xl font-medium text-gray-300 mt-1"> Resaltar Día: </label>
+                  </div>
+                  <div className='flex flex-row items-center gap-2'>
+                    <input type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                    {errors?.coloringDay && <p className="text-red-400 text-xs mt-1">{errors.coloringDay.message}</p>}  
+                  </div>
                 </div>
                 <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
                                 md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]

@@ -184,15 +184,17 @@ export default function Calendar() {
         />
       </div>
         <div className="calendar-legend">
-          {categoryLegend.map(cat => (
-            <button
-              key={cat.key}
-              className={`legend-item ${cat.color} ${activeCategories[cat.key] ? '' : 'legend-disabled'}`}
-              onClick={() => toggleCategory(cat.key)}
-            >
-              {cat.label}
-            </button>
-          ))}
+          {categoryLegend
+            .filter(cat => !cat.itsMixedCategory)
+            .map(cat => (
+              <button
+                key={cat.key}
+                className={`legend-item ${cat.color} ${activeCategories[cat.key] ? '' : 'legend-disabled'}`}
+                onClick={() => toggleCategory(cat.key)}
+              >
+                {cat.label}
+              </button>
+            ))}
         </div>
       
     </div>

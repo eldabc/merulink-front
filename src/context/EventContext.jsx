@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { formatDateToEvent } from './../utils/date-utils';
-import { categoryLegend } from '../utils/StaticData/typeEvent-utils';
+import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 const EventContext = createContext();
 
 // hook personalizado para usar el contexto
@@ -16,7 +16,7 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
   // ***   ***   ***   ***   ***   ***   ***
     // *** Crear Sub-departamento
     const createEvent = async (formData) => {
-      const typeEvent = categoryLegend.find(te => te.key === formData.typeEventId);
+      const typeEvent = categoryEvents.find(te => te.key === formData.typeEventId);
   
       const newEvent = {
         id: Date.now(), // ID temporal

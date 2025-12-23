@@ -1,5 +1,5 @@
 // Categorías dinámicas
-export const categoryLegend = [
+export const categoryEvents = [
   { id: 1,
     key: "meru-events", 
     label: "Eventos Merú", 
