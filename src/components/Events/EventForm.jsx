@@ -99,6 +99,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           shouldValidate: true,
           shouldDirty: true
         });
+      }else {
+        setValue('endDate', null, { shouldValidate: true });
       }
     };
     return (

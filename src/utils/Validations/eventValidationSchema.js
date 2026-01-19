@@ -15,7 +15,8 @@ export const eventValidationSchema = yup.object().shape({
 
   startDate: yup
     .date()
-    .required('Fecha de inicio es requerida'),
+    .required('Fecha de inicio es requerida')
+    .min(new Date(new Date().setHours(0, 0, 0, 0)), 'La fecha de inicio no puede ser anterior a la actual'),
 
   startTime: yup.string()
   .nullable()
@@ -27,22 +28,35 @@ export const eventValidationSchema = yup.object().shape({
   }),
     
   endDate: yup.date()
-  .nullable()
-  .transform((curr, orig) => (orig === '' ? null : curr))
-  .when('typeEventId', {
-    is: 'meru-events',
-    then: (schema) => schema.required('La fecha de fin es obligatoria para este evento'),
-    otherwise: (schema) => schema.notRequired(),
-  }),
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .min(yup.ref('startDate'), 'La fecha de fin no puede ser anterior a la de inicio')
+    .when('typeEventId', {
+      is: 'meru-events',
+      then: (schema) => schema.required('La fecha de fin es obligatoria'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 
   endTime: yup.string()
-  .nullable()
-  .transform((curr, orig) => (orig === '' ? null : curr))
-  .when('typeEventId', {
-    is: (val) => ['meru-events', 'wedding-nights'].includes(val),
-    then: (schema) => schema.required('La hora culminación es obligatoria para este evento'),
-    otherwise: (schema) => schema.notRequired(),
-  }),
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .when('typeEventId', {
+      is: (val) => ['meru-events', 'wedding-nights'].includes(val),
+      then: (schema) => schema
+        .required('La hora culminación es obligatoria')
+        // Valida que la hora fin sea mayor a la de inicio 
+        .test('is-after-startTime', 'La hora de fin debe ser posterior a la de inicio', function(value) {
+          const { startTime, startDate, endDate } = this.parent;
+          
+          const isSameDay = startDate?.getTime() === endDate?.getTime();
+          
+          if (isSameDay && startTime && value) {
+            return value > startTime; // Compara "HH:mm"
+          }
+          return true;
+        }),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 
   location: yup.string()
   .nullable()
