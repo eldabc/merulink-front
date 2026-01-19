@@ -20,14 +20,14 @@ export const INITIAL_EVENTS = [
   },
   {
     id: createEventId(),
-    title: 'Evento 2',
+    title: 'Camilo Hernández',
     start: '2025-11-15T09:00:00',
     end:   '2025-11-15T11:00:00',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
       status: 'Tentativo',
-      location: 'Oficinas Merú',
+      department: 'Contabilidad',
       coloringDay: true,
     },
     className: 'meru-birthdays',
@@ -101,14 +101,14 @@ export const INITIAL_EVENTS = [
   },
   {
     id: createEventId(),
-    title: 'Evento 8',
+    title: 'Juan Perez',
     start: '2025-11-30T09:00:00',
     end:   '2025-11-30T11:00:00',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
       status: 'Confirmado',
-      location: 'Oficinas Merú',
+      department: 'Administración',
       coloringDay: true,
     },
     className: 'meru-birthdays',

@@ -4,7 +4,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
 
-export default function EmployeeRow( {event, stringCategory, eventWithLocation} ) {
+export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation} ) {
   return (
     <tr
       key={event.id}
@@ -12,7 +12,13 @@ export default function EmployeeRow( {event, stringCategory, eventWithLocation} 
     >
       <td className="px-4 py-3 text-white-800 font-medium">{event.title}</td>
       <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event.start)}</td>
+      
+      {isMeruBirthday ? (
+        <td className="px-4 py-3 text-white-700">{event.extendedProps.department}</td>
+      ) : ( 
       <td className="px-4 py-3 text-white-700">{truncateText(event.extendedProps.description)}</td>
+      )}
+
       {!eventWithLocation && (
         <td className="px-4 py-3 text-white-700">{event.extendedProps.location}</td>
       )}

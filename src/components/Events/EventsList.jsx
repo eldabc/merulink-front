@@ -15,7 +15,8 @@ export default function EventsList({ categoryKeys }) {
   const stringCategory = stringCategoryEvents(categoryKeys);
   const { eventData } = useEvents();
   const navigate = useNavigate();
-  const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar';
+  const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
+  const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
 
   const items = useMemo(() => {
     if (!categoryKeys || categoryKeys.length === 0) return [];
@@ -39,7 +40,7 @@ export default function EventsList({ categoryKeys }) {
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
 
       <div className="titles-table flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Listado de {stringCategory} </h2>
+        <h2 className="text-2xl font-bold">{stringCategory} </h2>
         <div className="text-sm">
           <button
             onClick={() => navigate('/eventos/nuevo')}
@@ -67,7 +68,11 @@ export default function EventsList({ categoryKeys }) {
             <tr className="tr-thead-table">
               <th className="px-4 py-3 text-left font-semibold">Nombre</th>
               <th className="px-4 py-3 text-left font-semibold">Fecha</th>
-              <th className="px-4 py-3 text-left font-semibold">Descripción</th>
+              {isMeruBirthday ? (
+                <th className="px-4 py-3 text-left font-semibold">Departamento</th>
+              ) : (
+                <th className="px-4 py-3 text-left font-semibold">Descripción</th>
+              )}
               {!eventWithLocation && (
                 <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
               )}
@@ -77,7 +82,7 @@ export default function EventsList({ categoryKeys }) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <EventRow key={item.id} event={item} stringCategory={stringCategory} eventWithLocation={eventWithLocation} />
+              <EventRow key={item.id} event={item} isMeruBirthday={isMeruBirthday} eventWithLocation={eventWithLocation} />
             ))}
           </tbody>
         </table>
