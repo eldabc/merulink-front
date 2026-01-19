@@ -6,9 +6,6 @@ export const eventValidationSchema = yup.object().shape({
   typeEventId: yup
     .string()
     .required('Tipo de evento es requerido'),
-    // .matches(/^[0-9]+$/, 'Solo se permiten números.')
-    // .max(4, 'Debe contener máximo 4 dígitos')
-    // .min(3, 'Debe contener mínimo 3 dígitos'), 
     
   eventName: yup
     .string()
@@ -24,7 +21,7 @@ export const eventValidationSchema = yup.object().shape({
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('typeEventId', {
-    is: 'meru-events',
+    is: (val) => ['meru-events', 'wedding-nights'].includes(val),
     then: (schema) => schema.required('La hora de inicio es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
   }),
@@ -42,7 +39,7 @@ export const eventValidationSchema = yup.object().shape({
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('typeEventId', {
-    is: 'meru-events',
+    is: (val) => ['meru-events', 'wedding-nights'].includes(val),
     then: (schema) => schema.required('La hora culminación es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
   }),

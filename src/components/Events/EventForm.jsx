@@ -76,6 +76,31 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       console.warn('Form validation errors:', formErrors);
       if (!formErrors) return;
     };
+
+    const renderCategoryEvents = () => {
+      const excludedKeys = ["meru-birthdays", "google-calendar"];
+      return categoryEvents
+              .filter(typeEvent => !excludedKeys.includes(typeEvent.key))
+              .map(typeEvent => (
+                <option key={`typeEventId-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
+            ));
+    }
+
+    const guestNextDate = (e) => {
+      if (selectedType === 'wedding-nights') {
+        const dateString = e.target.value;
+        if (!dateString ) return;
+        
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + 1);
+        const nextDateFormatted = date.toISOString().split('T')[0];
+        
+        setValue('endDate', nextDateFormatted, { 
+          shouldValidate: true,
+          shouldDirty: true
+        });
+      }
+    };
     return (
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 rounded-lg">
         <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -89,13 +114,10 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
               disabled= {mode === 'view'}
               {...register('typeEventId' , { onChange: handleEventChange })}
               className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.typeEventId ? 'border-red-500' : ''}
-                ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+            >
               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                {categoryEvents
-                  .filter(typeEvent => typeEvent.key !== 'meru-birthdays')
-                  .map(typeEvent => (
-                    <option key={`typeEventId-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
-                ))}
+              {renderCategoryEvents()}
             </select>
             {errors?.typeEventId && <p className="text-red-400 text-xs mt-1">{errors.typeEventId.message}</p>}  
             </div>
@@ -104,8 +126,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
             {selectedType && (
               <div className='border border-[#ffffff21]
-                                md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                md:[&>*:nth-child(2n)]:pl-4 p-7'>
+                              md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
+                              md:[&>*:nth-child(2n)]:pl-4 p-7'
+              >
                 <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
                 <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
                   <div className="md:w-32 md:text-right">
@@ -131,7 +154,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && !eventOneDayWithEndTime && 'Inicio'}: *</label>
                   </div>
                   <div>
-                    <input {...register('startDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                    <input {...register('startDate', {onChange: (e) => guestNextDate(e) })} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
                     {errors?.startDate && <p className="text-red-400 text-xs mt-1">{errors.startDate.message}</p>}  
                   </div>
                   {meruEventsFlag && (
@@ -207,9 +230,10 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <div>
                       <select 
                         disabled= {mode === 'view' || !isRepeatEvent}
-                        {...register('repeatInterval')} // , { onChange: handleEventChange }
+                        {...register('repeatInterval')}
                         className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
-                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                          ${mode === 'view' || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                      >
                           <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                           <option className='bg-[#3c4042]' value='Anual'>Anual</option>
                           <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>

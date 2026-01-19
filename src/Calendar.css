@@ -546,13 +546,19 @@ b { /* used for event dates/times */
   opacity: 0.3;
 }
 
+/* color domingos */
 .fc .fc-day-sun .fc-daygrid-day-frame {
-    border: 1px solid #892020 !important;
-    box-shadow: 0 0 2px #ff5353a1;
-    background: linear-gradient(51deg,#ff53530f,#ff535303);
-    transform: scale(1.02);
+  border: 1px solid #892020 !important;
+  box-shadow: 0 0 2px #ff5353a1;
+  background: linear-gradient(51deg,#ff53530f,#ff535303);
+  transform: scale(1.02);
 }
 a[aria-label="domingo"] {
-    color: #892020 !important;
-    font-weight: 600 !important;
+  color: #892020 !important;
+  font-weight: 600 !important;
 }
+
+.fc .fc-day-sun .fc-daygrid-day-frame .fc-daygrid-day-top .fc-daygrid-day-number{
+  color: #892020 !important;
+}
+/* FIN color domingos */
