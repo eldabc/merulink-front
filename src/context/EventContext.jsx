@@ -14,7 +14,7 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
   const [eventData, setEventData] = useState(initialData);
 
   // ***   ***   ***   ***   ***   ***   ***
-    // *** Crear Sub-departamento
+    // *** Crear
     const createEvent = async (formData) => {
       const typeEvent = categoryEvents.find(te => te.key === formData.typeEventId);
   
@@ -59,7 +59,7 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
 
 
     // ***   ***   ***   ***   ***   ***   ***
-      // *** Actualizar Sub-departamento
+      // *** Actualizar
       const updateEvent = async (formData) => {
         // const departmentData =  getDepartmentNameById(formData.departmentId);
     

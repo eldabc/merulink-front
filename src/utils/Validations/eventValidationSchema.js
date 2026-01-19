@@ -81,8 +81,14 @@ export const eventValidationSchema = yup.object().shape({
   .optional(),
 
   status: yup.string()
-    .required('El estado es requerido')
-    .oneOf(['tentative', 'confirmed'], 'Estado inválido'),
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .when('typeEventId', {
+      is: (val) => val === 'meru-events' || val === 'wedding-nights' || val === 'dinner-heights',
+      then: (schema) => schema.required('El estado es requerido'),
+      otherwise: (schema) => schema.notRequired(),
+    })
+   .oneOf(['tentative', 'confirmed'], 'Estado inválido'),
     
   coloringDay: yup.boolean(),
   

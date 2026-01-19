@@ -16,11 +16,12 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const navigate = useNavigate();
   const meruEventsFlag = selectedType === 'meru-events' || selectedType === 'wedding-nights' || selectedType === 'dinner-heights';
   const eventOneDayWithEndTime = selectedType === 'dinner-heights';
+  const eventWithLocation = selectedType === 've-holidays';
   const { createEvent, updateEvent } = useEvents();
   
-
   // Al seleccionar
   const handleEventChange = (e) => {
+    e.stopPropagation();
     const selectedEventId = e.target.value;
   
     setValue('typeEventId', selectedEventId, { shouldValidate: true });
@@ -31,8 +32,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       if (event && mode === 'edit' || mode === 'view') {
         reset({
           typeEventId: event?.typeEventId ?? '',
-          startDate: event?.startDate ?? '',
-          endDate: event?.endDate ?? '',
+          startDate: event?.startDate ?? null,
+          endDate: event?.endDate ?? null,
         });
       } else if (mode === 'create') {
         reset({
@@ -75,17 +76,15 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       console.warn('Form validation errors:', formErrors);
       if (!formErrors) return;
     };
-    console.log('selectedType;', selectedType)
     return (
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 rounded-lg">
         <form onSubmit={handleSubmit(onSubmit, onError)}>
-          <h2 className="text-2xl font-bold">Registrar Fecha  </h2>       
           <div className="titles-table flex justify-center items-center mb-4">
-          <div className="text-sm justify-center w-64">
-            <div>
-              <label className="block text-xl text-center font-medium text-gray-300 mt-1 mb-2"> Tipo de Evento: *</label>
+          <div className="justify-center w-64">
+            <div className='mt-5'>
+              <h2 className="block text-2xl font-bold text-center"> Tipo de Evento: *</h2>
             </div>
-            <div>
+            <div className='mt-5'>
             <select 
               disabled= {mode === 'view'}
               {...register('typeEventId' , { onChange: handleEventChange })}
@@ -102,9 +101,11 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
             </div>
           </div>
           </div>
-          <div className="rounded-lg shadow">
+          <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
             {selectedType && (
-              <div>
+              <div className='border border-[#ffffff21]
+                                md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
+                                md:[&>*:nth-child(2n)]:pl-4 p-7'>
                 <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
                 <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
                   <div className="md:w-32 md:text-right">
@@ -121,7 +122,11 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">                    
+                <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full
+                                border border-[#ffffff21]
+                                md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
+                                md:[&>*:nth-child(2n)]:pl-4 p-7"
+                >                    
                   <div>
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && !eventOneDayWithEndTime && 'Inicio'}: *</label>
                   </div>
@@ -174,23 +179,26 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       </div>
                     </> 
                   )}
-                  <div>
-                    <label className="block text-xl font-medium text-gray-300 mt-1"> Ubicación: *</label>
-                  </div>
-                  <div>
-                    <select 
-                      disabled= {mode === 'view'}
-                      {...register('location')}
-                      className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.location ? 'border-red-500' : ''}
-                        ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
-                      <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                        {locations.map(location => (
-                          <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
-                        ))}
-                    </select>
-                    {errors?.location && <p className="text-red-400 text-xs mt-1">{errors.location.message}</p>}  
-                  </div> 
-
+                  {!eventWithLocation && (
+                    <>
+                    <div>
+                      <label className="block text-xl font-medium text-gray-300 mt-1"> Ubicación: *</label>
+                    </div>
+                    <div>
+                      <select 
+                        disabled= {mode === 'view'}
+                        {...register('location')}
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.location ? 'border-red-500' : ''}
+                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                        <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                          {locations.map(location => (
+                            <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
+                          ))}
+                      </select>
+                      {errors?.location && <p className="text-red-400 text-xs mt-1">{errors.location.message}</p>}  
+                    </div> 
+                    </> 
+                  )}
                   <div>
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: </label>
                   </div>

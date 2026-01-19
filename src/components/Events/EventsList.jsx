@@ -15,6 +15,7 @@ export default function EventsList({ categoryKeys }) {
   const stringCategory = stringCategoryEvents(categoryKeys);
   const { eventData } = useEvents();
   const navigate = useNavigate();
+  const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar';
 
   const items = useMemo(() => {
     if (!categoryKeys || categoryKeys.length === 0) return [];
@@ -36,8 +37,6 @@ export default function EventsList({ categoryKeys }) {
 
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
-            
-      {/* {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )} */}
 
       <div className="titles-table flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Listado de {stringCategory} </h2>
@@ -68,15 +67,17 @@ export default function EventsList({ categoryKeys }) {
             <tr className="tr-thead-table">
               <th className="px-4 py-3 text-left font-semibold">Nombre</th>
               <th className="px-4 py-3 text-left font-semibold">Fecha</th>
-              <th className="px-4 py-3 text-left font-semibold">Hora</th>
-              <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
+              <th className="px-4 py-3 text-left font-semibold">Descripción</th>
+              {!eventWithLocation && (
+                <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
+              )}
               <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
               <th className="px-4 py-3 text-left font-semibold">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <EventRow key={item.id} event={item} stringCategory={stringCategory} />
+              <EventRow key={item.id} event={item} stringCategory={stringCategory} eventWithLocation={eventWithLocation} />
             ))}
           </tbody>
         </table>

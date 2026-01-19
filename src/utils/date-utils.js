@@ -32,6 +32,11 @@ export function normalizeDate(date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
+export function normalizeDateToString(date) {
+  const normalizedDate = normalizeDate(date);
+  return normalizedDate.toLocaleDateString();
+}
+
 // Obtener fecha de hoy normalizada
 export function getTodayNormalized() {
   return normalizeDate(new Date());

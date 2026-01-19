@@ -6,3 +6,8 @@ export function normalizeText(text) {
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
 }
+//  Cortar texto a un limite de caracteres
+export function truncateText(text = '', limit = 50) {
+  if (text.length <= limit) return text;
+  return text.substring(0, limit) + "...";
+};

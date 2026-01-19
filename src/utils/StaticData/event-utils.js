@@ -68,6 +68,7 @@ export const INITIAL_EVENTS = [
       status: 'Tentativo',
       location: 'Oficinas Merú',
       coloringDay: true,
+      description: 'Descripción del evento 5',
     },
     className: 've-holidays',
   },
