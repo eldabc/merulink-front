@@ -1,31 +1,40 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import axios from 'axios'
 import { formatDate } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
-import esLocale from '@fullcalendar/core/locales/es';
+import { EventProvider, useEvents } from "../../context/EventContext";
+import { useNotification } from "../../context/NotificationContext";  
 import { capitalizeDateString } from '../../utils/date-utils';
 import { filterEventsByDate } from '../../utils/calendar-utils';
 import { getTodayNormalized } from '../../utils/date-utils';
 import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
-import '../../Calendar.css';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from 'react-router-dom';
 import { categoryLegend } from '../../utils/Events/events-utils';
+import esLocale from '@fullcalendar/core/locales/es';
+import '../../Calendar.css';
 
 export default function Calendar() {
 
+  const { showNotification } = useNotification();
+  return (
+    <EventProvider showNotification={showNotification}>
+      <EventsCalendar />
+    </EventProvider>
+  );
+}
+
+function EventsCalendar() {
   const navigate = useNavigate();
   const [weekendsVisible, setWeekendsVisible] = useState(true);
-  const [currentEvents, setCurrentEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
   const calendarRef = useRef(null);
   const [currentTitle, setCurrentTitle] = useState('');
+  const { eventData } = useEvents();
 
   // Funciones para controlar el calendario manualmente
   const handlePrev = () => calendarRef.current.getApi().prev();
@@ -44,32 +53,15 @@ export default function Calendar() {
 
   //  Filtrado dinámico según categorías activas
   const filteredEvents = useMemo(() => {
-    return currentEvents.filter(ev =>
+    return eventData.filter(ev =>
       activeCategories[ev.extendedProps?.category]
     );
-  }, [currentEvents, activeCategories]);
+  }, [eventData, activeCategories]);
 
   // Filtrar eventos del día seleccionado
   const eventsOfSelectedDay = useMemo(() => {
     return filterEventsByDate(filteredEvents, selectedDate);
   }, [filteredEvents, selectedDate]);
-
-
-  // Cargar eventos desde backend con AXIOS
-  // useEffect(() => {
-  //   axios.get("https://app.ticketmaster.com/discovery/v2/events.json?apikey=EsFHMrENSgZMEQRfre6wUuUZMFJTaWqU")
-  //     .then(res => {
-  //       const loadedEvents = res.data._embedded.events.map(e => ({
-  //         ...e,
-  //         start: new Date(e.start),
-  //         end: e.end ? new Date(e.end) : null
-  //       }));
-  //       console.log("loadedEvents: ", loadedEvents);
-  //       setCurrentEvents(loadedEvents);
-  //       // eventsOfSelectedDay(new Date(), loadedEvents);  // mostrar eventos del día actual
-  //     })
-  //     .catch(err => console.error("Error cargando eventos:", err));
-  // }, []);
   
   // Formatear la fecha seleccionada para mostrar en sidebar
   const formattedSelectedDate = useMemo(() => {
@@ -102,15 +94,6 @@ export default function Calendar() {
   function handleEventClick(clickInfo) {
     toggleSelectedEvent(clickInfo.event);
   }
-  
-  // Esta función no se ejecuta nunca si usas events={filteredEvents}
-  // function handleEvents(events) {
-  //   setCurrentEvents(events);
-  // }
-
-  useEffect(() => {
-    setCurrentEvents(INITIAL_EVENTS);
-  }, []);
 
   function handleDateClick(arg) {
     const clickedDate = new Date(arg.date);
@@ -166,8 +149,6 @@ export default function Calendar() {
             eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
-            // initialEvents={INITIAL_EVENTS}
-            // eventsSet={handleEvents}
             locale={esLocale}
             datesSet={(arg) => {
               // arg.view.title contiene el string formateado (ej: "diciembre de 2025")

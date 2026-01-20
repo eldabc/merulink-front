@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
+import { INITIAL_EVENTS } from '../utils/StaticData/event-utils';
 const EventContext = createContext();
 
 // hook personalizado para usar el contexto
@@ -9,9 +10,54 @@ export const useEvents = () => {
 };
 
 // Provider con la lógica y el estado
-export const EventProvider = ({ initialData, showNotification, children }) => {
+export const EventProvider = ({ showNotification, children }) => {
     
-  const [eventData, setEventData] = useState(initialData);
+  const [eventData, setEventData] = useState(INITIAL_EVENTS);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Cargar datos desde API (preparado para migración)
+  useEffect(() => {
+    const loadEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // TODO: Reemplazar con llamada real a API cuando esté lista
+        // const response = await fetch('http://your-api.com/events');
+        // if (!response.ok) throw new Error('Error al cargar eventos');
+        // const data = await response.json();
+        // setEventData(data);
+        
+        // Por ahora usamos datos estáticos
+        setEventData(INITIAL_EVENTS);
+      } catch (err) {
+        setError(err.message);
+        showNotification('Error al cargar eventos: ' + err.message, 'error');
+        // Fallback a datos estáticos en caso de error
+        setEventData(INITIAL_EVENTS);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [showNotification]);
+
+  // *** Para recargar datos manualmente
+  const refetchEvents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+
+      setEventData(INITIAL_EVENTS);
+
+    } catch (err) {
+      setError(err.message);
+      showNotification('Error al recargar eventos: ' + err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ***   ***   ***   ***   ***   ***   ***
     // *** Crear
@@ -90,6 +136,9 @@ export const EventProvider = ({ initialData, showNotification, children }) => {
   const contextValue = {
     eventData,
     setEventData,
+    loading,
+    error,
+    refetchEvents,
     createEvent,
     updateEvent
   };
