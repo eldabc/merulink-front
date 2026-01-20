@@ -3,6 +3,10 @@ import { useEvents } from "../../context/EventContext";
 import EventRow from './EventRow';
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { useNavigate } from 'react-router-dom';
+import { normalizeText } from '../../utils/text-utils';
+import { filterData } from '../../utils/filter-utils';
+import { useState } from 'react';
+import Pagination from '../Pagination';
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
@@ -17,7 +21,14 @@ export default function EventsList({ categoryKeys }) {
   const navigate = useNavigate();
   const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
-
+  
+  // Variables para paginación y búsqueda
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [hasSearched, setHasSearched] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const itemsPerPage = 10;
+  
+ 
   const items = useMemo(() => {
     if (!categoryKeys || categoryKeys.length === 0) return [];
 
@@ -35,6 +46,27 @@ export default function EventsList({ categoryKeys }) {
       };
     });
   }, [eventData, categoryKeys]);
+
+  const SEARCH_FIELDS = [
+    'title'
+  ];
+
+  // Filtrar
+  const filteredEvents = useMemo(() => {
+      return filterData(
+          items,
+          searchValue,
+          SEARCH_FIELDS,
+          "",
+          normalizeText
+      );
+  }, [items, searchValue]);
+
+  // Datos para mostrar
+  const dataToDisplay = hasSearched ? filteredEvents : items;
+  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedEvents = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -91,18 +123,18 @@ export default function EventsList({ categoryKeys }) {
       </div>
       
     )}
-    {/* <Pagination
-        paginatedData={paginatedDepartments}
+    <Pagination
+        paginatedData={paginatedEvents}
         startIndex={startIndex}
         itemsPerPage={itemsPerPage}
         dataToDisplay={dataToDisplay}
         hasSearched={hasSearched}
-        data={departmentData}
+        data={items}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
         totalPages={totalPages}
-        moduleName={'Departamento'}
-      /> */}
+        moduleName={'Evento'}
+      />
     </div>
             
   );
