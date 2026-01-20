@@ -1,5 +1,4 @@
 import React from 'react';
-// import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
@@ -14,7 +13,7 @@ export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation} 
       <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event.start)}</td>
       
       {isMeruBirthday ? (
-        <td className="px-4 py-3 text-white-700">{event.extendedProps.department}</td>
+        <td className="px-4 py-3 text-white-700">{event.extendedProps.departmentName}</td>
       ) : ( 
       <td className="px-4 py-3 text-white-700">{truncateText(event.extendedProps.description)}</td>
       )}

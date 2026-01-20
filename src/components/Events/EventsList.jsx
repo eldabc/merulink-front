@@ -42,12 +42,14 @@ export default function EventsList({ categoryKeys }) {
       <div className="titles-table flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">{stringCategory} </h2>
         <div className="text-sm">
-          <button
-            onClick={() => navigate('/eventos/nuevo')}
-            className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
-          >
-            ← Nuevo Registro
-          </button>
+          {!isMeruBirthday && (
+            <button
+              onClick={() => navigate('/eventos/nuevo')}
+              className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
+            >
+              ← Nuevo Registro
+            </button>
+          )}
         </div>
       </div>
       {/* Filtro */}
