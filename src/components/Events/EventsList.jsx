@@ -7,6 +7,7 @@ import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 import { useState } from 'react';
 import Pagination from '../Pagination';
+import EventForm from './EventForm';
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
@@ -21,6 +22,7 @@ export default function EventsList({ categoryKeys }) {
   const navigate = useNavigate();
   const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
+  const [selectedEvent, setSelectedEvent] = useState(null);
   
   // Variables para paginación y búsqueda
   const [currentPage, setCurrentPage] = useState(1); 
@@ -47,9 +49,7 @@ export default function EventsList({ categoryKeys }) {
     });
   }, [eventData, categoryKeys]);
 
-  const SEARCH_FIELDS = [
-    'title'
-  ];
+  const SEARCH_FIELDS = ['title'];
 
   // Filtrar
   const filteredEvents = useMemo(() => {
@@ -62,6 +62,10 @@ export default function EventsList({ categoryKeys }) {
       );
   }, [items, searchValue]);
 
+  if (selectedEvent) {
+    const eventSelected = items.find(e => e.id === selectedEvent);
+    return <EventForm mode="view" event={eventSelected} onBack={() => setSelectedEvent(null)} />;
+  }
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredEvents : items;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
@@ -116,7 +120,7 @@ export default function EventsList({ categoryKeys }) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <EventRow key={item.id} event={item} isMeruBirthday={isMeruBirthday} eventWithLocation={eventWithLocation} />
+              <EventRow key={item.id} event={item} isMeruBirthday={isMeruBirthday} eventWithLocation={eventWithLocation} setSelectedEvent={setSelectedEvent}/>
             ))}
           </tbody>
         </table>

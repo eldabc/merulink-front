@@ -11,7 +11,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
   });
-  const selectedType = watch('typeEventId');
+  let selectedType = watch('typeEventId');
   const isRepeatEvent = watch('repeatEvent');
   const navigate = useNavigate();
   const meruEventsFlag = selectedType === 'meru-events' || selectedType === 'wedding-nights' || selectedType === 'dinner-heights';
@@ -29,12 +29,26 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   };
 
   useEffect(() => {
-      if (event && mode === 'edit' || mode === 'view') {
+      if (event && (mode === 'edit' || mode === 'view')) {
+        const categoryType = event?.extendedProps?.category;
         reset({
-          typeEventId: event?.typeEventId ?? '',
-          startDate: event?.startDate ?? null,
-          endDate: event?.endDate ?? null,
+          typeEventId: '',
+          startDate: event?.start ?? null,
+          endDate: event?.end ?? null,
+          eventName: event?.title ??'',
+          startTime: event?.startTime ?? null,
+          endTime: event?.endTime ?? null,
+          locationEvent: event?.extendedProps?.location ?? '',
+          repeatEvent: event?.extendedProps?.repeatEvent ?? false,
+          repeatInterval: event?.extendedProps?.repeatInterval ?? '',
+          createAlert: event?.extendedProps?.createAlert ?? false,
+          description: event?.extendedProps?.description ?? '',
+          comments: event?.extendedProps?.comments ?? '',
+          coloringDay: event?.extendedProps?.coloringDay ?? false,
+          status: event?.extendedProps?.status ?? 'tentative',
         });
+        // Actualizar el estado del watch
+        setValue('typeEventId', categoryType, { shouldValidate: false });
       } else if (mode === 'create') {
         reset({
           eventName: '',
@@ -51,7 +65,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           typeEventId: '',
         });
       }
-    }, [event, mode, reset]);
+  }, [event, mode, reset, setValue]);
 
     const onSubmit = async (data) => {
       let success = false;
@@ -112,16 +126,20 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
               <h2 className="block text-2xl font-bold text-center"> Tipo de Evento: *</h2>
             </div>
             <div className='mt-5'>
-            <select 
-              disabled= {mode === 'view'}
-              {...register('typeEventId' , { onChange: handleEventChange })}
-              className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.typeEventId ? 'border-red-500' : ''}
-                ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
-            >
-              <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-              {renderCategoryEvents()}
-            </select>
-            {errors?.typeEventId && <p className="text-red-400 text-xs mt-1">{errors.typeEventId.message}</p>}  
+              {mode === 'view' ? (
+                <div className="text-xl w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-300">
+                  {categoryEvents.find(t => t.key === selectedType)?.label || 'Sin tipo'}
+                </div>
+              ) : (
+                <select 
+                  {...register('typeEventId' , { onChange: handleEventChange })}
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
+                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                >
+                  <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                  {renderCategoryEvents()}
+                </select>
+              )}
             </div>
           </div>
           </div>
@@ -300,7 +318,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
             )}
           </div>
           <div className="mt-6 flex justify-end gap-3">
-            <button type="button" onClick={() => navigate(-1)} className="px-6 py-2 font-semibold">Cancelar</button>
+            <button type="button" onClick={() => typeof onBack === 'function' ? onBack() : navigate(-1)} className="px-6 py-2 font-semibold">Cancelar</button>
             {mode !== 'view' && (
               <button type="submit" disabled={isSubmitting} className="px-6 py-2 font-semibold">
                 {mode === 'edit' ? 'Guardar cambios' : 'Crear Evento'}

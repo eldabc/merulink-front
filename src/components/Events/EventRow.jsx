@@ -3,10 +3,11 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
 
-export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation} ) {
+export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation, setSelectedEvent} ) {
   return (
     <tr
       key={event.id}
+      onClick={() => setSelectedEvent(event.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
     >
       <td className="px-4 py-3 text-white-800 font-medium">{event.title}</td>
