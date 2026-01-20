@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom';
 import EventsList from './EventsList';
 import EventForm from './EventForm';
 import { EventProvider } from '../../context/EventContext';
-import { INITIAL_EVENTS } from '../../utils/StaticData/event-utils';
 import { useNotification } from '../../context/NotificationContext';
 
 export default function EventsPage() {
@@ -11,7 +10,7 @@ export default function EventsPage() {
   return (
     <>
       <main className="flex-1 rounded p-4 min-h-[60vh]">
-        <EventProvider initialData={INITIAL_EVENTS} showNotification={showNotification}>
+        <EventProvider showNotification={showNotification}>
           <Routes>
             <Route path="/" element={<EventsList categoryKeys={["meru-events"]} />} />
             <Route path="noche-bodas-cena-alturas" element={<EventsList categoryKeys={["wedding-nights", "dinner-heights"]} />} />

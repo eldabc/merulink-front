@@ -41,7 +41,7 @@ export const EventProvider = ({ showNotification, children }) => {
     };
 
     loadEvents();
-  }, [showNotification]);
+  }, []);
 
   // *** Para recargar datos manualmente
   const refetchEvents = async () => {
