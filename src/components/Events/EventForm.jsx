@@ -7,20 +7,28 @@ import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
 import { useEffect, useState } from 'react';
 import { divideDateTime } from '../../utils/date-utils';
+import { PencilIcon } from "@heroicons/react/24/solid";
+import { ArrowLeft } from "lucide-react";
 
 export default function EventForm({ mode = 'create', event = null, onBack }) { // , onSave, onCancel
+  
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
   });
+  
+  const [isMeruBirthdays, setIsMeruBirthdays] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const { createEvent, updateEvent } = useEvents();
+  const viewMode = mode === 'view';
+
   let selectedType = watch('typeEventId');
   const isRepeatEvent = watch('repeatEvent');
+
   const navigate = useNavigate();
+
   const meruEventsFlag = selectedType === 'meru-events' || selectedType === 'wedding-nights' || selectedType === 'dinner-heights';
   const eventOneDayWithEndTime = selectedType === 'dinner-heights';
   const eventWithoutLocation = selectedType === 've-holidays' || selectedType === 'meru-birthdays';
-  const [isMeruBirthdays, setIsMeruBirthdays] = useState(false);
-  const { createEvent, updateEvent } = useEvents();
-  const viewMode = mode === 'view';
   
   // Al seleccionar
   const handleEventChange = (e) => {
@@ -42,7 +50,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         
         const defaultRepitedEvent = isMeruBirthdays ? true : (event?.extendedProps?.repeatEvent ?? false);
         const defaultRepitedInterval = isMeruBirthdays ? 'Anual' : (event?.extendedProps?.repeatInterval ?? '');
-        console.log('defaul repited: ', defaultRepitedEvent, isMeruBirthdays);
+        console.log('event?.extendedProps?.createAlert: ',event?.extendedProps?.createAlert);
         reset({
           typeEventId: '',
           startDate: divideDateTimeStart?.date ?? null,
@@ -50,14 +58,14 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           eventName: event?.title ??'',
           startTime: divideDateTimeStart?.time ?? null,
           endTime: divideDateTimeEnd?.time ?? null,
-          locationEvent: event?.extendedProps?.location ?? '',
+          location: event?.extendedProps?.location ?? '',
           repeatEvent: defaultRepitedEvent,
           repeatInterval: defaultRepitedInterval,
           createAlert: event?.extendedProps?.createAlert ?? false,
           description: event?.extendedProps?.description ?? '',
           comments: event?.extendedProps?.comments ?? '',
+          status: event?.extendedProps?.status ?? 'Tentativo',
           coloringDay: event?.extendedProps?.coloringDay ?? false,
-          status: event?.extendedProps?.status ?? 'tentative',
         });
         // Actualizar el estado del watch
         setValue('typeEventId', categoryType, { shouldValidate: false });
@@ -68,13 +76,15 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           startTime: null,
           endDate: null,
           endTime: null,
-          locationEvent: '',
+          location: '',
           repeatEvent: false,
           repeatInterval: '',
           createAlert: false,
           description: '',
           comments: '',
           typeEventId: '',
+          status: 'Tentativo',
+          coloringDay: false,
         });
       }
   }, [event, mode, reset, setValue]);
@@ -129,9 +139,21 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         setValue('endDate', null, { shouldValidate: true });
       }
     };
+
+  if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => setIsEditing(false)} />;}
+
     return (
-      <div className="md:min-w-4xl overflow-x-auto table-container p-4 rounded-lg">
-        <form onSubmit={handleSubmit(onSubmit, onError)}>
+      <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+        <div className="buttons-bar flex gap-2 aling-items-right justify-end">
+          <button onClick={() => setIsEditing(true)} className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
+            <PencilIcon className="w-4 h-4 text-white-500" />
+          </button>
+          <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
+              <ArrowLeft className="w-4 h-4 text-white-500" />
+          </button>
+        </div>
+      <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+        <form onSubmit={handleSubmit(onSubmit, onError)}> 
           <div className="titles-table flex justify-center items-center mb-4">
           <div className="justify-center w-64">
             <div className='mt-5'>
@@ -236,8 +258,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           {...register('status')} // , { onChange: handleEventChange }
                           className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
                             ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
-                            <option className='bg-[#3c4042]' value='tentative'>Tentativo</option>
-                            <option className='bg-[#3c4042]' value='confirmed'>Confirmado</option>
+                            <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
+                            <option className='bg-[#3c4042]' value='Confirmado'>Confirmado</option>
                           </select>
                         {errors?.status && <p className="text-red-400 text-xs mt-1">{errors.status.message}</p>}  
                       </div>
@@ -280,7 +302,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                           <option className='bg-[#3c4042]' value='Anual'>Anual</option>
                           <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
-                          <option className='bg-[#3c4042]' value='Quincesal'>Quincesal</option>
+                          <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
                           {selectedType === 'executive-mod' && ( <option className='bg-[#3c4042]' value='Semanal'>Semanal</option> )}
                       </select>
                       {errors?.repeatInterval && <p className="text-red-400 text-xs mt-1">{errors.repeatInterval.message}</p>}  
@@ -357,7 +379,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
               </button>
             )}
           </div>
-          </form>
+        </form>
+      </div>
       </div>
     );
 }

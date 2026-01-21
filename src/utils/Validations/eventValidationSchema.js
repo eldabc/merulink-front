@@ -99,7 +99,7 @@ export const eventValidationSchema = yup.object().shape({
       then: (schema) => schema.required('El estado es requerido'),
       otherwise: (schema) => schema.notRequired(),
     })
-   .oneOf(['tentative', 'confirmed'], 'Estado inválido'),
+   .oneOf(['Tentativo', 'Confirmado'], 'Estado inválido'),
     
   coloringDay: yup.boolean(),
   

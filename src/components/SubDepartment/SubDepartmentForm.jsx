@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowLeft, User } from "lucide-react";
 import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
 import { departments } from '../../utils/StaticData/departments-utils';  
 import { subDepartmentValidationSchema } from '../../utils/Validations/subDepartmentValidationSchema';
 import { useSubDepartments } from '../../context/SubDepartmentContext';
 import { PencilIcon } from "@heroicons/react/24/solid";
+import { ArrowLeft } from "lucide-react";
 import '../../Tables.css';
 
 export default function SubDepartmentForm({ mode = 'create', subDepartment = null, onBack, onSave, onUpdate }) {
