@@ -16,10 +16,12 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       resolver: yupResolver(eventValidationSchema),
   });
   
-  const [isMeruBirthdays, setIsMeruBirthdays] = useState(false);
+  const [yearlyEvent, setYearlyEvent] = useState(false);
+  const [categoryType, setcategoryType] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const { createEvent, updateEvent } = useEvents();
   const viewMode = mode === 'view';
+  const editMode =  mode === 'edit';
 
   let selectedType = watch('typeEventId');
   const isRepeatEvent = watch('repeatEvent');
@@ -40,17 +42,17 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   };
 
   useEffect(() => {
-      if (event && (mode === 'edit' || viewMode)) {
+      if (event && (editMode || viewMode)) {
         
         const divideDateTimeStart = divideDateTime(event?.start);
         const divideDateTimeEnd = divideDateTime(event?.end);
         const categoryType = event?.extendedProps?.category;
-        // const isBirthdays = categoryType === 'meru-birthdays';
-        setIsMeruBirthdays(categoryType === 'meru-birthdays');
+        const yearlyEventValue = categoryType === 'meru-birthdays' || categoryType === 've-holidays';
+        setYearlyEvent(yearlyEventValue);
+        setcategoryType(categoryType);
         
-        const defaultRepitedEvent = isMeruBirthdays ? true : (event?.extendedProps?.repeatEvent ?? false);
-        const defaultRepitedInterval = isMeruBirthdays ? 'Anual' : (event?.extendedProps?.repeatInterval ?? '');
-        console.log('event?.extendedProps?.createAlert: ',event?.extendedProps?.createAlert);
+        const defaultRepitedEvent = yearlyEventValue ? true : (event?.extendedProps?.repeatEvent ?? false);
+        const defaultRepitedInterval = yearlyEventValue ? 'Anual' : (event?.extendedProps?.repeatInterval ?? '');
         reset({
           typeEventId: '',
           startDate: divideDateTimeStart?.date ?? null,
@@ -67,7 +69,6 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           status: event?.extendedProps?.status ?? 'Tentativo',
           coloringDay: event?.extendedProps?.coloringDay ?? false,
         });
-        // Actualizar el estado del watch
         setValue('typeEventId', categoryType, { shouldValidate: false });
       } else if (mode === 'create') {
         reset({
@@ -92,7 +93,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
     const onSubmit = async (data) => {
       let success = false;
       
-      if (mode === 'edit' && event) {
+      if (editMode && event) {
           console.log("Actualizando:", data);
 
           const updatedData = { ...event, ...data };
@@ -141,9 +142,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
     };
 
   if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => setIsEditing(false)} />;}
-
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+        {(viewMode && categoryType !== 'meru-birthdays') && (
         <div className="buttons-bar flex gap-2 aling-items-right justify-end">
           <button onClick={() => setIsEditing(true)} className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
             <PencilIcon className="w-4 h-4 text-white-500" />
@@ -152,6 +153,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
               <ArrowLeft className="w-4 h-4 text-white-500" />
           </button>
         </div>
+        )}
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <form onSubmit={handleSubmit(onSubmit, onError)}> 
           <div className="titles-table flex justify-center items-center mb-4">
@@ -183,7 +185,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                               md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                               md:[&>*:nth-child(2n)]:pl-4 p-7'
               >
-                <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
+                <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
                 <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
                   <div className="md:w-32 md:text-right">
                     <label className="block text-lg font-medium text-gray-300 mt-1">Nombre: *</label>
@@ -333,7 +335,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                                 md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                 md:[&>*:nth-child(2n)]:pl-4 p-7'
                 >
-                  {!isMeruBirthdays  && (
+                  {!yearlyEvent  && (
                     <>
                     <div className="md:w-32 md:text-right">
                       <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: </label>
@@ -375,7 +377,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
             <button type="button" onClick={() => typeof onBack === 'function' ? onBack() : navigate(-1)} className="px-6 py-2 font-semibold">Cancelar</button>
             {mode !== 'view' && (
               <button type="submit" disabled={isSubmitting} className="px-6 py-2 font-semibold">
-                {mode === 'edit' ? 'Guardar cambios' : 'Crear Evento'}
+                {editMode ? 'Guardar cambios' : 'Crear Evento'}
               </button>
             )}
           </div>
