@@ -1,12 +1,12 @@
 
 let eventGuid = 0
 let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
-
 export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 1',
-    start: '2025-11-11',
+    start: todayStr+ 'T13:00:00',
+    end: todayStr+ 'T15:00:00',
     allDay: true,
     extendedProps: {
       category: 'meru-events',
@@ -21,13 +21,15 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Camilo Hernández',
-    start: '2025-11-15T09:00:00',
-    end:   '2025-11-15T11:00:00',
+    start: '2025-11-15',
+    end:   '2025-11-15',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
       status: 'Tentativo',
       departmentName: 'Contabilidad',
+      repeatEvent: true,
+      repeatInterval: 'Anual',
       coloringDay: true,
     },
     className: 'meru-birthdays',
@@ -35,7 +37,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 3',
-    start: todayStr,
+    start: todayStr+ 'T13:00:00',
+    end: todayStr+ 'T15:00:00',
     extendedProps: {
       category: 'wedding-nights',
       label: 'Plan Noche de Bodas',
@@ -48,7 +51,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 4',
-    start: todayStr,
+    start: todayStr+ 'T08:00:00',
+    end: todayStr+ 'T17:00:00',
     extendedProps: {
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
@@ -102,8 +106,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Juan Perez',
-    start: '2025-11-30T09:00:00',
-    end:   '2025-11-30T11:00:00',
+    start: '2025-11-30',
+    end:   '2025-11-30',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',

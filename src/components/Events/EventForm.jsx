@@ -5,7 +5,8 @@ import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { divideDateTime } from '../../utils/date-utils';
 
 export default function EventForm({ mode = 'create', event = null, onBack }) { // , onSave, onCancel
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
@@ -16,8 +17,10 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const navigate = useNavigate();
   const meruEventsFlag = selectedType === 'meru-events' || selectedType === 'wedding-nights' || selectedType === 'dinner-heights';
   const eventOneDayWithEndTime = selectedType === 'dinner-heights';
-  const eventWithLocation = selectedType === 've-holidays';
+  const eventWithoutLocation = selectedType === 've-holidays' || selectedType === 'meru-birthdays';
+  const [isMeruBirthdays, setIsMeruBirthdays] = useState(false);
   const { createEvent, updateEvent } = useEvents();
+  const viewMode = mode === 'view';
   
   // Al seleccionar
   const handleEventChange = (e) => {
@@ -29,18 +32,27 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   };
 
   useEffect(() => {
-      if (event && (mode === 'edit' || mode === 'view')) {
+      if (event && (mode === 'edit' || viewMode)) {
+        
+        const divideDateTimeStart = divideDateTime(event?.start);
+        const divideDateTimeEnd = divideDateTime(event?.end);
         const categoryType = event?.extendedProps?.category;
+        // const isBirthdays = categoryType === 'meru-birthdays';
+        setIsMeruBirthdays(categoryType === 'meru-birthdays');
+        
+        const defaultRepitedEvent = isMeruBirthdays ? true : (event?.extendedProps?.repeatEvent ?? false);
+        const defaultRepitedInterval = isMeruBirthdays ? 'Anual' : (event?.extendedProps?.repeatInterval ?? '');
+        console.log('defaul repited: ', defaultRepitedEvent, isMeruBirthdays);
         reset({
           typeEventId: '',
-          startDate: event?.start ?? null,
-          endDate: event?.end ?? null,
+          startDate: divideDateTimeStart?.date ?? null,
+          endDate: divideDateTimeEnd?.date ?? null,
           eventName: event?.title ??'',
-          startTime: event?.startTime ?? null,
-          endTime: event?.endTime ?? null,
+          startTime: divideDateTimeStart?.time ?? null,
+          endTime: divideDateTimeEnd?.time ?? null,
           locationEvent: event?.extendedProps?.location ?? '',
-          repeatEvent: event?.extendedProps?.repeatEvent ?? false,
-          repeatInterval: event?.extendedProps?.repeatInterval ?? '',
+          repeatEvent: defaultRepitedEvent,
+          repeatInterval: defaultRepitedInterval,
           createAlert: event?.extendedProps?.createAlert ?? false,
           description: event?.extendedProps?.description ?? '',
           comments: event?.extendedProps?.comments ?? '',
@@ -126,7 +138,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
               <h2 className="block text-2xl font-bold text-center"> Tipo de Evento: *</h2>
             </div>
             <div className='mt-5'>
-              {mode === 'view' ? (
+              {viewMode ? (
                 <div className="text-xl w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-300">
                   {categoryEvents.find(t => t.key === selectedType)?.label || 'Sin tipo'}
                 </div>
@@ -134,7 +146,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                 <select 
                   {...register('typeEventId' , { onChange: handleEventChange })}
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                    ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
                 >
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                   {renderCategoryEvents()}
@@ -157,6 +169,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
 
                   <div className="w-full max-w-2xl">
                     <input 
+                      readOnly={viewMode}
                       {...register('eventName')} 
                       type='text' 
                       className={`w-full px-3 py-2 rounded-lg filter-input border ${errors?.eventName ? 'border-red-500' : ''}`} 
@@ -174,7 +187,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && !eventOneDayWithEndTime && 'Inicio'}: *</label>
                   </div>
                   <div>
-                    <input {...register('startDate', {onChange: (e) => guestNextDate(e) })} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                    <input 
+                      readOnly={viewMode} 
+                      {...register('startDate', {onChange: (e) => guestNextDate(e) })} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
                     {errors?.startDate && <p className="text-red-400 text-xs mt-1">{errors.startDate.message}</p>}  
                   </div>
                   {meruEventsFlag && (
@@ -183,7 +198,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Inicio: *</label>
                       </div>
                       <div>
-                        <input {...register('startTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                        <input 
+                          readOnly={viewMode}
+                          {...register('startTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                         {errors?.startTime && <p className="text-red-400 text-xs mt-1">{errors.startTime.message}</p>}  
 
                       </div>
@@ -193,7 +210,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
                       </div>
                       <div>
-                        <input {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                        <input 
+                          readOnly={viewMode}
+                          {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
                         {errors?.endDate && <p className="text-red-400 text-xs mt-1">{errors.endDate.message}</p>}  
                       </div> 
                     </>
@@ -202,7 +221,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Fin: *</label>
                       </div>
                       <div>
-                        <input {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                        <input 
+                          readOnly={viewMode}
+                          {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                         {errors?.endTime && <p className="text-red-400 text-xs mt-1">{errors.endTime.message}</p>}  
 
                       </div> 
@@ -211,10 +232,10 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       </div>
                       <div className='items-center gap-2'>
                         <select 
-                          disabled= {mode === 'view' }
+                          disabled= {viewMode}
                           {...register('status')} // , { onChange: handleEventChange }
                           className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
-                            ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                            ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
                             <option className='bg-[#3c4042]' value='tentative'>Tentativo</option>
                             <option className='bg-[#3c4042]' value='confirmed'>Confirmado</option>
                           </select>
@@ -222,17 +243,17 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       </div>
                     </> 
                   )}
-                  {!eventWithLocation && (
+                  {!eventWithoutLocation && (
                     <>
                     <div>
                       <label className="block text-xl font-medium text-gray-300 mt-1"> Ubicación: *</label>
                     </div>
                     <div>
                       <select 
-                        disabled= {mode === 'view'}
+                        disabled= {viewMode}
                         {...register('location')}
                         className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.location ? 'border-red-500' : ''}
-                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                          ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
                         <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                           {locations.map(location => (
                             <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
@@ -246,13 +267,15 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: </label>
                   </div>
                   <div className='flex flex-row items-center gap-2'>
-                    <input {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                    <input 
+                      disabled={viewMode}
+                      {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
                     <div>
                       <select 
-                        disabled= {mode === 'view' || !isRepeatEvent}
+                        disabled= {viewMode || !isRepeatEvent}
                         {...register('repeatInterval')}
                         className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
-                          ${mode === 'view' || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                          ${viewMode || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
                       >
                           <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                           <option className='bg-[#3c4042]' value='Anual'>Anual</option>
@@ -268,7 +291,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: </label>
                   </div>
                   <div className='flex flex-row items-center gap-2'>
-                    <input type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                    <input 
+                      disabled={viewMode} 
+                      type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
                     {errors?.createAlert && <p className="text-red-400 text-xs mt-1">{errors.createAlert.message}</p>}  
                   </div>
 
@@ -276,7 +301,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <label className="block text-xl font-medium text-gray-300 mt-1"> Resaltar Día: </label>
                   </div>
                   <div className='flex flex-row items-center gap-2'>
-                    <input type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                    <input 
+                      disabled={viewMode}
+                      type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
                     {errors?.coloringDay && <p className="text-red-400 text-xs mt-1">{errors.coloringDay.message}</p>}  
                   </div>
                 </div>
@@ -284,27 +311,32 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                                 md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                 md:[&>*:nth-child(2n)]:pl-4 p-7'
                 >
-                  <div className="md:w-32 md:text-right">
-                    <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: </label>
-                  </div>
-                  
-                  <div className="w-full max-w-2xl">
-                    <textarea
-                      {...register('description')}
-                      placeholder="Ingrese detalles adicionales..."
-                      className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${
-                        errors.description ? 'border-red-500' : ''
-                      }`}
-                    />
-                    {errors?.description && <p className="text-red-400 text-xs mt-1">{errors.description.message}</p>}  
-                  </div>
-
+                  {!isMeruBirthdays  && (
+                    <>
+                    <div className="md:w-32 md:text-right">
+                      <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: </label>
+                    </div>
+                    
+                    <div className="w-full max-w-2xl">
+                      <textarea
+                        readOnly={viewMode}
+                        {...register('description')}
+                        placeholder="Ingrese detalles adicionales..."
+                        className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${
+                          errors.description ? 'border-red-500' : ''
+                        }`}
+                      />
+                      {errors?.description && <p className="text-red-400 text-xs mt-1">{errors.description.message}</p>}  
+                    </div>
+                    </>
+                  )}
                   <div className="md:w-32 md:text-right">
                     <label className="block text-lg font-medium text-gray-300 mt-1">Comentarios: </label>
                   </div>
                   
                   <div className="w-full max-w-2xl">
                     <textarea
+                      readOnly={viewMode}
                       {...register('comments')}
                       placeholder="Ingrese comentarios, cambios, observaciones..."
                       className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${

@@ -1,4 +1,4 @@
-// Función para capitalizar fechas en español
+// Capitalizar fechas en español
 export function capitalizeDateString(dateString) {
   if (!dateString) return '';
   
@@ -32,6 +32,7 @@ export function normalizeDate(date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
+// Devolver fecha como cadena
 export function normalizeDateToString(date) {
   const normalizedDate = normalizeDate(date);
   return normalizedDate.toLocaleDateString();
@@ -42,11 +43,20 @@ export function getTodayNormalized() {
   return normalizeDate(new Date());
 }
 
+// Devolver fecha en formato ISO (YYYY-MM-DDTHH:MM:SS)
 export function formatDateToEvent(dateEvent, timeEvent) {
   const datePart = new Date(dateEvent).toISOString().split('T')[0];
   const timePart = timeEvent ? `${timeEvent}:00` : "00:00:00";
 
-  // Concatenar en formato ISO
   return `${datePart}T${timePart}`;
 }
+
+export function divideDateTime(isoString) {
+  if (!isoString) return { date: '', time: '' };
+
+  const [date, fullTime] = isoString.split('T');
+  const time = fullTime ? fullTime.substring(0, 5) : '';
+
+  return { date, time };
+};
 
