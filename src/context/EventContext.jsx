@@ -2,7 +2,11 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { INITIAL_EVENTS } from '../utils/StaticData/event-utils';
+import { useLocationsHook } from '../hooks/useLocatios';
+
 const EventContext = createContext();
+
+const { getLocationById } = useLocationsHook();
 
 // hook personalizado para usar el contexto
 export const useEvents = () => {
@@ -107,30 +111,55 @@ export const EventProvider = ({ showNotification, children }) => {
     // ***   ***   ***   ***   ***   ***   ***
       // *** Actualizar
       const updateEvent = async (formData) => {
-        // const departmentData =  getDepartmentNameById(formData.departmentId);
-    
-        // const finalData = {
-        //     ...formData,
-        //     departmentCode: departmentData.code, 
-        //     departmentName: departmentData.departmentName, 
-        // };
-        
         try {
-            // // Llamada a la API/Backend (onUpdate)
-            // // await api.put(`/subdepartments/${finalData.id}`, finalData); 
-            
-            // setSubDepartmentData(prevData => { // Actualiza el estado centralizado
-            //   return prevData.map(subDep => 
-            //     subDep.id === finalData.id ? finalData : subDep 
-            //   );
-            // });
+          // El evento original debe venir en formData.originalEvent o en el formData mismo
+          const eventId = formData.id || formData.originalEvent?.id;
+          
+          if (!eventId) {
+            showNotification('Error: No se encontró el ID del evento', 'error');
+            return false;
+          }
 
-            showNotification('Evento actualizado con éxito'); 
-            return true;
+          // Construir el evento actualizado con la estructura correcta
+          const typeEvent = categoryEvents.find(te => te.key === formData.typeEventId);
+          
+          const updatedEvent = {
+            id: eventId,
+            title: formData.eventName,
+            start: formatDateToEvent(formData.startDate, formData.startTime),
+            end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+            extendedProps: {
+              category: formData.typeEventId,
+              label: typeEvent?.label || '',
+              status: formData.status || 'Tentativo',
+              location: formData.location || '',
+              locationId: formData.locationId || '',
+              repeatEvent: formData.repeatEvent || false,
+              repeatInterval: formData.repeatInterval || '',
+              typeEventId: formData.typeEventId,
+              description: formData.description || '',
+              comments: formData.comments || '',
+            }
+          };
+          
+          console.log("Evento actualizado:", updatedEvent);
+          
+          // Llamada a la API/Backend (onUpdate)
+          // await api.put(`/events/${eventId}`, updatedEvent); 
+          
+          setEventData(prevData => {
+            return prevData.map(event => 
+              event.id === eventId ? updatedEvent : event 
+            );
+          });
+
+          showNotification('Evento actualizado con éxito'); 
+          return true;
     
         } catch (error) {
-            showNotification('Error al actualizar', 'error');
-            return false;
+          console.error('Error al actualizar evento:', error);
+          showNotification('Error al actualizar: ' + error.message, 'error');
+          return false;
         }
       };
   const contextValue = {

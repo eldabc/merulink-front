@@ -67,7 +67,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           endDate: divideDateTimeEnd?.date ?? null,
           endTime: divideDateTimeEnd?.time ?? null,
           status: event?.extendedProps?.status ?? 'Tentativo',
-          location: event?.extendedProps?.location ?? '',
+          locationId: event?.extendedProps?.locationId ?? '',
           repeatEvent: event?.extendedProps?.repeatEvent ?? false,
           repeatInterval: event?.extendedProps?.repeatInterval ?? '',
           createAlert: event?.extendedProps?.createAlert ?? false,
@@ -89,7 +89,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           endDate: null,
           endTime: null,
           status: 'Tentativo',
-          location: '',
+          locationId: '',
           repeatEvent: false,
           repeatInterval: '',
           createAlert: false,
@@ -107,7 +107,14 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       if (editMode && event) {
           console.log("Actualizando:", data);
 
-          const updatedData = { ...event, ...data };
+          // Pasar el evento completo con su ID y datos originales
+          const updatedData = {
+            ...data,
+            id: event.id,  // Asegurar que el ID se pase
+            originalEvent: event
+          };
+          console.log("updatedData:", updatedData);
+
           success = await updateEvent(updatedData);
       } else {
           console.log("Creando:", data);
@@ -152,7 +159,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       }
     };
 
-  if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => setIsEditing(false)} />;}
+  if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => { setIsEditing(false); if (typeof onBack === 'function') onBack(); }} />;}
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
         {(viewMode && categoryType !== 'meru-birthdays') && (
@@ -286,15 +293,15 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                     <div>
                       <select 
                         disabled= {viewMode}
-                        {...register('location')}
-                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.location ? 'border-red-500' : ''}
+                        {...register('locationId')}
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.locationId ? 'border-red-500' : ''}
                           ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
                         <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                           {locations.map(location => (
                             <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
                           ))}
                       </select>
-                      {errors?.location && <p className="text-red-400 text-xs mt-1">{errors.location.message}</p>}  
+                      {errors?.locationId && <p className="text-red-400 text-xs mt-1">{errors.locationId.message}</p>}  
                     </div> 
                     </> 
                   )}

@@ -65,7 +65,7 @@ export const eventValidationSchema = yup.object().shape({
       otherwise: (schema) => schema.notRequired(),
     }),
 
-  location: yup.string()
+  locationId: yup.string()
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('typeEventId', {
