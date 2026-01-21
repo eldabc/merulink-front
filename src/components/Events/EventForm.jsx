@@ -39,7 +39,18 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   
     setValue('typeEventId', selectedEventId, { shouldValidate: true });
 
+    const yearlyEventValue = handleCategoryType(selectedEventId);
+    const defaultRepitedEvent = yearlyEventValue ? true : false;
+    const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+
+    setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
+    setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+
   };
+
+  const handleCategoryType = (categoryType) => {
+    return categoryType === 'meru-birthdays' || categoryType === 've-holidays';
+  }
 
   useEffect(() => {
       if (event && (editMode || viewMode)) {
@@ -47,45 +58,45 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         const divideDateTimeStart = divideDateTime(event?.start);
         const divideDateTimeEnd = divideDateTime(event?.end);
         const categoryType = event?.extendedProps?.category;
-        const yearlyEventValue = categoryType === 'meru-birthdays' || categoryType === 've-holidays';
-        setYearlyEvent(yearlyEventValue);
-        setcategoryType(categoryType);
+        const yearlyEventValue = handleCategoryType(categoryType);
         
-        const defaultRepitedEvent = yearlyEventValue ? true : (event?.extendedProps?.repeatEvent ?? false);
-        const defaultRepitedInterval = yearlyEventValue ? 'Anual' : (event?.extendedProps?.repeatInterval ?? '');
         reset({
-          typeEventId: '',
-          startDate: divideDateTimeStart?.date ?? null,
-          endDate: divideDateTimeEnd?.date ?? null,
           eventName: event?.title ??'',
+          startDate: divideDateTimeStart?.date ?? null,
           startTime: divideDateTimeStart?.time ?? null,
+          endDate: divideDateTimeEnd?.date ?? null,
           endTime: divideDateTimeEnd?.time ?? null,
+          status: event?.extendedProps?.status ?? 'Tentativo',
           location: event?.extendedProps?.location ?? '',
-          repeatEvent: defaultRepitedEvent,
-          repeatInterval: defaultRepitedInterval,
+          repeatEvent: event?.extendedProps?.repeatEvent ?? false,
+          repeatInterval: event?.extendedProps?.repeatInterval ?? '',
           createAlert: event?.extendedProps?.createAlert ?? false,
+          coloringDay: event?.extendedProps?.coloringDay ?? false,
           description: event?.extendedProps?.description ?? '',
           comments: event?.extendedProps?.comments ?? '',
-          status: event?.extendedProps?.status ?? 'Tentativo',
-          coloringDay: event?.extendedProps?.coloringDay ?? false,
+          typeEventId: categoryType
         });
-        setValue('typeEventId', categoryType, { shouldValidate: false });
+
+        setYearlyEvent(yearlyEventValue);
+        setcategoryType(categoryType);
+
       } else if (mode === 'create') {
         reset({
+          typeEventId: '',
           eventName: '',
           startDate: null,
           startTime: null,
           endDate: null,
           endTime: null,
+          status: 'Tentativo',
           location: '',
           repeatEvent: false,
           repeatInterval: '',
           createAlert: false,
+          coloringDay: false,
           description: '',
           comments: '',
-          typeEventId: '',
-          status: 'Tentativo',
-          coloringDay: false,
+          
         });
       }
   }, [event, mode, reset, setValue]);

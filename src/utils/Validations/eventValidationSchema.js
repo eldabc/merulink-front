@@ -14,9 +14,16 @@ export const eventValidationSchema = yup.object().shape({
     .max(40, 'Debe contener máximo 40 dígitos'),
 
   startDate: yup
-    .date()
-    .required('Fecha de inicio es requerida')
-    .min(new Date(new Date().setHours(0, 0, 0, 0)), 'La fecha de inicio no puede ser anterior a la actual'),
+  .date()
+  .required('Fecha de inicio es requerida')
+  .when('typeEventId', {
+    is: (val) => val !== 've-holidays',
+    then: (schema) => schema.min(
+      new Date(new Date().setHours(0, 0, 0, 0)), 
+      'La fecha de inicio no puede ser anterior a la actual'
+    ),
+    otherwise: (schema) => schema,
+  }),
 
   startTime: yup.string()
   .nullable()
