@@ -14,6 +14,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
+      mode: 'onChange',
+      reValidateMode: 'onChange'
   });
   
   const [yearlyEvent, setYearlyEvent] = useState(false);
@@ -48,9 +50,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
 
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
     setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
-    setValue('endDate', null, { shouldValidate: true });
-    // setValue('status', handleStatusEvent, { shouldValidate: true });
 
+    setValue('endDate', null, { shouldValidate: false });
   };
 
   const handleCategoryType = (categoryType) => {

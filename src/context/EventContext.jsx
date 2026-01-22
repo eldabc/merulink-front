@@ -68,7 +68,6 @@ export const EventProvider = ({ showNotification, children }) => {
     const createEvent = async (formData) => {
       const typeEvent = categoryEvents.find(te => te.key === formData.category);
       const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-
       const newEvent = {
         id: Date.now(), // ID temporal
         title: formData.eventName,
@@ -79,7 +78,7 @@ export const EventProvider = ({ showNotification, children }) => {
           label: typeEvent.label,
           status: formData.status,
           locationId: formData.locationId,
-          locationName: getEventLocationById ? getEventLocationById.name : '',
+          locationName: getEventLocationById ? getEventLocationById.label : '',
           repeatEvent: formData.repeatEvent,
           repeatInterval: formData.repeatInterval,
           createAlert: formData.createAlert,
@@ -115,7 +114,6 @@ export const EventProvider = ({ showNotification, children }) => {
       // *** Actualizar
       const updateEvent = async (formData) => {
         try {
-          // El evento original debe venir en formData.originalEvent o en el formData mismo
           const eventId = formData.id;
           
           if (!eventId) {
@@ -138,7 +136,7 @@ export const EventProvider = ({ showNotification, children }) => {
               label: typeEvent?.label,
               status: formData.status,
               locationId: formData.locationId,
-              locationName: getEventLocationById ? getEventLocationById.name : '',
+              locationName: getEventLocationById ? getEventLocationById.label : '',
               repeatEvent: formData.repeatEvent,
               repeatInterval: formData.repeatInterval,
               createAlert: formData.createAlert,
