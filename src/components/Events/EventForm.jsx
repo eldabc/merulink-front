@@ -23,7 +23,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
 
-  let selectedType = watch('typeEventId');
+  let selectedType = watch('category');
   const isRepeatEvent = watch('repeatEvent');
 
   const navigate = useNavigate();
@@ -37,14 +37,18 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
     e.stopPropagation();
     const selectedEventId = e.target.value;
   
-    setValue('typeEventId', selectedEventId, { shouldValidate: true });
+    setValue('category', selectedEventId, { shouldValidate: true });
 
     const yearlyEventValue = handleCategoryType(selectedEventId);
     const defaultRepitedEvent = yearlyEventValue ? true : false;
     const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+    // const handleStatusEvent = yearlyEventValue ? '' : 'Tentativo';
+    if (yearlyEventValue) setYearlyEvent(true);
+
 
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
     setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+    // setValue('status', handleStatusEvent, { shouldValidate: true });
 
   };
 
@@ -66,7 +70,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           startTime: divideDateTimeStart?.time ?? null,
           endDate: divideDateTimeEnd?.date ?? null,
           endTime: divideDateTimeEnd?.time ?? null,
-          status: event?.extendedProps?.status ?? 'Tentativo',
+          status: event?.extendedProps?.status ?? '',
           locationId: event?.extendedProps?.locationId ?? '',
           repeatEvent: event?.extendedProps?.repeatEvent ?? false,
           repeatInterval: event?.extendedProps?.repeatInterval ?? '',
@@ -74,7 +78,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           coloringDay: event?.extendedProps?.coloringDay ?? false,
           description: event?.extendedProps?.description ?? '',
           comments: event?.extendedProps?.comments ?? '',
-          typeEventId: categoryType
+          category: categoryType
         });
 
         setYearlyEvent(yearlyEventValue);
@@ -82,13 +86,13 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
 
       } else if (mode === 'create') {
         reset({
-          typeEventId: '',
+          category: '',
           eventName: '',
           startDate: null,
           startTime: null,
           endDate: null,
           endTime: null,
-          status: 'Tentativo',
+          status: '',
           locationId: '',
           repeatEvent: false,
           repeatInterval: '',
@@ -107,13 +111,11 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       if (editMode && event) {
           console.log("Actualizando:", data);
 
-          // Pasar el evento completo con su ID y datos originales
+          // Añadir ID que no viene en form
           const updatedData = {
             ...data,
-            id: event.id,  // Asegurar que el ID se pase
-            originalEvent: event
+            id: event.id
           };
-          console.log("updatedData:", updatedData);
 
           success = await updateEvent(updatedData);
       } else {
@@ -137,7 +139,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       return categoryEvents
               .filter(typeEvent => !excludedKeys.includes(typeEvent.key))
               .map(typeEvent => (
-                <option key={`typeEventId-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
+                <option key={`category-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
             ));
     }
 
@@ -186,7 +188,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                 </div>
               ) : (
                 <select 
-                  {...register('typeEventId' , { onChange: handleEventChange })}
+                  {...register('category' , { onChange: handleEventChange })}
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
                     ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
                 >
@@ -278,6 +280,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           {...register('status')} // , { onChange: handleEventChange }
                           className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
                             ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                            <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                             <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
                             <option className='bg-[#3c4042]' value='Confirmado'>Confirmado</option>
                           </select>

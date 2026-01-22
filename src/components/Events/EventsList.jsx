@@ -109,7 +109,7 @@ export default function EventsList({ categoryKeys }) {
               {isMeruBirthday ? (
                 <th className="px-4 py-3 text-left font-semibold">Departamento</th>
               ) : (
-                <th className="px-4 py-3 text-left font-semibold">Descripción</th>
+                <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
               )}
               {!eventWithLocation && (
                 <th className="px-4 py-3 text-left font-semibold">Ubicación</th>

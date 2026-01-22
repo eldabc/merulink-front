@@ -3,7 +3,7 @@ import * as yup from 'yup';
 // Validation schema for Position form
 export const eventValidationSchema = yup.object().shape({
    
-  typeEventId: yup
+  category: yup
     .string()
     .required('Tipo de evento es requerido'),
     
@@ -16,7 +16,7 @@ export const eventValidationSchema = yup.object().shape({
   startDate: yup
   .date()
   .required('Fecha de inicio es requerida')
-  .when('typeEventId', {
+  .when('category', {
     is: (val) => val !== 've-holidays',
     then: (schema) => schema.min(
       new Date(new Date().setHours(0, 0, 0, 0)), 
@@ -28,7 +28,7 @@ export const eventValidationSchema = yup.object().shape({
   startTime: yup.string()
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
-  .when('typeEventId', {
+  .when('category', {
     is: (val) => ['meru-events', 'wedding-nights'].includes(val),
     then: (schema) => schema.required('La hora de inicio es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
@@ -38,7 +38,7 @@ export const eventValidationSchema = yup.object().shape({
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
     .min(yup.ref('startDate'), 'La fecha de fin no puede ser anterior a la de inicio')
-    .when('typeEventId', {
+    .when('category', {
       is: 'meru-events',
       then: (schema) => schema.required('La fecha de fin es obligatoria'),
       otherwise: (schema) => schema.notRequired(),
@@ -47,7 +47,7 @@ export const eventValidationSchema = yup.object().shape({
   endTime: yup.string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
-    .when('typeEventId', {
+    .when('category', {
       is: (val) => ['meru-events', 'wedding-nights'].includes(val),
       then: (schema) => schema
         .required('La hora culminación es obligatoria')
@@ -68,7 +68,7 @@ export const eventValidationSchema = yup.object().shape({
   locationId: yup.string()
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
-  .when('typeEventId', {
+  .when('category', {
     is: (val) => val === 'meru-events' || val === 'wedding-nights' || val === 'dinner-heights',
     then: (schema) => schema.required('La ubicación es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
@@ -101,7 +101,7 @@ export const eventValidationSchema = yup.object().shape({
   status: yup.string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
-    .when('typeEventId', {
+    .when('category', {
       is: (val) => val === 'meru-events' || val === 'wedding-nights' || val === 'dinner-heights',
       then: (schema) => schema.required('El estado es requerido'),
       otherwise: (schema) => schema.notRequired(),

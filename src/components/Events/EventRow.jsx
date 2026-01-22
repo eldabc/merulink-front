@@ -4,6 +4,9 @@ import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
 
 export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation, setSelectedEvent} ) {
+ const renderDescriptionComments = () => {
+    return event.extendedProps?.description ? truncateText(event.extendedProps?.description, 50) : truncateText(event.extendedProps?.comments, 50);
+  }
   return (
     <tr
       key={event.id}
@@ -16,11 +19,11 @@ export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation, 
       {isMeruBirthday ? (
         <td className="px-4 py-3 text-white-700">{event.extendedProps.departmentName}</td>
       ) : ( 
-      <td className="px-4 py-3 text-white-700">{truncateText(event.extendedProps.description)}</td>
+      <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
       )}
 
       {!eventWithLocation && (
-        <td className="px-4 py-3 text-white-700">{event.extendedProps.location}</td>
+        <td className="px-4 py-3 text-white-700">{event.extendedProps.locationName}</td>
       )}
       <td className="px-4 py-3 text-white-700">{event.extendedProps.categoryDisplayName}</td>
       <td className="px-4 py-3">

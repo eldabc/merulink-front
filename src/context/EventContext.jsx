@@ -66,21 +66,24 @@ export const EventProvider = ({ showNotification, children }) => {
   // ***   ***   ***   ***   ***   ***   ***
     // *** Crear
     const createEvent = async (formData) => {
-      const typeEvent = categoryEvents.find(te => te.key === formData.typeEventId);
-  
+      const typeEvent = categoryEvents.find(te => te.key === formData.category);
+      const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+
       const newEvent = {
         id: Date.now(), // ID temporal
         title: formData.eventName,
         start: formatDateToEvent(formData.startDate, formData.startTime),
         end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
         extendedProps: {
-          category: formData.typeEventId,
+          category: formData.category,
           label: typeEvent.label,
-          status: 'active',
-          location: formData.location,
+          status: formData.status,
+          locationId: formData.locationId,
+          locationName: getEventLocationById ? getEventLocationById.name : '',
           repeatEvent: formData.repeatEvent,
           repeatInterval: formData.repeatInterval,
-          typeEventId: formData.typeEventId,
+          createAlert: formData.createAlert,
+          coloringDay: formData.coloringDay,
           description: formData.description,
           comments: formData.comments,
         }
@@ -113,7 +116,7 @@ export const EventProvider = ({ showNotification, children }) => {
       const updateEvent = async (formData) => {
         try {
           // El evento original debe venir en formData.originalEvent o en el formData mismo
-          const eventId = formData.id || formData.originalEvent?.id;
+          const eventId = formData.id;
           
           if (!eventId) {
             showNotification('Error: No se encontró el ID del evento', 'error');
@@ -121,24 +124,27 @@ export const EventProvider = ({ showNotification, children }) => {
           }
 
           // Construir el evento actualizado con la estructura correcta
-          const typeEvent = categoryEvents.find(te => te.key === formData.typeEventId);
-          
+          const typeEvent = categoryEvents.find(te => te.key === formData.category);
+          const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+          console.log("location", getEventLocationById);
+
           const updatedEvent = {
             id: eventId,
             title: formData.eventName,
             start: formatDateToEvent(formData.startDate, formData.startTime),
             end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
             extendedProps: {
-              category: formData.typeEventId,
-              label: typeEvent?.label || '',
-              status: formData.status || 'Tentativo',
-              location: formData.location || '',
-              locationId: formData.locationId || '',
-              repeatEvent: formData.repeatEvent || false,
-              repeatInterval: formData.repeatInterval || '',
-              typeEventId: formData.typeEventId,
-              description: formData.description || '',
-              comments: formData.comments || '',
+              category: formData.category,
+              label: typeEvent?.label,
+              status: formData.status,
+              locationId: formData.locationId,
+              locationName: getEventLocationById ? getEventLocationById.name : '',
+              repeatEvent: formData.repeatEvent,
+              repeatInterval: formData.repeatInterval,
+              createAlert: formData.createAlert,
+              coloringDay: formData.coloringDay,
+              description: formData.description,
+              comments: formData.comments,
             }
           };
           
