@@ -60,3 +60,18 @@ export function divideDateTime(isoString) {
   return { date, time };
 };
 
+// Calcular NextHour (HH:mm)
+export function getNextHour(startTime) {
+  if (!startTime) return "";
+
+  let [hours, minutes] = startTime.split(':').map(Number);
+
+  // Sumamos una hora
+  hours = (hours + 1) % 24;
+
+  // Formateamos (HH:mm)
+  const nextHoursStr = hours.toString().padStart(2, '0');
+  const minutesStr = minutes.toString().padStart(2, '0');
+
+  return `${nextHoursStr}:${minutesStr}`;
+};

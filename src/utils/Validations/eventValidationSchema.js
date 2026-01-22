@@ -29,7 +29,7 @@ export const eventValidationSchema = yup.object().shape({
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('category', {
-    is: (val) => ['meru-events', 'wedding-nights'].includes(val),
+    is: (val) => ['meru-events', 'wedding-nights', 'dinner-heights'].includes(val),
     then: (schema) => schema.required('La hora de inicio es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
   }),

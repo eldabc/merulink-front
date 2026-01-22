@@ -6,7 +6,7 @@ import { eventValidationSchema } from '../../utils/Validations/eventValidationSc
 import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
 import { useEffect, useState } from 'react';
-import { divideDateTime } from '../../utils/date-utils';
+import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft } from "lucide-react";
 
@@ -26,6 +26,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const editMode =  mode === 'edit';
 
   let selectedCategory = watch('category');
+  const selectedStartTime = watch('startTime');
   const isRepeatEvent = watch('repeatEvent');
 
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
@@ -45,7 +46,6 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
     // const handleStatusEvent = yearlyEventValue ? '' : 'Tentativo';
     if (yearlyEventValue) setYearlyEvent(true);
 
-
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
     setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
     setValue('endDate', null, { shouldValidate: true });
@@ -58,53 +58,58 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   }
 
   useEffect(() => {
-      if (event && (editMode || viewMode)) {
-        
-        const divideDateTimeStart = divideDateTime(event?.start);
-        const divideDateTimeEnd = divideDateTime(event?.end);
-        const categoryType = event?.extendedProps?.category;
-        const yearlyEventValue = handleCategoryType(categoryType);
-        
-        reset({
-          eventName: event?.title ?? '',
-          startDate: divideDateTimeStart?.date ?? null,
-          startTime: divideDateTimeStart?.time ?? null,
-          endDate: divideDateTimeEnd?.date ?? null,
-          endTime: divideDateTimeEnd?.time ?? null,
-          status: event?.extendedProps?.status ?? '',
-          locationId: event?.extendedProps?.locationId ?? '',
-          repeatEvent: event?.extendedProps?.repeatEvent ?? false,
-          repeatInterval: event?.extendedProps?.repeatInterval ?? '',
-          createAlert: event?.extendedProps?.createAlert ?? false,
-          coloringDay: event?.extendedProps?.coloringDay ?? false,
-          description: event?.extendedProps?.description ?? '',
-          comments: event?.extendedProps?.comments ?? '',
-          category: categoryType
-        });
+    if (event && (editMode || viewMode)) {
+      const divideDateTimeStart = divideDateTime(event?.start);
+      const divideDateTimeEnd = divideDateTime(event?.end);
+      const categoryType = event?.extendedProps?.category;
+      const yearlyEventValue = handleCategoryType(categoryType);
+      
+      reset({
+        eventName: event?.title ?? '',
+        startDate: divideDateTimeStart?.date ?? null,
+        startTime: divideDateTimeStart?.time ?? null,
+        endDate: divideDateTimeEnd?.date ?? null,
+        endTime: divideDateTimeEnd?.time ?? null,
+        status: event?.extendedProps?.status ?? '',
+        locationId: event?.extendedProps?.locationId ?? '',
+        repeatEvent: event?.extendedProps?.repeatEvent ?? false,
+        repeatInterval: event?.extendedProps?.repeatInterval ?? '',
+        createAlert: event?.extendedProps?.createAlert ?? false,
+        coloringDay: event?.extendedProps?.coloringDay ?? false,
+        description: event?.extendedProps?.description ?? '',
+        comments: event?.extendedProps?.comments ?? '',
+        category: categoryType
+      });
 
-        setYearlyEvent(yearlyEventValue);
-        setcategoryType(categoryType);
+      setYearlyEvent(yearlyEventValue);
+      setcategoryType(categoryType);
 
-      } else if (mode === 'create') {
-        reset({
-          category: '',
-          eventName: '',
-          startDate: null,
-          startTime: null,
-          endDate: null,
-          endTime: null,
-          status: '',
-          locationId: '',
-          repeatEvent: false,
-          repeatInterval: '',
-          createAlert: false,
-          coloringDay: false,
-          description: '',
-          comments: '',
-          
-        });
-      }
-  }, [event, mode, reset, setValue]);
+    } else if (mode === 'create') {
+      reset({
+        category: '',
+        eventName: '',
+        startDate: null,
+        startTime: null,
+        endDate: null,
+        endTime: null,
+        status: '',
+        locationId: '',
+        repeatEvent: false,
+        repeatInterval: '',
+        createAlert: false,
+        coloringDay: false,
+        description: '',
+        comments: '',
+      });
+    }
+  }, [event, mode, reset]);
+
+  useEffect(() => {
+    if (selectedStartTime && selectedCategory === 'dinner-heights') {
+      const nextHour = getNextHour(selectedStartTime);
+      setValue('endTime', nextHour, { shouldValidate: true });
+    }
+  }, [selectedStartTime, selectedCategory, setValue]);
 
     const onSubmit = async (data) => {
       let success = false;
