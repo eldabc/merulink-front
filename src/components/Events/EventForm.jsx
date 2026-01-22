@@ -28,7 +28,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const editMode =  mode === 'edit';
 
   let selectedCategory = watch('category');
-  const selectedStartTime = watch('startTime');
+  // const selectedStartTime = watch('startTime');
   const isRepeatEvent = watch('repeatEvent');
 
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
@@ -103,14 +103,14 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         comments: '',
       });
     }
-  }, [event, mode, reset]);
+  }, [event, mode, reset, setValue]);
 
-  useEffect(() => {
-    if (selectedStartTime && selectedCategory === 'dinner-heights') {
-      const nextHour = getNextHour(selectedStartTime);
-      setValue('endTime', nextHour, { shouldValidate: true });
-    }
-  }, [selectedStartTime, selectedCategory, setValue]);
+  // useEffect(() => {
+  //   if (selectedStartTime && selectedCategory === 'dinner-heights') {
+  //     const nextHour = getNextHour(selectedStartTime);
+  //     setValue('endTime', nextHour, { shouldValidate: true });
+  //   }
+  // }, [selectedStartTime, selectedCategory, setValue]);
 
     const onSubmit = async (data) => {
       let success = false;
@@ -166,6 +166,14 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         shouldDirty: true
       });
     };
+
+    const handleNextTime = (e) => {
+      if (selectedCategory === 'dinner-heights') {
+        const nextHour = getNextHour(e.target.value);
+        setValue('endTime', nextHour, { shouldValidate: true });
+      }
+    }
+    
 
   if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => { setIsEditing(false); if (typeof onBack === 'function') onBack(); }} />;}
     return (
@@ -250,7 +258,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       <div>
                         <input 
                           readOnly={viewMode}
-                          {...register('startTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                          {...register('startTime', {
+    onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                         {errors?.startTime && <p className="text-red-400 text-xs mt-1">{errors.startTime.message}</p>}  
 
                       </div>
