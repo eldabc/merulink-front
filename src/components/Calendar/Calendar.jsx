@@ -29,13 +29,14 @@ export default function Calendar() {
 }
 
 function EventsCalendar() {
-  const navigate = useNavigate();
+  const API_KEY = import.meta.env.VITE_API_KEY;
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
-  const calendarRef = useRef(null);
   const [currentTitle, setCurrentTitle] = useState('');
   const { eventData } = useEvents();
+  const calendarRef = useRef(null);
+  const navigate = useNavigate();
 
   // Funciones para controlar el calendario manualmente
   const handlePrev = () => calendarRef.current.getApi().prev();
@@ -111,7 +112,6 @@ function EventsCalendar() {
     }));
   }
 
-const API_KEY = import.meta.env.API_KEY;
   return (
     <div className='container'>
       <div className='calendar-container'>
