@@ -173,8 +173,8 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         setValue('endTime', nextHour, { shouldValidate: true });
       }
     }
-    
 
+    
   if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => { setIsEditing(false); if (typeof onBack === 'function') onBack(); }} />;}
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -258,8 +258,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       <div>
                         <input 
                           readOnly={viewMode}
-                          {...register('startTime', {
-    onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                          {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                         {errors?.startTime && <p className="text-red-400 text-xs mt-1">{errors.startTime.message}</p>}  
 
                       </div>
@@ -293,7 +292,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         <select 
                           disabled= {viewMode}
                           {...register('status')}
-                          className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
+                          className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.status ? 'border-red-500' : ''}
                             ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
                             <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                             <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
@@ -328,11 +327,11 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                   </div>
                   <div className='flex flex-row items-center gap-2'>
                     <input 
-                      disabled={viewMode}
+                      disabled={viewMode || yearlyEvent}
                       {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
                     <div>
                       <select 
-                        disabled= {viewMode || !isRepeatEvent}
+                        disabled= {viewMode || !isRepeatEvent || yearlyEvent}
                         {...register('repeatInterval')}
                         className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
                           ${viewMode || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}

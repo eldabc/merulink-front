@@ -275,7 +275,7 @@ b { /* used for event dates/times */
   background-color: #603F99;
   border-color: #593a8f;
 }
-.wedding-nights {
+.di-heights-wedding-nights {
   background-color: #7EC225;
   border-color: #77b823;
 }
@@ -283,17 +283,14 @@ b { /* used for event dates/times */
   background-color: #E0C240;
   border-color: #cfb43a;
 }
-.ve-holidays{
+.g-calendar-ve-holidays{
   background-color: #AD2D2D;
   border-color: #962626;
 }
-.google-calendar{
-  background-color: #d76418;
-  border-color: #be5916;
-}
-.christian-holidays{
-  background-color: #C4A883;
-  border-color: #bba07e;
+
+.banking-mondays{
+  background-color: #e67e22;
+  border-color: #c66c1e;
 }
 .fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
     margin-left: 15px;

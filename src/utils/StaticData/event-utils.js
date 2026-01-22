@@ -54,7 +54,7 @@ export const INITIAL_EVENTS = [
       coloringDay: true,
       comments: 'Comentario del evento 4'
     },
-    className: 'wedding-nights',
+    className: 'di-heights-wedding-nights',
   },
   {
     id: createEventId(),
@@ -88,7 +88,7 @@ export const INITIAL_EVENTS = [
       description: '',
       comments: 'Comentario del evento 5'
     },
-    className: 've-holidays',
+    className: 'g-calendar-ve-holidays',
   },
   {
     id: createEventId(),
@@ -103,7 +103,7 @@ export const INITIAL_EVENTS = [
       coloringDay: true,
       comments: 'Comentario del evento 6'
     },
-    className: 've-holidays',
+    className: 'g-calendar-ve-holidays',
   },
   {
     id: createEventId(),

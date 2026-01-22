@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import googleCalendarPlugin from '@fullcalendar/google-calendar';
 import { EventProvider, useEvents } from "../../context/EventContext";
 import { useNotification } from "../../context/NotificationContext";  
 import { capitalizeDateString } from '../../utils/date-utils';
@@ -110,6 +111,7 @@ function EventsCalendar() {
     }));
   }
 
+const API_KEY = import.meta.env.API_KEY;
   return (
     <div className='container'>
       <div className='calendar-container'>
@@ -136,22 +138,32 @@ function EventsCalendar() {
           </div>
          
           <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, googleCalendarPlugin]}
             ref={calendarRef}
             headerToolbar={false}
             initialView='dayGridMonth'
+            googleCalendarApiKey={API_KEY}
             editable={false}
             selectable={true}
             selectMirror={true}
             dayMaxEvents={true}
             weekends={weekendsVisible}
-            events={filteredEvents}
+            // events={filteredEvents}
+            eventSources={[
+              { 
+                events: filteredEvents
+              },
+              {
+                googleCalendarId: 'es.ve#holiday@group.v.calendar.google.com',
+                className: 'g-calendar-ve-holidays',
+                display: 'block'
+              }
+            ]}
             eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
             locale={esLocale}
             datesSet={(arg) => {
-              // arg.view.title contiene el string formateado (ej: "diciembre de 2025")
               setCurrentTitle(arg.view.title);
             }} 
           />

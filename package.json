@@ -12,19 +12,20 @@
   "dependencies": {
     "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
+    "@fullcalendar/google-calendar": "^6.1.20",
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@fullcalendar/timegrid": "^6.1.19",
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^3.1.1",
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
     "lucide-react": "^0.554.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.50.1",
     "react-router-dom": "^7.9.6",
     "tailwindcss": "^4.1.17",
-    "react-hook-form": "^7.50.1",
-    "@hookform/resolvers": "^3.1.1",
     "yup": "^1.2.0"
   },
   "devDependencies": {

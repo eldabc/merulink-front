@@ -33,11 +33,7 @@ export const categoryEvents = [
   { id: 7,
     key: "executive-mod", 
     label: "Ejecutivos MOD", 
-    color: "executive-mod" },
-      
-  { id: 8,
-    key: "christian-holidays", 
-    label: "Festivos Cristianos", 
-    color: "christian-holidays" 
+    color: "executive-mod" 
   },
+      
 ];
