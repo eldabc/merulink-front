@@ -20,17 +20,17 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const [categoryType, setcategoryType] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const { createEvent, updateEvent } = useEvents();
+  const navigate = useNavigate();
+
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
 
-  let selectedType = watch('category');
+  let selectedCategory = watch('category');
   const isRepeatEvent = watch('repeatEvent');
 
-  const navigate = useNavigate();
-
-  const meruEventsFlag = selectedType === 'meru-events' || selectedType === 'wedding-nights' || selectedType === 'dinner-heights';
-  const eventOneDayWithEndTime = selectedType === 'dinner-heights';
-  const eventWithoutLocation = selectedType === 've-holidays' || selectedType === 'meru-birthdays';
+  const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
+  const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
+  const eventWithoutLocation = selectedCategory === 've-holidays' || selectedCategory === 'meru-birthdays';
   
   // Al seleccionar
   const handleEventChange = (e) => {
@@ -48,6 +48,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
 
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
     setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+    setValue('endDate', null, { shouldValidate: true });
     // setValue('status', handleStatusEvent, { shouldValidate: true });
 
   };
@@ -65,7 +66,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         const yearlyEventValue = handleCategoryType(categoryType);
         
         reset({
-          eventName: event?.title ??'',
+          eventName: event?.title ?? '',
           startDate: divideDateTimeStart?.date ?? null,
           startTime: divideDateTimeStart?.time ?? null,
           endDate: divideDateTimeEnd?.date ?? null,
@@ -144,21 +145,20 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
     }
 
     const guestNextDate = (e) => {
-      if (selectedType === 'wedding-nights') {
-        const dateString = e.target.value;
-        if (!dateString ) return;
-        
-        const date = new Date(dateString);
+      const dateString = e.target.value;
+      if (!dateString ) return;
+      
+      const date = new Date(dateString);
+      
+      if (selectedCategory === 'wedding-nights') {
         date.setDate(date.getDate() + 1);
-        const nextDateFormatted = date.toISOString().split('T')[0];
-        
-        setValue('endDate', nextDateFormatted, { 
-          shouldValidate: true,
-          shouldDirty: true
-        });
-      }else {
-        setValue('endDate', null, { shouldValidate: true });
       }
+      const nextDateFormatted = date.toISOString().split('T')[0];
+      
+      setValue('endDate', nextDateFormatted, { 
+        shouldValidate: true,
+        shouldDirty: true
+      });
     };
 
   if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => { setIsEditing(false); if (typeof onBack === 'function') onBack(); }} />;}
@@ -184,7 +184,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
             <div className='mt-5'>
               {viewMode ? (
                 <div className="text-xl w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-300">
-                  {categoryEvents.find(t => t.key === selectedType)?.label || 'Sin tipo'}
+                  {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
                 </div>
               ) : (
                 <select 
@@ -200,7 +200,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
           </div>
           </div>
           <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
-            {selectedType && (
+            {selectedCategory && (
               <div className='border border-[#ffffff21]
                               md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                               md:[&>*:nth-child(2n)]:pl-4 p-7'
@@ -277,7 +277,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       <div className='items-center gap-2'>
                         <select 
                           disabled= {viewMode}
-                          {...register('status')} // , { onChange: handleEventChange }
+                          {...register('status')}
                           className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.repeatInterval ? 'border-red-500' : ''}
                             ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
                             <option className='bg-[#3c4042]' value="">Seleccionar...</option>
@@ -326,7 +326,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           <option className='bg-[#3c4042]' value='Anual'>Anual</option>
                           <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
                           <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
-                          {selectedType === 'executive-mod' && ( <option className='bg-[#3c4042]' value='Semanal'>Semanal</option> )}
+                          {selectedCategory === 'executive-mod' && ( <option className='bg-[#3c4042]' value='Semanal'>Semanal</option> )}
                       </select>
                       {errors?.repeatInterval && <p className="text-red-400 text-xs mt-1">{errors.repeatInterval.message}</p>}  
                     </div>
