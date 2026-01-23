@@ -4,6 +4,7 @@ import EventsList from './EventsList';
 import EventForm from './EventForm';
 import { EventProvider } from '../../context/EventContext';
 import { useNotification } from '../../context/NotificationContext';
+import EventBankingMondaysForm from './EventBankingMondaysForm'; 
 
 export default function EventsPage() {
   const { showNotification } = useNotification();
@@ -18,8 +19,10 @@ export default function EventsPage() {
             <Route path="calendario-google" element={<EventsList categoryKeys={["google-calendar"]} />} />
             <Route path="cumpleaños-merú" element={<EventsList categoryKeys={["meru-birthdays"]} />} />
             <Route path="executive-mod" element={<EventsList categoryKeys={["executive-mod"]} />} />
+            <Route path="lunes-bancarios" element={<EventsList categoryKeys={["banking-mondays"]} />} />
 
             <Route path="nuevo" element={<EventForm />} />
+            <Route path="/lunes-bancarios/nuevo" element={<EventBankingMondaysForm />} />
           </Routes>
         </EventProvider>
       </main>

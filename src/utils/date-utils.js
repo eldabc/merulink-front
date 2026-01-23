@@ -75,3 +75,22 @@ export function getNextHour(startTime) {
 
   return `${nextHoursStr}:${minutesStr}`;
 };
+
+// Obtiene todos los lunes de un año dado
+export function generateMondays (year) {
+  const mondays = [];
+
+  // Empieza el 1 de enero del año seleccionado
+  let date = new Date(year, 0, 1);
+
+  // Busca el primer lunes del año
+  while (date.getDay() !== 1) {
+    date.setDate(date.getDate() + 1);
+  }
+
+  while (date.getFullYear() === year) {
+    mondays.push(new Date(date));
+    date.setDate(date.getDate() + 7);
+  }
+  return mondays;
+};

@@ -23,6 +23,7 @@ export default function EventsList({ categoryKeys }) {
   const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const bankingMondaysCategoryKey = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   
   // Variables para paginación y búsqueda
   const [currentPage, setCurrentPage] = useState(1); 
@@ -80,7 +81,7 @@ export default function EventsList({ categoryKeys }) {
         <div className="text-sm">
           {!isMeruBirthday && (
             <button
-              onClick={() => navigate('/eventos/nuevo')}
+              onClick={() => navigate(`/eventos${bankingMondaysCategoryKey}/nuevo`)} //DINÁMICO
               className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
             >
               ← Nuevo Registro
