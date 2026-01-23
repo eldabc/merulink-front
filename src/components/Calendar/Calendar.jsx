@@ -105,6 +105,11 @@ function EventsCalendar() {
 
   function handleEventClick(clickInfo) {
     if (clickInfo.event.url) clickInfo.jsEvent.preventDefault();
+    
+    const eventDate = new Date(clickInfo.event.start);
+    eventDate.setHours(0, 0, 0, 0);
+    setSelectedDate(eventDate);
+    setSelectedEvent(clickInfo.event);
   }
 
   function handleDateClick(arg) {
@@ -115,13 +120,29 @@ function EventsCalendar() {
   }
 
   const allEventsForSidebar = useMemo(() => {
-    // Si el calendario ya cargó, extrae los eventos directamente de la API
-    if (calendarRef.current) {
-      return getEventsFromApi(selectedDate);
-    }
-    // Si no, return filtrado local
+    // El sidebar siempre muestra los eventos locales filtrados del día seleccionado
+    // de la misma forma que el calendario los filtra, asegurando sincronización
     return eventsOfSelectedDay;
-  }, [selectedDate, eventsOfSelectedDay, activeCategories]);
+  }, [eventsOfSelectedDay]);
+
+  // Memoizar eventSources para evitar recrear el array en cada render
+  // Esto reduce llamadas innecesarias a la API de Google Calendar
+  const eventSources = useMemo(() => {
+    const sources = [
+      { 
+        events: filteredEvents 
+      }
+    ];
+    
+    if (activeCategories["ve-holidays"]) {
+      sources.push({
+        googleCalendarId: 'es.ve#holiday@group.v.calendar.google.com',
+        className: 'g-calendar-ve-holidays',
+      });
+    }
+    
+    return sources;
+  }, [filteredEvents, activeCategories["ve-holidays"]]);
 
   // Click sobre una categoría en la leyenda
   function toggleCategory(catKey) {
@@ -167,15 +188,7 @@ function EventsCalendar() {
             selectMirror={true}
             dayMaxEvents={true}
             weekends={weekendsVisible}
-            eventSources={[
-            { 
-              events: filteredEvents 
-            },
-              ...(activeCategories["ve-holidays"] ? [{
-                googleCalendarId: 'es.ve#holiday@group.v.calendar.google.com',
-                className: 'g-calendar-ve-holidays',
-              }] : [])
-            ]}
+            eventSources={eventSources}
             eventContent={(arg) => <EventContent eventInfo={arg} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
