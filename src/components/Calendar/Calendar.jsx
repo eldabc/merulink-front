@@ -49,7 +49,7 @@ function EventsCalendar() {
     "wedding-nights": true,
     "executive-mod": true,
     "meru-birthdays": true,
-    "christian-holidays": true,
+    "banking-mondays": true,
   });
 
 
@@ -153,11 +153,10 @@ function EventsCalendar() {
               { 
                 events: filteredEvents
               },
-              {
+              ...(activeCategories["ve-holidays"] ? [{
                 googleCalendarId: 'es.ve#holiday@group.v.calendar.google.com',
                 className: 'g-calendar-ve-holidays',
-                display: 'block'
-              }
+              }] : [])
             ]}
             eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
             eventClick={handleEventClick}

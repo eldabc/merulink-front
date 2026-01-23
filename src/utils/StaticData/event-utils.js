@@ -157,8 +157,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 10',
-    start: '2025-12-05T09:00:00',
-    end:   '2025-12-05T11:00:00',
+    start: '2026-01-05T09:00:00',
+    end:   '2026-01-05T11:00:00',
     extendedProps: {
       category: 'dinner-heights',
       label: 'Plan Noche de Bodas',
@@ -168,7 +168,23 @@ export const INITIAL_EVENTS = [
       coloringDay: true,
       description: 'Descripción del evento 10'
     },
-    className: 'dinner-heights',
+    className: 'di-heights-wedding-nights',
+  },
+  {
+    id: createEventId(),
+    title: 'Evento 11',
+    start: '2026-01-05T09:00:00',
+    end:   '2026-01-05T11:00:00',
+    extendedProps: {
+      category: 'banking-mondays',
+      label: 'Lunes Bancario 1',
+      status: '',
+      locationId: null,
+      locationName: '',
+      coloringDay: false,
+      description: 'Descripción del evento 11'
+    },
+    className: 'banking-mondays',
   }
 ]
 
