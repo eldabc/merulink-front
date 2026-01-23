@@ -27,8 +27,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Camilo Hernández',
-    start: '2025-11-15',
-    end:   '2025-11-15',
+    start: '2026-01-01',
+    end:   '2026-01-01',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
@@ -123,8 +123,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Juan Perez',
-    start: '2025-11-30',
-    end:   '2025-11-30',
+    start: '2026-01-30',
+    end:   '2026-01-30',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',

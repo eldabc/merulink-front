@@ -1,7 +1,7 @@
-export default function EventContent({ eventInfo, onDotClick }) {
+export default function EventContent({ eventInfo }) {
   return (
     <>
-      <div onClick={() => onDotClick(eventInfo.event)} className="event-dot"></div>
+      <div className="event-dot"></div>
     </>
   );
 }

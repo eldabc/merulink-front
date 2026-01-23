@@ -93,8 +93,18 @@ function EventsCalendar() {
     );
   }
 
+  const getEventsFromApi = (date) => {
+    const calendarApi = calendarRef.current.getApi();
+    const allApiEvents = calendarApi.getEvents(); // TODOS, incluidos los de Google
+    
+    return allApiEvents.filter(event => {
+      const eventStart = new Date(event.start);
+      return eventStart.toDateString() === date.toDateString();
+    });
+  };
+
   function handleEventClick(clickInfo) {
-    toggleSelectedEvent(clickInfo.event);
+    if (clickInfo.event.url) clickInfo.jsEvent.preventDefault();
   }
 
   function handleDateClick(arg) {
@@ -103,6 +113,15 @@ function EventsCalendar() {
     setSelectedDate(clickedDate);
     setSelectedEvent(null);
   }
+
+  const allEventsForSidebar = useMemo(() => {
+    // Si el calendario ya cargó, extrae los eventos directamente de la API
+    if (calendarRef.current) {
+      return getEventsFromApi(selectedDate);
+    }
+    // Si no, return filtrado local
+    return eventsOfSelectedDay;
+  }, [selectedDate, eventsOfSelectedDay, activeCategories]);
 
   // Click sobre una categoría en la leyenda
   function toggleCategory(catKey) {
@@ -148,17 +167,16 @@ function EventsCalendar() {
             selectMirror={true}
             dayMaxEvents={true}
             weekends={weekendsVisible}
-            // events={filteredEvents}
             eventSources={[
-              { 
-                events: filteredEvents
-              },
+            { 
+              events: filteredEvents 
+            },
               ...(activeCategories["ve-holidays"] ? [{
                 googleCalendarId: 'es.ve#holiday@group.v.calendar.google.com',
                 className: 'g-calendar-ve-holidays',
               }] : [])
             ]}
-            eventContent={(arg) => <EventContent eventInfo={arg} onDotClick={toggleSelectedEvent} />}
+            eventContent={(arg) => <EventContent eventInfo={arg} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
             locale={esLocale}
@@ -169,7 +187,7 @@ function EventsCalendar() {
         </div>
         
         <CalendarSidebar
-          eventsOfSelectedDay={eventsOfSelectedDay}
+          eventsOfSelectedDay={allEventsForSidebar}
           selectedEvent={selectedEvent}
           onSelectEvent={toggleSelectedEvent}
           selectedDateLabel={formattedSelectedDate}

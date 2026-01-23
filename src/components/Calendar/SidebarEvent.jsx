@@ -1,6 +1,6 @@
 export default function SidebarEvent({ event, isSelected, onSelectEvent }) {
   // Obtener la clase CSS del evento
-  const eventColorClass = event.classNames?.[0] || event.className || '';
+  const eventColorClass = event.classNames?.[0] || event.className || 'g-calendar-ve-holidays';
   
   return (
     <li 
