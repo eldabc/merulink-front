@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
+import ErrorMessage from '../Shared/ErrorMessage.jsx';
 
 export default function EventForm({ mode = 'create', event = null, onBack }) { // , onSave, onCancel
   
@@ -224,7 +225,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         type='text' 
                         className={`w-full px-3 py-2 rounded-lg filter-input border`} 
                       />
-                      {errors?.eventName && <p className="text-red-400 text-xs mt-1">{errors.eventName.message}</p>}  
+                      {errors?.eventName && <ErrorMessage msg={errors.eventName.message} /> }  
                     </div>
                   </div>
 
@@ -240,7 +241,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       <input 
                         readOnly={viewMode} 
                         {...register('startDate', {onChange: (e) => guestNextDate(e) })} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
-                      {errors?.startDate && <p className="text-red-400 text-xs mt-1">{errors.startDate.message}</p>}  
+                      {errors?.startDate && <ErrorMessage msg={errors.startDate.message} /> }  
                     </div>
                     {meruEventsFlag && (
                       <>
@@ -251,7 +252,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           <input 
                             readOnly={viewMode}
                             {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
-                          {errors?.startTime && <p className="text-red-400 text-xs mt-1">{errors.startTime.message}</p>}  
+                          {errors?.startTime && <ErrorMessage msg={errors.startTime.message} /> }
 
                         </div>
                       {!eventOneDayWithEndTime && ( 
@@ -263,7 +264,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           <input 
                             readOnly={viewMode}
                             {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
-                          {errors?.endDate && <p className="text-red-400 text-xs mt-1">{errors.endDate.message}</p>}  
+                          {errors?.endDate && <ErrorMessage msg={errors.endDate.message} />}  
                         </div> 
                       </>
                     )}
@@ -274,7 +275,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           <input 
                             readOnly={viewMode}
                             {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
-                          {errors?.endTime && <p className="text-red-400 text-xs mt-1">{errors.endTime.message}</p>}  
+                          {errors?.endTime && <ErrorMessage msg={errors.endTime.message} /> }
 
                         </div> 
                         <div>
@@ -290,7 +291,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                               <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
                               <option className='bg-[#3c4042]' value='Confirmado'>Confirmado</option>
                             </select>
-                          {errors?.status && <p className="text-red-400 text-xs mt-1">{errors.status.message}</p>}  
+                          {errors?.status && <ErrorMessage msg={errors.status.message} /> }  
                         </div>
                       </> 
                     )}
@@ -310,7 +311,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                               <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
                             ))}
                         </select>
-                        {errors?.locationId && <p className="text-red-400 text-xs mt-1">{errors.locationId.message}</p>}  
+                        {errors?.locationId && <ErrorMessage msg={errors.locationId.message} /> }  
                       </div> 
                       </> 
                     )}
@@ -334,7 +335,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                             <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
                             {selectedCategory === 'executive-mod' && ( <option className='bg-[#3c4042]' value='Semanal'>Semanal</option> )}
                         </select>
-                        {errors?.repeatInterval && <p className="text-red-400 text-xs mt-1">{errors.repeatInterval.message}</p>}  
+                        {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
                       </div>
                     </div> 
                     
@@ -345,7 +346,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       <input 
                         disabled={viewMode} 
                         type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
-                      {errors?.createAlert && <p className="text-red-400 text-xs mt-1">{errors.createAlert.message}</p>}  
+                      {errors?.createAlert && <ErrorMessage msg={errors.createAlert.message} /> }  
                     </div>
 
                     <div>
@@ -355,7 +356,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                       <input 
                         disabled={viewMode}
                         type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
-                      {errors?.coloringDay && <p className="text-red-400 text-xs mt-1">{errors.coloringDay.message}</p>}  
+                      {errors?.coloringDay && <ErrorMessage msg={errors.coloringDay.message} /> }  
                     </div>
                   </div>
                   <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
@@ -375,7 +376,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                           placeholder="Ingrese detalles adicionales..."
                           className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none`}
                         />
-                        {errors?.description && <p className="text-red-400 text-xs mt-1">{errors.description.message}</p>}  
+                        {errors?.description && <ErrorMessage msg={errors.description.message} /> }  
                       </div>
                       </>
                     )}
@@ -390,7 +391,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
                         placeholder="Ingrese comentarios, cambios, observaciones..."
                         className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none`}
                       />
-                      {errors?.comments && <p className="text-red-400 text-xs mt-1">{errors.comments.message}</p>}  
+                      {errors?.comments && <ErrorMessage msg={errors.comments.message} /> }  
                     </div>
                   </div>
                 </div>
