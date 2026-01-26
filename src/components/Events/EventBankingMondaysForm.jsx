@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEvents } from '../../context/EventContext';
 import { generateMondays } from '../../utils/date-utils';
 import TitleHeader from '../Shared/TitleHeader';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -8,6 +9,7 @@ import ErrorMessage from '../Shared/ErrorMessage';
 
 export default function BankingMondaysManager({ mode = 'create', event = [], onBack, year }) {
   const navigate = useNavigate();
+  const { createBankingEvents, updateEvent } = useEvents();
   const [formErrors, setFormErrors] = useState({});
 
   // Estado Checks (colores y habilitar inputs)
@@ -46,17 +48,27 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
       await bankingSchema.validate(dataToValidate, { abortEarly: false });
       
       console.log("Validación exitosa, guardando...", dataToValidate);
-      // Aquí invoca Contexto: saveEvents(dataToValidate);
+
+      await createBankingEvents(dataToValidate, year);
       
+      if (typeof onBack === 'function') onBack();
+      else navigate(-1);
+
     } catch (err) {
       const errorsFound = {};
-      err.inner.forEach(error => {
-        
-        // Extrae el dateStr original para mapear error
-        const index = error.path.match(/\d+/)[0];
-        const dateKey = dataToValidate[index].start;
-        errorsFound[dateKey] = error.message;
-      });
+      
+      if (err.inner?.length === 0 || !err.inner?.some(e => e.path.includes('['))) {
+        errorsFound['global'] = err.message;
+      } else {
+        err.inner.forEach(error => {
+          const match = error.path.match(/\[(\d+)\]/);
+          if (match) {
+            const index = match[1];
+            const dateKey = dataToValidate[index].start;
+            errorsFound[dateKey] = error.message;
+          }
+        });
+      }
       
       setFormErrors(errorsFound);
     }
@@ -67,6 +79,11 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
       <header className="mb-4">
         <TitleHeader title={`Calendario Bancario ${year}`} />
         <p className="text-sm text-gray-400">Marca los lunes y escribe el motivo. Solo se guardarán los que estén marcados.</p>
+        {formErrors.global && (
+          <div className="mt-4 p-3 bg-red-900/30 border border-red-500 rounded-lg flex items-center gap-2 animate-in fade-in duration-300">
+            <span className="text-red-500 text-sm font-bold">⚠️ {formErrors.global}</span>
+          </div>
+        )}
       </header>
 
       <div className="table-container overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">

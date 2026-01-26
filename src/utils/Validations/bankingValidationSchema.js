@@ -9,4 +9,4 @@ export const bankingSchema = Yup.array().of(
       .max(50, "La descripción es muy larga")
       .required("Debes indicar el motivo del feriado")
   })
-);
+).min(1, "Debe seleccionar al menos un lunes");

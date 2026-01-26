@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useLocationsHook } from '../hooks/useLocations';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { INITIAL_EVENTS } from '../utils/StaticData/event-utils';
-import { useLocationsHook } from '../hooks/useLocatios';
 
 const EventContext = createContext();
 
@@ -109,6 +109,41 @@ export const EventProvider = ({ showNotification, children }) => {
       }
     };
 
+    const createBankingEvents = async (eventsArray, year) => {
+      try {
+        // Mapeamos el array
+        const formattedEvents = eventsArray.map((event, index) => ({
+          id: Date.now() + index,
+          title: event.title,
+          start: event.start, // Ya viene formateado como YYYY-MM-DD
+          end: event.start, 
+          allDay: true,
+          extendedProps: {
+            category: 'banking-mondays',
+            label: 'Lunes Bancario',
+            status: 'active',
+            description: `Feriado Bancario - Año ${year}`,
+          }
+        }));
+
+        // setEventData(prevData => {
+          // OPCIONAL: Filtramos para eliminar lunes bancarios previos de ese mismo año
+          // y así evitar duplicados si el usuario guarda varias veces.
+          // const filteredData = prevData.filter(e => 
+          //   !(e.extendedProps.category === 'banking-mondays' && e.start.startsWith(year))
+          // );
+          // return [...formattedEvents, ...filteredData];
+        // });
+        setEventData(prevData => { // Actualiza el estado centralizado
+          return [formattedEvents, ...prevData]; 
+        });
+        showNotification(`Calendario Bancario ${year} actualizado`);
+        return true;
+      } catch (error) {
+        showNotification('Error al procesar el calendario bancario', 'error');
+        return false;
+      }
+    };
 
     // ***   ***   ***   ***   ***   ***   ***
       // *** Actualizar
@@ -173,6 +208,7 @@ export const EventProvider = ({ showNotification, children }) => {
     error,
     refetchEvents,
     createEvent,
+    createBankingEvents,
     updateEvent
   };
 

@@ -1,16 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useEvents } from "../../context/EventContext";
-import EventRow from './EventRow';
-import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { useNavigate } from 'react-router-dom';
+import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
-import { useState } from 'react';
 import Pagination from '../Pagination';
 import EventForm from './EventForm';
-import '../../Tables.css';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
+import EventRow from './EventRow';
+import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
 
