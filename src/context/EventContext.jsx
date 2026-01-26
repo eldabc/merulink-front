@@ -115,28 +115,30 @@ export const EventProvider = ({ showNotification, children }) => {
         const formattedEvents = eventsArray.map((event, index) => ({
           id: Date.now() + index,
           title: event.title,
-          start: event.start, // Ya viene formateado como YYYY-MM-DD
-          end: event.start, 
+          start: event.start + 'T00:00:00',
+          end: null, 
           allDay: true,
           extendedProps: {
             category: 'banking-mondays',
-            label: 'Lunes Bancario',
-            status: 'active',
+            label: 'Lunes Bancarios',
+            status: '',
             description: `Feriado Bancario - Año ${year}`,
           }
         }));
 
-        // setEventData(prevData => {
+        setEventData(prevData => {
           // OPCIONAL: Filtramos para eliminar lunes bancarios previos de ese mismo año
           // y así evitar duplicados si el usuario guarda varias veces.
-          // const filteredData = prevData.filter(e => 
-          //   !(e.extendedProps.category === 'banking-mondays' && e.start.startsWith(year))
-          // );
-          // return [...formattedEvents, ...filteredData];
-        // });
-        setEventData(prevData => { // Actualiza el estado centralizado
-          return [formattedEvents, ...prevData]; 
+          const filteredData = prevData.filter(e => 
+            !(e.extendedProps.category === 'banking-mondays' && e.start.startsWith(year))
+          );
+          return [...formattedEvents, ...filteredData];
         });
+        
+        console.log("formattedEvents...", formattedEvents);
+        // setEventData(prevData => { // Actualiza el estado centralizado
+        //   return [end, ...prevData]; 
+        // });
         showNotification(`Calendario Bancario ${year} actualizado`);
         return true;
       } catch (error) {

@@ -47,10 +47,8 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
      setFormErrors({});
       await bankingSchema.validate(dataToValidate, { abortEarly: false });
       
-      console.log("Validación exitosa, guardando...", dataToValidate);
-
       await createBankingEvents(dataToValidate, year);
-      
+
       if (typeof onBack === 'function') onBack();
       else navigate(-1);
 
