@@ -100,6 +100,8 @@ export const INITIAL_EVENTS = [
       status: 'Confirmado',
       locationId: null,
       locationName: null,
+      repeatEvent: true,
+      repeatInterval: 'Anual',
       coloringDay: true,
       comments: 'Comentario del evento 6'
     },
