@@ -22,7 +22,7 @@ export default function EventsPage() {
             <Route path="lunes-bancarios" element={<EventsList categoryKeys={["banking-mondays"]} />} />
 
             <Route path="nuevo" element={<EventForm />} />
-            <Route path="/lunes-bancarios/nuevo" element={<EventBankingMondaysForm />} />
+            <Route path="/lunes-bancarios/nuevo" element={<EventBankingMondaysForm year={new Date().getFullYear()} />} />
           </Routes>
         </EventProvider>
       </main>

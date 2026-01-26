@@ -35,5 +35,10 @@ export const categoryEvents = [
     label: "Ejecutivos MOD", 
     color: "executive-mod" 
   },
+  { id: 8,
+    key: "banking-mondays", 
+    label: "Lunes Bancarios", 
+    color: "banking-mondays" 
+  },
       
 ];
