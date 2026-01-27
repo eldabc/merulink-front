@@ -1,16 +1,24 @@
+import { useEvents } from "../../../context/EventContext";
 import { normalizeDateToString } from "../../../utils/date-utils";
-import { XMarkIcon } from '@heroicons/react/24/solid';
 import TitleHeader from "../../Shared/TitleHeader";
 import { useNavigate } from 'react-router-dom';
+import ButtonDelete from "../../Shared/ButtonDelete";
 
 function BankingMondaysList({events}) {
 
   const navigate = useNavigate();
+  const { deleteEvents } = useEvents();
+
   const setSelectedEvent = () => {
     navigate("/eventos/lunes-bancarios/ver", { 
       state: { data: events } 
     }); 
   };
+
+  const handleDeleteEvent = (id) => {
+    console.log("ELiminiar evento",id); 
+    
+  }
 
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -44,15 +52,7 @@ function BankingMondaysList({events}) {
                   <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(item.start)}</td>
                   <td className="px-4 py-3 text-white-700">{item.extendedProps.categoryDisplayName}</td>
                   <td className="px-4 py-3">
-                    <button 
-                      // onClick={(e) => {
-                      //   e.stopPropagation();
-                      //   toggleStatusEvent(event.id);
-                      // }}
-                      title='Eliminar Evento'
-                      type="button" className={`tags-work-btn }`}>
-                    <XMarkIcon className='w-5 h-5 text-red-400' />
-                    </button>
+                    <ButtonDelete handleDeleteEvent={handleDeleteEvent} id={item.id} />
                   </td>
                 </tr>
               ))}

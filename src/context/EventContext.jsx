@@ -167,61 +167,84 @@ export const EventProvider = ({ showNotification, children }) => {
 
 
 
-    // *** Actualizar
-    const updateEvent = async (formData) => {
-      try {
-        const eventId = formData.id;
-        
-        if (!eventId) {
-          showNotification('Error: No se encontró el ID del evento', 'error');
-          return false;
-        }
-
-        // Construir el evento actualizado con la estructura correcta
-        const typeEvent = categoryEvents.find(te => te.key === formData.category);
-        const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-
-        const updatedEvent = {
-          id: eventId,
-          title: formData.eventName,
-          start: formatDateToEvent(formData.startDate, formData.startTime),
-          end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
-          extendedProps: {
-            category: formData.category,
-            label: typeEvent?.label,
-            status: formData.status,
-            locationId: formData.locationId,
-            locationName: getEventLocationById ? getEventLocationById.label : '',
-            repeatEvent: formData.repeatEvent,
-            repeatInterval: formData.repeatInterval,
-            createAlert: formData.createAlert,
-            coloringDay: formData.coloringDay,
-            description: formData.description,
-            comments: formData.comments,
-          },
-          className: formData.category
-        };
-        
-        console.log("Evento actualizado:", updatedEvent);
-        
-        // Llamada a la API/Backend (onUpdate)
-        // await api.put(`/events/${eventId}`, updatedEvent); 
-        
-        setEventData(prevData => {
-          return prevData.map(event => 
-            event.id === eventId ? updatedEvent : event 
-          );
-        });
-
-        showNotification('Evento actualizado con éxito'); 
-        return true;
-  
-      } catch (error) {
-        console.error('Error al actualizar evento:', error);
-        showNotification('Error al actualizar: ' + error.message, 'error');
+  // *** Actualizar
+  const updateEvent = async (formData) => {
+    try {
+      const eventId = formData.id;
+      
+      if (!eventId) {
+        showNotification('Error: No se encontró el ID del evento', 'error');
         return false;
       }
-    };
+
+      // Construir el evento actualizado con la estructura correcta
+      const typeEvent = categoryEvents.find(te => te.key === formData.category);
+      const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+
+      const updatedEvent = {
+        id: eventId,
+        title: formData.eventName,
+        start: formatDateToEvent(formData.startDate, formData.startTime),
+        end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+        extendedProps: {
+          category: formData.category,
+          label: typeEvent?.label,
+          status: formData.status,
+          locationId: formData.locationId,
+          locationName: getEventLocationById ? getEventLocationById.label : '',
+          repeatEvent: formData.repeatEvent,
+          repeatInterval: formData.repeatInterval,
+          createAlert: formData.createAlert,
+          coloringDay: formData.coloringDay,
+          description: formData.description,
+          comments: formData.comments,
+        },
+        className: formData.category
+      };
+      
+      console.log("Evento actualizado:", updatedEvent);
+      
+      // Llamada a la API/Backend (onUpdate)
+      // await api.put(`/events/${eventId}`, updatedEvent); 
+      
+      setEventData(prevData => {
+        return prevData.map(event => 
+          event.id === eventId ? updatedEvent : event 
+        );
+      });
+
+      showNotification('Evento actualizado con éxito'); 
+      return true;
+
+    } catch (error) {
+      console.error('Error al actualizar evento:', error);
+      showNotification('Error al actualizar: ' + error.message, 'error');
+      return false;
+    }
+  };
+
+  // *** Eliminar
+  const deleteEvent = async (id, year = null) => {
+    try {
+      setEventData(prevData => {
+        // Reutilizamos la lógica: filtramos para dejar FUERA lo que queremos "borrar"
+        return prevData.filter(ev => {
+          const isBanking = ev.extendedProps?.category === 'banking-mondays';
+          const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
+          
+          // Si es banking y es el año, el resultado es FALSE y se elimina del array
+          return !(isBanking && isSameYear);
+        });
+      });
+
+      showNotification(`Evento ${year} eliminado con éxito`);
+      return true;
+    } catch (error) {
+      showNotification('Error al eliminar el calendario', 'error');
+      return false;
+    }
+  }
+
   const contextValue = {
     eventData,
     setEventData,
@@ -230,7 +253,8 @@ export const EventProvider = ({ showNotification, children }) => {
     refetchEvents,
     createEvent,
     createEditBankingEvents,
-    updateEvent
+    updateEvent,
+    deleteEvent
   };
 
   return (
