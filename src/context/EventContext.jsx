@@ -63,160 +63,165 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   };
 
-  // ***   ***   ***   ***   ***   ***   ***
-    // *** Crear
-    const createEvent = async (formData) => {
 
-      const typeEvent = categoryEvents.find(te => te.key === formData.category);
-      const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+  // *** Crear
+  const createEvent = async (formData) => {
 
-      const newEvent = {
-        id: Date.now(), // ID temporal
-        title: formData.eventName,
-        start: formatDateToEvent(formData.startDate, formData.startTime),
-        end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
-        extendedProps: {
-          category: formData.category,
-          label: typeEvent.label,
-          status: formData.status,
-          locationId: formData.locationId,
-          locationName: getEventLocationById ? getEventLocationById.label : '',
-          repeatEvent: formData.repeatEvent,
-          repeatInterval: formData.repeatInterval,
-          createAlert: formData.createAlert,
-          coloringDay: formData.coloringDay,
-          description: formData.description,
-          comments: formData.comments,
-        }
-        
-      };
+    const typeEvent = categoryEvents.find(te => te.key === formData.category);
+    const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
 
-      console.log("datos", newEvent);
-  
-      try {
-        // Llamado a API
-        // const response = await api.post('/subdepartments', newEvent); 
-        // const createdRecord = await response.json(); 
-  
-        setEventData(prevData => { // Actualiza el estado centralizado
-          return [newEvent, ...prevData]; 
-        });
-  
-        showNotification(`Evento ${newEvent.title} creado con éxito`);
-        
-        return true;
-      } catch (error) {
-        showNotification('Error al crear el evento', 'error');
-        return false;
-      }
+    const newEvent = {
+      id: Date.now(), // ID temporal
+      title: formData.eventName,
+      start: formatDateToEvent(formData.startDate, formData.startTime),
+      end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+      extendedProps: {
+        category: formData.category,
+        label: typeEvent.label,
+        status: formData.status,
+        locationId: formData.locationId,
+        locationName: getEventLocationById ? getEventLocationById.label : '',
+        repeatEvent: formData.repeatEvent,
+        repeatInterval: formData.repeatInterval,
+        createAlert: formData.createAlert,
+        coloringDay: formData.coloringDay,
+        description: formData.description,
+        comments: formData.comments,
+      },
+      className: formData.category
+      
     };
 
-    const formattedBankingEvents = (eventsArray, year) => {
-      // Mapeamos el array
-      return eventsArray.map((event, index) => ({
-          id: Date.now() + index,
-          title: event.title,
-          start: event.start + 'T00:00:00',
-          end: null, 
-          allDay: true,
-          extendedProps: {
-            category: 'banking-mondays',
-            label: 'Lunes Bancarios',
-            status: '',
-            description: `Feriado Bancario - Año ${year}`,
-          }
-        }));
+    console.log("datos", newEvent);
 
-    }
+    try {
+      // Llamado a API
+      // const response = await api.post('/subdepartments', newEvent); 
+      // const createdRecord = await response.json(); 
 
-    const createEditBankingEvents = async (eventsArray, year, mode) => {
-      try {
-
-        const editMode = mode === 'edit';
-        const msg = editMode ? `actualizado` : `creado`;
-        const formattedEvents = formattedBankingEvents(eventsArray, year);
-
-        setEventData(prevData => {
-        
-          let oldData = [...prevData];
-        
-          if (editMode) {
-            // Eliminamos eventos previos de lunes bancarios 
-            oldData = prevData.filter(ev => {
-              const isBanking = ev.extendedProps?.category === 'banking-mondays';
-              const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
-              
-              return !(isBanking && isSameYear);
-            });
-          }
-
-          return [...formattedEvents, ...oldData];
+      setEventData(prevData => { // Actualiza el estado centralizado
+        return [newEvent, ...prevData]; 
       });
-        
-        showNotification(`Calendario Bancario ${year} ${msg}`);
-        return true;
-      } catch (error) {
-        showNotification('Error al procesar el calendario bancario', 'error');
-        return false;
-      }
-    };
 
+      showNotification(`Evento ${newEvent.title} creado con éxito`);
+      
+      return true;
+    } catch (error) {
+      showNotification('Error al crear el evento', 'error');
+      return false;
+    }
+  };
 
-    // ***   ***   ***   ***   ***   ***   ***
-      // *** Actualizar
-      const updateEvent = async (formData) => {
-        try {
-          const eventId = formData.id;
-          
-          if (!eventId) {
-            showNotification('Error: No se encontró el ID del evento', 'error');
-            return false;
-          }
-
-          // Construir el evento actualizado con la estructura correcta
-          const typeEvent = categoryEvents.find(te => te.key === formData.category);
-          const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-
-          const updatedEvent = {
-            id: eventId,
-            title: formData.eventName,
-            start: formatDateToEvent(formData.startDate, formData.startTime),
-            end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
-            extendedProps: {
-              category: formData.category,
-              label: typeEvent?.label,
-              status: formData.status,
-              locationId: formData.locationId,
-              locationName: getEventLocationById ? getEventLocationById.label : '',
-              repeatEvent: formData.repeatEvent,
-              repeatInterval: formData.repeatInterval,
-              createAlert: formData.createAlert,
-              coloringDay: formData.coloringDay,
-              description: formData.description,
-              comments: formData.comments,
-            }
-          };
-          
-          console.log("Evento actualizado:", updatedEvent);
-          
-          // Llamada a la API/Backend (onUpdate)
-          // await api.put(`/events/${eventId}`, updatedEvent); 
-          
-          setEventData(prevData => {
-            return prevData.map(event => 
-              event.id === eventId ? updatedEvent : event 
-            );
-          });
-
-          showNotification('Evento actualizado con éxito'); 
-          return true;
+  //*** Mapeo Banking array
+  const formattedBankingEvents = (eventsArray, year) => {
     
-        } catch (error) {
-          console.error('Error al actualizar evento:', error);
-          showNotification('Error al actualizar: ' + error.message, 'error');
+    return eventsArray.map((event, index) => ({
+        id: Date.now() + index,
+        title: event.title,
+        start: event.start + 'T00:00:00',
+        end: null, 
+        allDay: true,
+        extendedProps: {
+          category: 'banking-mondays',
+          label: 'Lunes Bancarios',
+          status: '',
+          description: `Feriado Bancario - Año ${year}`,
+        },
+        className: 'banking-mondays'
+      }));
+
+  }
+
+  // *** Crear/Editar Lunes Bancarios
+  const createEditBankingEvents = async (eventsArray, year, mode) => {
+    try {
+
+      const editMode = mode === 'edit';
+      const msg = editMode ? `actualizado` : `creado`;
+      const formattedEvents = formattedBankingEvents(eventsArray, year);
+
+      setEventData(prevData => {
+      
+        let oldData = [...prevData];
+      
+        if (editMode) {
+          // Eliminamos eventos previos de lunes bancarios 
+          oldData = prevData.filter(ev => {
+            const isBanking = ev.extendedProps?.category === 'banking-mondays';
+            const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
+            
+            return !(isBanking && isSameYear);
+          });
+        }
+
+        return [...formattedEvents, ...oldData];
+    });
+      
+      showNotification(`Calendario Bancario ${year} ${msg}`);
+      return true;
+    } catch (error) {
+      showNotification('Error al procesar el calendario bancario', 'error');
+      return false;
+    }
+  };
+
+
+
+    // *** Actualizar
+    const updateEvent = async (formData) => {
+      try {
+        const eventId = formData.id;
+        
+        if (!eventId) {
+          showNotification('Error: No se encontró el ID del evento', 'error');
           return false;
         }
-      };
+
+        // Construir el evento actualizado con la estructura correcta
+        const typeEvent = categoryEvents.find(te => te.key === formData.category);
+        const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+
+        const updatedEvent = {
+          id: eventId,
+          title: formData.eventName,
+          start: formatDateToEvent(formData.startDate, formData.startTime),
+          end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+          extendedProps: {
+            category: formData.category,
+            label: typeEvent?.label,
+            status: formData.status,
+            locationId: formData.locationId,
+            locationName: getEventLocationById ? getEventLocationById.label : '',
+            repeatEvent: formData.repeatEvent,
+            repeatInterval: formData.repeatInterval,
+            createAlert: formData.createAlert,
+            coloringDay: formData.coloringDay,
+            description: formData.description,
+            comments: formData.comments,
+          },
+          className: formData.category
+        };
+        
+        console.log("Evento actualizado:", updatedEvent);
+        
+        // Llamada a la API/Backend (onUpdate)
+        // await api.put(`/events/${eventId}`, updatedEvent); 
+        
+        setEventData(prevData => {
+          return prevData.map(event => 
+            event.id === eventId ? updatedEvent : event 
+          );
+        });
+
+        showNotification('Evento actualizado con éxito'); 
+        return true;
+  
+      } catch (error) {
+        console.error('Error al actualizar evento:', error);
+        showNotification('Error al actualizar: ' + error.message, 'error');
+        return false;
+      }
+    };
   const contextValue = {
     eventData,
     setEventData,
