@@ -24,6 +24,7 @@ export default function EventsPage() {
             <Route path="nuevo" element={<EventForm />} />
             <Route path="/lunes-bancarios/nuevo" element={<EventBankingMondaysForm year={new Date().getFullYear()} />} />
             <Route path="/lunes-bancarios/ver" element={<EventBankingMondaysForm mode="view" year={new Date().getFullYear()} />} />
+            <Route path="/lunes-bancarios/edit" element={<EventBankingMondaysForm mode="edit" year={new Date().getFullYear()} />} />
           </Routes>
         </EventProvider>
       </main>

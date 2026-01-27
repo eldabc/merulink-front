@@ -117,7 +117,6 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       let success = false;
       
       if (editMode && event) {
-          console.log("Actualizando:", data);
 
           // Añadir ID que no viene en form
           const updatedData = {

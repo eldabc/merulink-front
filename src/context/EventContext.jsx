@@ -66,8 +66,10 @@ export const EventProvider = ({ showNotification, children }) => {
   // ***   ***   ***   ***   ***   ***   ***
     // *** Crear
     const createEvent = async (formData) => {
+
       const typeEvent = categoryEvents.find(te => te.key === formData.category);
       const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+
       const newEvent = {
         id: Date.now(), // ID temporal
         title: formData.eventName,
@@ -109,10 +111,9 @@ export const EventProvider = ({ showNotification, children }) => {
       }
     };
 
-    const createBankingEvents = async (eventsArray, year) => {
-      try {
-        // Mapeamos el array
-        const formattedEvents = eventsArray.map((event, index) => ({
+    const formattedBankingEvents = (eventsArray, year) => {
+      // Mapeamos el array
+      return eventsArray.map((event, index) => ({
           id: Date.now() + index,
           title: event.title,
           start: event.start + 'T00:00:00',
@@ -126,17 +127,40 @@ export const EventProvider = ({ showNotification, children }) => {
           }
         }));
 
+    }
+
+    const createEditBankingEvents = async (eventsArray, year, mode) => {
+      try {
+
+        const editMode = mode === 'edit';
+        const msg = editMode ? `actualizado` : `creado`;
+        const formattedEvents = formattedBankingEvents(eventsArray, year);
+
         setEventData(prevData => {
-          return [...formattedEvents, ...prevData];
-        });
         
-        showNotification(`Calendario Bancario ${year} creado con éxito`);
+          let oldData = [...prevData];
+        
+          if (editMode) {
+            // Eliminamos eventos previos de lunes bancarios 
+            oldData = prevData.filter(ev => {
+              const isBanking = ev.extendedProps?.category === 'banking-mondays';
+              const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
+              
+              return !(isBanking && isSameYear);
+            });
+          }
+
+          return [...formattedEvents, ...oldData];
+      });
+        
+        showNotification(`Calendario Bancario ${year} ${msg}`);
         return true;
       } catch (error) {
         showNotification('Error al procesar el calendario bancario', 'error');
         return false;
       }
     };
+
 
     // ***   ***   ***   ***   ***   ***   ***
       // *** Actualizar
@@ -152,7 +176,6 @@ export const EventProvider = ({ showNotification, children }) => {
           // Construir el evento actualizado con la estructura correcta
           const typeEvent = categoryEvents.find(te => te.key === formData.category);
           const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-          console.log("location", getEventLocationById);
 
           const updatedEvent = {
             id: eventId,
@@ -201,7 +224,7 @@ export const EventProvider = ({ showNotification, children }) => {
     error,
     refetchEvents,
     createEvent,
-    createBankingEvents,
+    createEditBankingEvents,
     updateEvent
   };
 

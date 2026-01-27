@@ -6,14 +6,16 @@ import TitleHeader from '../../Shared/TitleHeader';
 import FooterFormButtons from '../../Shared/FooterFormButtons';
 import { bankingSchema } from '../../../utils/Validations/bankingValidationSchema';
 import ErrorMessage from '../../Shared/ErrorMessage';
+import HeadFormButtons from '../../Shared/HeadFormButtons';
 
 export default function BankingMondaysManager({ mode = 'create', event = [], onBack, year }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { createBankingEvents, updateEvent } = useEvents();
+  const { createEditBankingEvents } = useEvents();
   const [formErrors, setFormErrors] = useState({});
 
-  const eventsReceived = location.state?.events || [];
+  const eventsReceived = location.state?.data || [];
+  const viewMode = mode === 'view';
 
   // Inicializamos los checks basados en los eventos existentes
   const [checkedDates, setCheckedDates] = useState(() => {
@@ -31,7 +33,7 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
 
   const handleToggle = (dateStr) => {
 
-    if (mode === 'view') return;
+    if (viewMode) return;
 
     setCheckedDates(prev => {
       const newSet = new Set(prev);
@@ -57,15 +59,14 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
     try {
       setFormErrors({});
       await bankingSchema.validate(dataToValidate, { abortEarly: false });
-      
-      await createBankingEvents(dataToValidate, year);
 
-      if (typeof onBack === 'function') onBack();
-      else navigate(-1);
+      await createEditBankingEvents(dataToValidate, year, mode);
+          
+      if (mode === 'create') navigate(-1);
+      else navigate(-2);
 
     } catch (err) {
       const errorsFound = {};
-      
       if (!err.inner || err.inner.length === 0 || !err.inner.some(e => e.path.includes('['))) {
         errorsFound['global'] = err.message;
       } else {
@@ -84,10 +85,12 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
 
   return (
     <div className="flex flex-col h-full text-white w-full p-2">
+        {(viewMode) && <HeadFormButtons url="/eventos/lunes-bancarios/edit" data={eventsReceived} /> }
+
       <header className="mb-4">
         <TitleHeader title={`Calendario Bancario ${year}`} />
         <p className="text-sm text-gray-400">
-          {mode === 'view' 
+          {viewMode 
             ? "Vista de consulta de los lunes bancarios registrados." 
             : "Marca los lunes y escribe el motivo. Solo se guardarán los marcados."}
         </p>
@@ -119,7 +122,7 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
                   className="w-5 h-5 accent-blue-500 cursor-pointer disabled:opacity-50"
                   checked={isChecked}
                   onChange={() => handleToggle(dateStr)}
-                  disabled={mode === 'view'}
+                  disabled={viewMode}
                 />
                 
                 <div className="w-24 shrink-0">
@@ -132,7 +135,7 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
                   type="text"
                   key={`${dateStr}-${initialValue}`} // Fuerza actualización si cambian los datos
                   defaultValue={initialValue}
-                  disabled={!isChecked || mode === 'view'}
+                  disabled={!isChecked || viewMode}
                   placeholder={isChecked ? "Título del feriado..." : "Deshabilitado"}
                   className={`filter-input flex-1 bg-gray-950 border p-2 rounded text-sm outline-none transition-all disabled:opacity-40`}
                 />

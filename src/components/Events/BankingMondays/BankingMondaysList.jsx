@@ -4,11 +4,11 @@ import TitleHeader from "../../Shared/TitleHeader";
 import { useNavigate } from 'react-router-dom';
 
 function BankingMondaysList({events}) {
-  
+
   const navigate = useNavigate();
   const setSelectedEvent = () => {
     navigate("/eventos/lunes-bancarios/ver", { 
-      state: { events: events } 
+      state: { data: events } 
     }); 
   };
 
