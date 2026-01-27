@@ -1,19 +1,28 @@
 import { normalizeDateToString } from "../../../utils/date-utils";
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import TitleHeader from "../../Shared/TitleHeader";
+import { useNavigate } from 'react-router-dom';
 
-function BankingMondaysList({items}) {
+function BankingMondaysList({events}) {
+  
+  const navigate = useNavigate();
+  const setSelectedEvent = () => {
+    navigate("/eventos/lunes-bancarios/ver", { 
+      state: { events: events } 
+    }); 
+  };
+
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
 
-      {items && items.length === 0 ? (
+      {events && events.length === 0 ? (
         <div className="p-4">No existe calendario Bancario para este año.</div>
       ) : (
         
         <div className="rounded-lg shadow">
           <div className="mb-4">
             <TitleHeader title={`Calendario de Lunes Bancarios ${new Date().getFullYear()}`} />
-            <p className="text-sm text-gray-400">Este listadro contiene próximas fechas para los lunes bancarios.</p>
+            <p className="text-sm text-gray-400">Este listado contiene las próximas fechas para los lunes bancarios.</p>
           </div>
           <table className="min-w-full border-collapse text-sm sm:text-base">
               <thead>
@@ -25,10 +34,10 @@ function BankingMondaysList({items}) {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {events.map((item) => (
                 <tr
                   key={item.id}
-                  onClick={() => setSelectedEvent(item.id)}
+                  onClick={() => setSelectedEvent()}
                   className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
                 >
                   <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>

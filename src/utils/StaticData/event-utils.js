@@ -172,22 +172,22 @@ export const INITIAL_EVENTS = [
     },
     className: 'di-heights-wedding-nights',
   },
-  {
-    id: createEventId(),
-    title: 'Evento 11',
-    start: '2026-01-05T09:00:00',
-    end:   '2026-01-05T11:00:00',
-    extendedProps: {
-      category: 'banking-mondays',
-      label: 'Lunes Bancario 1',
-      status: '',
-      locationId: null,
-      locationName: '',
-      coloringDay: false,
-      description: 'Descripción del evento 11'
-    },
-    className: 'banking-mondays',
-  }
+  // {
+  //   id: createEventId(),
+  //   title: 'Evento 11',
+  //   start: '2026-01-05T09:00:00',
+  //   end:   '2026-01-05T11:00:00',
+  //   extendedProps: {
+  //     category: 'banking-mondays',
+  //     label: 'Lunes Bancario 1',
+  //     status: '',
+  //     locationId: null,
+  //     locationName: '',
+  //     coloringDay: false,
+  //     description: 'Descripción del evento 11'
+  //   },
+  //   className: 'banking-mondays',
+  // }
 ]
 
 export function createEventId() {

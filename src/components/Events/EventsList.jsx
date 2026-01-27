@@ -58,7 +58,7 @@ export default function EventsList({ categoryKeys }) {
     });
 }, [eventData, categoryKeys]);
 
-  const hasBankingRegisters = items[0].extendedProps.category === 'banking-mondays' && items?.length > 0;
+  const hasBankingRegisters = items[0]?.extendedProps.category === 'banking-mondays' && items?.length > 0;
 
   // Filtrar
   const filteredEvents = useMemo(() => {
@@ -107,7 +107,7 @@ export default function EventsList({ categoryKeys }) {
       ) : (
         <>
         {hasBankingRegisters ? (
-          <BankingMondaysList stringCategory={stringCategory} navigate={navigate} items={items} />
+          <BankingMondaysList stringCategory={stringCategory} navigate={navigate} events={items} />
         ) : (
         <div className="rounded-lg shadow">
           <table className="min-w-full border-collapse text-sm sm:text-base">

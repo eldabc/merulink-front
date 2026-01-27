@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEvents } from '../../../context/EventContext';
 import { generateMondays } from '../../../utils/date-utils';
 import TitleHeader from '../../Shared/TitleHeader';
@@ -9,14 +9,17 @@ import ErrorMessage from '../../Shared/ErrorMessage';
 
 export default function BankingMondaysManager({ mode = 'create', event = [], onBack, year }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { createBankingEvents, updateEvent } = useEvents();
   const [formErrors, setFormErrors] = useState({});
 
-  // Estado Checks (colores y habilitar inputs)
+  const eventsReceived = location.state?.events || [];
+
+  // Inicializamos los checks basados en los eventos existentes
   const [checkedDates, setCheckedDates] = useState(() => {
     const initialSet = new Set();
-    if (mode === 'edit' && Array.isArray(event)) {
-      event.forEach(e => {
+    if (Array.isArray(eventsReceived)) {
+      eventsReceived.forEach(e => {
         const d = e.start?.substring(0, 10);
         if (d) initialSet.add(d);
       });
@@ -24,27 +27,35 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
     return initialSet;
   });
 
-  // Generación de lunes (cambia si cambia el año)
   const yearMondays = useMemo(() => generateMondays(year), [year]);
 
   const handleToggle = (dateStr) => {
+
+    if (mode === 'view') return;
+
     setCheckedDates(prev => {
       const newSet = new Set(prev);
       newSet.has(dateStr) ? newSet.delete(dateStr) : newSet.add(dateStr);
       return newSet;
     });
+
+    // Limpiamos errores de esa fecha y el global al interactuar
+    setFormErrors(prev => {
+      const newErrs = { ...prev };
+      delete newErrs[dateStr];
+      delete newErrs.global;
+      return newErrs;
+    });
   };
 
-
   const handleSave = async () => {
-    // Recolectamos con dateStr
     const dataToValidate = Array.from(checkedDates).map(dateStr => ({
       start: dateStr,
       title: document.getElementById(`input-${dateStr}`)?.value || ""
     }));
 
     try {
-     setFormErrors({});
+      setFormErrors({});
       await bankingSchema.validate(dataToValidate, { abortEarly: false });
       
       await createBankingEvents(dataToValidate, year);
@@ -55,7 +66,7 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
     } catch (err) {
       const errorsFound = {};
       
-      if (err.inner?.length === 0 || !err.inner?.some(e => e.path.includes('['))) {
+      if (!err.inner || err.inner.length === 0 || !err.inner.some(e => e.path.includes('['))) {
         errorsFound['global'] = err.message;
       } else {
         err.inner.forEach(error => {
@@ -67,7 +78,6 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
           }
         });
       }
-      
       setFormErrors(errorsFound);
     }
   };
@@ -76,7 +86,12 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
     <div className="flex flex-col h-full text-white w-full p-2">
       <header className="mb-4">
         <TitleHeader title={`Calendario Bancario ${year}`} />
-        <p className="text-sm text-gray-400">Marca los lunes y escribe el motivo. Solo se guardarán los que estén marcados.</p>
+        <p className="text-sm text-gray-400">
+          {mode === 'view' 
+            ? "Vista de consulta de los lunes bancarios registrados." 
+            : "Marca los lunes y escribe el motivo. Solo se guardarán los marcados."}
+        </p>
+        
         {formErrors.global && (
           <div className="mt-4 p-3 bg-red-900/30 border border-red-500 rounded-lg flex items-center gap-2 animate-in fade-in duration-300">
             <span className="text-red-500 text-sm font-bold">⚠️ {formErrors.global}</span>
@@ -90,19 +105,21 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
           const isChecked = checkedDates.has(dateStr);
           const errorMsg = formErrors[dateStr];
           
-          const initialValue = event?.find(e => e.start?.startsWith(dateStr))?.title || "";
+          // Buscamos el valor inicial en los eventos recibidos
+          const initialValue = eventsReceived?.find(e => e.start?.startsWith(dateStr))?.title || "";
 
           return (
-            <div key={dateStr} className="flex flex-col">
+            <div key={dateStr} className="flex flex-col mb-2">
               <div className={`flex items-center gap-3 p-3 rounded-lg transition-all 
                 ${isChecked ? 'check-active border-l-4 border-gray-500' : 'bg-gray-800/40 border-l-4 border-transparent'}
-                `}
+           `}
               >
                 <input 
                   type="checkbox" 
-                  className="w-5 h-5 accent-blue-500 cursor-pointer"
+                  className="w-5 h-5 accent-blue-500 cursor-pointer disabled:opacity-50"
                   checked={isChecked}
                   onChange={() => handleToggle(dateStr)}
+                  disabled={mode === 'view'}
                 />
                 
                 <div className="w-24 shrink-0">
@@ -113,14 +130,15 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
                 <input 
                   id={`input-${dateStr}`}
                   type="text"
+                  key={`${dateStr}-${initialValue}`} // Fuerza actualización si cambian los datos
                   defaultValue={initialValue}
-                  disabled={!isChecked}
+                  disabled={!isChecked || mode === 'view'}
                   placeholder={isChecked ? "Título del feriado..." : "Deshabilitado"}
-                  className={`filter-input flex-1 bg-gray-950 border p-2 rounded text-sm outline-none transition-all disabled:opacity-20`}
+                  className={`filter-input flex-1 bg-gray-950 border p-2 rounded text-sm outline-none transition-all disabled:opacity-40`}
                 />
               </div>
               
-              {errorMsg && <ErrorMessage msg={errorMsg} /> }
+              {errorMsg && <div className="ml-14"><ErrorMessage msg={errorMsg} /></div>}
             </div>
           );
         })}
