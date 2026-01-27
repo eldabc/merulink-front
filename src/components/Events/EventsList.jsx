@@ -9,6 +9,7 @@ import EventForm from './EventForm';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
 import EventRow from './EventRow';
+import BankingMondaysList from './BankingMondays/BankingMondaysList.jsx';
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
@@ -31,15 +32,14 @@ export default function EventsList({ categoryKeys }) {
   const [hasSearched, setHasSearched] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const itemsPerPage = 10;
-  
+  const SEARCH_FIELDS = ['title'];
  
   const items = useMemo(() => {
-    if (!categoryKeys || categoryKeys.length === 0) return [];
+  if (!categoryKeys || categoryKeys.length === 0) return [];
 
-    return eventData
+  return eventData
     .filter(ev => categoryKeys.includes(ev.extendedProps?.category))
     .map(ev => {
-      
       const categoryId = ev.extendedProps?.category;
       return {
         ...ev,
@@ -48,10 +48,17 @@ export default function EventsList({ categoryKeys }) {
           categoryDisplayName: stringCategoryEvents([categoryId])
         }
       };
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.start);
+      const dateB = new Date(b.start);
+      
+      // Orden ascendente
+      return dateA - dateB;
     });
-  }, [eventData, categoryKeys]);
+}, [eventData, categoryKeys]);
 
-  const SEARCH_FIELDS = ['title'];
+  const hasBankingRegisters = items[0].extendedProps.category === 'banking-mondays' && items?.length > 0;
 
   // Filtrar
   const filteredEvents = useMemo(() => {
@@ -82,11 +89,11 @@ export default function EventsList({ categoryKeys }) {
 
         <div className="text-sm">
           {!isMeruBirthday && (
-            <ButtonNavigate url={`/eventos${bankingMondaysCategoryKey}/nuevo`} navigate={navigate} />
+            <ButtonNavigate url={`/eventos${bankingMondaysCategoryKey}/nuevo`} navigate={navigate} flagDisabled={hasBankingRegisters} />
           )}
         </div>
       </div>
-      {/* Filtro */}
+
       {/* <FilterByFields
         searchValue={searchValue}
         onSearchChange={setSearchValue}
@@ -98,32 +105,38 @@ export default function EventsList({ categoryKeys }) {
       {items && items.length === 0 ? (
         <div className="p-4">No hay eventos en esta categoría.</div>
       ) : (
+        <>
+        {hasBankingRegisters ? (
+          <BankingMondaysList stringCategory={stringCategory} navigate={navigate} items={items} />
+        ) : (
         <div className="rounded-lg shadow">
           <table className="min-w-full border-collapse text-sm sm:text-base">
               <thead>
-            <tr className="tr-thead-table">
-              <th className="px-4 py-3 text-left font-semibold">Nombre</th>
-              <th className="px-4 py-3 text-left font-semibold">Fecha</th>
-              {isMeruBirthday ? (
-                <th className="px-4 py-3 text-left font-semibold">Departamento</th>
-              ) : (
-                <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
-              )}
-              {!eventWithLocation && (
-                <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
-              )}
-              <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
-              <th className="px-4 py-3 text-left font-semibold">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <EventRow key={item.id} event={item} isMeruBirthday={isMeruBirthday} eventWithLocation={eventWithLocation} setSelectedEvent={setSelectedEvent}/>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
+              <tr className="tr-thead-table">
+                <th className="px-4 py-3 text-left font-semibold">Nombre</th>
+                <th className="px-4 py-3 text-left font-semibold">Fecha</th>
+                {isMeruBirthday ? (
+                  <th className="px-4 py-3 text-left font-semibold">Departamento</th>
+                ) : (
+                  <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
+                )}
+                {!eventWithLocation && (
+                  <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
+                )}
+                <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
+                <th className="px-4 py-3 text-left font-semibold">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <EventRow key={item.id} event={item} isMeruBirthday={isMeruBirthday} eventWithLocation={eventWithLocation} setSelectedEvent={setSelectedEvent}/>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+      )}
+      </>
     )}
     <Pagination
         paginatedData={paginatedEvents}
@@ -137,7 +150,6 @@ export default function EventsList({ categoryKeys }) {
         totalPages={totalPages}
         moduleName={'Evento'}
       />
-    </div>
-            
+    </div>        
   );
 }

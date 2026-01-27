@@ -4,7 +4,7 @@ import EventsList from './EventsList';
 import EventForm from './EventForm';
 import { EventProvider } from '../../context/EventContext';
 import { useNotification } from '../../context/NotificationContext';
-import EventBankingMondaysForm from './EventBankingMondaysForm'; 
+import EventBankingMondaysForm from './BankingMondays/EventBankingMondaysForm'; 
 
 export default function EventsPage() {
   const { showNotification } = useNotification();

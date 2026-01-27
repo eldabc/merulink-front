@@ -127,19 +127,10 @@ export const EventProvider = ({ showNotification, children }) => {
         }));
 
         setEventData(prevData => {
-          // OPCIONAL: Filtramos para eliminar lunes bancarios previos de ese mismo año
-          // y así evitar duplicados si el usuario guarda varias veces.
-          const filteredData = prevData.filter(e => 
-            !(e.extendedProps.category === 'banking-mondays' && e.start.startsWith(year))
-          );
-          return [...formattedEvents, ...filteredData];
+          return [...formattedEvents, ...prevData];
         });
         
-        console.log("formattedEvents...", formattedEvents);
-        // setEventData(prevData => { // Actualiza el estado centralizado
-        //   return [end, ...prevData]; 
-        // });
-        showNotification(`Calendario Bancario ${year} actualizado`);
+        showNotification(`Calendario Bancario ${year} creado con éxito`);
         return true;
       } catch (error) {
         showNotification('Error al procesar el calendario bancario', 'error');

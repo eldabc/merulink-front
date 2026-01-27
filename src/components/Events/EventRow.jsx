@@ -3,7 +3,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
 
-export default function EmployeeRow( {event, isMeruBirthday, eventWithLocation, setSelectedEvent} ) {
+export default function EventRow( {event, isMeruBirthday, eventWithLocation, setSelectedEvent} ) {
  const renderDescriptionComments = () => {
     return event.extendedProps?.description ? truncateText(event.extendedProps?.description, 50) : truncateText(event.extendedProps?.comments, 50);
   }
