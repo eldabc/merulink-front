@@ -23,6 +23,6 @@ export const stringCategoryEvents = (keys) => {
     return category && category.label;
   });
 
-  // Unir los resultados
+  // Unir resultados
   return labels.join(' / ');
 };

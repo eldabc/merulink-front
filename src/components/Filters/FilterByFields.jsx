@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function FilterByFields({ searchValue, onSearchChange, filterStatus, onFilterStatus, showFilterStatus = false, moduleName = '', placeholder = '' }) {
+export default function FilterByFields({ searchValue, onSearchChange, filterStatus, onFilterStatus, showFilterStatus = false, showFilterDate = false, moduleName = '', placeholder = '' }) {
   return (
     <div className="mb-6 p-4 rounded-lg search-container shadow-sm">
       <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
@@ -20,6 +20,7 @@ export default function FilterByFields({ searchValue, onSearchChange, filterStat
 
         {/* Filtros por Estado */}
         {showFilterStatus && (
+        <div className="flex-1">
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => onFilterStatus('all')}
@@ -42,6 +43,16 @@ export default function FilterByFields({ searchValue, onSearchChange, filterStat
             >
               Inactivos
             </button>
+          </div>
+        </div>
+
+        )}
+
+        {showFilterDate && (
+          <div className="flex-1 gap-2 flex-wrap">
+            <input 
+              onChange={(e) => onSearchChange(e.target.value) } 
+              type='date' className="px-3 py-2 rounded-lg filter-input"  />
           </div>
         )}
       </div>
