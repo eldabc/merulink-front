@@ -1,11 +1,11 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
-function ButtonDelete({handleDeleteEvent, id}) {
+function ButtonDelete({setIsModalOpen, id}) {
   return (
     <button 
       onClick={(e) => {
         e.stopPropagation();
-        handleDeleteEvent(id);
+        setIsModalOpen(true);
       }}
       title='Eliminar'
       type="button" className={`tags-work-btn }`}>

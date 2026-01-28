@@ -224,26 +224,22 @@ export const EventProvider = ({ showNotification, children }) => {
   };
 
   // *** Eliminar
-  const deleteEvent = async (id, year = null) => {
+  const deleteEvent = async (id) => {
     try {
+      // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
+      // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
+
       setEventData(prevData => {
-        // Reutilizamos la lógica: filtramos para dejar FUERA lo que queremos "borrar"
-        return prevData.filter(ev => {
-          const isBanking = ev.extendedProps?.category === 'banking-mondays';
-          const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
-          
-          // Si es banking y es el año, el resultado es FALSE y se elimina del array
-          return !(isBanking && isSameYear);
-        });
+        return prevData.filter(ev => ev.id !== id);
       });
 
-      showNotification(`Evento ${year} eliminado con éxito`);
+      showNotification(`Evento eliminado con éxito`);
       return true;
     } catch (error) {
       showNotification('Error al eliminar el calendario', 'error');
       return false;
     }
-  }
+  };
 
   const contextValue = {
     eventData,
