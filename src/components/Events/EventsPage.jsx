@@ -15,8 +15,8 @@ export default function EventsPage() {
           <Routes>
             <Route path="/" element={<EventsList categoryKeys={["meru-events"]} />} />
             <Route path="noche-bodas-cena-alturas" element={<EventsList categoryKeys={["wedding-nights", "dinner-heights"]} />} />
-            <Route path="feriados-venezolanos" element={<EventsList categoryKeys={["ve-holidays"]} />} />
-            <Route path="calendario-google" element={<EventsList categoryKeys={["google-calendar"]} />} />
+            <Route path="festivos-venezolanos-calendario-google" element={<EventsList categoryKeys={["ve-holidays", "google-calendar"]} />} />
+            {/* <Route path="calendario-google" element={<EventsList categoryKeys={["google-calendar"]} />} /> */}
             <Route path="cumpleaños-merú" element={<EventsList categoryKeys={["meru-birthdays"]} />} />
             <Route path="executive-mod" element={<EventsList categoryKeys={["executive-mod"]} />} />
             <Route path="lunes-bancarios" element={<EventsList categoryKeys={["banking-mondays"]} />} />

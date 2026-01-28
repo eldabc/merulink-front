@@ -124,7 +124,7 @@ export default function EventsList({ categoryKeys }) {
                   <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
                 )}
                 <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
-                <th className="px-4 py-3 text-left font-semibold">Acciones</th>
+                {!isMeruBirthday && <th className="px-4 py-3 text-left font-semibold">Acciones</th> }
               </tr>
             </thead>
             <tbody>

@@ -6,7 +6,7 @@ export const menuEvents = {
     _meta: { label: 'Noches Bodas / Cena en Alturas', path: '/eventos/noche-bodas-cena-alturas' },
   },
   VeHolidaysGoogleCalendar: {
-    _meta: { label: 'Feriados VE / Calendario Google', path: '/eventos/feriados-venezolanos' },
+    _meta: { label: 'Festivos VE / Calendario Google', path: '/eventos/festivos-venezolanos-calendario-google' },
   },
    MeruBirthDays: {
     _meta: { label: 'Cumpleaños Merú', path: '/eventos/cumpleaños-merú' },
