@@ -71,7 +71,8 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
 
     try {
       setFormErrors({});
-      await bankingSchema.validate(dataToValidate, { abortEarly: false });
+      const dynamicSchema = bankingSchema(mode);
+      await dynamicSchema.validate(dataToValidate, { abortEarly: false });
 
       await createEditBankingEvents(dataToValidate, year, mode);
           

@@ -66,7 +66,7 @@ function EventListContent({ categoryKeys }) {
   }, [items, searchValue]);
 
   const hasBankingRegisters = items[0]?.extendedProps.category === 'banking-mondays' && items?.length > 0;
-  const searchTextFragmentAvise = isSearching ? "para la búsqueda" : '';
+  const searchTextFragmentAvise = isSearching ? " para la búsqueda" : '';
 
 
   // Cálculos de paginación
@@ -99,7 +99,7 @@ function EventListContent({ categoryKeys }) {
       />
 
       {items.length === 0  || paginatedEvents.length === 0 ? (
-        <div className="p-4 text-gray-500 italic">{`No se encontraron coincidencias esta categoría ${searchTextFragmentAvise}.`}</div>
+        <div className="p-4 text-gray-500 italic">{`No se encontraron coincidencias esta categoría${searchTextFragmentAvise}.`}</div>
       ) : (
         <>
           {hasBankingRegisters ? (
