@@ -4,7 +4,7 @@ import EventsList from './EventsList';
 import EventForm from './EventForm';
 import { EventProvider } from '../../context/EventContext';
 import { useNotification } from '../../context/NotificationContext';
-import EventBankingMondaysForm from './BankingMondays/EventBankingMondaysForm'; 
+import BankingMondaysForm from './BankingMondays/BankingMondaysForm'; 
 
 export default function EventsPage() {
   const { showNotification } = useNotification();
@@ -22,9 +22,9 @@ export default function EventsPage() {
             <Route path="lunes-bancarios" element={<EventsList categoryKeys={["banking-mondays"]} />} />
 
             <Route path="nuevo" element={<EventForm />} />
-            <Route path="/lunes-bancarios/nuevo" element={<EventBankingMondaysForm year={new Date().getFullYear()} />} />
-            <Route path="/lunes-bancarios/ver" element={<EventBankingMondaysForm mode="view" year={new Date().getFullYear()} />} />
-            <Route path="/lunes-bancarios/edit" element={<EventBankingMondaysForm mode="edit" year={new Date().getFullYear()} />} />
+            <Route path="/lunes-bancarios/nuevo" element={<BankingMondaysForm year={new Date().getFullYear()} />} />
+            <Route path="/lunes-bancarios/ver" element={<BankingMondaysForm mode="view" year={new Date().getFullYear()} />} />
+            <Route path="/lunes-bancarios/edit" element={<BankingMondaysForm mode="edit" year={new Date().getFullYear()} />} />
           </Routes>
         </EventProvider>
       </main>

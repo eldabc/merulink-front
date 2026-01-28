@@ -8,7 +8,7 @@ import { bankingSchema } from '../../../utils/Validations/bankingValidationSchem
 import ErrorMessage from '../../Shared/ErrorMessage';
 import HeadFormButtons from '../../Shared/HeadFormButtons';
 
-export default function BankingMondaysManager({ mode = 'create', event = [], onBack, year }) {
+export default function BankingMondaysForm({ mode = 'create', event = [], onBack, year }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { createEditBankingEvents } = useEvents();
@@ -36,8 +36,21 @@ export default function BankingMondaysManager({ mode = 'create', event = [], onB
     if (viewMode) return;
 
     setCheckedDates(prev => {
-      const newSet = new Set(prev);
-      newSet.has(dateStr) ? newSet.delete(dateStr) : newSet.add(dateStr);
+    const newSet = new Set(prev);
+    
+    if (newSet.has(dateStr)) {
+      // Desmarcando
+      newSet.delete(dateStr);
+      
+      // Limpiando title
+      const inputElement = document.getElementById(`input-${dateStr}`);
+      if (inputElement) {
+        inputElement.value = ""; 
+      }
+    } else {
+      newSet.add(dateStr);
+    }
+    
       return newSet;
     });
 

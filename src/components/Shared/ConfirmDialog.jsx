@@ -2,7 +2,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-[#2f3d44] border border-gray-800 p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 animate-in zoom-in duration-200">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-red-500/10 rounded-full">
