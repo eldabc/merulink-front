@@ -1,19 +1,20 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { EventProvider, useEvents } from "../../context/EventContext";
+import { useNotification } from "../../context/NotificationContext"; 
+import { useNavigate } from 'react-router-dom';
+
 import { formatDate } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import googleCalendarPlugin from '@fullcalendar/google-calendar';
-import { EventProvider, useEvents } from "../../context/EventContext";
-import { useNotification } from "../../context/NotificationContext";  
 import { capitalizeDateString } from '../../utils/date-utils';
 import { filterEventsByDate } from '../../utils/calendar-utils';
 import { getTodayNormalized } from '../../utils/date-utils';
 import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from 'react-router-dom';
 import { categoryLegend } from '../../utils/Events/events-utils';
 import esLocale from '@fullcalendar/core/locales/es';
 import '../../Calendar.css';
