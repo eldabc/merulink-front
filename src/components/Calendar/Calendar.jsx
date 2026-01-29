@@ -29,7 +29,6 @@ export default function Calendar() {
 }
 
 function EventsCalendar() {
-  const API_KEY = import.meta.env.VITE_API_KEY;
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
@@ -59,12 +58,13 @@ function EventsCalendar() {
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
     "meru-events": true,
+    "wedding-nights": true,    
+    "dinner-heights": true,
     "ve-holidays": true,
-    "wedding-nights": true,
-    "executive-mod": true,
-    "meru-birthdays": true,
-    "banking-mondays": true,
     "google-calendar": true,
+    "meru-birthdays": true,
+    "executive-mod": true,
+    "banking-mondays": true,
   });
 
 
@@ -138,13 +138,20 @@ function EventsCalendar() {
         events: filteredEvents
       }
     ];
-  }, [filteredEvents])
+  }, [filteredEvents]);
+
   // Click sobre una categoría en la leyenda
   function toggleCategory(catKey) {
-    setActiveCategories(prev => ({
-      ...prev,
-      [catKey]: !prev[catKey]
-    }));
+    setActiveCategories(prev => {
+      const newCategories = { ...prev };
+      const shouldActivate = !catKey.every(key => prev[key]);
+      
+      catKey.forEach(key => {
+        newCategories[key] = shouldActivate;
+      });
+      
+      return newCategories;
+    });
   }
 
   return (
@@ -200,16 +207,20 @@ function EventsCalendar() {
       </div>
         <div className="calendar-legend">
           {categoryLegend
-            .filter(cat => !cat.itsMixedCategory)
-            .map(cat => (
-              <button
-                key={cat.key}
-                className={`legend-item ${cat.color} ${activeCategories[cat.key] ? '' : 'legend-disabled'}`}
-                onClick={() => toggleCategory(cat.key)}
-              >
-                {cat.label}
-              </button>
-            ))}
+            .map(cat => {
+              // Verificar si todos los keys de la categorías están activos
+              const allKeysActive = cat.key.every(k => activeCategories[k]);
+              
+              return (
+                <button
+                  key={cat.key.join('-')}
+                  className={`legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'}`}
+                  onClick={() => toggleCategory(cat.key)}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
         </div>
       
     </div>
