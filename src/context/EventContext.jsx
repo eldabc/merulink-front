@@ -24,7 +24,16 @@ export const EventProvider = ({ showNotification, children }) => {
   // Traer datos de Google manualmente
   const fetchGoogleEvents = async () => {
     const calendarId = 'es.ve#holiday@group.v.calendar.google.com';
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`;
+    const currentYear = new Date().getFullYear();
+    const timeMin = `${currentYear}-01-01T00:00:00Z`;
+    const timeMax = `${currentYear}-12-31T23:59:59Z`;
+
+
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`+
+                `&timeMin=${timeMin}` +
+                `&timeMax=${timeMax}` +
+                `&singleEvents=true` + // Divide eventos recurrentes en instancias individuales
+                `&orderBy=startTime`;
     
     try {
       const response = await fetch(url);
@@ -37,8 +46,8 @@ export const EventProvider = ({ showNotification, children }) => {
           start: event.start.date || event.start.dateTime,
           allDay: !!event.start.date,
           extendedProps: {
-            category: 've-holidays',
-            label: 'Feriado Nacional',
+            category: 'google-calendar',
+            label: 'Calendario Google',
             description: event.description || 'Feriado oficial de Venezuela',
           },
           display: 'block',

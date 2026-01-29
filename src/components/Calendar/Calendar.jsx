@@ -50,6 +50,7 @@ function EventsCalendar() {
     "executive-mod": true,
     "meru-birthdays": true,
     "banking-mondays": true,
+    "google-calendar": true,
   });
 
 
