@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function FilterByFields({ searchValue, onSearchChange, filterStatus, onFilterStatus, showFilterStatus = false, showFilterDate = false, moduleName = '', placeholder = '' }) {
+export default function FilterByFields({ searchValue, onSearchChange, filterStatus, onFilterStatus, onFilterDate, showFilterStatus = false, showFilterDate = false, moduleName = '', placeholder = '' }) {
   return (
     <div className="mb-6 p-4 rounded-lg search-container shadow-sm">
       <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
@@ -51,7 +51,7 @@ export default function FilterByFields({ searchValue, onSearchChange, filterStat
         {showFilterDate && (
           <div className="flex-1 gap-2 flex-wrap">
             <input 
-              onChange={(e) => onSearchChange(e.target.value) } 
+              onChange={(e) => onFilterDate(e.target.value) } 
               type='date' className="px-3 py-2 rounded-lg filter-input"  />
           </div>
         )}

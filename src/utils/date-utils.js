@@ -94,3 +94,9 @@ export function generateMondays (year) {
   }
   return mondays;
 };
+
+// Retorna solo la parte "2026-01-28"
+export const normalizeDateYYYMMDD = (date) => {
+  const d = new Date(date);
+  return d.toISOString().split('T')[0];
+};

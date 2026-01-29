@@ -23,6 +23,7 @@ function EventListContent({ categoryKeys }) {
   const { eventData } = useEvents();
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
+  const [searchDateValue, setSearchDateValue] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const itemsPerPage = 10;
@@ -31,7 +32,7 @@ function EventListContent({ categoryKeys }) {
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
   const bankingMondaysCategoryKey = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
-   
+
   // Filtrar para mostrar eventos en la categoría
   const items = useMemo(() => {
     if (!categoryKeys || categoryKeys.length === 0) return [];
@@ -53,21 +54,33 @@ function EventListContent({ categoryKeys }) {
 
   // Filtrado y detección de búsqueda
   const { dataToDisplay, isSearching } = useMemo(() => {
-    const searching = searchValue.trim() !== '';
-    
-    const filtered = searching
-      ? filterData(items, searchValue, SEARCH_FIELDS, "", normalizeText)
-      : items;
+    const hasSearchText = searchValue.trim() !== '';
+    const hasSearchDate = searchDateValue && searchDateValue !== '';
+    const searching = hasSearchText || hasSearchDate;
+
+    let filtered = items;
+
+    // Filtrar por texto
+    if (hasSearchText) {
+      filtered = filterData(filtered, searchValue, SEARCH_FIELDS, "", normalizeText);
+    }
+
+    // Filtrar por fecha (comparamos YYYY-MM-DD)
+    if (hasSearchDate) {
+      filtered = filtered.filter(ev => {
+        const eventDate = ev.start.substring(0, 10);
+        return eventDate === searchDateValue;
+      });
+    }
 
     return {
       dataToDisplay: filtered,
       isSearching: searching
     };
-  }, [items, searchValue]);
+  }, [items, searchValue, searchDateValue]);
 
   const hasBankingRegisters = items[0]?.extendedProps.category === 'banking-mondays' && items?.length > 0;
   const searchTextFragmentAvise = isSearching ? " para la búsqueda" : '';
-
 
   // Cálculos de paginación
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
@@ -93,13 +106,14 @@ function EventListContent({ categoryKeys }) {
       <FilterByFields
         searchValue={searchValue}
         onSearchChange={(val) => { setSearchValue(val); setCurrentPage(1); }}
+        onFilterDate={(val) => { setSearchDateValue(val); setCurrentPage(1); }}
         moduleName='Evento'
         placeholder='Ingrese nombre del evento'
         showFilterDate={true}
       />
 
-      {items.length === 0  || paginatedEvents.length === 0 ? (
-        <div className="p-4 text-gray-500 italic">{`No se encontraron coincidencias esta categoría${searchTextFragmentAvise}.`}</div>
+      {dataToDisplay.length === 0 || paginatedEvents.length === 0 ? (
+        <div className="p-4 text-gray-500 italic">{`No se encontraron coincidencias en esta categoría${searchTextFragmentAvise}.`}</div>
       ) : (
         <>
           {hasBankingRegisters ? (
