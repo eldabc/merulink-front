@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback  } from 'react';
 import { useLocationsHook } from '../hooks/useLocations';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
@@ -16,50 +16,70 @@ export const useEvents = () => {
 // Provider con la lógica y el estado
 export const EventProvider = ({ showNotification, children }) => {
     
-  const [eventData, setEventData] = useState(INITIAL_EVENTS);
+  const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const API_KEY = import.meta.env.VITE_API_KEY;
 
-  // Cargar datos desde API (preparado para migración)
-  useEffect(() => {
-    const loadEvents = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // TODO: Reemplazar con llamada real a API cuando esté lista
-        // const response = await fetch('http://your-api.com/events');
-        // if (!response.ok) throw new Error('Error al cargar eventos');
-        // const data = await response.json();
-        // setEventData(data);
-        
-        // Por ahora usamos datos estáticos
-        setEventData(INITIAL_EVENTS);
-      } catch (err) {
-        setError(err.message);
-        showNotification('Error al cargar eventos: ' + err.message, 'error');
-        // Fallback a datos estáticos en caso de error
-        setEventData(INITIAL_EVENTS);
-      } finally {
-        setLoading(false);
+  // Traer datos de Google manualmente
+  const fetchGoogleEvents = async () => {
+    const calendarId = 'es.ve#holiday@group.v.calendar.google.com';
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`;
+    
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.items) {
+        return data.items.map(event => ({
+          id: event.id,
+          title: event.summary,
+          start: event.start.date || event.start.dateTime,
+          allDay: !!event.start.date,
+          extendedProps: {
+            category: 've-holidays',
+            label: 'Feriado Nacional',
+            description: event.description || 'Feriado oficial de Venezuela',
+          },
+          display: 'block',
+          className: 'g-calendar-ve-holidays'
+        }));
       }
-    };
+      return [];
+    } catch (err) {
+      console.error("Error cargando Google Calendar:", err);
+      return [];
+    }
+  };
 
+  const loadEvents = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Cargar Google y Local al mismo tiempo
+      const googleHolidays = await fetchGoogleEvents();
+
+      setEventData([...INITIAL_EVENTS, ...googleHolidays]);
+    } catch (err) {
+      showNotification('Error al cargar datos', err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [showNotification]);
+
+  useEffect(() => {
     loadEvents();
-  }, []);
+  }, [loadEvents]);
 
   // *** Para recargar datos manualmente
   const refetchEvents = async () => {
-    setLoading(true);
-    setError(null);
+    
     try {
 
-      setEventData(INITIAL_EVENTS);
+     await loadEvents();
 
     } catch (err) {
       setError(err.message);
-      showNotification('Error al recargar eventos: ' + err.message, 'error');
-    } finally {
-      setLoading(false);
+      showNotification('Error al recargar eventos: ' + error);
     }
   };
 

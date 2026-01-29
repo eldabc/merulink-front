@@ -8,7 +8,6 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import googleCalendarPlugin from '@fullcalendar/google-calendar';
 import { capitalizeDateString } from '../../utils/date-utils';
 import { filterEventsByDate } from '../../utils/calendar-utils';
 import { getTodayNormalized } from '../../utils/date-utils';
@@ -94,15 +93,6 @@ function EventsCalendar() {
     );
   }
 
-  const getEventsFromApi = (date) => {
-    const calendarApi = calendarRef.current.getApi();
-    const allApiEvents = calendarApi.getEvents(); // TODOS, incluidos los de Google
-    
-    return allApiEvents.filter(event => {
-      const eventStart = new Date(event.start);
-      return eventStart.toDateString() === date.toDateString();
-    });
-  };
 
   function handleEventClick(clickInfo) {
     if (clickInfo.event.url) clickInfo.jsEvent.preventDefault();
@@ -127,24 +117,13 @@ function EventsCalendar() {
   }, [eventsOfSelectedDay]);
 
   // Memoizar eventSources para evitar recrear el array en cada render
-  // Esto reduce llamadas innecesarias a la API de Google Calendar
   const eventSources = useMemo(() => {
-    const sources = [
+    return [
       { 
-        events: filteredEvents 
+        events: filteredEvents
       }
     ];
-    
-    if (activeCategories["ve-holidays"]) {
-      sources.push({
-        googleCalendarId: 'es.ve#holiday@group.v.calendar.google.com',
-        className: 'g-calendar-ve-holidays',
-      });
-    }
-    
-    return sources;
-  }, [filteredEvents, activeCategories["ve-holidays"]]);
-
+  }, [filteredEvents])
   // Click sobre una categoría en la leyenda
   function toggleCategory(catKey) {
     setActiveCategories(prev => ({
@@ -179,11 +158,10 @@ function EventsCalendar() {
           </div>
          
           <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, googleCalendarPlugin]}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             ref={calendarRef}
             headerToolbar={false}
             initialView='dayGridMonth'
-            googleCalendarApiKey={API_KEY}
             editable={false}
             selectable={true}
             selectMirror={true}
