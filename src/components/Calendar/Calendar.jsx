@@ -34,13 +34,27 @@ function EventsCalendar() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
   const [currentTitle, setCurrentTitle] = useState('');
-  const { eventData } = useEvents();
+  const { eventData, refetchEvents } = useEvents();
   const calendarRef = useRef(null);
   const navigate = useNavigate();
 
   // Funciones para controlar el calendario manualmente
   const handlePrev = () => calendarRef.current.getApi().prev();
   const handleNext = () => calendarRef.current.getApi().next(); 
+
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const handleDatesSet = (dateInfo) => {
+    const yearInView = dateInfo.view.currentStart.getFullYear();
+
+    // Si el año cambia
+    if (yearInView !== currentYear) {
+      setCurrentYear(yearInView);
+      refetchEvents(yearInView);
+    }
+    
+    setCurrentTitle(dateInfo.view.title);
+  };
 
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
@@ -173,9 +187,7 @@ function EventsCalendar() {
             eventClick={handleEventClick}
             dateClick={handleDateClick}
             locale={esLocale}
-            datesSet={(arg) => {
-              setCurrentTitle(arg.view.title);
-            }} 
+            datesSet={handleDatesSet}
           />
         </div>
         

@@ -22,11 +22,10 @@ export const EventProvider = ({ showNotification, children }) => {
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   // Traer datos de Google manualmente
-  const fetchGoogleEvents = async () => {
+  const fetchGoogleEvents = async (year) => {
     const calendarId = 'es.ve#holiday@group.v.calendar.google.com';
-    const currentYear = new Date().getFullYear();
-    const timeMin = `${currentYear}-01-01T00:00:00Z`;
-    const timeMax = `${currentYear}-12-31T23:59:59Z`;
+    const timeMin = `${year}-01-01T00:00:00Z`;
+    const timeMax = `${year}-12-31T23:59:59Z`;
 
 
     const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`+
@@ -61,11 +60,11 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   };
 
-  const loadEvents = useCallback(async () => {
+  const loadEvents = useCallback(async (year = new Date().getFullYear()) => {
     setLoading(true);
     try {
       // Cargar Google y Local al mismo tiempo
-      const googleHolidays = await fetchGoogleEvents();
+      const googleHolidays = await fetchGoogleEvents(year);
 
       setEventData([...INITIAL_EVENTS, ...googleHolidays]);
     } catch (err) {
@@ -80,11 +79,11 @@ export const EventProvider = ({ showNotification, children }) => {
   }, [loadEvents]);
 
   // *** Para recargar datos manualmente
-  const refetchEvents = async () => {
+  const refetchEvents = async (year) => {
     
     try {
 
-     await loadEvents();
+     await loadEvents(year);
 
     } catch (err) {
       setError(err.message);
