@@ -75,6 +75,7 @@ export const EventProvider = ({ showNotification, children }) => {
   }, [showNotification]);
 
   useEffect(() => {
+    console.log("AQUI", eventData)
     loadEvents();
   }, [loadEvents]);
 
@@ -120,7 +121,7 @@ export const EventProvider = ({ showNotification, children }) => {
       
     };
 
-    console.log("datos", newEvent);
+    console.log("Crear Event:", newEvent);
 
     try {
       // Llamado a API
