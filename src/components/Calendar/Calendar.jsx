@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { EventProvider, useEvents } from "../../context/EventContext";
+import { useEvents } from "../../context/EventContext";
 import { useNotification } from "../../context/NotificationContext"; 
 import { useNavigate } from 'react-router-dom';
 
@@ -20,11 +20,8 @@ import '../../Calendar.css';
 
 export default function Calendar() {
 
-  const { showNotification } = useNotification();
   return (
-    <EventProvider showNotification={showNotification}>
-      <EventsCalendar />
-    </EventProvider>
+    <EventsCalendar />
   );
 }
 
