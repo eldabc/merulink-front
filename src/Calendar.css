@@ -275,7 +275,7 @@ b { /* used for event dates/times */
   background-color: #603F99;
   border-color: #593a8f;
 }
-.di-heights-wedding-nights {
+.di-heights-wedding-nights, .wedding-nights, .dinner-heights {
   background-color: #7EC225;
   border-color: #77b823;
 }
@@ -283,7 +283,7 @@ b { /* used for event dates/times */
   background-color: #E0C240;
   border-color: #cfb43a;
 }
-.g-calendar-ve-holidays{
+.g-calendar-ve-holidays, .google-calendar, .ve-holidays{
   background-color: #AD2D2D;
   border-color: #962626;
 }

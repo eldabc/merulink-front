@@ -40,13 +40,18 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   const handleEventChange = (e) => {
     e.stopPropagation();
     const selectedEventId = e.target.value;
+
+    if (selectedEventId === 'banking-mondays') {
+      setValue('category', '');
+      return navigate('/eventos/lunes-bancarios/nuevo'); 
+    }
   
     setValue('category', selectedEventId, { shouldValidate: true });
 
     const yearlyEventValue = handleCategoryType(selectedEventId);
     const defaultRepitedEvent = yearlyEventValue ? true : false;
     const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
-    // const handleStatusEvent = yearlyEventValue ? '' : 'Tentativo';
+
     if (yearlyEventValue) setYearlyEvent(true);
 
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
