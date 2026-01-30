@@ -27,8 +27,7 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Camilo Hernández',
-    start: '2026-01-01',
-    end:   '2026-01-01',
+    start: '2026-01-01T00:00:00',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
@@ -37,6 +36,21 @@ export const INITIAL_EVENTS = [
       repeatEvent: true,
       repeatInterval: 'Anual',
       coloringDay: false,
+    },
+    className: 'meru-birthdays',
+  },
+  {
+    id: createEventId(),
+    title: 'Juan Perez',
+    start: '2026-01-30T00:00:00',
+    extendedProps: {
+      category: 'meru-birthdays',
+      label: 'Cumpleañeros Merú',
+      status: 'Confirmado',
+      departmentName: 'Administración',
+      repeatEvent: true,
+      repeatInterval: 'Anual',
+      coloringDay: true,
     },
     className: 'meru-birthdays',
   },
@@ -75,7 +89,7 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 5',
-    start: todayStr,
+    start: todayStr+'T00:00:00',
     extendedProps: {
       category: 've-holidays',
       label: 'Festivos Venezolanos',
@@ -93,7 +107,7 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 6',
-    start: todayStr,
+    start: todayStr+'T00:00:00',
     extendedProps: {
       category: 've-holidays',
       label: 'Festivos Venezolanos',
@@ -121,22 +135,6 @@ export const INITIAL_EVENTS = [
       coloringDay: true,
     },
     className: 'executive-mod',
-  },
-  {
-    id: createEventId(),
-    title: 'Juan Perez',
-    start: '2026-01-30',
-    end:   '2026-01-30',
-    extendedProps: {
-      category: 'meru-birthdays',
-      label: 'Cumpleañeros Merú',
-      status: 'Confirmado',
-      departmentName: 'Administración',
-      repeatEvent: true,
-      repeatInterval: 'Anual',
-      coloringDay: true,
-    },
-    className: 'meru-birthdays',
   },
   {
     id: createEventId(),

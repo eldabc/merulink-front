@@ -42,7 +42,7 @@ export const EventProvider = ({ showNotification, children }) => {
         return data.items.map(event => ({
           id: event.id,
           title: event.summary,
-          start: event.start.date || event.start.dateTime,
+          start: event.start.date + 'T00:00:00' || event.start.dateTime+ 'T00:00:00',
           allDay: !!event.start.date,
           extendedProps: {
             category: 'google-calendar',
@@ -72,7 +72,7 @@ export const EventProvider = ({ showNotification, children }) => {
     } finally {
       setLoading(false);
     }
-  }, [showNotification]);
+  }, []);
 
   useEffect(() => {
     loadEvents();
