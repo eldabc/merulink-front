@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback  } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 import { useLocationsHook } from '../hooks/useLocations';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
@@ -270,6 +270,16 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   };
 
+  const specialDays = useMemo(() => {
+  return eventData
+      .filter(event => event.extendedProps?.coloringDay === true)
+      .reduce((acc, event) => {
+        const dateKey = event.start.split('T')[0];
+        acc[dateKey] = event.backgroundColor || '#892020';
+        return acc;
+      }, {});
+  }, [eventData]);
+
   const contextValue = {
     eventData,
     setEventData,
@@ -279,7 +289,8 @@ export const EventProvider = ({ showNotification, children }) => {
     createEvent,
     createEditBankingEvents,
     updateEvent,
-    deleteEvent
+    deleteEvent,
+    specialDays
   };
 
   return (

@@ -27,7 +27,7 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Camilo Hernández',
-    start: '2026-01-01T00:00:00',
+    start: '2026-01-10T00:00:00',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
@@ -68,7 +68,7 @@ export const INITIAL_EVENTS = [
       coloringDay: true,
       comments: 'Comentario del evento 4'
     },
-    className: 'di-heights-wedding-nights',
+    className: 'di-heights-wedding-nights', 
   },
   {
     id: createEventId(),

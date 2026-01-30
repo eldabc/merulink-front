@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useEvents } from "../../context/EventContext";
-import { useNotification } from "../../context/NotificationContext"; 
 import { useNavigate } from 'react-router-dom';
 
 import { formatDate } from '@fullcalendar/core';
@@ -19,13 +18,6 @@ import esLocale from '@fullcalendar/core/locales/es';
 import '../../Calendar.css';
 
 export default function Calendar() {
-
-  return (
-    <EventsCalendar />
-  );
-}
-
-function EventsCalendar() {
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
@@ -151,6 +143,19 @@ function EventsCalendar() {
     });
   }
 
+  // Lista de fechas a colorear dinámicamente
+  const specialDays = {
+    '2026-01-10': '#ff9f9f', // Rojo claro
+    '2026-01-07': '#9f9fff', // Azul claro
+  };
+
+  const handleDayCellDidMount = (arg) => {
+    const dateStr = arg.date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    if (specialDays[dateStr]) {
+      arg.el.style.backgroundColor = specialDays[dateStr]; // Cambia el color de la celda
+    }
+  };
+
   return (
     <div className='container'>
       <div className='calendar-container'>
@@ -187,6 +192,7 @@ function EventsCalendar() {
             dayMaxEvents={true}
             weekends={weekendsVisible}
             eventSources={eventSources}
+            dayCellDidMount={handleDayCellDidMount}
             eventContent={(arg) => <EventContent eventInfo={arg} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}

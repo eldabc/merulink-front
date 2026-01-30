@@ -6,7 +6,6 @@ import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 import { menuTree } from "./components/Menu/menuTree";
 import { NotificationProvider } from "./context/NotificationContext";
-// import Calendar from "./components/Calendar/Calendar";
 
 export default function App() {
   return (
