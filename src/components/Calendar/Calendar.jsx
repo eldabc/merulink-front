@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useEvents } from "../../context/EventContext";
+import { EventProvider, useEvents } from "../../context/EventContext";
+import { useNotification } from "../../context/NotificationContext"; 
 import { useNavigate } from 'react-router-dom';
 
 import { formatDate } from '@fullcalendar/core';
@@ -18,7 +19,13 @@ import esLocale from '@fullcalendar/core/locales/es';
 import '../../Calendar.css';
 
 export default function Calendar() {
-  return <EventsCalendar />;
+
+  const { showNotification } = useNotification();
+  return (
+    <EventProvider showNotification={showNotification}>
+      <EventsCalendar />
+    </EventProvider>
+  );
 }
 
 function EventsCalendar() {

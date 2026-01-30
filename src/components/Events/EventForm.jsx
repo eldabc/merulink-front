@@ -126,6 +126,7 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
 
           success = await updateEvent(updatedData);
       } else {
+          console.log("Creando:", data);
           success = await createEvent(data);
       }
 
