@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useEvents } from "../../context/EventContext";
 import { useNavigate } from 'react-router-dom';
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
@@ -32,6 +32,12 @@ function EventListContent({ categoryKeys }) {
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
   const bankingMondaysCategoryKey = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
+
+  useEffect(() => {
+    setSearchValue('');
+    setSearchDateValue('');
+    setCurrentPage(1);
+  }, [categoryKeys]);
 
   // Filtrar para mostrar eventos en la categoría
   const items = useMemo(() => {
@@ -105,6 +111,7 @@ function EventListContent({ categoryKeys }) {
 
       <FilterByFields
         searchValue={searchValue}
+        searchDateValue={searchDateValue}
         onSearchChange={(val) => { setSearchValue(val); setCurrentPage(1); }}
         onFilterDate={(val) => { setSearchDateValue(val); setCurrentPage(1); }}
         moduleName='Evento'

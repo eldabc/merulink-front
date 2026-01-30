@@ -75,6 +75,7 @@ export const EventProvider = ({ showNotification, children }) => {
   }, []);
 
   useEffect(() => {
+    console.log('UseEffect EventContext');
     loadEvents();
   }, [loadEvents]);
 
