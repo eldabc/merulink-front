@@ -2,6 +2,7 @@ import React from "react";
 import logo from './../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { menuTree } from './menuTree';
+import { BellIcon } from '@heroicons/react/24/solid';
 
 export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
   const navigate = useNavigate();
@@ -25,9 +26,14 @@ export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
           ))}
         </nav>
       </div>
-      <div className="user-block">
-        <div className="name">Riad Abdo</div>
-        <div className="dept">Sistemas y Tecnología</div>
+      <div className="user-block flex items-center gap-5 ">
+        <div className="shrink-0 rounded-full bg-[#2f3d44] border border-[#ffffff21] p-2 hover:border-[#9fd8ff]">
+          <BellIcon className='w-6 h-6 text-white-400' />
+        </div>
+        <div className="flex flex-col">
+          <div className="name">Riad Abdo</div>
+          <div className="dept">Sistemas y Tecnología</div>
+        </div>
       </div>
     </header>
   );
