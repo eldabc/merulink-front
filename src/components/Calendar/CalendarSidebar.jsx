@@ -48,7 +48,8 @@ export default function CalendarSidebar({
                     month: 'short',
                     day: 'numeric',
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
+                    hour12: true
                   }))}
                 </p>
                 <p>
@@ -60,7 +61,8 @@ export default function CalendarSidebar({
                         month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
-                        minute: '2-digit'
+                        minute: '2-digit',
+                        hour12: true
                       }))
                     : 'Sin hora de fin'}
                 </p>
