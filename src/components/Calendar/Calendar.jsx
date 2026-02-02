@@ -191,7 +191,7 @@ export default function Calendar() {
             editable={false}
             selectable={true}
             selectMirror={true}
-            dayMaxEvents={true}
+            dayMaxEvents={5}
             weekends={weekendsVisible}
             eventSources={eventSources}
             dayCellClassNames={handleDayCellClassNames}
@@ -200,6 +200,7 @@ export default function Calendar() {
             dateClick={handleDateClick}
             locale={esLocale}
             datesSet={handleDatesSet}
+            moreLinkClick="none"
           />
         </div>
         

@@ -35,7 +35,7 @@ export const INITIAL_EVENTS = [
       departmentName: 'Contabilidad',
       repeatEvent: true,
       repeatInterval: 'Anual',
-      coloringDay: false,
+      coloringDay: true,
     },
     className: 'meru-birthdays',
   },
@@ -124,8 +124,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 7',
-    start: '2025-11-18T09:00:00',
-    end:   '2025-11-18T11:00:00',
+    start: '2026-02-18T09:00:00',
+    end:   '2026-02-18T11:00:00',
     extendedProps: {
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
@@ -139,8 +139,8 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Evento 9',
-    start: '2025-12-01T09:00:00',
-    end:   '2025-12-01T11:00:00',
+    start: '2026-02-01T09:00:00',
+    end:   '2026-02-01T11:00:00',
     extendedProps: {
       category: 'meru-events',
       label: 'Eventos Merú',

@@ -559,3 +559,37 @@ a[aria-label="domingo"] {
   /* color: #892020 !important; */
 } 
 /* FIN color domingos */
+
+/* Mover Puntos hacia abajo */
+.fc-daygrid-day-events {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0;
+    margin-top: auto !important;
+    padding-bottom: 4px !important;
+    min-height: 20px;
+}
+
+/* Ajuste individual de los puntos */
+.fc-daygrid-event-harness {
+    margin: 0 !important;
+}
+
+.fc-daygrid-dot-event {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+.fc-daygrid-day-frame {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important; /* Número arriba, puntos abajo */
+    height: 100%;
+}
+
+.fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
+    margin-left: 5px !important;
+}
+/* FIN Mover Puntos hacia abajo */
