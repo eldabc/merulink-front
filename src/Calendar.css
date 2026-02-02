@@ -250,7 +250,7 @@ b { /* used for event dates/times */
 .fc .fc-daygrid-day.fc-day-today {
     background-color: transparent;
 }
-.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
+.fc .fc-daygrid-day.fc-day-today:not(.is-special-day) .fc-daygrid-day-frame {
     border: 1px solid #53c4ff !important;
     box-shadow: 0 0 22px rgba(83,196,255,0.48);
     background: linear-gradient(135deg,rgba(83,196,255,0.16),rgba(83,196,255,0.06));
@@ -544,8 +544,8 @@ b { /* used for event dates/times */
 }
 
 /* color domingos */
-.fc .fc-day-sun .fc-daygrid-day-frame, .coloring-day {
-  border: 1px solid #892020 !important;
+.fc .fc-day-sun .fc-daygrid-day-frame, .is-special-day .fc-daygrid-day-frame{
+  border: 3.5px solid #892020 !important;
   box-shadow: 0 0 2px #ff5353a1;
   background: linear-gradient(51deg,#ff53530f,#ff535303);
   transform: scale(1.02);
@@ -556,6 +556,6 @@ a[aria-label="domingo"] {
 }
 
 .fc .fc-day-sun .fc-daygrid-day-frame .fc-daygrid-day-top .fc-daygrid-day-number{
-  color: #892020 !important;
-}
+  /* color: #892020 !important; */
+} 
 /* FIN color domingos */

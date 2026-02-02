@@ -275,7 +275,7 @@ export const EventProvider = ({ showNotification, children }) => {
       .filter(event => event.extendedProps?.coloringDay === true)
       .reduce((acc, event) => {
         const dateKey = event.start.split('T')[0];
-        acc[dateKey] = event.backgroundColor || '#892020';
+        acc[`${dateKey}`] = event.backgroundColor || '#892020';
         return acc;
       }, {});
   }, [eventData]);

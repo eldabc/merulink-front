@@ -22,7 +22,7 @@ export default function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
   const [currentTitle, setCurrentTitle] = useState('');
-  const { eventData, refetchEvents } = useEvents();
+  const { eventData, refetchEvents, specialDays } = useEvents();
   const calendarRef = useRef(null);
   const navigate = useNavigate();
 
@@ -143,18 +143,20 @@ export default function Calendar() {
     });
   }
 
-  // Lista de fechas a colorear dinámicamente
-  const specialDays = {
-    '2026-01-10': '#ff9f9f', // Rojo claro
-    '2026-01-07': '#9f9fff', // Azul claro
+  const handleDayCellClassNames = (arg) => {
+    if (!arg.date) return [];
+    
+    const year = arg.date.getFullYear();
+    const month = String(arg.date.getMonth() + 1).padStart(2, '0');
+    const day = String(arg.date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+
+    if (specialDays && specialDays[dateStr]) {
+      return ['is-special-day'];
+    }
+    return [];
   };
 
-  const handleDayCellDidMount = (arg) => {
-    const dateStr = arg.date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-    if (specialDays[dateStr]) {
-      arg.el.style.backgroundColor = specialDays[dateStr]; // Cambia el color de la celda
-    }
-  };
 
   return (
     <div className='container'>
@@ -192,7 +194,7 @@ export default function Calendar() {
             dayMaxEvents={true}
             weekends={weekendsVisible}
             eventSources={eventSources}
-            dayCellDidMount={handleDayCellDidMount}
+            dayCellClassNames={handleDayCellClassNames}
             eventContent={(arg) => <EventContent eventInfo={arg} />}
             eventClick={handleEventClick}
             dateClick={handleDateClick}
