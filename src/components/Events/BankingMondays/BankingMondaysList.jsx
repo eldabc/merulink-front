@@ -1,19 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { useEvents } from "../../../context/EventContext";
 import { normalizeDateToString } from "../../../utils/date-utils";
 import TitleHeader from "../../Shared/TitleHeader";
 
 function BankingMondaysList({events}) {
 
   const navigate = useNavigate();
-  const { deleteEvents } = useEvents();
 
-  const setSelectedEvent = () => {
+  const selectedEvent = () => {
     navigate("/eventos/lunes-bancarios/ver", { 
       state: { data: events } 
     }); 
   };
-
 
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -39,7 +36,7 @@ function BankingMondaysList({events}) {
               {events.map((item) => (
                 <tr
                   key={item.id}
-                  onClick={() => setSelectedEvent()}
+                  onClick={() => selectedEvent()}
                   className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
                 >
                   <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>

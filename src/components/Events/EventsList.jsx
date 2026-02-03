@@ -24,7 +24,6 @@ function EventListContent({ categoryKeys }) {
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const itemsPerPage = 10;
   const SEARCH_FIELDS = ['title', 'start'];
@@ -93,11 +92,6 @@ function EventListContent({ categoryKeys }) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEvents = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
-  if (selectedEvent) {
-    const eventSelected = items.find(e => e.id === selectedEvent);
-    return <EventForm mode="view" event={eventSelected} onBack={() => setSelectedEvent(null)} />;
-  }
-
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
       <div className="titles-table flex justify-between items-center mb-4">
@@ -151,7 +145,6 @@ function EventListContent({ categoryKeys }) {
                       event={item} 
                       isMeruBirthday={isMeruBirthday} 
                       eventWithLocation={eventWithLocation} 
-                      setSelectedEvent={setSelectedEvent}
                     />
                   ))}
                 </tbody>

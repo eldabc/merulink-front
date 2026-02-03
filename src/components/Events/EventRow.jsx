@@ -4,10 +4,12 @@ import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
+import { useNavigate } from 'react-router-dom';
 
-export default function EventRow( {event, isMeruBirthday, eventWithLocation, setSelectedEvent} ) {
+export default function EventRow( {event, isMeruBirthday, eventWithLocation} ) {
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const renderDescriptionComments = () => {
     return event.extendedProps?.description ? truncateText(event.extendedProps?.description, 50) : truncateText(event.extendedProps?.comments, 50);
@@ -16,11 +18,17 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, set
   const handleDeleteEvent = (id) => {
     deleteEvent(id);
   }
+
+  const selectedEvent = () => {
+    navigate("/eventos/ver", { 
+      state: { data: event } 
+    }); 
+  };
   return (
     <>
       <tr
         key={event.id}
-        onClick={() => setSelectedEvent(event.id)}
+        onClick={() => selectedEvent(event.id)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium">{event.title}</td>

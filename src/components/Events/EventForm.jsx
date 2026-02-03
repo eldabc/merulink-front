@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
@@ -11,7 +11,7 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 
-export default function EventForm({ mode = 'create', event = null, onBack }) { // , onSave, onCancel
+export default function EventForm({ mode = 'create', onBack }) {
   
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
@@ -21,9 +21,10 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
   
   const [yearlyEvent, setYearlyEvent] = useState(false);
   const [categoryType, setcategoryType] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
   const { createEvent, updateEvent } = useEvents();
   const navigate = useNavigate();
+  const location = useLocation();
+  const event = location.state?.data;
 
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
@@ -108,36 +109,32 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
         description: '',
         comments: '',
       });
-    }
-  }, [event, mode, reset, setValue]);
 
-  // useEffect(() => {
-  //   if (selectedStartTime && selectedCategory === 'dinner-heights') {
-  //     const nextHour = getNextHour(selectedStartTime);
-  //     setValue('endTime', nextHour, { shouldValidate: true });
-  //   }
-  // }, [selectedStartTime, selectedCategory, setValue]);
+      setYearlyEvent(false);
+      setcategoryType('');
+    }
+  }, [event, mode, reset, location.state?.data]);
 
     const onSubmit = async (data) => {
       let success = false;
       
-      if (editMode && event) {
+      if (editMode && location.state?.data) {
 
-          // Añadir ID que no viene en form
-          const updatedData = {
-            ...data,
-            id: event.id
-          };
-
-          success = await updateEvent(updatedData);
+        // Añadir ID que no viene en form
+        const updatedData = {
+          ...data,
+          id: event.id
+        };
+          
+        success = await updateEvent(updatedData);
       } else {
-          console.log("Creando:", data);
-          success = await createEvent(data);
+        success = await createEvent(data);
       }
+      
 
       if (success) {
-        if (typeof onBack === 'function') onBack();
-        else navigate(-1);
+        if (mode === 'create') navigate(-1);
+        else navigate(-2);
       }
     };
 
@@ -179,11 +176,9 @@ export default function EventForm({ mode = 'create', event = null, onBack }) { /
       }
     }
 
-    
-  if (isEditing){ return <EventForm mode="edit" event={event} onBack={() => { setIsEditing(false); if (typeof onBack === 'function') onBack(); }} />;}
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons setIsEditing={setIsEditing} onBack={onBack} /> }
+        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={location.state?.data} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 

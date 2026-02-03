@@ -17,7 +17,9 @@ export default function EventsPage() {
           <Route path="executive-mod" element={<EventsList categoryKeys={["executive-mod"]} />} />
           <Route path="lunes-bancarios" element={<EventsList categoryKeys={["banking-mondays"]} />} />
 
+          <Route path="ver" element={<EventForm mode="view" />} />
           <Route path="nuevo" element={<EventForm />} />
+          <Route path="editar" element={<EventForm  mode="edit" />} />
           <Route path="/lunes-bancarios/nuevo" element={<BankingMondaysForm year={new Date().getFullYear()} />} />
           <Route path="/lunes-bancarios/ver" element={<BankingMondaysForm mode="view" year={new Date().getFullYear()} />} />
           <Route path="/lunes-bancarios/edit" element={<BankingMondaysForm mode="edit" year={new Date().getFullYear()} />} />
