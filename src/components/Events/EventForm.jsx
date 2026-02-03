@@ -35,8 +35,8 @@ export default function EventForm({ mode = 'create', onBack }) {
 
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
-  const eventWithoutLocation = selectedCategory === 've-holidays' || selectedCategory === 'meru-birthdays';
-  
+  const eventWithoutLocation = selectedCategory === 've-holidays' || selectedCategory === 'meru-birthdays' || selectedCategory === 'google-calendar' || selectedCategory === 'executive-mod';
+
   // Al seleccionar
   const handleEventChange = (e) => {
     e.stopPropagation();
@@ -49,7 +49,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   
     setValue('category', selectedEventId, { shouldValidate: true });
 
-    const yearlyEventValue = handleCategoryType(selectedEventId);
+    const yearlyEventValue = handleYearlyEvent(selectedEventId);
     const defaultRepitedEvent = yearlyEventValue ? true : false;
     const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
 
@@ -61,17 +61,17 @@ export default function EventForm({ mode = 'create', onBack }) {
     setValue('endDate', null, { shouldValidate: false });
   };
 
-  const handleCategoryType = (categoryType) => {
+  const handleYearlyEvent = (categoryType) => {
     return categoryType === 'meru-birthdays' || categoryType === 've-holidays';
   }
 
   useEffect(() => {
     if (event && (editMode || viewMode)) {
+        
       const divideDateTimeStart = divideDateTime(event?.start);
       const divideDateTimeEnd = divideDateTime(event?.end);
-      const categoryType = event?.extendedProps?.category;
-      const yearlyEventValue = handleCategoryType(categoryType);
-      
+      const categoryTypeExtracted = event?.extendedProps?.category;
+      const yearlyEventValue = handleYearlyEvent(categoryTypeExtracted);
       reset({
         eventName: event?.title ?? '',
         startDate: divideDateTimeStart?.date ?? null,
@@ -86,11 +86,11 @@ export default function EventForm({ mode = 'create', onBack }) {
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
-        category: categoryType
+        category: categoryTypeExtracted
       });
 
       setYearlyEvent(yearlyEventValue);
-      setcategoryType(categoryType);
+      setcategoryType(categoryTypeExtracted);
 
     } else if (mode === 'create') {
       reset({
@@ -113,12 +113,12 @@ export default function EventForm({ mode = 'create', onBack }) {
       setYearlyEvent(false);
       setcategoryType('');
     }
-  }, [event, mode, reset, location.state?.data]);
+  }, [event, mode, reset]);
 
     const onSubmit = async (data) => {
       let success = false;
       
-      if (editMode && location.state?.data) {
+      if (editMode && event) {
 
         // Añadir ID que no viene en form
         const updatedData = {
@@ -130,7 +130,6 @@ export default function EventForm({ mode = 'create', onBack }) {
       } else {
         success = await createEvent(data);
       }
-      
 
       if (success) {
         if (mode === 'create') navigate(-1);
@@ -178,7 +177,7 @@ export default function EventForm({ mode = 'create', onBack }) {
 
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={location.state?.data} /> }
+        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={event} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
@@ -188,7 +187,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                 <h2 className="block text-2xl font-bold text-center"> Tipo de Evento: *</h2>
               </div>
               <div className='mt-5'>
-                {viewMode ? (
+                {viewMode || editMode ? (
                   <div className="text-xl w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-300">
                     {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
                   </div>

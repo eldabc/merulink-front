@@ -48,6 +48,7 @@ export const EventProvider = ({ showNotification, children }) => {
             category: 'google-calendar',
             label: 'Calendario Google',
             description: event.description || 'Feriado oficial de Venezuela',
+            externalDate: true
           },
           display: 'block',
           className: 'g-calendar-ve-holidays'
@@ -193,8 +194,6 @@ export const EventProvider = ({ showNotification, children }) => {
       return false;
     }
   };
-
-
 
   // *** Actualizar
   const updateEvent = async (formData) => {
