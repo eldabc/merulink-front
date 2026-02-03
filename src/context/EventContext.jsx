@@ -195,6 +195,35 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   };
 
+  // Eventos de Google
+  const handleGoogleEvents = async (formData) => {
+    try {
+
+      const existsGoogleEvent = eventData.some(event => {
+        // Extraemos la fecha del evento (manejando que puede venir como string o Date)
+        const eventDate = new Date(event.start).toISOString().split('T')[0];
+        console.log("eventDate",event.extendedProps?.category === 'google-calendar');
+        
+        // Comparamos fecha y categoría
+        return eventDate === formData.startDate && 
+              event.extendedProps?.category === 'google-calendar';
+      });
+
+      if (existsGoogleEvent) {
+        console.log("editamos");
+        await updateEvent(formData);
+        return true;
+      } else {
+        console.log("registramos");
+        await createEvent(formData);
+        return true;
+      }
+    } catch (error) {
+      showNotification('Error en evento: ' + error.message, 'error');
+      return false;
+    }
+  };
+
   // *** Actualizar
   const updateEvent = async (formData) => {
     try {
@@ -287,6 +316,7 @@ export const EventProvider = ({ showNotification, children }) => {
     refetchEvents,
     createEvent,
     createEditBankingEvents,
+    handleGoogleEvents,
     updateEvent,
     deleteEvent,
     specialDays

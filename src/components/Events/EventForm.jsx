@@ -21,7 +21,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   
   const [yearlyEvent, setYearlyEvent] = useState(false);
   const [categoryType, setcategoryType] = useState('');
-  const { createEvent, updateEvent } = useEvents();
+  const { createEvent, updateEvent, handleGoogleEvents } = useEvents();
   const navigate = useNavigate();
   const location = useLocation();
   const event = location.state?.data;
@@ -118,7 +118,9 @@ export default function EventForm({ mode = 'create', onBack }) {
     const onSubmit = async (data) => {
       let success = false;
       
-      if (editMode && event) {
+      if (selectedCategory === 'google-calendar') {
+        success = await  handleGoogleEvents(data);
+      } else if (editMode && event) {
 
         // Añadir ID que no viene en form
         const updatedData = {

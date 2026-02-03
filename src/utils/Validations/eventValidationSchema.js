@@ -17,7 +17,7 @@ export const eventValidationSchema = yup.object().shape({
   .date()
   .required('Fecha de inicio es requerida')
   .when('category', {
-    is: (val) => val !== 've-holidays',
+    is: (val) => val !== 've-holidays' && val !== 'google-calendar',
     then: (schema) => schema.min(
       new Date(new Date().setHours(0, 0, 0, 0)), 
       'La fecha de inicio no puede ser anterior a la actual'
