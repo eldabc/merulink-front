@@ -118,16 +118,15 @@ export default function EventForm({ mode = 'create', onBack }) {
     const onSubmit = async (data) => {
       let success = false;
       
-      if (selectedCategory === 'google-calendar') {
-        success = await  handleGoogleEvents(data);
-      } else if (editMode && event) {
-
-        // Añadir ID que no viene en form
+      //Pasa ID que no viene en form
         const updatedData = {
           ...data,
           id: event.id
         };
-          
+
+      if (selectedCategory === 'google-calendar') {
+        success = await  handleGoogleEvents(updatedData);
+      } else if (editMode && event) {
         success = await updateEvent(updatedData);
       } else {
         success = await createEvent(data);

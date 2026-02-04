@@ -199,22 +199,22 @@ export const EventProvider = ({ showNotification, children }) => {
   const handleGoogleEvents = async (formData) => {
     try {
 
-      const existsGoogleEvent = eventData.some(event => {
-        // Extraemos la fecha del evento (manejando que puede venir como string o Date)
-        const eventDate = new Date(event.start).toISOString().split('T')[0];
-        console.log("eventDate",event.extendedProps?.category === 'google-calendar');
+        const existsGoogleEvent = eventData.some(event => {
         
-        // Comparamos fecha y categoría
-        return eventDate === formData.startDate && 
-              event.extendedProps?.category === 'google-calendar';
+          const formDate = new Date(formData.startDate).toISOString().split("T")[0]; 
+          const eventDate = new Date(event.start).toISOString().split("T")[0]; 
+            
+          // if (formDate === eventDate) console.log("aqui", formDate === eventDate); 
+          
+          return eventDate === formDate && event.extendedProps?.category === 'google-calendar' && !event.extendedProps?.externalDate;
       });
 
       if (existsGoogleEvent) {
-        console.log("editamos");
+        // console.log("editamos");
         await updateEvent(formData);
         return true;
       } else {
-        console.log("registramos");
+        // console.log("registramos");
         await createEvent(formData);
         return true;
       }
