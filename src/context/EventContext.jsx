@@ -96,35 +96,11 @@ export const EventProvider = ({ showNotification, children }) => {
 
   // *** Crear
   const createEvent = async (formData) => {
-
-    const typeEvent = categoryEvents.find(te => te.key === formData.category);
-    const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-
-    const newEvent = {
-      id: Date.now(), // ID temporal
-      title: formData.eventName,
-      start: formatDateToEvent(formData.startDate, formData.startTime),
-      end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
-      extendedProps: {
-        category: formData.category,
-        label: typeEvent.label,
-        status: formData.status,
-        locationId: formData.locationId,
-        locationName: getEventLocationById ? getEventLocationById.label : '',
-        repeatEvent: formData.repeatEvent,
-        repeatInterval: formData.repeatInterval,
-        createAlert: formData.createAlert,
-        coloringDay: formData.coloringDay,
-        description: formData.description,
-        comments: formData.comments,
-      },
-      className: formData.category
-      
-    };
-
-    console.log("datos", newEvent);
-
     try {
+      
+      const newEvent = formattedEvents(formData);
+      console.log("Creado", newEvent);
+
       // Llamado a API
       // const response = await api.post('/subdepartments', newEvent); 
       // const createdRecord = await response.json(); 
@@ -160,6 +136,34 @@ export const EventProvider = ({ showNotification, children }) => {
         className: 'banking-mondays'
       }));
 
+  }
+
+  const formattedEvents = (formData) => {
+
+    const typeEvent = categoryEvents.find(te => te.key === formData.category);
+    const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+
+    return {
+      id: Date.now(), // ID temporal
+      title: formData.eventName,
+      start: formatDateToEvent(formData.startDate, formData.startTime),
+      end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+      extendedProps: {
+        category: formData.category,
+        label: typeEvent.label,
+        status: formData.status,
+        locationId: formData.locationId,
+        locationName: getEventLocationById ? getEventLocationById.label : '',
+        repeatEvent: formData.repeatEvent,
+        repeatInterval: formData.repeatInterval,
+        createAlert: formData.createAlert,
+        coloringDay: formData.coloringDay,
+        description: formData.description,
+        comments: formData.comments,
+      },
+      className: formData.category
+      
+    };
   }
 
   // *** Crear/Editar Lunes Bancarios
@@ -228,38 +232,14 @@ export const EventProvider = ({ showNotification, children }) => {
   const updateEvent = async (formData) => {
     try {
       const eventId = formData.id;
-      
+
       if (!eventId) {
         showNotification('Error: No se encontró el ID del evento', 'error');
         return false;
       }
 
-      // Construir el evento actualizado con la estructura correcta
-      const typeEvent = categoryEvents.find(te => te.key === formData.category);
-      const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-
-      const updatedEvent = {
-        id: eventId,
-        title: formData.eventName,
-        start: formatDateToEvent(formData.startDate, formData.startTime),
-        end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
-        extendedProps: {
-          category: formData.category,
-          label: typeEvent?.label,
-          status: formData.status,
-          locationId: formData.locationId,
-          locationName: getEventLocationById ? getEventLocationById.label : '',
-          repeatEvent: formData.repeatEvent,
-          repeatInterval: formData.repeatInterval,
-          createAlert: formData.createAlert,
-          coloringDay: formData.coloringDay,
-          description: formData.description,
-          comments: formData.comments,
-        },
-        className: formData.category
-      };
-      
-      console.log("Evento actualizado:", updatedEvent);
+      const updatedEvent = formattedEvents(formData);
+      console.log("Actualizado:", updatedEvent);
       
       // Llamada a la API/Backend (onUpdate)
       // await api.put(`/events/${eventId}`, updatedEvent); 

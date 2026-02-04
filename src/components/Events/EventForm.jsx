@@ -65,6 +65,10 @@ export default function EventForm({ mode = 'create', onBack }) {
     return categoryType === 'meru-birthdays' || categoryType === 've-holidays';
   }
 
+  const updatedData = (data, event) => { 
+    return  { ...data, id: event.id }; 
+  }
+
   useEffect(() => {
     if (event && (editMode || viewMode)) {
         
@@ -117,17 +121,11 @@ export default function EventForm({ mode = 'create', onBack }) {
 
     const onSubmit = async (data) => {
       let success = false;
-      
-      //Pasa ID que no viene en form
-        const updatedData = {
-          ...data,
-          id: event.id
-        };
 
       if (selectedCategory === 'google-calendar') {
-        success = await  handleGoogleEvents(updatedData);
+        success = await  handleGoogleEvents(updatedData(data,event));
       } else if (editMode && event) {
-        success = await updateEvent(updatedData);
+        success = await updateEvent(updatedData(data,event));
       } else {
         success = await createEvent(data);
       }
