@@ -62,7 +62,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   };
 
   const handleYearlyEvent = (categoryType) => {
-    return categoryType === 'meru-birthdays' || categoryType === 've-holidays';
+    return categoryType === 'meru-birthdays' || categoryType === 've-holidays' || categoryType === 'google-calendar';
   }
 
   const updatedData = (data, event) => { 

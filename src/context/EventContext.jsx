@@ -48,7 +48,9 @@ export const EventProvider = ({ showNotification, children }) => {
             category: 'google-calendar',
             label: 'Calendario Google',
             description: event.description || 'Feriado oficial de Venezuela',
-            externalDate: true
+            externalDate: true,
+            repeatEvent: true,
+            repeatInterval: 'Anual'
           },
           display: 'block',
           className: 'g-calendar-ve-holidays'
@@ -157,18 +159,19 @@ export const EventProvider = ({ showNotification, children }) => {
     });
   };
 
+  // Encontrar Eventos Fijos
+  const findFixedEvents = (formData) => {
+    const formDate = new Date(formData.startDate).toISOString().split("T")[0]
+    const dayMonth = formDate.substring(5, 10); // Extrae "MM-DD"
+      
+    return fixedEvents.includes(dayMonth);
+  }
+
+  // Armado JSON Events
   const formattedEvents = (formData) => {
 
    let isFixed = false;
-    if (formData.category === 'google-calendar') {
-      const formDate = new Date(formData.startDate).toISOString().split("T")[0]
-      const dayMonth = formDate.substring(5, 10); // Extrae "MM-DD"
-       
-      isFixed = fixedEvents.includes(dayMonth);
-      // console.log("isFixed", isFixed);
-
-      if (isFixed) isFixed = true;
-    }
+   if (formData.category === 'google-calendar') isFixed = findFixedEvents(formData); 
 
     const typeEvent = categoryEvents.find(te => te.key === formData.category);
     const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
