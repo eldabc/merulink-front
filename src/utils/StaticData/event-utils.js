@@ -191,3 +191,7 @@ export const INITIAL_EVENTS = [
 export function createEventId() {
   return String(eventGuid++)
 }
+
+export const fixedEvents = [
+  '01-01', '05-01', '06-24', '07-05', '07-24', '10-12', '12-24', '12-25', '12-31'
+];

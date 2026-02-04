@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useLocationsHook } from '../hooks/useLocations';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
-import { INITIAL_EVENTS } from '../utils/StaticData/event-utils';
+import { INITIAL_EVENTS, fixedEvents } from '../utils/StaticData/event-utils';
 
 const EventContext = createContext();
 
@@ -67,7 +67,8 @@ export const EventProvider = ({ showNotification, children }) => {
       // Cargar Google y Local al mismo tiempo
       const googleHolidays = await fetchGoogleEvents(year);
 
-      setEventData([...INITIAL_EVENTS, ...googleHolidays]);
+      const combinedEvents = [...INITIAL_EVENTS, ...googleHolidays];
+      setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
       showNotification('Error al cargar datos', err.message);
     } finally {
@@ -105,10 +106,11 @@ export const EventProvider = ({ showNotification, children }) => {
       // const response = await api.post('/subdepartments', newEvent); 
       // const createdRecord = await response.json(); 
 
-      setEventData(prevData => { // Actualiza el estado centralizado
-        return [newEvent, ...prevData]; 
+      setEventData(prevData => {
+        const newEventList = [newEvent, ...prevData];
+        if (formData.category === 'google-calendar') return filterGoogleDuplicates(newEventList);
+        return newEventList;
       });
-
       showNotification(`Evento ${newEvent.title} creado con éxito`);
       
       return true;
@@ -138,7 +140,35 @@ export const EventProvider = ({ showNotification, children }) => {
 
   }
 
+  const filterGoogleDuplicates = (allEvents) => {
+    // Identifica fechas de eventos Google que se han registrado
+    const registeredDates = allEvents
+      .filter(ev => ev.extendedProps?.category === 'google-calendar' && !ev.extendedProps?.externalDate)
+      .map(ev => ev.start.split('T')[0]);
+
+    return allEvents.filter(ev => {
+      if (ev.extendedProps?.category === 'google-calendar' && ev.extendedProps?.externalDate) {
+        const dateKey = ev.start.split('T')[0];
+        // El evento pasa solo si su fecha NO está en la lista de registrados
+        return !registeredDates.includes(dateKey);
+      }
+
+      return true;
+    });
+  };
+
   const formattedEvents = (formData) => {
+
+   let isFixed = false;
+    if (formData.category === 'google-calendar') {
+      const formDate = new Date(formData.startDate).toISOString().split("T")[0]
+      const dayMonth = formDate.substring(5, 10); // Extrae "MM-DD"
+       
+      isFixed = fixedEvents.includes(dayMonth);
+      // console.log("isFixed", isFixed);
+
+      if (isFixed) isFixed = true;
+    }
 
     const typeEvent = categoryEvents.find(te => te.key === formData.category);
     const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
@@ -160,6 +190,7 @@ export const EventProvider = ({ showNotification, children }) => {
         coloringDay: formData.coloringDay,
         description: formData.description,
         comments: formData.comments,
+        isFixed: isFixed
       },
       className: formData.category
       
