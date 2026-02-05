@@ -220,6 +220,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                     isTemplate={isTemplate}
                     setIsTemplate={setIsTemplate}
                     creator='Sistema'
+                    showTemplateToggle={!handleYearlyEvent(selectedCategory)}
                   />
                   
                   <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
