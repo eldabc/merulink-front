@@ -10,6 +10,7 @@ import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
+import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
 
 export default function EventForm({ mode = 'create', onBack }) {
   
@@ -20,6 +21,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   });
   
   const [yearlyEvent, setYearlyEvent] = useState(false);
+  const [isTemplate, setIsTemplate] = useState(false);
   const [categoryType, setcategoryType] = useState('');
   const { createEvent, updateEvent, handleGoogleEvents } = useEvents();
   const navigate = useNavigate();
@@ -35,8 +37,9 @@ export default function EventForm({ mode = 'create', onBack }) {
 
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
-  const eventWithoutLocation = selectedCategory === 've-holidays' || selectedCategory === 'meru-birthdays' || selectedCategory === 'google-calendar' || selectedCategory === 'executive-mod';
-
+  const isGoogleCategory = selectedCategory === 'google-calendar'
+  const eventWithoutLocation = selectedCategory === 've-holidays' || selectedCategory === 'meru-birthdays' || isGoogleCategory || selectedCategory === 'executive-mod';
+  
   // Al seleccionar
   const handleEventChange = (e) => {
     e.stopPropagation();
@@ -124,7 +127,7 @@ export default function EventForm({ mode = 'create', onBack }) {
     const onSubmit = async (data) => {
       let success = false;
 
-      if (selectedCategory === 'google-calendar') {
+      if (isGoogleCategory) {
         success = await  handleGoogleEvents(updatedData(data,event));
       } else if (editMode && event) {
         success = await updateEvent(updatedData(data,event));
@@ -189,7 +192,7 @@ export default function EventForm({ mode = 'create', onBack }) {
               </div>
               <div className='mt-5'>
                 {viewMode || editMode ? (
-                  <div className="text-xl w-full px-3 py-2 rounded-lg bg-gray-700 text-gray-300">
+                  <div className="text-xl w-full px-3 py-2 rounded-lg bg-[#2f3d44] text-center text-gray-300">
                     {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
                   </div>
                 ) : (
@@ -212,6 +215,13 @@ export default function EventForm({ mode = 'create', onBack }) {
                                 md:[&>*:nth-child(2n)]:pl-4 p-7'
                 >
                   <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
+                  
+                  <InfoToggleSeccion
+                    isTemplate={isTemplate}
+                    setIsTemplate={setIsTemplate}
+                    creator='Sistema'
+                  />
+                  
                   <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
                     <div className="md:w-32 md:text-right">
                       <label className="block text-lg font-medium text-gray-300 mt-1">Nombre: *</label>
@@ -333,7 +343,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                             <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
                             <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
 
-                            {selectedCategory === 'google-calendar' && (<option className='bg-[#3c4042]' value='Aleatorio'>Aleatorio</option>)}
+                            {isGoogleCategory && (<option className='bg-[#3c4042]' value='Aleatorio'>Aleatorio</option>)}
                             {selectedCategory === 'executive-mod' && ( <option className='bg-[#3c4042]' value='Semanal'>Semanal</option> )}
                         </select>
                         {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
