@@ -181,15 +181,15 @@ export const EventProvider = ({ showNotification, children }) => {
   const formattedEvents = (formData) => {
 
    let isFixed = false;
-   let labelCategory = typeEvent.label;
    
+   const typeEvent = categoryEvents.find(te => te.key === formData.category);
+   const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+   let labelCategory = typeEvent.label;
+
    if (formData.category === 'google-calendar') {
     isFixed = findFixedEvents(formData); 
     labelCategory = 'Festivo Almacenamiento Local'
    }
-
-    const typeEvent = categoryEvents.find(te => te.key === formData.category);
-    const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
 
     return {
       id: Date.now(), // ID temporal
