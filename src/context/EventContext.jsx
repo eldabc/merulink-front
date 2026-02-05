@@ -59,7 +59,8 @@ export const EventProvider = ({ showNotification, children }) => {
               externalDate: true,
               repeatEvent: true, 
               repeatInterval: isFixed ? 'Anual' : 'Aleatorio',
-              isFixed: isFixed
+              isFixed: isFixed,
+              createdBy: 'Calendario Google'
             },
             display: 'block',
             className: 'g-calendar-ve-holidays'
@@ -208,7 +209,8 @@ export const EventProvider = ({ showNotification, children }) => {
         coloringDay: formData.coloringDay,
         description: formData.description,
         comments: formData.comments,
-        isFixed: isFixed
+        isFixed: isFixed,
+        createdBy: 'Sistema',
       },
       className: formData.category
       

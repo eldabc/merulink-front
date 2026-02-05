@@ -20,6 +20,7 @@ export const INITIAL_EVENTS = [
       coloringDay: true,
       description: 'Descripción del evento 1',
       comments: 'Comentarios del evento 1',
+      createdBy: "Ana Luna"
     },
     className: 'meru-events',
 
@@ -36,6 +37,7 @@ export const INITIAL_EVENTS = [
       repeatEvent: true,
       repeatInterval: 'Anual',
       coloringDay: true,
+      createdBy: "Sistema"
     },
     className: 'meru-birthdays',
   },
@@ -51,6 +53,7 @@ export const INITIAL_EVENTS = [
       repeatEvent: true,
       repeatInterval: 'Anual',
       coloringDay: true,
+      createdBy: "Sistema"
     },
     className: 'meru-birthdays',
   },
@@ -66,7 +69,8 @@ export const INITIAL_EVENTS = [
       locationId: 2,
       locationName: 'Salon 2',
       coloringDay: true,
-      comments: 'Comentario del evento 4'
+      comments: 'Comentario del evento 4',
+      createdBy: "Ana Luna"
     },
     className: 'di-heights-wedding-nights', 
   },
@@ -82,7 +86,8 @@ export const INITIAL_EVENTS = [
       locationId: 3,
       locationName: 'Salon 3',
       coloringDay: true,
-      comments: 'Comentario del evento 4'
+      comments: 'Comentario del evento 4',
+      createdBy: "Riad Abdo"
     },
     className: 'executive-mod',
   },
@@ -100,7 +105,8 @@ export const INITIAL_EVENTS = [
       repeatInterval: 'Anual',
       coloringDay: true,
       description: '',
-      comments: 'Comentario del evento 5'
+      comments: 'Comentario del evento 5',
+      createdBy: "Sistema"
     },
     className: 'g-calendar-ve-holidays',
   },
@@ -117,7 +123,8 @@ export const INITIAL_EVENTS = [
       repeatEvent: true,
       repeatInterval: 'Anual',
       coloringDay: true,
-      comments: 'Comentario del evento 6'
+      comments: 'Comentario del evento 6',
+      createdBy: "Sistema"
     },
     className: 'g-calendar-ve-holidays',
   },
@@ -133,6 +140,7 @@ export const INITIAL_EVENTS = [
       locationId: 6,
       locationName: 'Salon 6',
       coloringDay: true,
+      createdBy: "Ana Luna"
     },
     className: 'executive-mod',
   },
@@ -151,6 +159,7 @@ export const INITIAL_EVENTS = [
       repeatInterval: 'Quincenal',
       createAlert: true,
       coloringDay: true,
+      createdBy: "Ana Luna"
     },
     className: 'meru-events',
   },
@@ -166,7 +175,8 @@ export const INITIAL_EVENTS = [
       locationId: 1,
       locationName: 'Salon 1',
       coloringDay: true,
-      description: 'Descripción del evento 10'
+      description: 'Descripción del evento 10',
+      createdBy: "Ana Luna"
     },
     className: 'di-heights-wedding-nights',
   },
@@ -182,7 +192,8 @@ export const INITIAL_EVENTS = [
       locationId: null,
       locationName: '',
       coloringDay: false,
-      description: 'Descripción del evento 11'
+      description: 'Descripción del evento 11',
+      createdBy: "Riad Abdo"
     },
     className: 'banking-mondays',
   }

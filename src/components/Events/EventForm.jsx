@@ -23,6 +23,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const [yearlyEvent, setYearlyEvent] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [categoryType, setcategoryType] = useState('');
+  const [createdBy, setCreatedBy] = useState('');
   const { createEvent, updateEvent, handleGoogleEvents } = useEvents();
   const navigate = useNavigate();
   const location = useLocation();
@@ -81,6 +82,11 @@ export default function EventForm({ mode = 'create', onBack }) {
       const divideDateTimeEnd = divideDateTime(event?.end);
       const categoryTypeExtracted = event?.extendedProps?.category;
       const yearlyEventValue = handleYearlyEvent(categoryTypeExtracted);
+
+      if (event.extendedProps?.createdBy) {
+        setCreatedBy(event.extendedProps?.createdBy);
+      }
+
       reset({
         eventName: event?.title ?? '',
         startDate: divideDateTimeStart?.date ?? null,
@@ -219,7 +225,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                   <InfoToggleSeccion
                     isTemplate={isTemplate}
                     setIsTemplate={setIsTemplate}
-                    creator='Sistema'
+                    createdBy={createdBy}
                     showTemplateToggle={!handleYearlyEvent(selectedCategory)}
                   />
                   
