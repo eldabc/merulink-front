@@ -245,7 +245,7 @@ export const EventProvider = ({ showNotification, children }) => {
       showNotification(`Calendario Bancario ${year} ${msg}`);
       return true;
     } catch (error) {
-      showNotification('Error al procesar el calendario bancario', 'error');
+      showNotification('Error al procesar el calendario bancario', error.message);
       return false;
     }
   };

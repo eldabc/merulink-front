@@ -28,7 +28,7 @@ export const INITIAL_EVENTS = [
   {
     id: createEventId(),
     title: 'Camilo Hernández',
-    start: '2026-01-10T00:00:00',
+    start: '2026-02-10T00:00:00',
     extendedProps: {
       category: 'meru-birthdays',
       label: 'Cumpleañeros Merú',
@@ -83,8 +83,8 @@ export const INITIAL_EVENTS = [
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
       status: 'Tentativo',
-      locationId: 3,
-      locationName: 'Salon 3',
+      // locationId: 3,
+      // locationName: 'Salon 3',
       coloringDay: true,
       comments: 'Comentario del evento 4',
       createdBy: "Riad Abdo"
@@ -137,8 +137,8 @@ export const INITIAL_EVENTS = [
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
       status: 'Confirmado',
-      locationId: 6,
-      locationName: 'Salon 6',
+      // locationId: 6,
+      // locationName: 'Salon 6',
       coloringDay: true,
       createdBy: "Ana Luna"
     },

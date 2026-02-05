@@ -10,7 +10,8 @@ import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
 import EventRow from './EventRow';
 import BankingMondaysList from './BankingMondays/BankingMondaysList.jsx';
-import FilterByFields from '../Filters/FilterByFields.jsx'
+import FilterByFields from '../Filters/FilterByFields.jsx';
+import ButtonHistory from '../Shared/ButtonHistory.jsx';
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
@@ -24,13 +25,15 @@ function EventListContent({ categoryKeys }) {
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
+  const [showHistory, setShowHistory] = useState(false);
 
   const itemsPerPage = 10;
   const SEARCH_FIELDS = ['title', 'start'];
   const stringCategory = stringCategoryEvents(categoryKeys);
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
   const bankingMondaysCategoryKey = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
-  const eventWithLocation = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar' || categoryKeys[0] === 'meru-birthdays';
+  const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
+  const eventWithLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
 
   useEffect(() => {
     setSearchValue('');
@@ -39,23 +42,29 @@ function EventListContent({ categoryKeys }) {
   }, [categoryKeys]);
 
   // Filtrar para mostrar eventos en la categoría
-  const items = useMemo(() => {
-    if (!categoryKeys || categoryKeys.length === 0) return [];
+ const items = useMemo(() => {
+  if (!categoryKeys || categoryKeys.length === 0) return [];
 
-    return eventData
-      .filter(ev => categoryKeys.includes(ev.extendedProps?.category))
-      .map(ev => {
-        const categoryId = ev.extendedProps?.category;
-        return {
-          ...ev,
-          extendedProps: {
-            ...ev.extendedProps,
-            // categoryDisplayName: stringCategoryEvents([categoryId])
-          }
-        };
-      })
-      .sort((a, b) => new Date(a.start) - new Date(b.start));
-  }, [eventData, categoryKeys]);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return eventData
+    .filter(ev => {
+      const category = ev.extendedProps?.category;
+      const matchesCategory = categoryKeys.includes(category);
+      if (!matchesCategory) return false;
+
+      if (showHistory) return true; // Mostramos TODO
+
+      if (category === 'google-calendar') return true;
+
+      // Solo si event es futuro o es hoy
+      const eventDate = new Date(ev.start);
+      return eventDate >= today;
+    })
+    .map(ev => ({ ...ev }))
+    .sort((a, b) => new Date(a.start) - new Date(b.start));
+}, [eventData, categoryKeys, showHistory]);
 
   // Filtrado y detección de búsqueda
   const { dataToDisplay, isSearching } = useMemo(() => {
@@ -112,6 +121,8 @@ function EventListContent({ categoryKeys }) {
         placeholder='Ingrese nombre del evento'
         showFilterDate={true}
       />
+      
+      {!holidaysEvents && <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} /> }
 
       {dataToDisplay.length === 0 || paginatedEvents.length === 0 ? (
         <div className="p-4 text-gray-500 italic">{`No se encontraron coincidencias en esta categoría${searchTextFragmentAvise}.`}</div>

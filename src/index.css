@@ -53,7 +53,7 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border-color: #4e83a7;
 }
 .merulink-root{
   min-height:100vh;
