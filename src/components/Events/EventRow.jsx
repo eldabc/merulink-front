@@ -43,7 +43,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation} ) {
         {!eventWithLocation && (
           <td className="px-4 py-3 text-white-700">{event.extendedProps.locationName}</td>
         )}
-        <td className="px-4 py-3 text-white-700">{event.extendedProps.categoryDisplayName}</td>
+        <td className="px-4 py-3 text-white-700">{event.extendedProps.label}</td>
         <td className="px-4 py-3">
           {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
             <ButtonDelete setIsModalOpen={setIsModalOpen} id={event.id} />

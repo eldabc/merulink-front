@@ -50,7 +50,7 @@ function EventListContent({ categoryKeys }) {
           ...ev,
           extendedProps: {
             ...ev.extendedProps,
-            categoryDisplayName: stringCategoryEvents([categoryId])
+            // categoryDisplayName: stringCategoryEvents([categoryId])
           }
         };
       })

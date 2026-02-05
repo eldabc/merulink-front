@@ -177,7 +177,7 @@ export const INITIAL_EVENTS = [
     end:   '2026-01-05T11:00:00',
     extendedProps: {
       category: 'banking-mondays',
-      label: 'Lunes Bancario 1',
+      label: 'Lunes Bancarios',
       status: '',
       locationId: null,
       locationName: '',
