@@ -39,22 +39,32 @@ export const EventProvider = ({ showNotification, children }) => {
       const data = await response.json();
       
       if (data.items) {
-        return data.items.map(event => ({
-          id: event.id,
-          title: event.summary,
-          start: event.start.date + 'T00:00:00' || event.start.dateTime+ 'T00:00:00',
-          allDay: !!event.start.date,
-          extendedProps: {
-            category: 'google-calendar',
-            label: 'Calendario Google',
-            description: event.description || 'Feriado oficial de Venezuela',
-            externalDate: true,
-            repeatEvent: true,
-            repeatInterval: 'Anual'
-          },
-          display: 'block',
-          className: 'g-calendar-ve-holidays'
-        }));
+        return data.items.map(event => {
+          // Extrae el formato MM-DD
+          const dateStr = event.start.date || event.start.dateTime;
+          const monthDay = dateStr.substring(5, 10); 
+
+          // Verifica si MM-DD está en eventos fijos
+          const isFixed = fixedEvents.includes(monthDay);
+
+          return {
+            id: event.id,
+            title: event.summary,
+            start: event.start.date ? event.start.date + 'T00:00:00' : event.start.dateTime,
+            allDay: !!event.start.date,
+            extendedProps: {
+              category: 'google-calendar',
+              label: 'Calendario Google',
+              description: event.description || 'Feriado oficial de Venezuela',
+              externalDate: true,
+              repeatEvent: true, 
+              repeatInterval: isFixed ? 'Anual' : 'Aleatorio',
+              isFixed: isFixed
+            },
+            display: 'block',
+            className: 'g-calendar-ve-holidays'
+          };
+        });
       }
       return [];
     } catch (err) {

@@ -50,10 +50,12 @@ export default function EventForm({ mode = 'create', onBack }) {
     setValue('category', selectedEventId, { shouldValidate: true });
 
     const yearlyEventValue = handleYearlyEvent(selectedEventId);
+
+    setYearlyEvent(yearlyEventValue);
+
     const defaultRepitedEvent = yearlyEventValue ? true : false;
     const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
 
-    if (yearlyEventValue) setYearlyEvent(true);
 
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
     setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
@@ -330,6 +332,8 @@ export default function EventForm({ mode = 'create', onBack }) {
                             <option className='bg-[#3c4042]' value='Anual'>Anual</option>
                             <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
                             <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
+
+                            {selectedCategory === 'google-calendar' && (<option className='bg-[#3c4042]' value='Aleatorio'>Aleatorio</option>)}
                             {selectedCategory === 'executive-mod' && ( <option className='bg-[#3c4042]' value='Semanal'>Semanal</option> )}
                         </select>
                         {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
