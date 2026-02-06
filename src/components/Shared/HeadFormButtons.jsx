@@ -1,7 +1,7 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-function HeadFormButtons({ onBack, url = '', data = null, setIsEditing }) {
+function HeadFormButtons({ onBack, url = '', data = null, setIsEditing, disabled }) {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
@@ -18,7 +18,8 @@ function HeadFormButtons({ onBack, url = '', data = null, setIsEditing }) {
 
   return (
     <div className="buttons-bar flex gap-2 items-center justify-end">
-      <button 
+      <button
+        disabled={disabled} 
         type="button"
         onClick={handleEditClick} 
         className="buttons-bar-btn flex text-3xl font-semibold" 

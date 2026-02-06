@@ -152,7 +152,7 @@ export const INITIAL_EVENTS = [
     extendedProps: {
       category: 'meru-events',
       label: 'Eventos Merú',
-      status: 'Confirmado',
+      status: 'Finalizado',
       locationId: 7,
       locationName: 'Salon 7',
       repeatEvent: true,

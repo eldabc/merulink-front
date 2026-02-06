@@ -28,6 +28,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const navigate = useNavigate();
   const location = useLocation();
   const event = location.state?.data;
+  const disabled = event?.extendedProps?.status === 'Finalizado' ? true : false;
 
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
@@ -189,7 +190,7 @@ export default function EventForm({ mode = 'create', onBack }) {
 
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={event} /> }
+        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={event} disabled={disabled} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
