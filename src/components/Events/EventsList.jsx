@@ -31,7 +31,7 @@ function EventListContent({ categoryKeys }) {
   const SEARCH_FIELDS = ['title', 'start'];
   const stringCategory = stringCategoryEvents(categoryKeys);
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
-  const bankingMondaysCategoryKey = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
+  const isBankingMondays = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
 
@@ -42,29 +42,41 @@ function EventListContent({ categoryKeys }) {
     setShowHistory(false);
   }, [categoryKeys]);
 
-  // Filtrar para mostrar eventos en la categoría
- const items = useMemo(() => {
-  if (!categoryKeys || categoryKeys.length === 0) return [];
+ // Filtrar para mostrar eventos en la categoría
+const { items, allBankingEvents } = useMemo(() => {
+  if (!categoryKeys || categoryKeys.length === 0) return { items: [], allBankingEvents: [] };
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  return eventData
-    .filter(ev => {
-      const category = ev.extendedProps?.category;
-      const matchesCategory = categoryKeys.includes(category);
-      if (!matchesCategory) return false;
+  const result = eventData.reduce((acc, ev) => {
+    const category = ev.extendedProps?.category;
+    const matchesCategory = categoryKeys.includes(category);
 
-      if (showHistory) return true; // Mostramos TODO
+    if (matchesCategory) {
+      
+      // Extraer TODOS los banking-mondays (sin filtro de fecha)
+      if (category === 'banking-mondays') {
+        acc.allBankingEvents.push({ ...ev });
+      }
 
-      if (category === 'google-calendar') return true;
+      // Extraer TODOS los google-calendar (sin filtro de fecha)
+      const isGoogle = category === 'google-calendar';
+      const isFutureOrToday = new Date(ev.start) >= today;
 
-      // Solo si event es futuro o es hoy
-      const eventDate = new Date(ev.start);
-      return eventDate >= today;
-    })
-    .map(ev => ({ ...ev }))
-    .sort((a, b) => new Date(a.start) - new Date(b.start));
+      if (showHistory || isGoogle || isFutureOrToday) {
+        acc.items.push({ ...ev });
+      }
+    }
+
+    return acc;
+  }, { items: [], allBankingEvents: [] });
+
+  // Ordenar
+  result.items.sort((a, b) => new Date(a.start) - new Date(b.start));
+  result.allBankingEvents;
+
+  return result;
 }, [eventData, categoryKeys, showHistory]);
 
   // Filtrado y detección de búsqueda
@@ -94,7 +106,7 @@ function EventListContent({ categoryKeys }) {
     };
   }, [items, searchValue, searchDateValue]);
 
-  const hasBankingRegisters = bankingMondaysCategoryKey && eventData.some( 
+  const hasBankingRegisters = isBankingMondays && eventData.some( 
     ev => ev.extendedProps?.category === 'banking-mondays'
   ) ? true : false;
 
@@ -111,7 +123,7 @@ function EventListContent({ categoryKeys }) {
         <TitleHeader title={stringCategory} />
         <div className="text-sm">
           {!isMeruBirthday && (
-            <ButtonNavigate url={`/eventos${bankingMondaysCategoryKey}/nuevo`} navigate={navigate} flagDisabled={hasBankingRegisters} />
+            <ButtonNavigate url={`/eventos${isBankingMondays}/nuevo`} navigate={navigate} flagDisabled={hasBankingRegisters} />
           )}
         </div>
       </div>
@@ -133,7 +145,12 @@ function EventListContent({ categoryKeys }) {
       ) : (
         <>
           {hasBankingRegisters ? (
-            <BankingMondaysList stringCategory={stringCategory} navigate={navigate} events={dataToDisplay} />
+            <BankingMondaysList 
+              stringCategory={stringCategory} 
+              navigate={navigate} 
+              events={paginatedEvents} 
+              allBankingEvents={allBankingEvents} 
+            />
           ) : (
             <div className="rounded-lg shadow">
               <table className="min-w-full border-collapse text-sm sm:text-base">

@@ -2,13 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { normalizeDateToString } from "../../../utils/date-utils";
 import TitleHeader from "../../Shared/TitleHeader";
 
-function BankingMondaysList({events}) {
+function BankingMondaysList({events, allBankingEvents}) {
 
   const navigate = useNavigate();
 
   const selectedEvent = () => {
     navigate("/eventos/lunes-bancarios/ver", { 
-      state: { data: events } 
+      state: { data: allBankingEvents } 
     }); 
   };
 
