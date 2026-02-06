@@ -185,7 +185,13 @@ export const EventProvider = ({ showNotification, children }) => {
    
    const typeEvent = categoryEvents.find(te => te.key === formData.category);
    const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
+   
+   let allDay = false;
    let labelCategory = typeEvent.label;
+
+   if (formData.category === 'meru-birthdays' || formData.category === 'google-calendar' || formData.category === 'executive-mod' 
+       || formData.category === 'banking-mondays' || formData.category === 've-holidays'
+      ) { allDay = true; }
 
    if (formData.category === 'google-calendar') {
     isFixed = findFixedEvents(formData); 
@@ -197,6 +203,7 @@ export const EventProvider = ({ showNotification, children }) => {
       title: formData.eventName,
       start: formatDateToEvent(formData.startDate, formData.startTime),
       end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
+      allDay: allDay,
       extendedProps: {
         category: formData.category,
         label: labelCategory,
