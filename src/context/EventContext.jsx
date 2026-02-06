@@ -210,7 +210,7 @@ export const EventProvider = ({ showNotification, children }) => {
         description: formData.description,
         comments: formData.comments,
         isFixed: isFixed,
-        createdBy: 'Sistema',
+        createdBy: formData.extendedProps.createdBy,
       },
       className: formData.category
       

@@ -39,6 +39,7 @@ function EventListContent({ categoryKeys }) {
     setSearchValue('');
     setSearchDateValue('');
     setCurrentPage(1);
+    setShowHistory(false);
   }, [categoryKeys]);
 
   // Filtrar para mostrar eventos en la categoría
@@ -96,7 +97,7 @@ function EventListContent({ categoryKeys }) {
   const hasBankingRegisters = bankingMondaysCategoryKey && eventData.some( 
     ev => ev.extendedProps?.category === 'banking-mondays'
   ) ? true : false;
-  
+
   const searchTextFragmentAvise = isSearching ? " para la búsqueda" : '';
 
   // Cálculos de paginación

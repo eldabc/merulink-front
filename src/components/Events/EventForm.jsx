@@ -23,7 +23,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const [yearlyEvent, setYearlyEvent] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [categoryType, setcategoryType] = useState('');
-  const [createdBy, setCreatedBy] = useState('');
+  const [createdBy, setCreatedBy] = useState('Sistema');
   const { createEvent, updateEvent, handleGoogleEvents } = useEvents();
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,10 +82,11 @@ export default function EventForm({ mode = 'create', onBack }) {
       const divideDateTimeEnd = divideDateTime(event?.end);
       const categoryTypeExtracted = event?.extendedProps?.category;
       const yearlyEventValue = handleYearlyEvent(categoryTypeExtracted);
+      let createdBy = event.extendedProps?.createdBy;
 
-      if (event.extendedProps?.createdBy) {
-        setCreatedBy(event.extendedProps?.createdBy);
-      }
+      if (isGoogleCategory) createdBy = 'Sistema';
+
+      setCreatedBy(createdBy);
 
       reset({
         eventName: event?.title ?? '',
@@ -132,6 +133,7 @@ export default function EventForm({ mode = 'create', onBack }) {
 
     const onSubmit = async (data) => {
       let success = false;
+      data = { ...data, extendedProps: { createdBy: createdBy } }
 
       if (isGoogleCategory) {
         success = await  handleGoogleEvents(updatedData(data,event));
