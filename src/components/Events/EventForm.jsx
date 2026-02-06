@@ -11,6 +11,8 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
+import TabButtonsManager from './tabs/TabButtonsManager.jsx';
+import EventTemplates from './tabs/EventTemplates.jsx';
 
 export default function EventForm({ mode = 'create', onBack }) {
   
@@ -24,6 +26,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const [isTemplate, setIsTemplate] = useState(false);
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
+  const [activeTab, setActiveTab] = useState('eventForm');
   const { createEvent, updateEvent, handleGoogleEvents } = useEvents();
   const navigate = useNavigate();
   const location = useLocation();
@@ -224,7 +227,17 @@ export default function EventForm({ mode = 'create', onBack }) {
                                 md:[&>*:nth-child(2n)]:pl-4 p-7'
                 >
                   <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
-                  
+                  <TabButtonsManager 
+                      activeTab={activeTab} 
+                      setActiveTab={setActiveTab} 
+                      event={event}
+                      // errors={errors}
+                      // tempFlags={tempFlags}
+                  />
+                  <div className="mt-6">     
+                    {activeTab === 'eventForm' && ( <EventForm  /> )} {/* register={register} errors={errors} event={event} */}
+                    {activeTab === 'eventTemplates' && ( <EventTemplates /> )} {/*register={register} errors={errors} event={event} tempFlags={tempFlags} setTempFlags={setTempFlags}*/}
+                  </div>
                   <InfoToggleSeccion
                     isTemplate={isTemplate}
                     setIsTemplate={setIsTemplate}

@@ -4,3 +4,8 @@ export const tabs = [
     { id: "contact", label: "Datos de contactos" },
     { id: "meruLink", label: "Meru Link" },
 ];
+
+export const tabsEvents = [
+    { id: "formEvent", label: "Datos del Evento" },
+    { id: "eventTemplates", label: "Usar Plantilla" },
+];
