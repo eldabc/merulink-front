@@ -40,8 +40,8 @@ export default function EventForm({ mode = 'create', onBack }) {
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
   const isGoogleCategory = selectedCategory === 'google-calendar'
-  const eventWithoutLocation = selectedCategory === 've-holidays' || selectedCategory === 'meru-birthdays' || isGoogleCategory || selectedCategory === 'executive-mod';
-  
+  const isMeruBirthdays = selectedCategory === 'meru-birthdays'
+  const eventWithoutLocation = selectedCategory === 've-holidays' || isMeruBirthdays || isGoogleCategory || selectedCategory === 'executive-mod';
   // Al seleccionar
   const handleEventChange = (e) => {
     e.stopPropagation();
@@ -359,26 +359,29 @@ export default function EventForm({ mode = 'create', onBack }) {
                         {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
                       </div>
                     </div> 
-                    
-                    <div>
-                      <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: </label>
-                    </div>
-                    <div className='flex flex-row items-center gap-2'>
-                      <input 
-                        disabled={viewMode} 
-                        type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
-                      {errors?.createAlert && <ErrorMessage msg={errors.createAlert.message} /> }  
-                    </div>
-
-                    <div>
-                      <label className="block text-xl font-medium text-gray-300 mt-1"> Resaltar Día: </label>
-                    </div>
-                    <div className='flex flex-row items-center gap-2'>
-                      <input 
-                        disabled={viewMode}
-                        type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
-                      {errors?.coloringDay && <ErrorMessage msg={errors.coloringDay.message} /> }  
-                    </div>
+                    {!isMeruBirthdays  && (
+                      <>
+                      <div>
+                        <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: </label>
+                      </div>
+                      <div className='flex flex-row items-center gap-2'>
+                        <input 
+                          disabled={viewMode} 
+                          type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                        {errors?.createAlert && <ErrorMessage msg={errors.createAlert.message} /> }  
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xl font-medium text-gray-300 mt-1"> Resaltar Día: </label>
+                      </div>
+                      <div className='flex flex-row items-center gap-2'>
+                        <input 
+                          disabled={viewMode}
+                          type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                        {errors?.coloringDay && <ErrorMessage msg={errors.coloringDay.message} /> }  
+                      </div>
+                      </>
+                    )}
                   </div>
                   <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
                                   md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
@@ -401,19 +404,23 @@ export default function EventForm({ mode = 'create', onBack }) {
                       </div>
                       </>
                     )}
-                    <div className="md:w-32 md:text-right">
-                      <label className="block text-lg font-medium text-gray-300 mt-1">Comentarios: </label>
-                    </div>
-                    
-                    <div className="w-full max-w-2xl">
-                      <textarea
-                        readOnly={viewMode}
-                        {...register('comments')}
-                        placeholder="Ingrese comentarios, cambios, observaciones..."
-                        className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none`}
-                      />
-                      {errors?.comments && <ErrorMessage msg={errors.comments.message} /> }  
-                    </div>
+                    {!isMeruBirthdays && (
+                      <>
+                      <div className="md:w-32 md:text-right">
+                        <label className="block text-lg font-medium text-gray-300 mt-1">Comentarios: </label>
+                      </div>
+                      
+                      <div className="w-full max-w-2xl">
+                        <textarea
+                          readOnly={viewMode}
+                          {...register('comments')}
+                          placeholder="Ingrese comentarios, cambios, observaciones..."
+                          className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none`}
+                        />
+                        {errors?.comments && <ErrorMessage msg={errors.comments.message} /> }  
+                      </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
