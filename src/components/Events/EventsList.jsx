@@ -93,7 +93,10 @@ function EventListContent({ categoryKeys }) {
     };
   }, [items, searchValue, searchDateValue]);
 
-  const hasBankingRegisters = items[0]?.extendedProps.category === 'banking-mondays' && items?.length > 0;
+  const hasBankingRegisters = bankingMondaysCategoryKey && eventData.some( 
+    ev => ev.extendedProps?.category === 'banking-mondays'
+  ) ? true : false;
+  
   const searchTextFragmentAvise = isSearching ? " para la búsqueda" : '';
 
   // Cálculos de paginación
