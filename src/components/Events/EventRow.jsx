@@ -6,7 +6,7 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
 
-export default function EventRow( {event, isMeruBirthday, eventWithLocation} ) {
+export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} ) {
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation} ) {
         <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
         )}
 
-        {!eventWithLocation && (
+        {!eventWithoutLocation && (
           <td className="px-4 py-3 text-white-700">{event.extendedProps.locationName}</td>
         )}
         <td className="px-4 py-3 text-white-700">{event.extendedProps.label}</td>

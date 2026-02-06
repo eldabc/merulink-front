@@ -33,7 +33,7 @@ function EventListContent({ categoryKeys }) {
   const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
   const bankingMondaysCategoryKey = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
-  const eventWithLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
+  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
 
   useEffect(() => {
     setSearchValue('');
@@ -142,7 +142,7 @@ function EventListContent({ categoryKeys }) {
                     ) : (
                       <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
                     )}
-                    {!eventWithLocation && (
+                    {!eventWithoutLocation && (
                       <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
                     )}
                     <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
@@ -155,7 +155,7 @@ function EventListContent({ categoryKeys }) {
                       key={item.id} 
                       event={item} 
                       isMeruBirthday={isMeruBirthday} 
-                      eventWithLocation={eventWithLocation} 
+                      eventWithoutLocation={eventWithoutLocation} 
                     />
                   ))}
                 </tbody>
