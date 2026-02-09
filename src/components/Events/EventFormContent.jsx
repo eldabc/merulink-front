@@ -27,7 +27,12 @@ export default function EventFormContent({
   return (
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
-      
+      <InfoToggleSeccion
+        isTemplate={isTemplate}
+        setIsTemplate={setIsTemplate}
+        createdBy={createdBy}
+        showTemplateToggle={!handleYearlyEvent(selectedCategory)}
+      />
       <div className='border border-[#ffffff21]
                       md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                       md:[&>*:nth-child(2n)]:pl-4 p-7'
@@ -222,13 +227,6 @@ export default function EventFormContent({
             </>
           )}
         </div>
-
-        <InfoToggleSeccion
-          isTemplate={isTemplate}
-          setIsTemplate={setIsTemplate}
-          createdBy={createdBy}
-          showTemplateToggle={!handleYearlyEvent(selectedCategory)}
-        />
       </div>
     </>
   );

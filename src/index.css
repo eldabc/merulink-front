@@ -154,7 +154,7 @@ footer {
   justify-content:center;
   align-items:flex-start;
   /* min-height:0; */
-  margin: 2% 5%;
+  margin: 1.5% 5%;
 }
 /* .calendar-card{width:100%;max-width:1200px;margin:0 auto;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:16px;padding:26px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 16px 50px rgba(2,6,23,0.6);backdrop-filter:blur(10px);transition:all 0.3s ease} */
 /* .calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.month-title{color:#cfeeff;font-weight:700}.nav-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text-primary);padding:8px 12px;border-radius:10px} */
