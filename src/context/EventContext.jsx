@@ -21,13 +21,14 @@ export const EventProvider = ({ showNotification, children }) => {
   const [error, setError] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [isTemplate, setIsTemplate] = useState(false);
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   const getTemplatesOnly = async (selectedCategory) => {
     setLoadingTemplates(true);
     try {
       // API const response = await fetch('/api/templates');
-      const onlyTemplates = INITIAL_EVENTS.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
+      const onlyTemplates = eventData.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
       
       setTemplates(onlyTemplates);
     } catch (error) {
@@ -234,6 +235,7 @@ export const EventProvider = ({ showNotification, children }) => {
         comments: formData.comments,
         isFixed: isFixed,
         createdBy: formData.extendedProps.createdBy,
+        isTemplate: isTemplate
       },
       className: formData.category
       
@@ -376,7 +378,9 @@ export const EventProvider = ({ showNotification, children }) => {
     specialDays,
     templates,
     getTemplatesOnly,
-    loadingTemplates
+    loadingTemplates,
+    isTemplate,
+    setIsTemplate
   };
 
   return (

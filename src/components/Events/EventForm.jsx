@@ -3,14 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
-import { locations } from '../../utils/StaticData/location-utils';
+// import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
 import { useEffect, useState } from 'react';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
-import ErrorMessage from '../Shared/ErrorMessage.jsx';
-import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
+// import ErrorMessage from '../Shared/ErrorMessage.jsx';
+// import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
@@ -24,11 +24,12 @@ export default function EventForm({ mode = 'create', onBack }) {
   });
   
   const [yearlyEvent, setYearlyEvent] = useState(false);
-  const [isTemplate, setIsTemplate] = useState(false);
+  // const [isTemplate, setIsTemplate] = useState(false);
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
-  const { createEvent, updateEvent, handleGoogleEvents } = useEvents();
+  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate } = useEvents();
+  console.log("isTemplate", isTemplate);
   const navigate = useNavigate();
   const location = useLocation();
   const event = location.state?.data;
@@ -99,7 +100,8 @@ export default function EventForm({ mode = 'create', onBack }) {
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
-        category: category
+        category: category,
+        isTemplate: setIsTemplate(event?.extendedProps?.isTemplate ?? false)
       }
   }
 
@@ -112,8 +114,7 @@ export default function EventForm({ mode = 'create', onBack }) {
 
       if (isGoogleCategory) createdBy = 'Sistema';
 
-      setCreatedBy(createdBy);
-
+      setCreatedBy(createdBy);      
       reset(
         eventReset(categoryTypeExtracted, event)
       );
@@ -122,6 +123,7 @@ export default function EventForm({ mode = 'create', onBack }) {
       setcategoryType(categoryTypeExtracted);
 
     } else if (createMode) {
+      console.log("holaaa", isTemplate)
       reset(
         eventReset('', null)
       );
@@ -133,7 +135,7 @@ export default function EventForm({ mode = 'create', onBack }) {
 
     const onSubmit = async (data) => {
       let success = false;
-      data = { ...data, extendedProps: { createdBy: createdBy } }
+      data = { ...data, extendedProps: { createdBy: createdBy, isTemplate: isTemplate } }
 
       if (isGoogleCategory) {
         success = await  handleGoogleEvents(updatedData(data,event));
@@ -188,7 +190,9 @@ export default function EventForm({ mode = 'create', onBack }) {
     }
 
     const applyTemplate = (templateData) => {
-      const eventFormated = eventReset(selectedCategory, templateData);
+      console.log("ccc", templateData)
+      const data = { ...templateData, extendedProps: {isTemplate: false} }
+      const eventFormated = eventReset(selectedCategory, data);
         reset({
           ...watch(), // Mantener lo que ya esté en form
           ...eventFormated
@@ -256,8 +260,8 @@ export default function EventForm({ mode = 'create', onBack }) {
                         isGoogleCategory={isGoogleCategory}
                         isMeruBirthdays={isMeruBirthdays}
                         eventWithoutLocation={eventWithoutLocation}
-                        isTemplate={isTemplate}
-                        setIsTemplate={setIsTemplate}
+                        // isTemplate={isTemplate}
+                        // setIsTemplate={setIsTemplate}
                         createdBy={createdBy}
                         guestNextDate={guestNextDate}
                         handleNextTime={handleNextTime}

@@ -1,6 +1,6 @@
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
-import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
+// import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { locations } from '../../utils/StaticData/location-utils';
 
 export default function EventFormContent({ 
@@ -18,7 +18,7 @@ export default function EventFormContent({
   isMeruBirthdays,
   eventWithoutLocation,
   isTemplate,
-  setIsTemplate,
+  // setIsTemplate,
   createdBy,
   guestNextDate,
   handleNextTime,
@@ -28,8 +28,8 @@ export default function EventFormContent({
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
       <InfoToggleSeccion
-        isTemplate={isTemplate}
-        setIsTemplate={setIsTemplate}
+        // isTemplate={isTemplate}
+        // setIsTemplate={setIsTemplate}
         createdBy={createdBy}
         showTemplateToggle={!handleYearlyEvent(selectedCategory)}
       />
