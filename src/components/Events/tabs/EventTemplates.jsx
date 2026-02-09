@@ -1,14 +1,12 @@
 import { useEffect } from 'react';
 import { useEvents } from '../../../context/EventContext';
 
-function EventTemplates() {
+function EventTemplates({selectedCategory}) {
   const { templates, getTemplatesOnly, loadingTemplates } = useEvents();
 
   useEffect(() => {
-    if (templates.length === 0) {
-      getTemplatesOnly();
-    }
-  }, []);
+      getTemplatesOnly(selectedCategory);
+  }, [selectedCategory]);
 
   if (loadingTemplates) return <div className="p-4 text-center">Buscando plantillas...</div>;
 

@@ -256,7 +256,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                         handleYearlyEvent={handleYearlyEvent}
                       />
                     )}
-                    {activeTab === 'eventTemplates' && ( <EventTemplates  /> )}
+                    {activeTab === 'eventTemplates' && ( <EventTemplates selectedCategory={selectedCategory}  /> )}
                   </div>
                 </div>
               )}

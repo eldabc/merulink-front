@@ -23,11 +23,11 @@ export const EventProvider = ({ showNotification, children }) => {
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const API_KEY = import.meta.env.VITE_API_KEY;
 
-  const getTemplatesOnly = async () => {
+  const getTemplatesOnly = async (selectedCategory) => {
     setLoadingTemplates(true);
     try {
       // API const response = await fetch('/api/templates');
-      const onlyTemplates = INITIAL_EVENTS.filter(ev => ev.extendedProps?.isTemplate === true);
+      const onlyTemplates = INITIAL_EVENTS.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
       
       setTemplates(onlyTemplates);
     } catch (error) {

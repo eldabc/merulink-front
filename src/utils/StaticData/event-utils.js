@@ -240,6 +240,24 @@ export const INITIAL_EVENTS = [
       isTemplate: true,
     },
     className: 'meru-events',
+  },
+  {
+    id: createEventId(),
+    title: 'Evento 14',
+    start: todayStr+ 'T13:00:00',
+    end: todayStr+ 'T15:00:00',
+    extendedProps: {
+      category: 'wedding-nights',
+      label: 'Plan Noche de Bodas',
+      status: 'Tentativo',
+      locationId: 2,
+      locationName: 'Salon 2',
+      coloringDay: true,
+      comments: 'Comentario del evento 14',
+      createdBy: "Ana Luna",
+      isTemplate: true,
+    },
+    className: 'di-heights-wedding-nights', 
   }
 ]
 
