@@ -34,6 +34,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const event = location.state?.data;
   const disabled = event?.extendedProps?.status === 'Finalizado' ? true : false;
 
+  const createMode =  mode === 'create';
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
 
@@ -80,20 +81,11 @@ export default function EventForm({ mode = 'create', onBack }) {
     return  { ...data, id: event.id }; 
   }
 
-  useEffect(() => {
-    if (event && (editMode || viewMode)) {
-        
-      const divideDateTimeStart = divideDateTime(event?.start);
-      const divideDateTimeEnd = divideDateTime(event?.end);
-      const categoryTypeExtracted = event?.extendedProps?.category;
-      const yearlyEventValue = handleYearlyEvent(categoryTypeExtracted);
-      let createdBy = event.extendedProps?.createdBy;
-
-      if (isGoogleCategory) createdBy = 'Sistema';
-
-      setCreatedBy(createdBy);
-
-      reset({
+  const eventReset = (category, event) => {
+   
+    const divideDateTimeStart = divideDateTime(event?.start);
+    const divideDateTimeEnd = divideDateTime(event?.end);
+    return {
         eventName: event?.title ?? '',
         startDate: divideDateTimeStart?.date ?? null,
         startTime: divideDateTimeStart?.time ?? null,
@@ -107,29 +99,32 @@ export default function EventForm({ mode = 'create', onBack }) {
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
-        category: categoryTypeExtracted
-      });
+        category: category
+      }
+  }
+
+  useEffect(() => {
+    if (event && (editMode || viewMode)) {
+        
+      const categoryTypeExtracted = event?.extendedProps?.category;
+      const yearlyEventValue = handleYearlyEvent(categoryTypeExtracted);
+      let createdBy = event.extendedProps?.createdBy;
+
+      if (isGoogleCategory) createdBy = 'Sistema';
+
+      setCreatedBy(createdBy);
+
+      reset(
+        eventReset(categoryTypeExtracted, event)
+      );
 
       setYearlyEvent(yearlyEventValue);
       setcategoryType(categoryTypeExtracted);
 
-    } else if (mode === 'create') {
-      reset({
-        category: '',
-        eventName: '',
-        startDate: null,
-        startTime: null,
-        endDate: null,
-        endTime: null,
-        status: '',
-        locationId: '',
-        repeatEvent: false,
-        repeatInterval: '',
-        createAlert: false,
-        coloringDay: false,
-        description: '',
-        comments: '',
-      });
+    } else if (createMode) {
+      reset(
+        eventReset('', null)
+      );
 
       setYearlyEvent(false);
       setcategoryType('');
@@ -149,7 +144,7 @@ export default function EventForm({ mode = 'create', onBack }) {
       }
 
       if (success) {
-        if (mode === 'create') navigate(-1);
+        if (createMode) navigate(-1);
         else navigate(-2);
       }
     };
@@ -192,6 +187,18 @@ export default function EventForm({ mode = 'create', onBack }) {
       }
     }
 
+    const applyTemplate = (templateData) => {
+      const eventFormated = eventReset(selectedCategory, templateData);
+        reset({
+          ...watch(), // Mantener lo que ya esté en form
+          ...eventFormated
+        }
+      );
+      
+      // Volver a pestaña del formulario
+      setActiveTab('formEvent');
+    };
+
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
         {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={event} disabled={disabled} /> }
@@ -231,6 +238,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                       activeTab={activeTab} 
                       setActiveTab={setActiveTab} 
                       event={event}
+                      mode={mode}
                   />
                   <div className="mt-6">     
                     {activeTab === 'formEvent' && (
@@ -256,7 +264,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                         handleYearlyEvent={handleYearlyEvent}
                       />
                     )}
-                    {activeTab === 'eventTemplates' && ( <EventTemplates selectedCategory={selectedCategory}  /> )}
+                    {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory}  /> )}
                   </div>
                 </div>
               )}

@@ -6,6 +6,6 @@ export const tabs = [
 ];
 
 export const tabsEvents = [
-    { id: "formEvent", label: "Datos del Evento" },
+    { id: "formEvent", label: "Nuevo Evento" },
     { id: "eventTemplates", label: "Usar Plantilla" },
 ];

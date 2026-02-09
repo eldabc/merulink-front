@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useEvents } from '../../../context/EventContext';
 
-function EventTemplates({selectedCategory}) {
+function EventTemplates({applyTemplate, selectedCategory}) {
   const { templates, getTemplatesOnly, loadingTemplates } = useEvents();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function EventTemplates({selectedCategory}) {
             <button 
               type="button"
               className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded shadow-md transition-all"
-              onClick={() => console.log("Aplicar esta plantilla", temp)}
+              onClick={() => applyTemplate(temp)}
             >
               Usar Plantilla
             </button>

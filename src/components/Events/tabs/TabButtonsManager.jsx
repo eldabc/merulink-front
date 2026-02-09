@@ -1,9 +1,14 @@
 import { tabsEvents } from '../../../utils/tabs-utils';
 
-function TabButtonsManager({ activeTab, setActiveTab, event }) { //, errors, tempFlags
+function TabButtonsManager({ activeTab, setActiveTab, event, mode }) { //, errors, tempFlags
     return (
         <div className="flex flex-col md:flex-row gap-4 border-b border-gray-700">
-          {tabsEvents.map((tab) => {
+          {tabsEvents
+            .filter(() => {
+              if ((mode === 'create')) return true;
+              return false;
+            })
+            .map((tab) => {
             // determine if this tab currently has errors from formState.errors
             // const tabError = (() => {
             //   if (!errors) return false;

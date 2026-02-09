@@ -7,7 +7,6 @@ export const INITIAL_EVENTS = [
     title: 'Evento 1',
     start: todayStr+ 'T13:00:00',
     end: todayStr+ 'T15:00:00',
-    allDay: true,
     extendedProps: {
       category: 'meru-events',
       label: 'Eventos Merú',
@@ -201,7 +200,7 @@ export const INITIAL_EVENTS = [
     id: createEventId(),
     title: 'Evento 12 Plantilla',
     start: todayStr+ 'T13:00:00',
-    allDay: true,
+    end: todayStr+ 'T15:00:00',
     extendedProps: {
       category: 'meru-events',
       label: 'Eventos Merú',
@@ -224,6 +223,7 @@ export const INITIAL_EVENTS = [
     id: createEventId(),
     title: 'Evento 13 Plantilla',
     start: '2026-02-10T00:00:00',
+    end: '2026-02-10TT15:00:00',
     extendedProps: {
      category: 'meru-events',
       label: 'Eventos Merú',

@@ -52,7 +52,7 @@ export function formatDateToEvent(dateEvent, timeEvent) {
 }
 
 export function divideDateTime(isoString) {
-  if (!isoString) return { date: '', time: '' };
+  if (!isoString) return { date: null, time: null };
 
   const [date, fullTime] = isoString.split('T');
   const time = fullTime ? fullTime.substring(0, 5) : '';
