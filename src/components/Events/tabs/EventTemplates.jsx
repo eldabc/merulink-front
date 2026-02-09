@@ -1,10 +1,40 @@
+import { useEffect } from 'react';
+import { useEvents } from '../../../context/EventContext';
 
-function EventTemplates({ activeTab, setActiveTab, event }) { //, errors, tempFlags
-    return (
-        <div className="flex flex-col md:flex-row gap-4 mt-6 border-b border-gray-700">
-            <h3>Test EventTemplatees</h3>
-        </div>
-    );
+function EventTemplates() {
+  const { templates, getTemplatesOnly, loadingTemplates } = useEvents();
+
+  useEffect(() => {
+    if (templates.length === 0) {
+      getTemplatesOnly();
+    }
+  }, []);
+
+  if (loadingTemplates) return <div className="p-4 text-center">Buscando plantillas...</div>;
+
+  return (
+    <div className="grid grid-cols-1 gap-4 p-4">
+      {templates.length > 0 ? (
+        templates.map(temp => (
+          <div key={temp.id} className="bg-[#2f3d44] p-4 rounded-lg flex justify-between items-center border border-gray-600">
+            <div>
+              <h4 className="text-white font-bold">{temp.title}</h4>
+              <p className="text-sm text-gray-400">{temp.extendedProps?.category}</p>
+            </div>
+            <button 
+              type="button"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded shadow-md transition-all"
+              onClick={() => console.log("Aplicar esta plantilla", temp)}
+            >
+              Usar Plantilla
+            </button>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-400 text-center">No hay plantillas guardadas.</p>
+      )}
+    </div>
+  );
 }
 
 export default EventTemplates;

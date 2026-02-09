@@ -2,7 +2,7 @@ import { tabsEvents } from '../../../utils/tabs-utils';
 
 function TabButtonsManager({ activeTab, setActiveTab, event }) { //, errors, tempFlags
     return (
-        <div className="flex flex-col md:flex-row gap-4 mt-6 border-b border-gray-700">
+        <div className="flex flex-col md:flex-row gap-4 border-b border-gray-700">
           {tabsEvents.map((tab) => {
             // determine if this tab currently has errors from formState.errors
             // const tabError = (() => {
@@ -25,7 +25,7 @@ function TabButtonsManager({ activeTab, setActiveTab, event }) { //, errors, tem
                 <button
                   type='button'
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mt-6 mb-2 p-2
+                  className={`px-4 py-2 border-b-2 transition-all text-xl font-bold text-white-700 mb-2 p-2
                     ${activeTab === tab.id
                       ? "border-blue-500 text-[#9fd8ff]"
                       : "border-transparent text-gray-400 hover:text-gray-200"}

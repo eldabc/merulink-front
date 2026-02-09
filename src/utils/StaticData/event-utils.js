@@ -196,6 +196,50 @@ export const INITIAL_EVENTS = [
       createdBy: "Riad Abdo"
     },
     className: 'banking-mondays',
+  },
+   {
+    id: createEventId(),
+    title: 'Evento 12 Plantilla',
+    start: todayStr+ 'T13:00:00',
+    allDay: true,
+    extendedProps: {
+      category: 'meru-events',
+      label: 'Eventos Merú',
+      status: 'Tentativo',
+      locationId: 1,
+      locationName: 'Salon 1',
+      repeatEvent: true,
+      repeatInterval: 'Mensual',
+      createAlert: true,
+      coloringDay: true,
+      description: 'Descripción del evento 12',
+      comments: 'Comentarios del evento 12',
+      createdBy: "Ana Luna",
+      isTemplate: true,
+    },
+    className: 'meru-events',
+
+  },
+  {
+    id: createEventId(),
+    title: 'Evento 13 Plantilla',
+    start: '2026-02-10T00:00:00',
+    extendedProps: {
+     category: 'meru-events',
+      label: 'Eventos Merú',
+      status: 'Tentativo',
+      locationId: 2,
+      locationName: 'Salon 2',
+      repeatEvent: false,
+      repeatInterval: '',
+      createAlert: true,
+      coloringDay: true,
+      description: 'Descripción del evento 13',
+      comments: 'Comentarios del evento 13',
+      createdBy: "Ana Luna",
+      isTemplate: true,
+    },
+    className: 'meru-events',
   }
 ]
 

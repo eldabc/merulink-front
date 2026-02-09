@@ -19,7 +19,23 @@ export const EventProvider = ({ showNotification, children }) => {
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [templates, setTemplates] = useState([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
   const API_KEY = import.meta.env.VITE_API_KEY;
+
+  const getTemplatesOnly = async () => {
+    setLoadingTemplates(true);
+    try {
+      // API const response = await fetch('/api/templates');
+      const onlyTemplates = INITIAL_EVENTS.filter(ev => ev.extendedProps?.isTemplate === true);
+      
+      setTemplates(onlyTemplates);
+    } catch (error) {
+      console.error("Error cargando plantillas:", error);
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
 
   // Traer datos de Google manualmente
   const fetchGoogleEvents = async (year) => {
@@ -357,7 +373,10 @@ export const EventProvider = ({ showNotification, children }) => {
     handleGoogleEvents,
     updateEvent,
     deleteEvent,
-    specialDays
+    specialDays,
+    templates,
+    getTemplatesOnly,
+    loadingTemplates
   };
 
   return (
