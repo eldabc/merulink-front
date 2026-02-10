@@ -7,20 +7,20 @@ import { useEffect } from 'react';
 export default function EventFormContent({ 
   register, 
   errors, 
-  event, 
+  // event, 
   viewMode, 
   editMode,
-  selectedCategory,
+  // selectedCategory,
   meruEventsFlag,
   eventOneDayWithEndTime,
   isRepeatEvent,
   isGoogleCategory,
-  isMeruBirthdays,
-  eventWithoutLocation,
+  // isMeruBirthdays,
+  // eventWithoutLocation,
   createdBy,
   guestNextDate,
   handleNextTime,
-  handleYearlyEvent,
+  // handleYearlyEvent,
   setValue
 }) {
 
