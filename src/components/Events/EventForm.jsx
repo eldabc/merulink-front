@@ -20,11 +20,10 @@ export default function EventForm({ mode = 'create', onBack }) {
       reValidateMode: 'onChange'
   });
   
-  const [yearlyEvent, setYearlyEvent] = useState(false);
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
-  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, setSelectedCategory } = useEvents();
+  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, setSelectedCategory, config } = useEvents();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,7 +48,7 @@ export default function EventForm({ mode = 'create', onBack }) {
     if (typeof selectedCategory !== 'undefined') {
       setSelectedCategory(selectedCategory);
     }
-  }, [selectedCategory, setSelectedCategory]); 
+  }, [selectedCategory]); 
   
   // Al seleccionar
   const handleEventChange = (e) => {
@@ -59,25 +58,7 @@ export default function EventForm({ mode = 'create', onBack }) {
       setValue('category', '');
       return navigate('/eventos/lunes-bancarios/nuevo'); 
     }
-  
-
-    const yearlyEventValue = handleYearlyEvent(selectedEventId);
-
-    setYearlyEvent(yearlyEventValue);
-
-    const defaultRepitedEvent = yearlyEventValue ? true : false;
-    const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
-
-
-    setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
-    setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
-
-    setValue('endDate', null, { shouldValidate: false });
   };
-
-  const handleYearlyEvent = (categoryType) => {
-    return categoryType === 'meru-birthdays' || categoryType === 've-holidays' || categoryType === 'google-calendar';
-  }
 
   const updatedData = (data, event) => { 
     return  { ...data, id: event.id }; 
@@ -110,7 +91,6 @@ export default function EventForm({ mode = 'create', onBack }) {
     if (event && (editMode || viewMode)) {
         
       const categoryTypeExtracted = event?.extendedProps?.category;
-      const yearlyEventValue = handleYearlyEvent(categoryTypeExtracted);
       let createdBy = event.extendedProps?.createdBy;
 
       if (isGoogleCategory) createdBy = 'Sistema';
@@ -120,7 +100,6 @@ export default function EventForm({ mode = 'create', onBack }) {
         eventReset(categoryTypeExtracted, event)
       );
 
-      setYearlyEvent(yearlyEventValue);
       setcategoryType(categoryTypeExtracted);
 
     } else if (createMode) {
@@ -128,7 +107,6 @@ export default function EventForm({ mode = 'create', onBack }) {
         eventReset('', null)
       );
 
-      setYearlyEvent(false);
       setcategoryType('');
     }
   }, [event, mode, reset]);
@@ -255,14 +233,13 @@ export default function EventForm({ mode = 'create', onBack }) {
                         meruEventsFlag={meruEventsFlag}
                         eventOneDayWithEndTime={eventOneDayWithEndTime}
                         isRepeatEvent={isRepeatEvent}
-                        yearlyEvent={yearlyEvent}
                         isGoogleCategory={isGoogleCategory}
                         isMeruBirthdays={isMeruBirthdays}
                         eventWithoutLocation={eventWithoutLocation}
                         createdBy={createdBy}
                         guestNextDate={guestNextDate}
                         handleNextTime={handleNextTime}
-                        handleYearlyEvent={handleYearlyEvent}
+                        setValue={setValue}
                       />
                     )}
                     {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory}  /> )}

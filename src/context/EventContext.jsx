@@ -3,7 +3,7 @@ import { useLocationsHook } from '../hooks/useLocations';
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { INITIAL_EVENTS, fixedEvents } from '../utils/StaticData/event-utils';
-import { CATEGORY_CONFIGS } from '../utils/eventConfig';
+import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
 const EventContext = createContext();
 
 const { getLocationById } = useLocationsHook();
@@ -18,7 +18,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const [selectedCategory, setSelectedCategory] = useState('');
 
   //Configuración basada en la categoría seleccionada
-  const config = CATEGORY_CONFIGS[selectedCategory] || CATEGORY_CONFIGS['default'];
+  const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
     
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(false);

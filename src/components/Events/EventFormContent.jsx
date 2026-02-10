@@ -2,6 +2,7 @@ import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
 import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
+import { useEffect } from 'react';
 
 export default function EventFormContent({ 
   register, 
@@ -13,23 +14,35 @@ export default function EventFormContent({
   meruEventsFlag,
   eventOneDayWithEndTime,
   isRepeatEvent,
-  yearlyEvent,
   isGoogleCategory,
   isMeruBirthdays,
   eventWithoutLocation,
   createdBy,
   guestNextDate,
   handleNextTime,
-  handleYearlyEvent
+  handleYearlyEvent,
+  setValue
 }) {
 
   const { config } = useEvents();
+  const yearlyEvent = config?.isYearly;
+
+  useEffect(() => {
+    const yearlyEventValue = config?.isYearly;
+    const defaultRepitedEvent = yearlyEventValue ? true : false;
+    const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+
+    setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
+    setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+    setValue('endDate', null, { shouldValidate: false });
+  }, [config, setValue]);
+
   return (
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
       <InfoToggleSeccion
         createdBy={createdBy}
-        showTemplateToggle={!handleYearlyEvent(selectedCategory)}
+        showTemplateToggle={!yearlyEvent}
       />
       <div className='border border-[#ffffff21]
                       md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
