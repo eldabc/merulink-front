@@ -1,6 +1,7 @@
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
 import { locations } from '../../utils/StaticData/location-utils';
+import { useEvents } from '../../context/EventContext';
 
 export default function EventFormContent({ 
   register, 
@@ -21,6 +22,8 @@ export default function EventFormContent({
   handleNextTime,
   handleYearlyEvent
 }) {
+
+  const { config } = useEvents();
   return (
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
@@ -63,20 +66,21 @@ export default function EventFormContent({
             {errors?.startDate && <ErrorMessage msg={errors.startDate.message} /> }  
           </div>
 
-          {!eventOneDayWithEndTime && ( 
-              <>
-                <div>
-                  <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
-                </div>
-                <div>
-                  <input 
-                    readOnly={viewMode}
-                    {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
-                  {errors?.endDate && <ErrorMessage msg={errors.endDate.message} />}  
-                </div> 
-              </>
-            )}
-          {meruEventsFlag && (
+          {config?.hasEndDate && ( 
+            <>
+              <div>
+                <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
+              </div>
+              <div>
+                <input 
+                  readOnly={viewMode}
+                  {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                {errors?.endDate && <ErrorMessage msg={errors.endDate.message} />}  
+              </div> 
+            </>
+          )}
+
+          {config?.hasStartTime && (
             <>
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Inicio: *</label>
@@ -87,7 +91,11 @@ export default function EventFormContent({
                   {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                 {errors?.startTime && <ErrorMessage msg={errors.startTime.message} /> }
               </div>
-          
+            </>
+          )}
+
+          {config?.hasEndTime && (
+            <>
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Fin: *</label>
               </div>
@@ -97,6 +105,11 @@ export default function EventFormContent({
                   {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                 {errors?.endTime && <ErrorMessage msg={errors.endTime.message} /> }
               </div> 
+            </>
+          )}
+
+          {config?.hasStatus && (
+            <>
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Estado: *</label>
               </div>
@@ -114,7 +127,8 @@ export default function EventFormContent({
               </div>
             </> 
           )}
-          {!eventWithoutLocation && (
+
+          {config?.hasLocation && (
             <>
             <div>
               <label className="block text-xl font-medium text-gray-300 mt-1"> Ubicación: *</label>
@@ -134,31 +148,38 @@ export default function EventFormContent({
             </div> 
             </> 
           )}
-          <div>
-            <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: </label>
-          </div>
-          <div className='flex flex-row items-center gap-2'>
-            <input 
-              disabled={viewMode || yearlyEvent}
-              {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
-            <div>
-              <select 
-                disabled= {viewMode || !isRepeatEvent || yearlyEvent}
-                {...register('repeatInterval')}
-                className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                ${viewMode || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
-              >
-                  <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                  <option className='bg-[#3c4042]' value='Anual'>Anual</option>
-                  <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
-                  <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
 
-                  {isGoogleCategory && (<option className='bg-[#3c4042]' value='Aleatorio'>Aleatorio</option>)}
-              </select>
-              {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
+          {config?.hasRepeatEvent && (
+            <>
+            <div>
+              <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: </label>
             </div>
-          </div> 
-          {!isMeruBirthdays  && (
+            <div className='flex flex-row items-center gap-2'>
+              <input 
+                disabled={viewMode || yearlyEvent}
+                {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
+              <div>
+                <select 
+                  disabled= {viewMode || !isRepeatEvent || yearlyEvent}
+                  {...register('repeatInterval')}
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
+                  ${viewMode || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                >
+                    <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                    <option className='bg-[#3c4042]' value='Anual'>Anual</option>
+                    <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
+                    <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
+
+                    {isGoogleCategory && (<option className='bg-[#3c4042]' value='Rotativo'>Rotativo</option>)}
+                </select>
+                {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
+              </div>
+            </div> 
+            </>
+          )}
+
+        
+          {config?.hasCreateAlert  && (
             <>
             <div>
               <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: </label>
@@ -169,7 +190,11 @@ export default function EventFormContent({
                 type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
               {errors?.createAlert && <ErrorMessage msg={errors.createAlert.message} /> }  
             </div>
-            
+            </>
+          )}
+
+          {config?.hasColorinDay  && (
+            <>
             <div>
               <label className="block text-xl font-medium text-gray-300 mt-1"> Resaltar Día: </label>
             </div>
@@ -187,12 +212,11 @@ export default function EventFormContent({
                         md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                         md:[&>*:nth-child(2n)]:pl-4 p-7'
         >
-          {!yearlyEvent  && (
+          {config?.hasDescription  && (
             <>
             <div className="md:w-32 md:text-right">
               <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: </label>
             </div>
-            
             <div className="w-full max-w-2xl">
               <textarea
                 readOnly={viewMode}
@@ -204,12 +228,12 @@ export default function EventFormContent({
             </div>
             </>
           )}
-          {!isMeruBirthdays && (
+
+          {config?.hasComments && (
             <>
             <div className="md:w-32 md:text-right">
               <label className="block text-lg font-medium text-gray-300 mt-1">Comentarios: </label>
             </div>
-            
             <div className="w-full max-w-2xl">
               <textarea
                 readOnly={viewMode}

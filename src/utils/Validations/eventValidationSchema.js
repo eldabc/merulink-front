@@ -39,7 +39,7 @@ export const eventValidationSchema = yup.object().shape({
     .transform((curr, orig) => (orig === '' ? null : curr))
     .min(yup.ref('startDate'), 'La fecha de fin no puede ser anterior a la de inicio')
     .when('category', {
-      is: 'meru-events',
+      is: (val) => ['meru-events', 'executive-mod'].includes(val),
       then: (schema) => schema.required('La fecha de fin es obligatoria'),
       otherwise: (schema) => schema.notRequired(),
     }),

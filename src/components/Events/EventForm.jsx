@@ -24,7 +24,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
-  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate } = useEvents();
+  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, setSelectedCategory } = useEvents();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,25 +36,29 @@ export default function EventForm({ mode = 'create', onBack }) {
   const editMode =  mode === 'edit';
 
   let selectedCategory = watch('category');
-  // const selectedStartTime = watch('startTime');
   const isRepeatEvent = watch('repeatEvent');
+  setSelectedCategory(selectedCategory) // Para el contexto
 
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
   const isGoogleCategory = selectedCategory === 'google-calendar'
   const isMeruBirthdays = selectedCategory === 'meru-birthdays'
   const eventWithoutLocation = selectedCategory === 've-holidays' || isMeruBirthdays || isGoogleCategory || selectedCategory === 'executive-mod';
+  
+  
   // Al seleccionar
   const handleEventChange = (e) => {
-    e.stopPropagation();
+    console.log("selectedCategoryWWWW", selectedCategory)
+    // e.stopPropagation();
     const selectedEventId = e.target.value;
 
     if (selectedEventId === 'banking-mondays') {
-      setValue('category', '');
+      // setValue('category', '');
       return navigate('/eventos/lunes-bancarios/nuevo'); 
     }
   
-    setValue('category', selectedEventId, { shouldValidate: true });
+    // setValue('category', selectedEventId, { shouldValidate: true });
+    setSelectedCategory(selectedEventId) // Para actualizar el contexto
 
     const yearlyEventValue = handleYearlyEvent(selectedEventId);
 
