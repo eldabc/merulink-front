@@ -170,7 +170,15 @@ export default function EventForm({ mode = 'create', onBack }) {
     }
 
     const applyTemplate = (templateData) => {
-      const data = { ...templateData, extendedProps: { ...templateData.extendedProps, isTemplate: false} }
+      const data = { 
+                    ...templateData, 
+                    start: null, 
+                    end: null, 
+                    extendedProps: { 
+                      ...templateData.extendedProps, 
+                      isTemplate: false
+                    } 
+                  }
       const eventFormated = eventReset(selectedCategory, data);
         reset({
           ...watch(), // Mantener lo que ya esté en form
