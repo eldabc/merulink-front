@@ -1,6 +1,5 @@
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
-// import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { locations } from '../../utils/StaticData/location-utils';
 
 export default function EventFormContent({ 
@@ -17,8 +16,6 @@ export default function EventFormContent({
   isGoogleCategory,
   isMeruBirthdays,
   eventWithoutLocation,
-  isTemplate,
-  // setIsTemplate,
   createdBy,
   guestNextDate,
   handleNextTime,
@@ -28,8 +25,6 @@ export default function EventFormContent({
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
       <InfoToggleSeccion
-        // isTemplate={isTemplate}
-        // setIsTemplate={setIsTemplate}
         createdBy={createdBy}
         showTemplateToggle={!handleYearlyEvent(selectedCategory)}
       />
@@ -67,6 +62,20 @@ export default function EventFormContent({
               {...register('startDate', {onChange: (e) => guestNextDate(e) })} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
             {errors?.startDate && <ErrorMessage msg={errors.startDate.message} /> }  
           </div>
+
+          {!eventOneDayWithEndTime && ( 
+              <>
+                <div>
+                  <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
+                </div>
+                <div>
+                  <input 
+                    readOnly={viewMode}
+                    {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                  {errors?.endDate && <ErrorMessage msg={errors.endDate.message} />}  
+                </div> 
+              </>
+            )}
           {meruEventsFlag && (
             <>
               <div>
@@ -77,21 +86,8 @@ export default function EventFormContent({
                   readOnly={viewMode}
                   {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                 {errors?.startTime && <ErrorMessage msg={errors.startTime.message} /> }
-
               </div>
-            {!eventOneDayWithEndTime && ( 
-            <>
-              <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
-              </div>
-              <div>
-                <input 
-                  readOnly={viewMode}
-                  {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
-                {errors?.endDate && <ErrorMessage msg={errors.endDate.message} />}  
-              </div> 
-            </>
-          )}
+          
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Fin: *</label>
               </div>
@@ -100,7 +96,6 @@ export default function EventFormContent({
                   readOnly={viewMode}
                   {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
                 {errors?.endTime && <ErrorMessage msg={errors.endTime.message} /> }
-
               </div> 
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Estado: *</label>
