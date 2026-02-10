@@ -34,7 +34,6 @@ export default function EventFormContent({
 
     setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
     setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
-    setValue('endDate', null, { shouldValidate: false });
   }, [config, setValue]);
 
   return (

@@ -12,7 +12,7 @@ function EventTemplates({applyTemplate, selectedCategory}) {
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4">
-      {templates.length > 0 ? (
+      {templates?.length > 0 ? (
         templates.map(temp => (
           <div onClick={() => applyTemplate(temp)} key={temp.id} className="bg-[#2f3d44] hover:bg-[#404f57] p-4 rounded-lg flex justify-between items-center border border-gray-600">
             <div>

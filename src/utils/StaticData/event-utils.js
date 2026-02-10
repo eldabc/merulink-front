@@ -82,8 +82,6 @@ export const INITIAL_EVENTS = [
       category: 'executive-mod',
       label: 'Ejecutivos MOD',
       status: 'Tentativo',
-      // locationId: 3,
-      // locationName: 'Salon 3',
       coloringDay: true,
       comments: 'Comentario del evento 4',
       createdBy: "Riad Abdo"

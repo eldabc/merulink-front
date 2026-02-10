@@ -58,6 +58,8 @@ export default function EventForm({ mode = 'create', onBack }) {
       setValue('category', '');
       return navigate('/eventos/lunes-bancarios/nuevo'); 
     }
+    setValue('endDate', null, { shouldValidate: false });
+
   };
 
   const updatedData = (data, event) => { 
