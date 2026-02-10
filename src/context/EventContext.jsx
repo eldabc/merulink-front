@@ -16,8 +16,8 @@ export const useEvents = () => {
 // Provider con la lógica y el estado
 export const EventProvider = ({ showNotification, children }) => {
   const [selectedCategory, setSelectedCategory] = useState('');
-console.log("selectedCategory contexto", selectedCategory)
-  // Generamos la configuración al vuelo basada en la categoría seleccionada
+
+  //Configuración basada en la categoría seleccionada
   const config = CATEGORY_CONFIGS[selectedCategory] || CATEGORY_CONFIGS['default'];
     
   const [eventData, setEventData] = useState([]);

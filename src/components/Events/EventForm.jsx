@@ -35,30 +35,31 @@ export default function EventForm({ mode = 'create', onBack }) {
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
 
-  let selectedCategory = watch('category');
+  const selectedCategory = watch('category');
   const isRepeatEvent = watch('repeatEvent');
-  setSelectedCategory(selectedCategory) // Para el contexto
 
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
   const isGoogleCategory = selectedCategory === 'google-calendar'
   const isMeruBirthdays = selectedCategory === 'meru-birthdays'
   const eventWithoutLocation = selectedCategory === 've-holidays' || isMeruBirthdays || isGoogleCategory || selectedCategory === 'executive-mod';
-  
+ 
+  // Actualizar contexto cuando cambia el valor en form
+  useEffect(() => {
+    if (typeof selectedCategory !== 'undefined') {
+      setSelectedCategory(selectedCategory);
+    }
+  }, [selectedCategory, setSelectedCategory]); 
   
   // Al seleccionar
   const handleEventChange = (e) => {
-    console.log("selectedCategoryWWWW", selectedCategory)
-    // e.stopPropagation();
     const selectedEventId = e.target.value;
 
     if (selectedEventId === 'banking-mondays') {
-      // setValue('category', '');
+      setValue('category', '');
       return navigate('/eventos/lunes-bancarios/nuevo'); 
     }
   
-    // setValue('category', selectedEventId, { shouldValidate: true });
-    setSelectedCategory(selectedEventId) // Para actualizar el contexto
 
     const yearlyEventValue = handleYearlyEvent(selectedEventId);
 
