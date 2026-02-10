@@ -223,7 +223,7 @@ export const INITIAL_EVENTS = [
     id: createEventId(),
     title: 'Evento 13 Plantilla',
     start: '2026-02-10T00:00:00',
-    end: '2026-02-10TT15:00:00',
+    end:   '2026-02-10T15:00:00',
     extendedProps: {
      category: 'meru-events',
       label: 'Eventos Merú',

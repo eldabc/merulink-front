@@ -3,14 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
-// import { locations } from '../../utils/StaticData/location-utils';
 import { useEvents } from '../../context/EventContext';
 import { useEffect, useState } from 'react';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
-// import ErrorMessage from '../Shared/ErrorMessage.jsx';
-// import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
@@ -24,12 +21,11 @@ export default function EventForm({ mode = 'create', onBack }) {
   });
   
   const [yearlyEvent, setYearlyEvent] = useState(false);
-  // const [isTemplate, setIsTemplate] = useState(false);
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
   const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate } = useEvents();
-  console.log("isTemplate", isTemplate);
+  
   const navigate = useNavigate();
   const location = useLocation();
   const event = location.state?.data;
@@ -83,7 +79,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   }
 
   const eventReset = (category, event) => {
-   
+
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
     return {
@@ -123,7 +119,6 @@ export default function EventForm({ mode = 'create', onBack }) {
       setcategoryType(categoryTypeExtracted);
 
     } else if (createMode) {
-      console.log("holaaa", isTemplate)
       reset(
         eventReset('', null)
       );
@@ -190,8 +185,7 @@ export default function EventForm({ mode = 'create', onBack }) {
     }
 
     const applyTemplate = (templateData) => {
-      console.log("ccc", templateData)
-      const data = { ...templateData, extendedProps: {isTemplate: false} }
+      const data = { ...templateData, extendedProps: { ...templateData.extendedProps, isTemplate: false} }
       const eventFormated = eventReset(selectedCategory, data);
         reset({
           ...watch(), // Mantener lo que ya esté en form
@@ -260,8 +254,6 @@ export default function EventForm({ mode = 'create', onBack }) {
                         isGoogleCategory={isGoogleCategory}
                         isMeruBirthdays={isMeruBirthdays}
                         eventWithoutLocation={eventWithoutLocation}
-                        // isTemplate={isTemplate}
-                        // setIsTemplate={setIsTemplate}
                         createdBy={createdBy}
                         guestNextDate={guestNextDate}
                         handleNextTime={handleNextTime}
