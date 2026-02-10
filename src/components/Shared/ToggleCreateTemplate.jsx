@@ -1,6 +1,7 @@
 
 import { useEvents } from '../../context/EventContext';
-function ToggleCreateTemplate() {
+function ToggleCreateTemplate({readOnly}) {
+  console.log("readOnly", readOnly)
   const { isTemplate, setIsTemplate } = useEvents();
   const toggleIsTemplate = () => {
     setIsTemplate(!isTemplate);
@@ -9,7 +10,7 @@ function ToggleCreateTemplate() {
     <div className="flex items-center gap-4">
       <span className="text-sm font-medium  mr-2 text-gray-200">Crear Plantilla</span>
       <div
-        onClick={() => toggleIsTemplate() }
+        onClick={() => !readOnly && toggleIsTemplate()}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none ${
           isTemplate ? 'bg-[#9fd8ff]' : 'bg-gray-300'
         }`}

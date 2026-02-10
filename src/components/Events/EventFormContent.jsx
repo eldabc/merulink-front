@@ -42,6 +42,7 @@ export default function EventFormContent({
       <InfoToggleSeccion
         createdBy={createdBy}
         showTemplateToggle={!yearlyEvent}
+        readOnly={viewMode}
       />
       <div className='border border-[#ffffff21]
                       md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
