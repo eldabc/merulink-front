@@ -310,9 +310,10 @@ export const EventProvider = ({ showNotification, children }) => {
   };
 
   // *** Actualizar
-  const updateEvent = async (formData) => {
+  const updateEvent = async (formData, messagge) => {
     try {
       const eventId = formData.id;
+      if (!messagge) messagge = "Evento actualizado";
 
       if (!eventId) {
         showNotification('Error: No se encontró el ID del evento', 'error');
@@ -331,7 +332,7 @@ export const EventProvider = ({ showNotification, children }) => {
         );
       });
 
-      showNotification('Evento actualizado con éxito'); 
+      showNotification(`${messagge} con éxito`); 
       return true;
 
     } catch (error) {
