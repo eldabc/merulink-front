@@ -238,9 +238,9 @@ export const EventProvider = ({ showNotification, children }) => {
         description: formData.description,
         comments: formData.comments,
         isFixed: isFixed,
-        createdBy: formData.extendedProps.createdBy,
-        isTemplate: isTemplate,
-        templateName: templateName,
+        createdBy: formData.createdBy,
+        isTemplate: formData.isTemplate,
+        templateName: formData.templateName,
       },
       className: formData.category
       

@@ -40,7 +40,7 @@ function ToggleCreateTemplate({readOnly, register, errors, setValue}) {
         />
       </button>
       {isTemplate && register && (
-        <>
+        <div className='flex flex-col w-2xl'>
           <input 
             readOnly={readOnly}
             type="text" 
@@ -55,7 +55,7 @@ function ToggleCreateTemplate({readOnly, register, errors, setValue}) {
           {errors?.templateName && (
             <span className="text-red-400 text-xs"> {errors.templateName.message} </span>
           )}
-        </>
+        </div>
       )}
     </div>
   );

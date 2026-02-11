@@ -6,21 +6,16 @@ import { useEffect } from 'react';
 
 export default function EventFormContent({ 
   register, 
-  errors, 
-  // event, 
+  errors,  
   viewMode, 
   editMode,
-  // selectedCategory,
   meruEventsFlag,
   eventOneDayWithEndTime,
   isRepeatEvent,
   isGoogleCategory,
-  // isMeruBirthdays,
-  // eventWithoutLocation,
   createdBy,
   guestNextDate,
   handleNextTime,
-  // handleYearlyEvent,
   setValue
 }) {
 
@@ -29,11 +24,13 @@ export default function EventFormContent({
 
   useEffect(() => {
     const yearlyEventValue = config?.isYearly;
-    const defaultRepitedEvent = yearlyEventValue ? true : false;
-    const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+    if (yearlyEventValue) {
+      const defaultRepitedEvent = yearlyEventValue ? true : false;
+      const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
 
-    setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
-    setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+      setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
+      setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+    }    
   }, [config, setValue]);
 
   return (

@@ -27,9 +27,7 @@ function EventTemplates({applyTemplate, selectedCategory}) {
       endDate: divideDateTimeEnd.date, 
       endTime: divideDateTimeEnd.time, 
       ...extendedProps,
-      extendedProps: {
-        createdBy: extendedProps.createdBy
-      }
+      createdBy: extendedProps.createdBy
     };
 
     console.log(flattenedData);

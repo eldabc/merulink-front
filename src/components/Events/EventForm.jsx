@@ -23,7 +23,7 @@ export default function EventForm({ mode = 'create', onBack }) {
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
-  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, templateName, setTemplateName, setSelectedCategory, config } = useEvents();
+  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, templateName, setTemplateName, setSelectedCategory } = useEvents();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,9 +67,13 @@ export default function EventForm({ mode = 'create', onBack }) {
   }
 
   const eventReset = (category, event) => {
-
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
+    const isTemplateValue = event?.extendedProps?.isTemplate ?? false;
+    const templateNameValue = event?.extendedProps?.templateName ?? '';
+
+    setIsTemplate(isTemplateValue);
+    setTemplateName(templateNameValue);
     return {
         eventName: event?.title ?? '',
         startDate: divideDateTimeStart?.date ?? null,
@@ -85,8 +89,8 @@ export default function EventForm({ mode = 'create', onBack }) {
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
         category: category,
-        isTemplate: setIsTemplate(event?.extendedProps?.isTemplate ?? false),
-        templateName: setTemplateName(event?.extendedProps?.templateName || '')
+        isTemplate: isTemplateValue,
+        templateName: templateNameValue
       }
   }
 
@@ -118,11 +122,9 @@ export default function EventForm({ mode = 'create', onBack }) {
       let success = false;
       data = { 
         ...data, 
-        extendedProps: { 
-          createdBy: createdBy, 
-          isTemplate: isTemplate,
-          templateName: templateName
-        } 
+        createdBy: createdBy, 
+        isTemplate: isTemplate,
+        templateName: templateName
       }
 
       if (isGoogleCategory) {
@@ -184,15 +186,12 @@ export default function EventForm({ mode = 'create', onBack }) {
                     end: null, 
                     extendedProps: { 
                       ...templateData.extendedProps, 
-                      isTemplate: false
+                      isTemplate: false,
+                      templateName: ''
                     } 
                   }
       const eventFormated = eventReset(selectedCategory, data);
-        reset({
-          ...watch(), // Mantener lo que ya esté en form
-          ...eventFormated
-        }
-      );
+        reset(eventFormated);
       
       // Volver a pestaña del formulario
       setActiveTab('formEvent');
