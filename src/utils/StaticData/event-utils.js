@@ -213,6 +213,7 @@ export const INITIAL_EVENTS = [
       comments: 'Comentarios del evento 12',
       createdBy: "Ana Luna",
       isTemplate: true,
+      templateName: 'Plantilla Eventos Uno'
     },
     className: 'meru-events',
 
@@ -236,6 +237,7 @@ export const INITIAL_EVENTS = [
       comments: 'Comentarios del evento 13',
       createdBy: "Ana Luna",
       isTemplate: true,
+      templateName: 'Plantilla Eventos Dos'
     },
     className: 'meru-events',
   },
@@ -254,6 +256,7 @@ export const INITIAL_EVENTS = [
       comments: 'Comentario del evento 14',
       createdBy: "Ana Luna",
       isTemplate: true,
+      templateName: 'Plantilla Eventos Tres'
     },
     className: 'di-heights-wedding-nights', 
   }

@@ -19,7 +19,7 @@ function EventTemplates({applyTemplate, selectedCategory}) {
         templates.map(temp => (
           <div onClick={() => applyTemplate(temp)} key={temp.id} className="bg-[#2f3d44] hover:bg-[#404f57] p-4 rounded-lg flex justify-between items-center border border-gray-600">
             <div>
-              <h4 className="text-white font-bold">{temp.title}</h4>
+              <h4 className="text-white font-bold">{temp.extendedProps?.templateName}</h4>
               <p className="text-sm text-gray-400">{temp.extendedProps?.label}</p>
             </div>
             <button 
@@ -35,7 +35,7 @@ function EventTemplates({applyTemplate, selectedCategory}) {
               onClose={() => setIsModalOpen(false)}
               onConfirm={() => handleDeleteEvent(temp.id)}
               title="Eliminar Plantilla"
-              message={`¿Estás seguro de que deseas eliminar "${temp.templateName}"?`}
+              message={`¿Estás seguro de que deseas eliminar "${temp.extendedProps?.templateName}"?`}
             />
           </div>
         ))
