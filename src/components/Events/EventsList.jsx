@@ -61,7 +61,7 @@ const { items, allBankingEvents } = useMemo(() => {
       }
 
       // Extraer TODOS los google-calendar (sin filtro de fecha)
-      const isGoogle = category === 'google-calendar';
+      const isGoogle = category === 'google-calendar' || category === 've-holidays';
       const isFutureOrToday = new Date(ev.start) >= today;
 
       if (showHistory || isGoogle || isFutureOrToday) {

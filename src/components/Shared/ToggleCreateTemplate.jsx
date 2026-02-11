@@ -33,6 +33,7 @@ function ToggleCreateTemplate({readOnly}) {
       </div>
       {isTemplate && (
         <input 
+          readOnly={readOnly}
           type="text" 
           placeholder="Nombre de la plantilla..."
           value={templateName}
