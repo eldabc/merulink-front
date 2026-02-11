@@ -244,16 +244,12 @@ export default function EventForm({ mode = 'create', onBack }) {
                       <EventFormContent
                         register={register}
                         errors={errors}
-                        // event={event}
                         viewMode={viewMode}
                         editMode={editMode}
-                        // selectedCategory={selectedCategory}
                         meruEventsFlag={meruEventsFlag}
                         eventOneDayWithEndTime={eventOneDayWithEndTime}
                         isRepeatEvent={isRepeatEvent}
                         isGoogleCategory={isGoogleCategory}
-                        // isMeruBirthdays={isMeruBirthdays}
-                        // eventWithoutLocation={eventWithoutLocation}
                         createdBy={createdBy}
                         guestNextDate={guestNextDate}
                         handleNextTime={handleNextTime}

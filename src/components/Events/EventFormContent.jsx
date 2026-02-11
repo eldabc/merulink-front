@@ -41,8 +41,11 @@ export default function EventFormContent({
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
       <InfoToggleSeccion
         createdBy={createdBy}
-        showTemplateToggle={true} //!yearlyEvent
+        showTemplateToggle={!isGoogleCategory}
         readOnly={viewMode}
+        register={register}
+        errors={errors}
+        setValue={setValue}
       />
       <div className='border border-[#ffffff21]
                       md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]

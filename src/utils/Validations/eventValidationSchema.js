@@ -109,5 +109,17 @@ export const eventValidationSchema = yup.object().shape({
    .oneOf(['Tentativo', 'Confirmado'], 'Estado inválido'),
     
   coloringDay: yup.boolean(),
+
+  isTemplate: yup.boolean(),
+
+  templateName: yup.string()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .when('isTemplate', {
+      is: true, // Si isTemplate es true (está clickeado)
+      then: (schema) => schema
+        .required('Debe ingresar el nombre de la plantilla'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   
 });

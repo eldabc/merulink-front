@@ -1,10 +1,17 @@
 import { useEvents } from '../../context/EventContext';
+import { useEffect } from 'react';
 
-function ToggleCreateTemplate({readOnly}) {
+function ToggleCreateTemplate({readOnly, register, errors, setValue}) {
   const { isTemplate, setIsTemplate, templateName, setTemplateName } = useEvents();
   
-  const toggleIsTemplate = () => {
+  // Sincronizar el estado del contexto con el formulario cuando cambia isTemplate
+  useEffect(() => {
+    if (setValue) {
+      setValue('isTemplate', isTemplate, { shouldValidate: true });
+    }
+  }, [isTemplate, setValue]);
 
+  const toggleIsTemplate = () => {
     setIsTemplate(!isTemplate);
     if (isTemplate)  setTemplateName('');  // Limpiar nombre plantilla al desmarcar
   }
@@ -19,9 +26,10 @@ function ToggleCreateTemplate({readOnly}) {
         Crear Plantilla
       </span>
       
-      <div
+      <button
+        type="button"
         onClick={() => !readOnly && toggleIsTemplate()}
-        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+        className={`skip-style-btn relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
           isTemplate ? 'bg-[#9fd8ff]' : 'bg-gray-300'
         } ${readOnly ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer'}`}
       >
@@ -30,16 +38,24 @@ function ToggleCreateTemplate({readOnly}) {
             isTemplate ? 'translate-x-6' : 'translate-x-1'
           }`}
         />
-      </div>
-      {isTemplate && (
-        <input 
-          readOnly={readOnly}
-          type="text" 
-          placeholder="Nombre de la plantilla..."
-          value={templateName}
-          onChange={handleTemplateNameChange}
-          className="w-full px-3 py-2 rounded-lg filter-input border"
-        />
+      </button>
+      {isTemplate && register && (
+        <>
+          <input 
+            readOnly={readOnly}
+            type="text" 
+            placeholder="Nombre de la plantilla..."
+            {...register('templateName')}
+            value={templateName}
+            onChange={handleTemplateNameChange}
+            className={`w-full px-3 py-2 rounded-lg filter-input border ${
+              errors?.templateName ? 'border-red-500' : ''
+            }`}
+          />
+          {errors?.templateName && (
+            <span className="text-red-400 text-xs"> {errors.templateName.message} </span>
+          )}
+        </>
       )}
     </div>
   );
