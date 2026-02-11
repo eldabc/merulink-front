@@ -1,11 +1,18 @@
-
 import { useEvents } from '../../context/EventContext';
+
 function ToggleCreateTemplate({readOnly}) {
-  console.log("readOnly", readOnly)
-  const { isTemplate, setIsTemplate } = useEvents();
+  const { isTemplate, setIsTemplate, templateName, setTemplateName } = useEvents();
+  
   const toggleIsTemplate = () => {
+
     setIsTemplate(!isTemplate);
+    if (isTemplate)  setTemplateName('');  // Limpiar nombre plantilla al desmarcar
   }
+
+  const handleTemplateNameChange = (e) => {
+    setTemplateName(e.target.value);
+  }
+
   return (
     <div className="flex items-center gap-4 w-full max-w-2xl py-2">
       <span className="text-sm font-medium text-gray-200 whitespace-nowrap">
@@ -28,6 +35,8 @@ function ToggleCreateTemplate({readOnly}) {
         <input 
           type="text" 
           placeholder="Nombre de la plantilla..."
+          value={templateName}
+          onChange={handleTemplateNameChange}
           className="w-full px-3 py-2 rounded-lg filter-input border"
         />
       )}

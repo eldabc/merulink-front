@@ -26,6 +26,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const [templates, setTemplates] = useState([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
+  const [templateName, setTemplateName] = useState('');
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   const getTemplatesOnly = async (selectedCategory) => {
@@ -136,7 +137,6 @@ export const EventProvider = ({ showNotification, children }) => {
       const newEvent = formattedEvents(formData);
       console.log("Creado", newEvent);
 
-      // Llamado a API
       // const response = await api.post('/subdepartments', newEvent); 
       // const createdRecord = await response.json(); 
 
@@ -239,7 +239,8 @@ export const EventProvider = ({ showNotification, children }) => {
         comments: formData.comments,
         isFixed: isFixed,
         createdBy: formData.extendedProps.createdBy,
-        isTemplate: isTemplate
+        isTemplate: isTemplate,
+        templateName: templateName,
       },
       className: formData.category
       
@@ -385,6 +386,8 @@ export const EventProvider = ({ showNotification, children }) => {
     loadingTemplates,
     isTemplate,
     setIsTemplate,
+    templateName,
+    setTemplateName,
     selectedCategory,
     setSelectedCategory, // Para actualizarla desde el select
     config,
