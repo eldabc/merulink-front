@@ -11,7 +11,7 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
 
   useEffect(() => {
       getTemplatesOnly(selectedCategory);
-  }, [selectedCategory]);
+  }, [selectedCategory, getTemplatesOnly]);
 
   const handleDeleteClick = (template) => {
     setSelectedTemplate(template);
@@ -40,9 +40,7 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
       templateName: ''
     };
 
-    console.log("flattenedData", flattenedData);
     await updateEvent(flattenedData, messagge);
-    getTemplatesOnly(selectedCategory);
     setIsModalOpen(false);
     setSelectedTemplate(null);
   };

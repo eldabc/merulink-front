@@ -29,7 +29,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const [templateName, setTemplateName] = useState('');
   const API_KEY = import.meta.env.VITE_API_KEY;
 
-  const getTemplatesOnly = async (selectedCategory) => {
+  const getTemplatesOnly = useCallback(async (selectedCategory) => {
     setLoadingTemplates(true);
     try {
       // API const response = await fetch('/api/templates');
@@ -41,7 +41,7 @@ export const EventProvider = ({ showNotification, children }) => {
     } finally {
       setLoadingTemplates(false);
     }
-  };
+  }, [eventData]);
 
   // Traer datos de Google manualmente
   const fetchGoogleEvents = async (year) => {
