@@ -10,7 +10,7 @@ export default function LockerRoomPage() {
       <main className="flex-1 rounded p-4 min-h-[60vh]">
         <Routes>
           <Route path="/" element={<LockerRoomList />} />
-          <Route path="/empleados/vestuarios/lockers/nuevo" element={<LockerRoomForm />} />
+          <Route path="nuevo" element={<LockerRoomForm />} />
 
           {/* <Route path="noche-bodas-cena-alturas" element={<EventsList categoryKeys={["wedding-nights", "dinner-heights"]} />} />
           <Route path="festivos-venezolanos-calendario-google" element={<EventsList categoryKeys={["ve-holidays", "google-calendar"]} />} />

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useLockerRooms, LockerRoomProvider } from '../../context/LockerRoomContext';
+import { useLockers } from '../../context/LockerRoomContext';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import LockerRoomRow from './LockerRoomRow';
@@ -8,16 +8,16 @@ import '../../Tables.css';
 
 function LockerRoomList() {
   return (
-    <LockerRoomProvider>
+    // <LockerRoomProvider>
       <LockerRoomListContent />
-    </LockerRoomProvider>
+    // </LockerRoomProvider>
   );
 }
 
 function LockerRoomListContent() {
   const navigate = useNavigate();
-  const { lockerRoomData } = useLockerRooms();
-  console.log('lockerRoomData', lockerRoomData)
+  const { lockerData } = useLockers();
+  console.log('lockerData', lockerData)
     return (
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
         <div className="titles-table flex justify-between items-center mb-4">
@@ -49,7 +49,7 @@ function LockerRoomListContent() {
               </tr>
             </thead>
             <tbody>
-              {lockerRoomData.map((locker) => (
+              {lockerData.map((locker) => (
                 <LockerRoomRow 
                   key={locker.id}
                   locker={locker} 
