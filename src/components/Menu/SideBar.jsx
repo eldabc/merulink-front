@@ -23,7 +23,7 @@ function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, co
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {hasChildren ? (
               <>
-                <button className="arrow-btn" onClick={() => toggleCollapse(JSON.stringify(currentPath))}>
+                <button className="skip-style-btn arrow-btn" onClick={() => toggleCollapse(JSON.stringify(currentPath))}>
                   {isCollapsed ? "▶" : "▼"}
                 </button>
 

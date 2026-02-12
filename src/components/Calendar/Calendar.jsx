@@ -220,7 +220,7 @@ export default function Calendar() {
               return (
                 <button
                   key={cat.key.join('-')}
-                  className={`legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'}`}
+                  className={`skip-style-btn legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'}`}
                   onClick={() => toggleCategory(cat.key)}
                 >
                   {cat.label}
