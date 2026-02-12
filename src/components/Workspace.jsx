@@ -6,6 +6,7 @@ const EmployeeList = lazy(() => import("./Employee/EmployeeList"));
 const DepartmentList = lazy(() => import("./Department/DepartmentList"));
 const SubDepartmentList = lazy(() => import("./SubDepartment/SubDepartmentList"));
 const PositionList = lazy(() => import("./Positions/PositionList"));
+const LockerRoomPage = lazy(() => import("./LockerRoom/LockerRoomPage"));
 const EventsPage = lazy(() => import("./Events/EventsPage"));
 import { EventProvider } from "../context/EventContext";
 import { useNotification } from "../context/NotificationContext";
@@ -31,6 +32,9 @@ export default function Workspace({ activeMenu, activePath }) {
         <Route path="/empleados/sub-departamentos" element={<div className="main-workspace"><SubDepartmentList /></div>} />
         <Route path="/empleados/cargos" element={<div className="main-workspace"><PositionList /></div>} />
         
+        {/* Locker Room */}
+        <Route path="/empleados/vestuarios/lockers" element={<LockerRoomPage/> } />
+
         {/* Calendario - Eventos */}
         <Route element={<EventLayout showNotification={showNotification} />}>
           <Route path="/" element={<div className="content-center"><Calendar /></div>} />

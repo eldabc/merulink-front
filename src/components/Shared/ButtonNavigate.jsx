@@ -1,4 +1,4 @@
-function ButtonNavigate({ url, navigate, flagDisabled = false}) {
+function ButtonNavigate({ url, navigate, flagDisabled}) {
   return (
     <button
       disabled={flagDisabled}
