@@ -255,7 +255,7 @@ export default function EventForm({ mode = 'create', onBack }) {
                         setValue={setValue}
                       />
                     )}
-                    {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory}  /> )}
+                    {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}
                   </div>
                 </div>
               )}

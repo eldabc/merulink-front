@@ -4,17 +4,25 @@ import ButtonDelete from '../../Shared/ButtonDelete';
 import ConfirmDialog  from '../../Shared/ConfirmDialog';
 import { divideDateTime } from '../../../utils/date-utils';
 
-function EventTemplates({applyTemplate, selectedCategory}) {
+function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
   const { templates, getTemplatesOnly, loadingTemplates, updateEvent, isTemplate } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   useEffect(() => {
       getTemplatesOnly(selectedCategory);
   }, [selectedCategory]);
 
-  const handleEditTemplate = (data) => {
+  const handleDeleteClick = (template) => {
+    setSelectedTemplate(template);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedTemplate) return;
+    
     const messagge = "Plantilla eliminada";
-    const { extendedProps, ...restOfData } = data;
+    const { extendedProps, ...restOfData } = selectedTemplate;
     const divideDateTimeStart = divideDateTime(restOfData?.start);
     const divideDateTimeEnd = divideDateTime(restOfData?.end);
     
@@ -27,15 +35,17 @@ function EventTemplates({applyTemplate, selectedCategory}) {
       endDate: divideDateTimeEnd.date, 
       endTime: divideDateTimeEnd.time, 
       ...extendedProps,
-      createdBy: extendedProps.createdBy
+      createdBy: extendedProps.createdBy,
+      isTemplate: false,
+      templateName: ''
     };
 
-    console.log(flattenedData);
-    console.log("isTemplate EventTemplate", isTemplate);
-    updateEvent(flattenedData, messagge);
-  }
-
-  if (loadingTemplates) return <div className="p-4 text-center">Buscando plantillas...</div>;
+    console.log("flattenedData", flattenedData);
+    await updateEvent(flattenedData, messagge);
+    getTemplatesOnly(selectedCategory);
+    setIsModalOpen(false);
+    setSelectedTemplate(null);
+  };
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4">
@@ -49,25 +59,28 @@ function EventTemplates({applyTemplate, selectedCategory}) {
             <button 
               type="button"
               className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded shadow-md transition-all ml-auto mr-5"
-              
             >
               Usar Plantilla
             </button>
-            <ButtonDelete setIsModalOpen={setIsModalOpen} />
             <div onClick={(e) => e.stopPropagation()}>
-              <ConfirmDialog 
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onConfirm={() => handleEditTemplate(temp)}
-                title="Eliminar Plantilla"
-                message={`¿Estás seguro de que deseas eliminar "${temp.extendedProps?.templateName}"?`}
-              />
-          </div>
+              <ButtonDelete setIsModalOpen={() => handleDeleteClick(temp)} />
+            </div>
           </div>
         ))
       ) : (
         <p className="text-gray-400 text-center">No hay plantillas guardadas.</p>
       )}
+      
+      <ConfirmDialog 
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedTemplate(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar Plantilla"
+        message={`¿Estás seguro de que deseas eliminar "${selectedTemplate?.extendedProps?.templateName}"?`}
+      />
     </div>
   );
 }
