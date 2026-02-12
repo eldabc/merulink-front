@@ -3,6 +3,7 @@ import { useEvents } from '../../context/EventContext';
 import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
 import ButtonDelete from '../Shared/ButtonDelete';
+import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,6 +49,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
           {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
             <ButtonDelete setIsModalOpen={setIsModalOpen} id={event.id} />
           )}
+            {event.extendedProps?.isTemplate && <ButtonIsTemplate/> }
         </td>
       </tr>
       <tr>
