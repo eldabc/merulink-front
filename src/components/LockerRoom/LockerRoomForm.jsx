@@ -9,6 +9,7 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import LockerFormContent from './LockerFormContent.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
+import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
 
 function LockerRoomForm({ mode = 'create' }) {
   
@@ -111,8 +112,9 @@ function LockerRoomForm({ mode = 'create' }) {
                     ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
                   >
                     <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                    <option className='bg-[#3c4042]' value="C">Hombre</option>
-                    <option className='bg-[#3c4042]' value="D">Mujer</option> 
+                    {lockerCategories.map((item) => (
+                      <option key={`category-${item.id}`}  className='bg-[#3c4042]' value={item.key}>{item.value}</option>                
+                    ))}
                   </select>
                     {errors?.category && <ErrorMessage msg={errors.category.message} /> } 
                   </>

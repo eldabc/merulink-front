@@ -35,22 +35,33 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
     loadLockers();
   }, [loadLockers]);
 
+  // Armado JSON
+  const formattedLockers = (formData) => {
+
+    return {
+      id: Date.now(), // ID temporal
+      code: formData.code ? `${formData.category}-${formData.code}` : null,
+      category: formData.category ? formData.category : null,
+      status: formData.status ? formData.status : null,
+    };
+      }
+
   // *** Crear
   const createLocker = async (formData) => {
     try {
       
-      const newLocker = formattedEvents(formData);
+      const newLocker = formattedLockers(formData);
       console.log("Creado", newLocker);
 
       // const response = await api.post('/subdepartments', newEvent); 
       // const createdRecord = await response.json(); 
 
       setLockerData(prevData => [newLocker, ...prevData]);
-      showNotification(`Evento ${newLocker.title} creado con éxito`);
+      showNotification(`Locker ${newLocker.code} creado con éxito`);
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el locker', 'error');
+      showNotification('Error al crear el locker', error.message);
       return false;
     }
   };
