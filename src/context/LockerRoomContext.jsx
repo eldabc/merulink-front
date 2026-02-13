@@ -89,7 +89,7 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
         );
       });
 
-      showNotification(`Locker actualizado con éxito`); 
+      showNotification(`Locker ${formData.code} actualizado con éxito`); 
       return true;
 
     } catch (error) {
@@ -99,16 +99,16 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
   };
 
   // *** Eliminar
-  const deleteLocker = async (id) => {
+  const deleteLocker = async (locker) => {
     try {
       // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
       // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
 
       setLockerData(prevData => {
-        return prevData.filter(ev => ev.id !== id);
+        return prevData.filter(ev => ev.id !== locker.id);
       });
 
-      showNotification(`Locker eliminado con éxito`);
+      showNotification(`Locker ${locker.code} eliminado con éxito`);
       return true;
     } catch (error) {
       showNotification('Error al eliminar el calendario', error.message);

@@ -29,7 +29,7 @@ function LockerRoomRow({ locker }) {
   const handleConfirmDelete = async () => {
     if (!selectedTemplate) return;
 
-    await deleteLocker(selectedTemplate.id);
+    await deleteLocker(selectedTemplate);
     setIsModalOpen(false);
     setSelectedTemplate(null);
   };

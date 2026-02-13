@@ -59,11 +59,11 @@ function LockerRoomForm({ mode = 'create' }) {
     let success = false;
 
     if (editMode && locker) {
-      const data = { 
+      const dataEdit = { 
         ...data, 
         id: locker.id, 
       }
-      success = await updateLocker(data);
+      success = await updateLocker(dataEdit);
     } else {
       success = await createLocker(data);
     }
