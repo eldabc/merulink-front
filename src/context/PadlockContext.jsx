@@ -40,8 +40,8 @@ export const PadlockProvider = ({ children }) => {
 
     return {
       id: Date.now(), // ID temporal
-      code: formData.code ? formData.code : null,
-      category: formData.category ? formData.category : null,
+      serial: formData.serial ? formData.serial : null,
+      pass: formData.pass ? formData.pass : null,
       status: formData.status ? formData.status : null,
     };
   }
