@@ -59,11 +59,11 @@ function LockerRoomForm({ mode = 'create' }) {
     let success = false;
 
     if (editMode && locker) {
-      data = { 
+      const data = { 
         ...data, 
         id: locker.id, 
       }
-      success = await updateoocker(updatedData(data));
+      success = await updateLocker(data);
     } else {
       success = await createLocker(data);
     }
@@ -75,13 +75,12 @@ function LockerRoomForm({ mode = 'create' }) {
   };
 
   const handleCategoryChange = (e) => {
-    // const selectedEventId = e.target.value;
   };
 
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode) && <HeadFormButtons url="/lockers/editar" data={locker} /> }
+        {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/lockers/editar" data={locker} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 

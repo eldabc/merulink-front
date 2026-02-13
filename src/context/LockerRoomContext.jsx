@@ -66,6 +66,38 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
     }
   };
 
+  // *** Actualizar
+  const updateLocker = async (formData, messagge) => {
+    try {
+      const lockerId = formData.id;
+      if (!messagge) messagge = "Locker actualizado";
+
+      if (!lockerId) {
+        showNotification('Error: No se encontró el ID del locker', 'error');
+        return false;
+      }
+
+      const updatedLocker = formattedLockers(formData);
+      console.log("Actualizado:", updatedLocker);
+      
+      // Llamada a la API/Backend (onUpdate)
+      // await api.put(`/events/${lockerId}`, updatedLocker); 
+      
+      setLockerData(prevData => {
+        return prevData.map(locker => 
+          locker.id === lockerId ? updatedLocker : locker 
+        );
+      });
+
+      showNotification(`Locker actualizado con éxito`); 
+      return true;
+
+    } catch (error) {
+      showNotification('Error al actualizar: ' + error.message, 'error');
+      return false;
+    }
+  };
+
 
   const contextValue = {
     lockerData,
@@ -73,6 +105,7 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
     loadLockers,
     error,
     createLocker,
+    updateLocker,
   };
 
   return (
