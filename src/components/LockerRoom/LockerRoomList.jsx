@@ -9,7 +9,7 @@ import '../../Tables.css';
 function LockerRoomList() {
   const navigate = useNavigate();
   const { lockerData } = useLockers();
-  console.log('lockerData', lockerData)
+
     return (
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
         <div className="titles-table flex justify-between items-center mb-4">
@@ -45,7 +45,6 @@ function LockerRoomList() {
                 <LockerRoomRow 
                   key={locker.id}
                   locker={locker} 
-                  // selectedLocker={locker.id}
                 />
               ))}
             </tbody>

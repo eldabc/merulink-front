@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useLockers } from '../../context/LockerRoomContext';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
@@ -8,7 +9,9 @@ import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
 function LockerRoomRow({ locker }) {
 
   const navigate = useNavigate();
+  const { deleteLocker } = useLockers();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   
   const lockerCategory = lockerCategories.find(c => c.key === locker.category);
 
@@ -16,6 +19,19 @@ function LockerRoomRow({ locker }) {
     navigate("/empleados/vestuarios/lockers/ver", { 
       state: { data: locker } 
     }); 
+  };
+
+  const handleDeleteClick = (template) => {
+      setSelectedTemplate(template);
+      setIsModalOpen(true);
+    };
+  
+  const handleConfirmDelete = async () => {
+    if (!selectedTemplate) return;
+
+    await deleteLocker(selectedTemplate.id);
+    setIsModalOpen(false);
+    setSelectedTemplate(null);
   };
 
   return (
@@ -29,17 +45,20 @@ function LockerRoomRow({ locker }) {
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerCategory?.value}</td>
         <td className="px-4 py-3 text-white-700">
-           <ButtonDelete setIsModalOpen={setIsModalOpen} id={locker.id} />
+           <ButtonDelete setIsModalOpen={() => handleDeleteClick(locker)} />
         </td>
       </tr>
       <tr>
         <td>
           <ConfirmDialog 
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onConfirm={() => handleDeletelocker(locker.id)}
-            title="Eliminar locker"
-            message={`¿Estás seguro de que deseas eliminar Locker "${locker.code}"?`}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedTemplate(null);
+            }}
+            onConfirm={handleConfirmDelete}
+            title="Eliminar Locker"
+            message={`¿Estás seguro de que deseas eliminar Locker "${selectedTemplate?.code}"?`}
           />
         </td>
       </tr>
