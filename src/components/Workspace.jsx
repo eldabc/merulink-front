@@ -7,9 +7,12 @@ const DepartmentList = lazy(() => import("./Department/DepartmentList"));
 const SubDepartmentList = lazy(() => import("./SubDepartment/SubDepartmentList"));
 const PositionList = lazy(() => import("./Positions/PositionList"));
 const LockerRoomPage = lazy(() => import("./LockerRoom/LockerRoomPage"));
+const PadlockPage = lazy(() => import("./Padlock/PadlockPage"));
 const EventsPage = lazy(() => import("./Events/EventsPage"));
+
 import { EventProvider } from "../context/EventContext";
 import { LockerRoomProvider } from "../context/LockerRoomContext";
+import { PadlockProvider } from "../context/PadlockContext";
 import { useNotification } from "../context/NotificationContext";
 
 const EventLayout = ({ showNotification }) => (
@@ -22,6 +25,12 @@ const LockerLayout = () => (
   <LockerRoomProvider>
     <Outlet />
   </LockerRoomProvider>
+);
+
+const PadlockLayout = () => (
+  <PadlockProvider>
+    <Outlet />
+  </PadlockProvider>
 );
 
 export default function Workspace({ activeMenu, activePath }) {
@@ -42,6 +51,11 @@ export default function Workspace({ activeMenu, activePath }) {
         {/* Locker Room */}
         <Route element={<LockerLayout />}>
           <Route path="/empleados/vestuarios/lockers/*" element={<LockerRoomPage/> } />
+        </Route>
+
+        {/* Padlock */}
+        <Route element={<PadlockLayout />}>
+          <Route path="/empleados/vestuarios/candados/*" element={<PadlockPage/> } />
         </Route>
 
         {/* Calendario - Eventos */}

@@ -7,7 +7,7 @@ export default function Notification({ title, message, onClose }) {
   // Cuando se va a cerrar → activar animación de salida
   const handleClose = () => {
     setAnimationClass("custom-notification-exit");
-    setTimeout(onClose, 300); // Duración de la animación
+    setTimeout(onClose, 500); // Duración de la animación
   };
 
   return (
