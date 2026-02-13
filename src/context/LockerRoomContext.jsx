@@ -40,7 +40,7 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
 
     return {
       id: Date.now(), // ID temporal
-      code: formData.code ? `${formData.category}-${formData.code}` : null,
+      code: formData.code ? formData.code : null,
       category: formData.category ? formData.category : null,
       status: formData.status ? formData.status : null,
     };

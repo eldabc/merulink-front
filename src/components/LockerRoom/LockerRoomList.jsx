@@ -7,14 +7,6 @@ import '../../Tables.css';
 
 
 function LockerRoomList() {
-  return (
-    // <LockerRoomProvider>
-      <LockerRoomListContent />
-    // </LockerRoomProvider>
-  );
-}
-
-function LockerRoomListContent() {
   const navigate = useNavigate();
   const { lockerData } = useLockers();
   console.log('lockerData', lockerData)
@@ -53,7 +45,7 @@ function LockerRoomListContent() {
                 <LockerRoomRow 
                   key={locker.id}
                   locker={locker} 
-                  // setSelectedPosition={setSelectedPosition}
+                  // selectedLocker={locker.id}
                 />
               ))}
             </tbody>

@@ -27,7 +27,7 @@ function LockerFormContent({ register, errors, createMode, viewMode, editMode  }
           <div>
             <select 
               {...register('status')}
-              disabled={createMode || viewMode}
+              disabled={createMode || viewMode || editMode}
               className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
                 ${viewMode || createMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
                 

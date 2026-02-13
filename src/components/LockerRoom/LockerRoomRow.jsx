@@ -1,17 +1,28 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
 
 function LockerRoomRow({ locker }) {
+
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const lockerCategory = lockerCategories.find(c => c.key === locker.category);
   
+  const lockerCategory = lockerCategories.find(c => c.key === locker.category);
+
+  const selectedLocker = (locker) => {
+    navigate("/empleados/vestuarios/lockers/ver", { 
+      state: { data: locker } 
+    }); 
+  };
+
   return (
     <>
       <tr
         key={locker.id}
-        onClick={() => selectedlocker(locker.id)}
+        onClick={() => selectedLocker(locker)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.status}</td>

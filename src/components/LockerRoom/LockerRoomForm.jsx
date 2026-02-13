@@ -26,15 +26,13 @@ function LockerRoomForm({ mode = 'create' }) {
   const createMode = mode === 'create'
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
+  const lockerCategory = lockerCategories.find(c => c.key === locker?.category);
 
   useEffect(() => {
     if (locker && (editMode || viewMode)) {
-              
       reset(
-        lockerReset(categoryTypeExtracted, locker)
+        lockerReset(lockerCategory, locker)
       );
-
-      setcategoryType(categoryTypeExtracted);
 
     } else if (createMode) {
       reset(
@@ -44,18 +42,12 @@ function LockerRoomForm({ mode = 'create' }) {
   }, [locker, mode, reset]);
 
   const lockerReset = (category, locker) => {
-    // const divideDateTimeStart = divideDateTime(locker?.start);
-    // const divideDateTimeEnd = divideDateTime(locker?.end);
-    // const isTemplateValue = locker?.extendedProps?.isTemplate ?? false;
-    // const templateNameValue = locker?.extendedProps?.templateName ?? '';
-
-    // setIsTemplate(isTemplateValue);
-    // setTemplateName(templateNameValue);
     return {
         code: locker?.code ?? '',
         category: locker?.category ?? '',
         status: locker?.status ?? (createMode ? 'Disponible' : null),
     }
+
   }
 
   const onError = (formErrors) => {
@@ -89,7 +81,7 @@ function LockerRoomForm({ mode = 'create' }) {
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode) && <HeadFormButtons url="/lockers/editar" data={locker} disabled={disabled} /> }
+        {(viewMode) && <HeadFormButtons url="/lockers/editar" data={locker} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
@@ -101,7 +93,7 @@ function LockerRoomForm({ mode = 'create' }) {
               <div className='mt-5'>
                 {viewMode || editMode ? (
                   <div className="text-xl w-full px-3 py-2 rounded-lg bg-[#2f3d44] text-center text-gray-300">
-                    {locker.category}
+                    {lockerCategory?.value}
                   </div>
                 ) : (
                   <>
