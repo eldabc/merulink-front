@@ -39,6 +39,8 @@ export const filterData = (data, searchValue, searchableFields, filterStatus, no
           matchesStatus = itemStatus === true;
         } else if (filterStatus === 'inactivo') {
           matchesStatus = itemStatus === false;
+        } else {
+          matchesStatus = normalizeText(itemStatus) === normalizeText(filterStatus); //  todos los estados que son strings
         }
     }
 

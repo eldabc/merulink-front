@@ -43,9 +43,9 @@ function LockerRoomRow({ locker }) {
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.status === 'Disponible' ? (
-          <BuildingOfficeIcon className="w-5 h-5" title='Locker Disponible'/>
+          <BuildingOfficeIcon className="w-6 h-6 text-[#dcfce7]" title='Locker Disponible'/>
         ) : (
-          <BuildingOfficeIcon className="w-5 h-5 text-gray-500" title='Locker Ocupado'/>
+          <BuildingOfficeIcon className="w-6 h-6 text-[#fee2e2]" title='Locker Ocupado'/>
         )}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerCategory?.value}</td>
