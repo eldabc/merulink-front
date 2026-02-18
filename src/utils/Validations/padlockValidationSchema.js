@@ -2,7 +2,11 @@ import * as yup from 'yup';
 
 export const padlockValidationSchema = yup.object().shape({
   pass: yup.string()
-    .required('Contraseña es requerido'),
+    .required('Contraseña es requerido')
+    .matches(
+      /^[0-9]{2}-[0-9]{2}-[0-9]{2}$/, 
+      'El formato debe ser XX-XX-XX (ej. 12-34-56)'
+    ),
 
   status: yup.string()
     .required('Estatus es requerido'),

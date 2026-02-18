@@ -73,7 +73,7 @@ export const PadlockProvider = ({ children }) => {
       if (!messagge) messagge = "Locker actualizado";
 
       if (!padlockId) {
-        showNotification('Error: No se encontró el ID del padlock', 'error');
+        showNotification('Error: No se encontró el ID del Candado', 'error');
         return false;
       }
 
@@ -89,7 +89,7 @@ export const PadlockProvider = ({ children }) => {
         );
       });
 
-      showNotification(`Locker ${formData.code} actualizado con éxito`); 
+      showNotification(`Locker ${formData.serial} actualizado con éxito`); 
       return true;
 
     } catch (error) {

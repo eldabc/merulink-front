@@ -9,7 +9,6 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
-// import { padlockCategories } from '../../utils/StaticData/padlock-utils.js';
 import LabelFieldForm from "../Shared/LabelFieldForm";
 
 
@@ -21,31 +20,30 @@ function PadlockForm ({ mode = 'create' }) {
     
     const navigate = useNavigate();
     const location = useLocation();
-    const selectedCategory = watch('category');
+    const selectedCategory = watch('pass');
     const padlock = location.state?.data;
     
     const createMode = mode === 'create'
     const viewMode = mode === 'view';
     const editMode =  mode === 'edit';
-    // const padlockCategory = padlockCategories.find(c => c.key === padlock?.category);
   
     useEffect(() => {
       if (padlock && (editMode || viewMode)) {
         reset(
-          padlockReset('padlockCategory', padlock)
+          padlockReset(padlock)
         );
   
       } else if (createMode) {
         reset(
-          padlockReset('', null)
+          padlockReset(null)
         );
       }
     }, [padlock, mode, reset]);
   
-    const padlockReset = (category, padlock) => {
+    const padlockReset = (padlock) => {
       return {
           serial: padlock?.serial ?? '',
-          category: padlock?.category ?? '',
+          pass: padlock?.pass ?? '',
           status: padlock?.status ?? (createMode ? 'Disponible' : null),
       }
   
@@ -75,11 +73,11 @@ function PadlockForm ({ mode = 'create' }) {
       }
     };
   
-    const handleSerialChange = (e) => {
-      let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const handlePassChange = (e) => {
+      let value = e.target.value.toUpperCase().replace(/[^0-9]/g, '');
 
       const maskedValue = value
-        .replace(/^([A-Z0-9]{2})([A-Z0-9]{2})?([A-Z0-9]{2})?/, (match, p1, p2, p3) => {
+        .replace(/^([0-9]{2})([0-9]{2})?([0-9]{2})?/, (match, p1, p2, p3) => {
           let res = p1;
           if (p2) res += `-${p2}`;
           if (p3) res += `-${p3}`;
@@ -94,7 +92,7 @@ function PadlockForm ({ mode = 'create' }) {
   
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/padlocks/editar" data={padlock} /> }
+          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/candados/editar" data={padlock} /> }
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
@@ -109,7 +107,8 @@ function PadlockForm ({ mode = 'create' }) {
                       {...register('serial')} 
                       type='text' 
                       className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
-                      placeholder='Ingrese Serial del Candado'
+                      placeholder='Ingrese Contraseña para el Candado'
+                      maxLength={40}
                     />
                   {errors?.serial && <ErrorMessage msg={errors.serial.message} /> }  
                 </div>
@@ -132,8 +131,8 @@ function PadlockForm ({ mode = 'create' }) {
                           <div className="w-full max-w-2xl">
                             <input 
                               readOnly={viewMode}
-                              {...register('pass')} 
-                              onChange={handleSerialChange}
+                              {...register('pass')}
+                              onChange={handlePassChange} 
                               type='text' 
                               className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
                               placeholder='Ejemplo: 55-44-23'
@@ -152,7 +151,7 @@ function PadlockForm ({ mode = 'create' }) {
                             >
                               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                               <option className='bg-[#3c4042]' value="Disponible">Disponible</option>
-                              <option className='bg-[#3c4042]' value="Ocupado">Asignado</option>
+                              <option className='bg-[#3c4042]' value="Asignado">Asignado</option>
                             </select>
                             {errors?.status && <ErrorMessage msg={errors.status.message} /> }  
                           </div>

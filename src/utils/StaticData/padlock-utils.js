@@ -1,32 +1,32 @@
 export const padlocks = [
   {
     id: 1,
-    serial: '11-22-33',
-    pass: 12345678,
+    serial: 12345678,
+    pass: '11-22-33',
     status: 'Asignado',
   },
   {
     id: 2,
-    serial: '44-55-66',
-    pass: 12345678,
+    serial: 12345678,
+    pass: '44-55-66',
     status: 'Disponible',
   },
   {
     id: 3,
-    serial: '77-88-99',
-    pass: 12345678,
+    serial: 12345678,
+    pass: '77-88-99',
     status: 'Disponible',
   },
   {
     id: 4,
-    serial: '00-11-22',
-    pass: 12345678,
+    serial: 12345678,
+    pass: '00-11-22',
     status: 'Disponible',
   },
   {
     id: 5,
-    serial: '33-44-55',
-    pass: 12345678,
+    serial: 12345678,
+    pass: '33-44-55',
     status: 'Disponible',
   }
 ];
