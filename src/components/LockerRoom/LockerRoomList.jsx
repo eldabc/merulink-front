@@ -22,17 +22,18 @@ function LockerRoomList() {
   const SEARCH_FIELDS = ['code'];
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    if (searchValue.trim() || filterStatus !== 'all' ) {
+    if (searchValue.trim() || filterStatus !== 'all' || filterCategory !== '') {
       setHasSearched(true);
     } else {
       setHasSearched(false);
     }
     setCurrentPage(1);
-  }, [searchValue, filterStatus]);
+  }, [searchValue, filterStatus, filterCategory]);
 
   // Filtrar
   const filteredLockers = useMemo(() => {
@@ -42,9 +43,10 @@ function LockerRoomList() {
           searchValue,
           SEARCH_FIELDS,
           filterStatus,
-          normalizeText
+          normalizeText,
+          filterCategory
       );
-  }, [lockerData, searchValue, filterStatus]);
+  }, [lockerData, searchValue, filterStatus, filterCategory]);
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredLockers : lockerData;
@@ -67,9 +69,11 @@ function LockerRoomList() {
           onSearchChange={setSearchValue}
           filterStatus={filterStatus}
           onFilterStatus={setFilterStatus}
+          onFilterCategory={setFilterCategory}
           moduleName='Locker'
-          placeholder={'Ingrese código o categoría del locker'}
+          placeholder={'Ingrese código del locker'}
           showFilterStatus={true}
+          showFilterCategory={true}
           active='disponible'
           inactive='ocupado'
         />

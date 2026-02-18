@@ -8,11 +8,11 @@
  * @param {function} normalizeText - Función de utilidad para normalizar el texto.
  * @returns {Array<Object>} El array de datos filtrado.
  */
-export const filterData = (data, searchValue, searchableFields, filterStatus, normalizeText) => {
+export const filterData = (data, searchValue, searchableFields, filterStatus, normalizeText, filterCategory = '') => {
 
   const normalizedValue = normalizeText(searchValue);
 
-  if (normalizedValue === '' && (filterStatus === 'all' || !filterStatus)) {
+  if (normalizedValue === '' && (filterStatus === 'all' || !filterStatus) && !filterCategory) {
     return data;
   }
 
@@ -44,6 +44,11 @@ export const filterData = (data, searchValue, searchableFields, filterStatus, no
         }
     }
 
-    return matchesSearch && matchesStatus;
+    let matchesCategory = true;
+    if (filterCategory && item.category) {
+      matchesCategory = item.category === filterCategory;
+    }
+
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 };
