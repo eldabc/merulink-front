@@ -3,7 +3,7 @@ import { usePadlocks } from '../../context/PadlockContext';
 
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
-import ButtonDelete from '../Shared/ButtonDelete';
+import PadlockRow from './PadlockRow'; 
 
 import '../../Tables.css';
 
@@ -11,7 +11,6 @@ import '../../Tables.css';
 function PadlockList() {
   const navigate = useNavigate();
   const { padlockData } = usePadlocks();
-console.log("padlocks", padlockData)
 
     return (
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -38,41 +37,14 @@ console.log("padlocks", padlockData)
             <thead>
               <tr className="tr-thead-table">
                 <th className="px-4 py-3 text-left font-semibold">Estatus</th>
-                <th className="px-4 py-3 text-left font-semibold">Código</th>
-                <th className="px-4 py-3 text-left font-semibold">Categoría</th>
+                <th className="px-4 py-3 text-left font-semibold">Serial</th>
+                <th className="px-4 py-3 text-left font-semibold">Contraseña</th>
                 <th className="px-4 py-3 text-left font-semibold">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {padlockData.map((padlok) => (
-                <>
-                  <tr
-                    key={padlok.id}
-                    onClick={() => selectedLocker(padlok)}
-                    className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
-                  >
-                    <td className="px-4 py-3 text-white-800 font-medium ">{padlok.status}</td>
-                    <td className="px-4 py-3 text-white-800 font-medium">{padlok.serial}</td>
-                    <td className="px-4 py-3 text-white-800 font-medium ">{padlok?.pass}</td>
-                    <td className="px-4 py-3 text-white-700">
-                      <ButtonDelete setIsModalOpen={() => handleDeleteClick(padlok)} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      {/* <ConfirmDialog 
-                        isOpen={isModalOpen}
-                        onClose={() => {
-                          setIsModalOpen(false);
-                          setSelectedTemplate(null);
-                        }}
-                        onConfirm={handleConfirmDelete}
-                        title="Eliminar Locker"
-                        message={`¿Estás seguro de que deseas eliminar Locker "${selectedTemplate?.code}"?`}
-                      /> */}
-                    </td>
-                  </tr>
-                </>
+              {padlockData.map((padlock) => (
+                <PadlockRow key={padlock.id} padlock={padlock}/>
               ))}
             </tbody>
           </table>

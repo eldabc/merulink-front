@@ -32,7 +32,7 @@ function PadlockForm ({ mode = 'create' }) {
     useEffect(() => {
       if (padlock && (editMode || viewMode)) {
         reset(
-          padlockReset(padlockCategory, padlock)
+          padlockReset('padlockCategory', padlock)
         );
   
       } else if (createMode) {
@@ -75,7 +75,20 @@ function PadlockForm ({ mode = 'create' }) {
       }
     };
   
-    const handleCategoryChange = (e) => {
+    const handleSerialChange = (e) => {
+      let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+      const maskedValue = value
+        .replace(/^([A-Z0-9]{2})([A-Z0-9]{2})?([A-Z0-9]{2})?/, (match, p1, p2, p3) => {
+          let res = p1;
+          if (p2) res += `-${p2}`;
+          if (p3) res += `-${p3}`;
+          return res;
+        })
+        .substring(0, 8);
+
+      // Actualiza el valor
+      setValue('pass', maskedValue);
     };
   
   
@@ -95,30 +108,10 @@ function PadlockForm ({ mode = 'create' }) {
                       readOnly={viewMode}
                       {...register('serial')} 
                       type='text' 
-                      className={`w-full px-3 py-2 rounded-lg filter-input border`} 
+                      className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
+                      placeholder='Ingrese Serial del Candado'
                     />
                   {errors?.serial && <ErrorMessage msg={errors.serial.message} /> }  
-
-                  {/* {viewMode || editMode ? (
-                    <div className="text-xl w-full px-3 py-2 rounded-lg bg-[#2f3d44] text-center text-gray-300">
-                      {padlockCategory?.value}
-                    </div>
-                  ) : (
-                    <>
-                    <select 
-                      {...register('category', { onChange: handleCategoryChange } )}
-                      disabled={viewMode}
-                      className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                      ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
-                    >
-                      <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                      {padlockCategories.map((item) => (
-                        <option key={`category-${item.id}`}  className='bg-[#3c4042]' value={item.key}>{item.value}</option>                
-                      ))}
-                    </select>
-                      {errors?.category && <ErrorMessage msg={errors.category.message} /> } 
-                    </>
-                  )} */}
                 </div>
               </div>
               </div>
@@ -135,13 +128,15 @@ function PadlockForm ({ mode = 'create' }) {
                       >
                         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
                           
-                          <LabelFieldForm field="Código" simbol="*" />
+                          <LabelFieldForm field="Contraseña Numérica" simbol="*" />
                           <div className="w-full max-w-2xl">
                             <input 
                               readOnly={viewMode}
                               {...register('pass')} 
+                              onChange={handleSerialChange}
                               type='text' 
-                              className={`w-full px-3 py-2 rounded-lg filter-input border`} 
+                              className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
+                              placeholder='Ejemplo: 55-44-23'
                             />
                             {errors?.pass && <ErrorMessage msg={errors.pass.message} /> }  
                           </div>
