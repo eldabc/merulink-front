@@ -17,9 +17,8 @@ function LockerRoomList() {
   const navigate = useNavigate();
   const { lockerData } = useLockers();
 
+  // Para buscador y paginación
   const itemsPerPage = 10;
-
-  // Al cargar el componente
   const SEARCH_FIELDS = ['code'];
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');

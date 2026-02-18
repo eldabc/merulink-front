@@ -1,16 +1,56 @@
 import { useNavigate } from 'react-router-dom';
 import { usePadlocks } from '../../context/PadlockContext';
+import { useEffect, useMemo, useState } from 'react';
 
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import PadlockRow from './PadlockRow'; 
+import Pagination from '../Pagination';
+import FilterByFields from '../Filters/FilterByFields';
+import { filterData } from '../../utils/filter-utils';
+import { normalizeText } from '../../utils/text-utils';
 
 import '../../Tables.css';
-
 
 function PadlockList() {
   const navigate = useNavigate();
   const { padlockData } = usePadlocks();
+
+  // Para buscador y paginación
+  const itemsPerPage = 10;
+  const SEARCH_FIELDS = ['serial'];
+  const [searchValue, setSearchValue] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [hasSearched, setHasSearched] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    if (searchValue.trim() || filterStatus !== 'all' ) {
+      setHasSearched(true);
+    } else {
+      setHasSearched(false);
+    }
+    setCurrentPage(1);
+  }, [searchValue, filterStatus]);
+
+  // Filtrar
+  const filteredLockers = useMemo(() => {
+
+      return filterData(
+          padlockData,
+          searchValue,
+          SEARCH_FIELDS,
+          filterStatus,
+          normalizeText
+      );
+  }, [padlockData, searchValue, filterStatus]);
+
+  // Datos para mostrar
+  const dataToDisplay = hasSearched ? filteredLockers : padlockData;
+  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+
 
     return (
       <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -22,15 +62,17 @@ function PadlockList() {
           </div>
         </div>
 
-        {/* Filtro */}
-        {/* <FilterByFields
+        <FilterByFields
           searchValue={searchValue}
           onSearchChange={setSearchValue}
           filterStatus={filterStatus}
           onFilterStatus={setFilterStatus}
-          moduleName='Cargo'
-          placeholder={'Ingrese código o nombre del cargo'}
-        /> */}
+          moduleName='Candado'
+          placeholder={'Ingrese serial del candado'}
+          showFilterStatus={true}
+          active='disponible'
+          inactive='asignado'
+        />
 
         <div className="rounded-lg shadow">
           <table className="min-w-full border-collapse text-sm sm:text-base">
@@ -43,26 +85,25 @@ function PadlockList() {
               </tr>
             </thead>
             <tbody>
-              {padlockData.map((padlock) => (
+              {paginatedData.map((padlock) => (
                 <PadlockRow key={padlock.id} padlock={padlock}/>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Paginación */}
-        {/* <Pagination
-          paginatedData={paginatedPositions}
+        <Pagination
+          paginatedData={paginatedData}
           startIndex={startIndex}
           itemsPerPage={itemsPerPage}
           dataToDisplay={dataToDisplay}
           hasSearched={hasSearched}
-          data={positionData}
+          data={padlockData}
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
           totalPages={totalPages}
-          moduleName={'Cargo'}
-        /> */}
+          moduleName={'Candado'}
+        />
       </div>
   );
 }

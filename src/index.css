@@ -81,7 +81,7 @@ footer {
   /* .calendar-card{max-width:100%} */
   .assistant-card{width:92%}.top-menu{display:none}
 }
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -92,7 +92,7 @@ footer {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
 @media (max-width:1200px){
   .workspace{padding:18px}
   /* .calendar-card{width:calc(100% - 32px)} */

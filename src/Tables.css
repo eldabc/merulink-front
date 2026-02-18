@@ -59,7 +59,7 @@
 }
 .status-btn--inactive {
   background: #fee2e2;
-  color: #991b1b;
+  color: #6c0c0c;
   border-color: rgba(153,27,27,0.10);
 }
 .status-btn--neutral {
@@ -69,6 +69,9 @@
 }
 .status-tag {
   display: inline-block;
+}
+.status-btn, .status-tag {
+  transition: transform 0.5s ease;
 }
 .status-btn:hover, .status-tag:hover {
   transform: translateY(-1px);
