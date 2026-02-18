@@ -94,7 +94,7 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
   }, [initialCollapsed]);
   // console.log('SideBar render:', { activeMenu, activePath, isSidebarOpen, toggleSidebar, node });
   // If no sections for this menu, hide the sidebar
-  if ((!activeMenu || Object.keys(node).length === 0 || activeMenu === "Lobby" || activeMenu === "IA") && !toggleSidebar) {
+  if ((!activeMenu || Object.keys(node).length === 0 || activeMenu === "404" || activeMenu === "IA") && !toggleSidebar) {
     return <aside className="sidebar hidden" />;
   }
 
@@ -115,7 +115,7 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
       <div className="submenu-title">Secciones</div>
       {/* Para poder clickar los breadcrumbs */}
       <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
-        {activeMenu !== 'Lobby' ? (
+        {activeMenu !== '404' ? (
           (() => {
             const safeActivePath = Array.isArray(activePath) ? activePath : [];
             const segments = [activeMenu, ...safeActivePath];

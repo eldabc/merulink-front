@@ -9,6 +9,7 @@ const PositionList = lazy(() => import("./Positions/PositionList"));
 const LockerRoomPage = lazy(() => import("./LockerRoom/LockerRoomPage"));
 const PadlockPage = lazy(() => import("./Padlock/PadlockPage"));
 const EventsPage = lazy(() => import("./Events/EventsPage"));
+const DefaultWorkspace = lazy(() => import("./DefaultWorkspace"));
 
 import { EventProvider } from "../context/EventContext";
 import { LockerRoomProvider } from "../context/LockerRoomContext";
@@ -34,8 +35,7 @@ const PadlockLayout = () => (
 );
 
 export default function Workspace({ activeMenu, activePath }) {
-    const { showNotification } = useNotification();
-  
+  const { showNotification } = useNotification();
   return (
     <Suspense fallback={<div className="p-6">Cargando...</div>}>
       <Routes>
@@ -68,14 +68,5 @@ export default function Workspace({ activeMenu, activePath }) {
         <Route path="*" element={<DefaultWorkspace activeMenu={activeMenu} />} />
       </Routes>
     </Suspense>
-  );
-}
-
-function DefaultWorkspace({ activeMenu }) {
-  return (
-    <div className="content-center">
-      <h2 className="title">{activeMenu}</h2>
-      <p className="muted">Área de trabajo — {activeMenu}</p>
-    </div>
   );
 }

@@ -12,7 +12,7 @@ export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
   return (
     <header className="topbar">
       <div className="brand-area">
-        <div onClick={() => { setActiveMenu('Lobby'); navigate('/'); }}><img  className="logo-img" src={logo} alt="MeruLink Logo" /></div>
+        <div onClick={() => { setActiveMenu('404'); navigate('/'); }}><img  className="logo-img" src={logo} alt="MeruLink Logo" /></div>
         <nav className="top-menu" aria-label="Main menu">
           {topMenuItems.map(item => (
             <button 

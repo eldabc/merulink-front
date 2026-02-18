@@ -25,7 +25,7 @@ export default function App() {
 function AppRouterSync() {
   // This component lives inside the Router so it can use hooks
   const location = useLocation();
-  const [activeMenu, setActiveMenu] = useState("Lobby");
+  const [activeMenu, setActiveMenu] = useState("404");
   const [activePath, setActivePath] = useState([]);
 
   // derive menu state from current location.pathname
@@ -72,8 +72,8 @@ function AppRouterSync() {
       setActiveMenu(matchedTop);
       setActivePath(matchedPath || []);
     } else {
-      // default to Lobby if nothing matches
-      setActiveMenu('Lobby');
+      // default to 404 if nothing matches
+      setActiveMenu('404');
       setActivePath([]);
     }
   }, [location.pathname]);
