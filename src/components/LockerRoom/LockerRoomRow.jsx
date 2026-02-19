@@ -5,7 +5,7 @@ import { useLockers } from '../../context/LockerRoomContext';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
-import { BuildingOfficeIcon } from '@heroicons/react/24/solid';
+import { getStatusColor, getStatusName } from '../../utils/status-utils';
 
 function LockerRoomRow({ locker }) {
 
@@ -43,9 +43,9 @@ function LockerRoomRow({ locker }) {
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.status === 'Disponible' ? (
-          <BuildingOfficeIcon className="w-6 h-6 text-[#dcfce7]" title='Locker Disponible'/>
+          <span className={getStatusColor(locker.status)} title='Locker Disponible'>Disponible</span>
         ) : (
-          <BuildingOfficeIcon className="w-6 h-6 text-[#fee2e2]" title='Locker Ocupado'/>
+          <span className={getStatusColor(locker.status)} title='Locker Ocupado'>Ocupado</span>
         )}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerCategory?.value}</td>
