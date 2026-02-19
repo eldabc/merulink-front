@@ -73,9 +73,9 @@ export default function Workspace({ activeMenu, activePath }) {
         </Route>
         
         {/* Locker Assign */}
-        <Route element={<LockerAssignLayout />}>
+        {/* <Route element={<LockerAssignLayout />}>
           <Route path="/empleados/vestuarios/locker-assign/*" element={<LockerAssignList/> } />
-        </Route>
+        </Route> */}
 
         {/* Calendario - Eventos */}
         <Route element={<EventLayout showNotification={showNotification} />}>

@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
-import { lockerAssigns } from '../utils/StaticData/lockerAssign-room-utils';
 import { useNotification } from "./NotificationContext";
+
+import { lockerAssigns } from '../utils/StaticData/lockerAssign-room-utils';
+import { lockers } from '../utils/StaticData/locker-room-utils.js'
 
 const LockerAssignContext = createContext();
 
@@ -116,6 +118,15 @@ export const LockerAssignProvider = ({ children }) => {
     // }
   };
 
+  const getLockers = async (category) => {
+    try {
+      return lockers.filter(locker => locker.category === category && locker.status === 'Disponible');
+      
+    } catch (error) {
+      showNotification('Error al obtener Lockers', error.message);
+      return false;
+    }
+  }
 
   const contextValue = {
     lockerAssignData,
@@ -125,6 +136,7 @@ export const LockerAssignProvider = ({ children }) => {
     createLockerAssign,
     updateLockerAssign,
     deleteLockerAssign,
+    getLockers,
   };
 
   return (
