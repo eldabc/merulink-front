@@ -44,8 +44,8 @@ export default function PersonalData({ employee = {}, register, errors }) {
           <label className="block text-sm font-medium text-gray-300 mb-1">Sexo: </label>
             <select {...register('sex')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.sex ? 'border-red-500' : ''}`}>
               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-              <option className='bg-[#3c4042]' value="M">Masculino</option>
-              <option className='bg-[#3c4042]' value="F">Femenino</option>
+              <option className='bg-[#3c4042]' value="H">Masculino</option>
+              <option className='bg-[#3c4042]' value="M">Femenino</option>
           </select>
           {errors?.sex && <p className="text-red-400 text-xs mt-1">{errors.sex.message}</p>}
         </div>

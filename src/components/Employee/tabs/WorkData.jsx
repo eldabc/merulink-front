@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
+
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useEmployees } from '../../../context/EmployeeContext';
 
 export default function WorkData({ register, errors, employee, tempFlags, setTempFlags }) {
-  const { toggleEmployeeField } = useEmployees();
+  const { toggleEmployeeField, getDepartments } = useEmployees();
   const isForm = typeof register === 'function';
   const isObjectEmpty = (obj) => obj && Object.keys(obj).length === 0;
   const isCreateMode = isForm && (!employee || isObjectEmpty(employee));
@@ -11,6 +13,22 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
   const flags = isCreateMode ? tempFlags : employee;
   (isCreateMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false)
   const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
+
+  const [availableDepartments, setAvailableDepartments] = useState([]);
+  const [loadingData, setLoadingData] = useState(false);
+
+  useEffect(() => {
+    const fetchDeps = async () => {
+      setLoadingData(true);
+      
+      const data = await getDepartments(); 
+      
+      setAvailableDepartments(data);
+      setLoadingData(false);
+    };
+
+    fetchDeps();
+  }, []);
 
   if (isForm) {
      return (
@@ -26,13 +44,11 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
         
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Departamento: *</label>
-          <select {...register('department')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.department ? 'border-red-500' : ''}`}>
-            <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-            <option className='bg-[#3c4042]' value="TI">TI</option>
-            <option className='bg-[#3c4042]' value="RRHH">RRHH</option>
-            <option className='bg-[#3c4042]' value="Ventas">Ventas</option>
-            <option className='bg-[#3c4042]' value="Finanzas">Finanzas</option>
-            <option className='bg-[#3c4042]' value="Marketing">Marketing</option>
+          <select {...register('department')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300`}>
+            <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+            {availableDepartments.map((item) => ( 
+              <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.departmentName} </option>
+            ))}
           </select>
           {errors.department && <p className="text-red-400 text-xs mt-1">{errors.department.message}</p>}
         </div>
@@ -102,7 +118,7 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
 
       <div>
         <label className="font-semibold">Departamento: </label>
-        {employee.department}
+        {employee.departmentName}
       </div>
 
       <div>

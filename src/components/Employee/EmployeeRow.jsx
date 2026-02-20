@@ -16,7 +16,7 @@ export default function EmployeeRow({ emp, setSelectedEmployee }) {
       <td className="px-4 py-3 text-white-700">{emp.ci}</td>
       <td className="px-4 py-3 text-white-700">{emp.firstName}</td>
       <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
-      <td className="px-4 py-3 text-white-700">{emp.department}</td>
+      <td className="px-4 py-3 text-white-700">{emp.departmentName}</td>
       <td className="px-4 py-3 text-white-700">{emp.subDepartment}</td>
       <td className="px-4 py-3 text-white-700">{emp.position}</td>
       <td className="px-4 py-3">

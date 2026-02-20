@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { departments } from '../utils/StaticData/departments-utils.js';
 
 const EmployeeContext = createContext();
 
@@ -39,17 +40,25 @@ export const EmployeeProvider = ({ initialData, showNotification, children }) =>
         }
 
         return updatedEmployee;
-    })
+      })
     );
-    
-    showNotification("Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);
-};
+    showNotification("Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);    
+  };
+
+  const getDepartments = async () => {
+    try {
+         return departments;       
+    } catch (error) {
+      showNotification('Error al obtener Departamentos', error.message);
+      return [];
+    }
+  }
   
-  // Se puede añadir más funciones (ojo)
   const contextValue = {
     employeeData,
+    setEmployeeData,
     toggleEmployeeField,
-    setEmployeeData, 
+    getDepartments
   };
 
   return (
