@@ -1,45 +1,45 @@
 export const lockers = [
   {
     id: 1,
-    code: "01",
+    code: "H-01",
     status: 'Disponible',
-    category: 'C',
+    category: 'H',
   },
   {
     id: 2,
-    code: "02",
+    code: "H-02",
     status: 'Disponible',
-    category: 'C',
+    category: 'H',
   },
   {
     id: 3,
-    code: "03",
+    code: "M-03",
     status: 'Disponible',
-    category: 'D',
+    category: 'M',
   },
   {
     id: 4,
-    code: "04",
+    code: "M-04",
     status: 'Ocupado',
-    category: 'D',
+    category: 'M',
   },
   {
     id: 5,
-    code: "05",
+    code: "H-05",
     status: 'Ocupado',
-    category: 'C',
+    category: 'H',
   },
 ];
 
 export const lockerCategories = [
   {
     id: 1,
-    key: 'D',
+    key: 'M',
     value: 'Mujer',
   },
   {
     id: 2,
-    key: 'C',
+    key: 'H',
     value: 'Hombre',
   },
 ];

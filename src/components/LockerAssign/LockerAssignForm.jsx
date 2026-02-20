@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLockerAssigns } from '../../context/LockerAssignContext.jsx';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { padlockValidationSchema } from '../../utils/Validations/padlockValidationSchema';
+import { lockerAssignValidationSchema } from '../../utils/Validations/lockerAssignValidationSchema';
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
@@ -15,26 +15,28 @@ import TitleHeader from '../Shared/TitleHeader';
 
 function LockerAssignForm({ mode = 'create' }) {
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
-        resolver: yupResolver(padlockValidationSchema),
+        resolver: yupResolver(lockerAssignValidationSchema),
     });
-    const { createLockerAssign, updateLockerAssign, getLockers, getPadlocks } = useLockerAssigns();
+    const { createLockerAssign, updateLockerAssign, getLockers, getPadlocks, getEmployeesByCategory } = useLockerAssigns();
     
     const navigate = useNavigate();
     const location = useLocation();
     const selectedCategory = watch('category');
     const selectedLocker = watch('lockerId');
     const selectedPadlock = watch('padlockId')
-    const padlock = location.state?.data;
+    const lockerAssign = location.state?.data;
     const [availableLockers, setAvailableLockers] = useState([]);
+    const [availableEmployees, setAvailableEmployees] = useState([]);
     const [availablePadlocks, setAvailablePadlocks] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
+    const [loadingEmployees, setLoadingEmployees] = useState(false);
 
     const createMode = mode === 'create'
     const viewMode = mode === 'view';
     const editMode =  mode === 'edit';
 
     useEffect(() => {
-      const fetchLockers = async () => {
+      const fetchData = async () => {
         if (selectedCategory) {
           setLoadingData(true);
           
@@ -42,12 +44,28 @@ function LockerAssignForm({ mode = 'create' }) {
           
           setAvailableLockers(data);
           setLoadingData(false);
+
+          fetchEmployeesInBackground(selectedCategory);
+
         } else {
           setAvailableLockers([]);
+          setAvailableEmployees([]);
         }
       };
 
-      fetchLockers();
+      const fetchEmployeesInBackground = async (category) => {
+        setLoadingEmployees(true);
+        try {
+          const empData = await getEmployeesByCategory(category);
+          setAvailableEmployees(empData);
+        } finally {
+          setLoadingEmployees(false);
+        }
+      };
+
+      fetchData();
+
+
     }, [selectedCategory]);
 
     useEffect(() => {
@@ -68,9 +86,9 @@ function LockerAssignForm({ mode = 'create' }) {
     }, [availableLockers]);
 
     useEffect(() => {
-      if (padlock && (editMode || viewMode)) {
+      if (lockerAssign && (editMode || viewMode)) {
         reset(
-          lockeAssignReset(padlock)
+          lockeAssignReset(lockerAssign)
         );
   
       } else if (createMode) {
@@ -78,7 +96,7 @@ function LockerAssignForm({ mode = 'create' }) {
           lockeAssignReset(null)
         );
       }
-    }, [padlock, mode, reset]);
+    }, [lockerAssign, mode, reset]);
   
     const lockeAssignReset = (lockerAssign) => {
       return {
@@ -97,10 +115,10 @@ function LockerAssignForm({ mode = 'create' }) {
     const onSubmit = async (data) => {
       let success = false;
   
-      if (editMode && padlock) {
+      if (editMode && lockerAssign) {
         const dataEdit = { 
           ...data, 
-          id: padlock.id, 
+          id: lockerAssign.id, 
         }
         success = await updateLockerAssign(dataEdit);
       } else {
@@ -115,12 +133,23 @@ function LockerAssignForm({ mode = 'create' }) {
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/candados/editar" data={padlock} /> }
+          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/candados/editar" data={lockerAssign} /> }
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
-              <div className="titles-table flex justify-center items-center mb-4">
-              
+              <div className="flex flex-row justify-start mb-4 ml-2 gap-2.5">
+                {lockerAssign && (
+                  <>
+                  <LabelFieldForm field="Código" simbol="*" />
+                  <div className="">
+                      <input type="text" value={lockerAssign?.assignCode ?? ''} className='mt-2 rounded-lg filter-input' disabled={true}/> 
+                  </div>
+                  <LabelFieldForm field="Fecha" simbol="*" />
+                  <div className="">
+                      <input type="text" value={lockerAssign?.assignDate ?? ''} className='mt-2 rounded-lg filter-input' disabled={true}/> 
+                  </div>
+                  </>
+                )}
               </div>
               <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
                   <div className='border border-[#ffffff21]
@@ -204,15 +233,15 @@ function LockerAssignForm({ mode = 'create' }) {
                             <div className='max-w-2xl'>
                               <select 
                                 {...register('employeeId')}
-                                disabled={viewMode || !selectedCategory || loadingData}
+                                disabled={viewMode || loadingEmployees}
                                 className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                  ${(viewMode || !selectedCategory || loadingData) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
+                                  ${(viewMode || loadingEmployees) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
                               >
-                                <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+                                <option className="bg-[#3c4042]" value=""> {loadingEmployees ? "Cargando..." : "Seleccionar..."} </option>
                                 
-                                {availableLockers.map((item) => (
+                                {availableEmployees.map((item) => (
                                   <option key={item.id} value={item.id} className='bg-[#3c4042]'>
-                                    {item.code}
+                                    {item.firstName} {item.lastName}
                                   </option>
                                 ))}
                               </select>

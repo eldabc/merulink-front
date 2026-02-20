@@ -77,6 +77,7 @@ function LockerAssignList() {
           <table className="min-w-full border-collapse text-sm sm:text-base">
             <thead>
               <tr className="tr-thead-table">
+                <th className="px-4 py-3 text-left font-semibold">Categoría</th>
                 <th className="px-4 py-3 text-left font-semibold">Estatus</th>
                 <th className="px-4 py-3 text-left font-semibold">Serial</th>
                 <th className="px-4 py-3 text-left font-semibold">Contraseña</th>
@@ -84,8 +85,8 @@ function LockerAssignList() {
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((padlock) => (
-                <LockerAssignRow key={padlock.id} padlock={padlock}/>
+              {paginatedData.map((lockerAssign) => (
+                <LockerAssignRow key={lockerAssign.id} lockerAssign={lockerAssign}/>
               ))}
             </tbody>
           </table>

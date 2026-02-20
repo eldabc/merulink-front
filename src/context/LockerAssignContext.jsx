@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
 import { useNotification } from "./NotificationContext";
 
-import { lockerAssigns } from '../utils/StaticData/lockerAssign-room-utils';
+import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 import { lockers } from '../utils/StaticData/locker-room-utils.js';
 import { padlocks } from '../utils/StaticData/padlock-utils.js';
+import { employees } from '../utils/StaticData/employee-utils.js';
 
 const LockerAssignContext = createContext();
 
@@ -47,7 +48,7 @@ export const LockerAssignProvider = ({ children }) => {
       category: formData.category ? formData.category : null,
       status: formData.status ? formData.status : null,
     };
-      }
+  }
 
   // *** Crear
   const createLockerAssign = async (formData) => {
@@ -139,6 +140,16 @@ export const LockerAssignProvider = ({ children }) => {
     }
   }
 
+  const getEmployeesByCategory = async (category) => {
+    try {
+      return employees.filter(employee => employee.sex === category && employee.status === true);
+    } catch (error) {
+      showNotification('Error al obtener Empleados por Categoría', error.message);
+      return false;
+    }
+  }
+
+
   const contextValue = {
     lockerAssignData,
     setLockerAssignData,
@@ -148,7 +159,8 @@ export const LockerAssignProvider = ({ children }) => {
     updateLockerAssign,
     deleteLockerAssign,
     getLockers,
-    getPadlocks
+    getPadlocks,
+    getEmployeesByCategory
   };
 
   return (
