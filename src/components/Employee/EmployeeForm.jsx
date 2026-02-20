@@ -17,16 +17,11 @@ import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
-  const { toggleEmployeeField } = useEmployees();
+  const { toggleEmployeeField, getDepartments } = useEmployees();
   const [activeTab, setActiveTab] = useState('personal');
-
-  const [tempFlags, setTempFlags] = useState({
-    useMeruLink: false,
-    useHidCard: false,
-    useLocker: false,
-    useTransport: false
-  });
-
+  const [availableDepartments, setAvailableDepartments] = useState([]);
+  const [loadingData, setLoadingData] = useState(false);
+  
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
   });
@@ -36,11 +31,31 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     name: 'contacts',
   });
 
+  const [tempFlags, setTempFlags] = useState({
+    useMeruLink: false,
+    useHidCard: false,
+    useLocker: false,
+    useTransport: false
+  });
+
   // calcular edad cuando cambie birthDate
   const watchedBirthDate = watch('birthDate');
   useEffect(() => {
     calculateAge(watchedBirthDate, setValue);
   }, [watchedBirthDate, setValue]);
+
+  useEffect(() => {
+    const fetchDeps = async () => {
+      setLoadingData(true);
+      
+      const data = await getDepartments(); 
+      
+      setAvailableDepartments(data);
+      setLoadingData(false);
+    };
+
+    fetchDeps();
+  }, []);
 
   useEffect(() => {
     if (employee && mode === 'edit') {
@@ -131,7 +146,9 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   }, [employee, mode, reset]);
 
   const onSubmit = async (data) => {
-    const submissionData = { ...data };
+    
+    const departmentFound = availableDepartments.find(item => item.id === Number(data.department));
+    const submissionData = { ...data, departmentName: departmentFound.departmentName };
 
     //Armado números de teléfono
     if (submissionData.mobilePhone) { submissionData.mobilePhone = `${submissionData.mobilePhoneCode}-${submissionData.mobilePhone}`; }
@@ -291,7 +308,10 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         />
         <div className="mt-6">     
             {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
-            {activeTab === 'work' && ( <WorkData register={register} errors={errors} employee={employee} tempFlags={tempFlags} setTempFlags={setTempFlags}/> )}
+            {activeTab === 'work' && ( <WorkData 
+                                          register={register} errors={errors} employee={employee} tempFlags={tempFlags}
+                                          setTempFlags={setTempFlags} availableDepartments={availableDepartments} loadingData={loadingData} /> )}
+                                          
             {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
             {activeTab === 'meruLink' && ( <MeruLinkData register={register} errors={errors} employee={employee} /> )}
         </div>

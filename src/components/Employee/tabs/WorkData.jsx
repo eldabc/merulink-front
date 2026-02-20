@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useEmployees } from '../../../context/EmployeeContext';
 
-export default function WorkData({ register, errors, employee, tempFlags, setTempFlags }) {
-  const { toggleEmployeeField, getDepartments } = useEmployees();
+export default function WorkData({ register, errors, employee, tempFlags, setTempFlags, availableDepartments, loadingData }) {
+  const { toggleEmployeeField } = useEmployees();
   const isForm = typeof register === 'function';
   const isObjectEmpty = (obj) => obj && Object.keys(obj).length === 0;
   const isCreateMode = isForm && (!employee || isObjectEmpty(employee));
@@ -13,22 +13,6 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
   const flags = isCreateMode ? tempFlags : employee;
   (isCreateMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false)
   const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
-
-  const [availableDepartments, setAvailableDepartments] = useState([]);
-  const [loadingData, setLoadingData] = useState(false);
-
-  useEffect(() => {
-    const fetchDeps = async () => {
-      setLoadingData(true);
-      
-      const data = await getDepartments(); 
-      
-      setAvailableDepartments(data);
-      setLoadingData(false);
-    };
-
-    fetchDeps();
-  }, []);
 
   if (isForm) {
      return (
