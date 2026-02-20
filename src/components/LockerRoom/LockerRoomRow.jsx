@@ -5,7 +5,7 @@ import { useLockers } from '../../context/LockerRoomContext';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';
+import { getStatusColor } from '../../utils/status-utils';
 
 function LockerRoomRow({ locker }) {
 

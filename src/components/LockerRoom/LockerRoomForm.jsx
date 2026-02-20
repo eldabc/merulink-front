@@ -42,8 +42,10 @@ function LockerRoomForm({ mode = 'create' }) {
   }, [locker, mode, reset]);
 
   const lockerReset = (category, locker) => {
+    const lockerCode = locker?.code ?? '';
+    const [categoryKey, code] = lockerCode.split("-");
     return {
-        code: locker?.code ?? '',
+        code: code,
         category: locker?.category ?? '',
         status: locker?.status ?? (createMode ? 'Disponible' : null),
     }
