@@ -48,7 +48,7 @@ function LockerRoomRow({ locker }) {
           <span className={getStatusColor(locker.status)} title='Locker Ocupado'>Ocupado</span>
         )}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
-        <td className="px-4 py-3 text-white-800 font-medium ">{lockerCategory?.value}</td>
+        <td className="px-4 py-3 text-white-800 font-medium ">{locker.category?.name}</td>
         <td className="px-4 py-3 text-white-700">
            <ButtonDelete setIsModalOpen={() => handleDeleteClick(locker)} />
         </td>

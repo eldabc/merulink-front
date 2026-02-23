@@ -46,7 +46,7 @@ export const filterData = (data, searchValue, searchableFields, filterStatus, no
 
     let matchesCategory = true;
     if (filterCategory && item.category) {
-      matchesCategory = item.category === filterCategory;
+      matchesCategory = item.category?.key === filterCategory;
     }
 
     return matchesSearch && matchesStatus && matchesCategory;

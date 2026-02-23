@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
-import { lockers } from '../utils/StaticData/locker-room-utils';
+import { lockers, lockerCategories } from '../utils/StaticData/locker-room-utils';
 import { useNotification } from "../context/NotificationContext";
 
 const LockerRoomContext = createContext();
@@ -37,11 +37,16 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
 
   // Armado JSON
   const formattedLockers = (formData) => {
+  const categoryData = lockerCategories.find(ca => ca.key === formData.category);
 
     return {
-      id: Date.now(), // ID temporal
+      id: formData.id ? formData.id : Date.now(),
       code: formData.category && formData.code ? `${formData.category}-${formData.code}` : null,
-      category: formData.category ? formData.category : null,
+      category: {
+        id: categoryData.id,
+        key: categoryData.key,
+        name: categoryData.value,
+      },
       status: formData.status ? formData.status : null,
     };
       }

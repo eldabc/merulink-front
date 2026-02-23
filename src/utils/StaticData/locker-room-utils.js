@@ -3,31 +3,51 @@ export const lockers = [
     id: 1,
     code: "C-01",
     status: 'Disponible',
-    category: 'C',
+    category:{
+      id: 2,
+      key: 'C',
+      name: 'Caballeros',
+    },
   },
   {
     id: 2,
     code: "C-02",
     status: 'Disponible',
-    category: 'C',
+    category:{
+      id: 2,
+      key: 'C',
+      name: 'Caballeros',
+    },
   },
   {
     id: 3,
     code: "D-03",
     status: 'Disponible',
-    category: 'D',
+    category:{
+      id: 1,
+      key: 'D',
+      name: 'Damas',
+    },
   },
   {
     id: 4,
     code: "D-04",
     status: 'Ocupado',
-    category: 'D',
+  category:{
+      id: 2,
+      key: 'C',
+      name: 'Caballeros',
+    }, 
   },
   {
     id: 5,
     code: "C-05",
     status: 'Ocupado',
-    category: 'C',
+    category:{
+      id: 2,
+      key: 'C',
+      name: 'Caballeros',
+    },
   },
 ];
 
