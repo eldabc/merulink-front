@@ -8,7 +8,7 @@ function LockerAssignRow({ lockerAssign }){
  
   const navigate = useNavigate();
 
-  const selectedPadlock = (lockerAssign) => {
+  const selectedLockerAssign = (lockerAssign) => {
     navigate("/empleados/vestuarios/casilleros/ver", { 
       state: { data: lockerAssign } 
     }); 
@@ -29,7 +29,7 @@ function LockerAssignRow({ lockerAssign }){
     <>
       <tr
         key={lockerAssign.id}
-        onClick={() => selectedPadlock(lockerAssign)}
+        onClick={() => selectedLockerAssign(lockerAssign)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium">
@@ -40,7 +40,7 @@ function LockerAssignRow({ lockerAssign }){
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.locker?.padlock?.serial}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.assignCode}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerAssign?.assignDate}</td>
-        <td className="px-4 py-3 text-white-800 font-medium ">{lockerAssign?.locker?.category.categoryName}
+        <td className="px-4 py-3 text-white-800 font-medium ">{lockerAssign?.locker?.category.name}
           
         </td>
         <td className="px-4 py-3 text-white-700">

@@ -75,9 +75,7 @@ export const LockerAssignProvider = ({ children }) => {
           categoryName: formData.locker?.category?.name,
         },
         padlock: {
-          id: formData.padlockId,
-          serial: 333355379,
-          pass: '11-22-33',
+          ...formData.padlock,
           status: 'Asignado',
         }
       },
@@ -97,8 +95,8 @@ export const LockerAssignProvider = ({ children }) => {
       const updatedLockerAssign = formattedLockerAssign(formData);
       console.log("Actualizado:", updatedLockerAssign);
       
+      // **Actualizar status locker** y Candado**
       // Llamada a la API/Backend (onUpdate)
-      // Actualizar status locker**
       // await api.put(`/events/${lockerId}`, updatedLockerAssign); 
       
       setLockerAssignData(prevData => {
@@ -107,7 +105,7 @@ export const LockerAssignProvider = ({ children }) => {
         );
       });
 
-      showNotification(`LockerAssignAssign ${formData.locker?.code} actualizado con éxito`); 
+      showNotification(`Locker ${formData.locker?.code} actualizado con éxito`); 
       return true;
 
     } catch (error) {
@@ -156,14 +154,14 @@ export const LockerAssignProvider = ({ children }) => {
 
   const getEmployeesByCategory = async (category) => {
     try {
-      if (category === 'C') {
-        category = 'H';
-      } else if (category === 'D') {
-        category = 'M';
-      }
+        if (category === 'C') {
+          category = 'H';
+        } else if (category === 'D') {
+          category = 'M';
+        }
       
        return employees.filter(employee => employee.sex === category && employee.status === true && employee.useLocker === true);
-    // console.log("category22222222", filteredEmployees);
+        // console.log("FilteredEmployees", filteredEmployees);
       } catch (error) {
       showNotification('Error al obtener Empleados por Categoría', error.message);
       return false;
@@ -176,7 +174,6 @@ export const LockerAssignProvider = ({ children }) => {
     setLockerAssignData,
     loadLockerAssign,
     error,
-    // createLockerAssign,
     updateLockerAssign,
     deleteLockerAssign,
     getLockers,

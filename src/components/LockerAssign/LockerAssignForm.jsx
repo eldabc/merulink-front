@@ -17,7 +17,7 @@ function LockerAssignForm({ mode = 'create' }) {
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(lockerAssignValidationSchema),
     });
-    const { createLockerAssign, updateLockerAssign, getLockers, getPadlocks, getEmployeesByCategory } = useLockerAssigns();
+    const { createLockerAssign, updateLockerAssign, getPadlocks, getEmployeesByCategory } = useLockerAssigns();
     
     const navigate = useNavigate();
     const location = useLocation();
@@ -92,11 +92,14 @@ function LockerAssignForm({ mode = 'create' }) {
   
     const onSubmit = async (data) => {
       let success = false;
-  
+      const padlockSelected = availablePadlocks.find(p => String(p.id).trim() === String(data.padlockId).trim());
       if (editMode && lockerAssign) {
         const dataEdit = {
           ...data, 
-          ...lockerAssign
+          ...lockerAssign,
+          padlock: {
+            ...padlockSelected
+          },
         }
         success = await updateLockerAssign(dataEdit);
       } else {
