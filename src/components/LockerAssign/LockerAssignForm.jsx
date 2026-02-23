@@ -21,11 +21,9 @@ function LockerAssignForm({ mode = 'create' }) {
     
     const navigate = useNavigate();
     const location = useLocation();
-    const selectedCategory = watch('category');
-    const selectedLocker = watch('lockerId');
+  
     const selectedPadlock = watch('padlockId')
     const lockerAssign = location.state?.data;
-    const [availableLockers, setAvailableLockers] = useState([]);
     const [availableEmployees, setAvailableEmployees] = useState([]);
     const [availablePadlocks, setAvailablePadlocks] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
@@ -36,24 +34,8 @@ function LockerAssignForm({ mode = 'create' }) {
     const editMode =  mode === 'edit';
 
     useEffect(() => {
-      const fetchData = async () => {
-        if (selectedCategory) {
-          setLoadingData(true);
-          
-          const data = await getLockers(selectedCategory);
-          
-          setAvailableLockers(data);
-          setLoadingData(false);
-
-          fetchEmployeesInBackground(selectedCategory);
-
-        } else {
-          setAvailableLockers([]);
-          setAvailableEmployees([]);
-        }
-      };
-
       const fetchEmployeesInBackground = async (category) => {
+       
         setLoadingEmployees(true);
         try {
           const empData = await getEmployeesByCategory(category);
@@ -62,28 +44,23 @@ function LockerAssignForm({ mode = 'create' }) {
           setLoadingEmployees(false);
         }
       };
+      
+      fetchEmployeesInBackground(lockerAssign?.locker?.category?.key);
 
-      fetchData();
-
-
-    }, [selectedCategory]);
+    }, []);
 
     useEffect(() => {
       const fetchPadlocks = async () => {
-        if (selectedCategory && availableLockers?.length > 0) {
-          setLoadingData(true);
-          
-          const data = await getPadlocks();
+        setLoadingData(true);
+        
+        const data = await getPadlocks();
 
-          setAvailablePadlocks(data);
-          setLoadingData(false);
-        } else {
-          setAvailablePadlocks([]);
-        }
+        setAvailablePadlocks(data);
+        setLoadingData(false);
       };
 
       fetchPadlocks();
-    }, [availableLockers]);
+    }, [lockerAssign]);
 
     useEffect(() => {
       if (lockerAssign && (editMode || viewMode)) {
@@ -99,10 +76,11 @@ function LockerAssignForm({ mode = 'create' }) {
     }, [lockerAssign, mode, reset]);
   
     const lockeAssignReset = (lockerAssign) => {
+
       return {
-          category: lockerAssign?.category ?? null,
-          lockerId: lockerAssign?.lockerId ?? null,
-          employeeId: lockerAssign?.employeeId ?? null,
+          lockerId: lockerAssign?.locker?.id ?? null,
+          padlockId: lockerAssign?.locker?.padlock?.id ?? '',
+          employeeId: lockerAssign?.employee?.id ?? '',
       }
   
     }
@@ -116,9 +94,9 @@ function LockerAssignForm({ mode = 'create' }) {
       let success = false;
   
       if (editMode && lockerAssign) {
-        const dataEdit = { 
+        const dataEdit = {
           ...data, 
-          id: lockerAssign.id, 
+          ...lockerAssign
         }
         success = await updateLockerAssign(dataEdit);
       } else {
@@ -133,20 +111,28 @@ function LockerAssignForm({ mode = 'create' }) {
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/candados/editar" data={lockerAssign} /> }
+          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/casilleros/editar" data={lockerAssign} /> }
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
-              <div className="flex flex-row justify-start mb-4 ml-2 gap-2.5">
-                {lockerAssign && (
+              <div className="w-full text-white rounded-lg shadow-md p-1 flex flex-col sm:flex-row sm:justify-end sm:space-x-8 ">
+                {lockerAssign?.employee?.id && (
                   <>
+                   <div className="flex items-center space-x-2">
                   <LabelFieldForm field="Código" simbol="*" />
                   <div className="">
-                      <input type="text" value={lockerAssign?.assignCode ?? ''} className='mt-2 rounded-lg filter-input' disabled={true}/> 
+                      <span className="px-2 py-1 rounded bg-[#505253] text-sm font-medium">
+                        {lockerAssign?.assignCode ?? ''}
+                      </span>
                   </div>
+                  </div>
+                   <div className="flex items-center space-x-2">
                   <LabelFieldForm field="Fecha" simbol="*" />
                   <div className="">
-                      <input type="text" value={lockerAssign?.assignDate ?? ''} className='mt-2 rounded-lg filter-input' disabled={true}/> 
+                      <span className="px-2 py-1 rounded bg-[#505253] text-sm font-medium">
+                        {lockerAssign?.assignDate ?? ''}
+                      </span>
+                  </div>
                   </div>
                   </>
                 )}
@@ -156,58 +142,39 @@ function LockerAssignForm({ mode = 'create' }) {
                                   md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                   md:[&>*:nth-child(2n)]:pl-4 p-7'
                   >
+                    <div className="w-full bg-[#2f3d44] text-white rounded-lg shadow-md p-4 flex flex-col sm:flex-row sm:items-center sm:justify-start sm:space-x-8">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-300">Código:</span>
+                        <span className="text-lg font-semibold">{lockerAssign?.locker?.code}</span>
+                      </div>
+
+                      <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+                        <span className="text-sm text-gray-300">Estatus:</span>
+                        <span className="px-2 py-1 rounded bg-[#505253] text-sm font-medium">
+                          {lockerAssign?.locker?.status}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+                        <span className="text-sm text-gray-300">Categoría:</span>
+                        <span className="px-2 py-1 rounded bg-[#505253] text-sm font-medium">
+                          {lockerAssign?.locker?.category?.name}
+                        </span>
+                      </div>
+                    </div>
                     <div className="mt-6">    
-                      <TitleHeader title={editMode ? ( 'Editar Emparejar Casillero' ):( 'Emparejar Casillero')} />
+                      <h3 className='text-xl font-bold'>{editMode ? ( 'Editar Emparejar Casillero' ):( 'Emparejar Casillero')}</h3>
                         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
                                         md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                         md:[&>*:nth-child(2n)]:pl-4 p-7'
                         >
-                          <LabelFieldForm field="Categoría" simbol="*" />
-                          <div className="">
-                            <select 
-                              {...register('category')} //, { onChange: handleCategoryChange }
-                              disabled={viewMode }
-                              className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                              ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
-                            >
-                              <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                              {lockerCategories.map((item) => (
-                                <option key={`category-${item.id}`}  className='bg-[#3c4042]' value={item.key}>{item.value}</option>                
-                              ))}
-                            </select>
-                              {errors?.category && <ErrorMessage msg={errors.category.message} /> } 
-                          </div>
-
-                          <LabelFieldForm field="Locker" simbol="*" />
-                          <div className="max-w-2xl">
-                            <select 
-                              {...register('lockerId')}
-                              disabled={viewMode || !selectedCategory || loadingData}
-                              className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                ${(viewMode || !selectedCategory || loadingData) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
-                            >
-                              <option className="bg-[#3c4042]" value="">
-                                {loadingData ? "Cargando..." : "Seleccionar..."}
-                              </option>
-                              
-                              {availableLockers.map((item) => (
-                                <option key={item.id} value={item.id} className='bg-[#3c4042]'>
-                                  {item.code}
-                                </option>
-                              ))}
-                            </select>
-
-                            {errors?.lockerId && <ErrorMessage msg={errors.lockerId.message} /> }  
-                          </div>
-
-
                           <LabelFieldForm field="Candado" simbol="*" />
                           <div className="max-w-2xl">
                             <select 
                               {...register('padlockId')}
-                              disabled={viewMode || !selectedCategory || loadingData || !selectedLocker}
+                              disabled={viewMode || loadingData}
                               className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                ${(viewMode || !selectedCategory || loadingData || !selectedLocker) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
+                                ${(viewMode || loadingData) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
                             >
                               <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
                               
@@ -222,9 +189,9 @@ function LockerAssignForm({ mode = 'create' }) {
                           </div>
                         </div>
                       
-                      {(selectedCategory && selectedLocker && selectedPadlock) && (
+                      {(selectedPadlock) && (
                         <>
-                        <TitleHeader title={editMode ? ( 'Editar Asignación de Casillero' ):( 'Asignar Casillero')} />
+                        <h3 className='text-xl font-bold'>{editMode ? ( 'Editar Asignación de Casillero' ):( 'Asignar Casillero')}</h3>
                           <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
                                           md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                           md:[&>*:nth-child(2n)]:pl-4 p-7'

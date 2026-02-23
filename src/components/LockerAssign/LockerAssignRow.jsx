@@ -9,9 +9,20 @@ function LockerAssignRow({ lockerAssign }){
   const navigate = useNavigate();
 
   const selectedPadlock = (lockerAssign) => {
-    navigate("/empleados/vestuarios/candados/ver", { 
+    navigate("/empleados/vestuarios/casilleros/ver", { 
       state: { data: lockerAssign } 
     }); 
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'Disponible':
+        return <span className={getStatusColor(lockerAssign?.locker?.status)} title='Locker Disponible'>Disponible</span>;
+      case 'Ocupado':
+        return <span className={getStatusColor(lockerAssign?.locker?.status)} title='Locker Ocupado'>Ocupado</span>;
+      case 'Emparejado':
+        return <span className={getStatusColor(status)} title="Emparejado">Emparejado</span>;
+    }
   };
 
   return (
@@ -22,12 +33,8 @@ function LockerAssignRow({ lockerAssign }){
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium">
-          {lockerAssign?.locker?.status === 'Disponible' ? (
-            <span className={getStatusColor(lockerAssign?.locker?.status)} title='Locker Disponible'>Disponible</span>
-          ) : (
-            <span className={getStatusColor(lockerAssign?.locker?.status)} title='Locker Ocupado'>Ocupado</span>
-          ) }
-          </td>
+          {getStatusLabel(lockerAssign?.locker?.status)}
+        </td>
         
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.locker?.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.locker?.padlock?.serial}</td>

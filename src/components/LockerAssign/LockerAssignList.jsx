@@ -38,14 +38,13 @@ function LockerAssignList() {
   const filteredLockers = useMemo(() => {
     
     return lockerAssignData.filter(item => {
-      const matchesCategory = item?.locker?.category?.categoryKey === activeCat;
-      // console.log("Coincide:", matchesCategory, "Item key:", item?.locker?.category?.categoryKey);
+      const matchesCategory = item?.locker?.category?.key === activeCat;
+      // console.log("Coincide:", matchesCategory, "Item key:, item?.locker?.category?.key);
       
       return matchesCategory;
    });
   }, [lockerAssignData, activeCat]);
     
-  console.log("filteredLockers", filteredLockers);
 
   // Datos para mostrar
   const dataToDisplay = filteredLockers;
@@ -87,9 +86,6 @@ const IconFemale = () => (
         <div className="titles-table flex justify-between items-center mb-4">
           
           <TitleHeader title="Asignación de Casilleros" />
-          <div className="text-sm">
-            <ButtonNavigate url={`/empleados/vestuarios/casilleros/nuevo`} navigate={navigate} />
-          </div>
         </div>
 
         {/* <FilterByFields

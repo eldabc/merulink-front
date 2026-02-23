@@ -26,27 +26,26 @@ function LockerRoomForm({ mode = 'create' }) {
   const createMode = mode === 'create'
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
-  const lockerCategory = lockerCategories.find(c => c.key === locker?.category);
 
   useEffect(() => {
     if (locker && (editMode || viewMode)) {
       reset(
-        lockerReset(lockerCategory, locker)
+        lockerReset(locker)
       );
 
     } else if (createMode) {
       reset(
-        lockerReset('', null)
+        lockerReset(null)
       );
     }
   }, [locker, mode, reset]);
 
-  const lockerReset = (category, locker) => {
+  const lockerReset = (locker) => {
     const lockerCode = locker?.code ?? '';
     const [categoryKey, code] = lockerCode.split("-");
     return {
         code: code,
-        category: locker?.category ?? '',
+        category: locker?.category?.key ?? '',
         status: locker?.status ?? (createMode ? 'Disponible' : null),
     }
 
@@ -94,7 +93,7 @@ function LockerRoomForm({ mode = 'create' }) {
               <div className='mt-5'>
                 {viewMode || editMode ? (
                   <div className="text-xl w-full px-3 py-2 rounded-lg bg-[#2f3d44] text-center text-gray-300">
-                    {lockerCategory?.value}
+                    {locker?.category?.name}
                   </div>
                 ) : (
                   <>

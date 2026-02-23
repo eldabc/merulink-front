@@ -5,6 +5,7 @@ import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 import { lockers } from '../utils/StaticData/locker-room-utils.js';
 import { padlocks } from '../utils/StaticData/padlock-utils.js';
 import { employees } from '../utils/StaticData/employee-utils.js';
+import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
 
 const LockerAssignContext = createContext();
 
@@ -26,13 +27,31 @@ export const LockerAssignProvider = ({ children }) => {
   const loadLockerAssign = useCallback(async () => {
     // setLoading(true);
     try {
-      setLockerAssignData(lockerAssigns);
+      // Extraer lockers IDs que tienen asignación
+      const assignedLockerIds = lockerAssigns.map(assign => assign.locker.id);
+
+      // Filtrar y transformar array
+      const availableLockersFormat = lockers
+              .filter(locker => !assignedLockerIds.includes(locker.id))
+              .map((locker, index) => {
+                return {
+                  id: `temp-${locker.id}-${index}`,
+                  locker: {
+                    ...locker,
+                  }
+                };
+              });
+
+      const combinedLockers = [...lockerAssigns, ...availableLockersFormat];
+      // console.log("CombinedLockers",combinedLockers);
+
+      setLockerAssignData(combinedLockers);
     } catch (err) {
       showNotification('Error al cargar datos', err.message);
     } finally {
       // setLoading(false);
     }
-  }, []);
+  }, [lockers, lockerAssigns]);
 
   useEffect(() => {
     console.log('UseEffect LockerAssignContext');
@@ -41,65 +60,60 @@ export const LockerAssignProvider = ({ children }) => {
 
   // Armado JSON
   const formattedLockerAssign = (formData) => {
-
+    const today = normalizeDateDDMMYYY(new Date());
     return {
-      id: Date.now(), // ID temporal
-      code: formData.code ? formData.code : null,
-      category: formData.category ? formData.category : null,
-      status: formData.status ? formData.status : null,
+      id: formData.id ? formData.id : Date.now(),
+      assignCode: `ASG-${formData.locker?.code}-${today}`,
+      assignDate: formData.assignDate ? formData.assignDate : today,
+      locker: {
+        id: formData.locker?.id,
+        code: formData.locker?.code,
+        status: formData.employeeId === '' ? 'Emparejado' : 'Ocupado',
+        category:{
+          id: formData.locker?.category?.id,
+          key: formData.locker?.category?.key,
+          categoryName: formData.locker?.category?.name,
+        },
+        padlock: {
+          id: formData.padlockId,
+          serial: 333355379,
+          pass: '11-22-33',
+          status: 'Asignado',
+        }
+      },
     };
   }
 
-  // *** Crear
-  const createLockerAssign = async (formData) => {
-    // try {
-      
-    //   const newLockerAssign = formattedLockerAssignAssigns(formData);
-    //   console.log("Creado", newLockerAssign);
-
-    //   // const response = await api.post('/subdepartments', newEvent); 
-    //   // const createdRecord = await response.json(); 
-
-    //   setLockerAssignData(prevData => [newLockerAssign, ...prevData]);
-    //   showNotification(`LockerAssignAssign ${newLockerAssign.code} creado con éxito`);
-      
-    //   return true;
-    // } catch (error) {
-    //   showNotification('Error al crear el lockerAssign', error.message);
-    //   return false;
-    // }
-  };
-
   // *** Actualizar
-  const updateLockerAssign = async (formData, messagge) => {
-    // try {
-    //   const lockerId = formData.id;
-    //   if (!messagge) messagge = "LockerAssignAssign actualizado";
+  const updateLockerAssign = async (formData) => {
+    try {
+      const lockerId = formData.id;
+      // console.log("formData", formData);
+      if (!lockerId) {
+        showNotification('Error: No se encontró el ID de la Asignación', 'error');
+        return false;
+      }
 
-    //   if (!lockerId) {
-    //     showNotification('Error: No se encontró el ID del lockerAssign', 'error');
-    //     return false;
-    //   }
-
-    //   const updatedLockerAssign = formattedLockerAssignAssigns(formData);
-    //   console.log("Actualizado:", updatedLockerAssign);
+      const updatedLockerAssign = formattedLockerAssign(formData);
+      console.log("Actualizado:", updatedLockerAssign);
       
-    //   // Llamada a la API/Backend (onUpdate)
-    //   // await api.put(`/events/${lockerId}`, updatedLockerAssign); 
+      // Llamada a la API/Backend (onUpdate)
+      // Actualizar status locker**
+      // await api.put(`/events/${lockerId}`, updatedLockerAssign); 
       
-    //   setLockerAssignData(prevData => {
-    //     return prevData.map(lockerAssign => 
-    //       lockerAssign.id === lockerId ? updatedLockerAssign : lockerAssign 
-    //     );
-    //   });
+      setLockerAssignData(prevData => {
+        return prevData.map(lockerAssign => 
+          lockerAssign.id === lockerId ? updatedLockerAssign : lockerAssign 
+        );
+      });
 
-    //   showNotification(`LockerAssignAssign ${formData.code} actualizado con éxito`); 
-    //   return true;
+      showNotification(`LockerAssignAssign ${formData.locker?.code} actualizado con éxito`); 
+      return true;
 
-    // } catch (error) {
-    //   showNotification('Error al actualizar: ' + error.message, 'error');
-    //   return false;
-    // }
+    } catch (error) {
+      showNotification('Error al actualizar: ' + error.message, 'error');
+      return false;
+    }
   };
 
   // *** Eliminar
@@ -142,8 +156,15 @@ export const LockerAssignProvider = ({ children }) => {
 
   const getEmployeesByCategory = async (category) => {
     try {
-      return employees.filter(employee => employee.sex === category && employee.status === true);
-    } catch (error) {
+      if (category === 'C') {
+        category = 'H';
+      } else if (category === 'D') {
+        category = 'M';
+      }
+      
+       return employees.filter(employee => employee.sex === category && employee.status === true && employee.useLocker === true);
+    // console.log("category22222222", filteredEmployees);
+      } catch (error) {
       showNotification('Error al obtener Empleados por Categoría', error.message);
       return false;
     }
@@ -155,7 +176,7 @@ export const LockerAssignProvider = ({ children }) => {
     setLockerAssignData,
     loadLockerAssign,
     error,
-    createLockerAssign,
+    // createLockerAssign,
     updateLockerAssign,
     deleteLockerAssign,
     getLockers,
