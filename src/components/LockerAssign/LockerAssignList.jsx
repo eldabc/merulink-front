@@ -9,6 +9,8 @@ import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
+import ButtonReset from '../Shared/ButtonReset';
+import ConfirmDialog from '../Shared/ConfirmDialog';
 
 import '../../Tables.css';
 
@@ -24,6 +26,9 @@ function LockerAssignList() {
   const [hasSearched, setHasSearched] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeCat, setActiveCat] = useState('C');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const isActiveCatD = activeCat === 'D';
+  const isActiveCatC = activeCat === 'C';
 
   useEffect(() => {
     if (searchValue.trim() || filterStatus !== 'all' ) {
@@ -107,24 +112,40 @@ const IconFemale = () => (
             <div 
               onClick={() => handleFilterCategory('C')}
               className={`flex-1 flex flex-col items-center justify-center py-4 rounded-lg cursor-pointer transition-all duration-300
-                ${activeCat === 'C' 
+                ${isActiveCatC 
                   ? 'bg-[#3c4042] border-b-2 border-blue-300 text-blue-300 shadow-lg' 
                   : 'text-gray-500 hover:bg-[#2a2d2e] hover:text-gray-300'}`}
             >
               <span className="text-3xl mb-1"><IconMale /></span>
               <span className="text-sm font-bold tracking-wider uppercase">Caballeros</span>
+              <div className='mt-1'>
+                <ButtonReset 
+                  setIsModalOpen={setIsModalOpen} 
+                  colorIcon={`${isActiveCatC ? 'border-blue-300 text-blue-300' : 'text-gray-500'}`}
+                  customStyle={`skip-style-btn ${isActiveCatC ? 'hover:bg-[#4e5052] hover:text-blue-400' : ''} `}
+                  title='s Caballeros'
+                />
+              </div>
             </div>
 
             {/* Botón Damas */}
             <div 
               onClick={() => handleFilterCategory('D')}
               className={`flex-1 flex flex-col items-center justify-center py-4 rounded-lg cursor-pointer transition-all duration-300
-                ${activeCat === 'D' 
+                ${isActiveCatD 
                   ? 'bg-[#3c4042] border-b-2 border-pink-300 text-pink-300 shadow-lg' 
                   : 'text-gray-500 hover:bg-[#2a2d2e] hover:text-gray-300'}`}
             >
               <span className="text-3xl mb-1"><IconFemale /></span>
               <span className="text-sm font-bold tracking-wider uppercase">Damas</span>
+              <div className='mt-1'>
+                <ButtonReset 
+                  setIsModalOpen={setIsModalOpen} 
+                  colorIcon={`${isActiveCatD ? 'border-pink-300 text-pink-300 0' : 'text-gray-500'}`} 
+                  customStyle={`skip-style-btn ${isActiveCatD ? ' hover:bg-[#4e5052] hover:text-pink-400' : ''} `}
+                  title='s Damas'
+                />
+              </div> 
             </div>
           </div>
           <table className="min-w-full border-collapse text-sm sm:text-base">

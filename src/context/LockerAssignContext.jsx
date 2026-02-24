@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo  } from 'react';
 import { useNotification } from "./NotificationContext";
 
 import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
@@ -19,44 +19,55 @@ export const useLockerAssigns = () => {
 export const LockerAssignProvider = ({ children }) => {
 
 
-  const [lockerAssignData, setLockerAssignData] = useState([]);
+  // const [lockerAssignData, setLockerAssignData] = useState(lockerAssigns);
+  const [assignments, setAssignments] = useState(lockerAssigns);
   // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { showNotification } = useNotification();
 
-  const loadLockerAssign = useCallback(async () => {
-    // setLoading(true);
-    try {
-      // Extraer lockers IDs que tienen asignación
-      const assignedLockerIds = lockerAssigns.map(assign => assign.locker.id);
 
-      // Filtrar y transformar array
-      const availableLockersFormat = lockers
-              .filter(locker => !assignedLockerIds.includes(locker.id))
-              .map((locker, index) => {
-                return {
-                  id: `temp-${locker.id}-${index}`,
-                  locker: {
-                    ...locker,
-                  }
-                };
-              });
+  const lockerAssignData = useMemo(() => {
+    const assignedLockerIds = assignments.map(a => a.locker.id);
 
-      const combinedLockers = [...lockerAssigns, ...availableLockersFormat];
-      // console.log("CombinedLockers",combinedLockers);
+    const availableLockersFormat = lockers
+      // .filter(locker => !assignedLockerIds.includes(locker.id))
+       .filter(locker => !assignedLockerIds.includes(Number(locker.id)))
+      .map((locker, index) => ({
+        id: `temp-${locker.id}-${index}`,
+        locker: {
+          ...locker,
+          status: 'Disponible'
+        }
+      }));
 
-      setLockerAssignData(combinedLockers);
-    } catch (err) {
-      showNotification('Error al cargar datos', err.message);
-    } finally {
-      // setLoading(false);
-    }
-  }, [lockers, lockerAssigns]);
+    return [...assignments, ...availableLockersFormat];
+  }, [assignments, lockers]);
 
-  useEffect(() => {
-    console.log('UseEffect LockerAssignContext');
-    loadLockerAssign();
-  }, [loadLockerAssign]);
+  // const loadLockerAssign = useCallback(async () => {
+  //   // setLoading(true);
+  //   try {
+  //     const assignedLockerIds = assignments.map(a => a.locker.id);
+
+  // const availableLockersFormat = lockers
+  //   .filter(locker => !assignedLockerIds.includes(locker.id))
+  //   .map((locker, index) => ({
+  //     id: `temp-${locker.id}-${index}`,
+  //     locker: { ...locker }
+  //   }));
+
+  // return [...assignments, ...availableLockersFormat];
+      
+  //   } catch (err) {
+  //     showNotification('Error al cargar datos', err.message);
+  //   } finally {
+  //     // setLoading(false);
+  //   }
+  // }, [assignments]);
+
+  // useEffect(() => {
+  //   console.log('UseEffect LockerAssignContext');
+  //   loadLockerAssign();
+  // }, [loadLockerAssign]);
 
   // Armado JSON
   const formattedLockerAssign = (formData) => {
@@ -108,12 +119,9 @@ export const LockerAssignProvider = ({ children }) => {
       // Llamada a la API/Backend (onUpdate)
       // await api.put(`/events/${lockerId}`, updatedLockerAssign); 
       
-      setLockerAssignData(prevData => {
-        return prevData.map(lockerAssign => 
-          lockerAssign.id === lockerId ? updatedLockerAssign : lockerAssign 
-        );
-      });
-
+       setAssignments(prev =>
+      prev.map(a => a.id === updated.id ? updated : a)
+    );
       showNotification(`Locker ${formData.locker?.code} actualizado con éxito`); 
       return true;
 
@@ -126,13 +134,16 @@ export const LockerAssignProvider = ({ children }) => {
     // *** Resetear Locker
   const resetLockerAssign = async (id) => {
     try {
-      // TODO: Colocar disponible locker, candado, quitar asignación empleados
-      setLockerAssignData(prevData => {
-        return prevData.filter(ev => ev.id !== id);
-      });
+      console.log("ID que se intenta resetear:", id);
+  console.log("Assignments antes:", assignments);
 
-      showNotification(`Locker reseteado con éxito`);
-      return true;
+  setAssignments(prev => {
+    const filtered = prev.filter(a => a.id !== id);
+    console.log("Assignments después:", filtered);
+    return filtered;
+  });
+
+  showNotification('Locker reseteado con éxito');
     } catch (error) {
       showNotification('Error al resetear el Locker', 'error');
       return false;
@@ -178,8 +189,8 @@ export const LockerAssignProvider = ({ children }) => {
 
   const contextValue = {
     lockerAssignData,
-    setLockerAssignData,
-    loadLockerAssign,
+    // setLockerAssignData,
+    // loadLockerAssign,
     error,
     updateLockerAssign,
     resetLockerAssign,
