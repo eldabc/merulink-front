@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import ButtonDelete from '../Shared/ButtonDelete';
+import ButtonReset from '../Shared/ButtonReset';
 import { getStatusColor } from '../../utils/status-utils';
+import ConfirmDialog from '../Shared/ConfirmDialog';
+import { useLockerAssigns } from '../../context/LockerAssignContext';
 
 
 function LockerAssignRow({ lockerAssign }){
  
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { resetLockerAssign } = useLockerAssigns();  
 
   const selectedLockerAssign = (lockerAssign) => {
     navigate("/empleados/vestuarios/casilleros/ver", { 
@@ -23,6 +28,11 @@ function LockerAssignRow({ lockerAssign }){
       case 'Emparejado':
         return <span className={getStatusColor(status)} title="Emparejado">Emparejado</span>;
     }
+  };
+
+  const handleConfirmReset = async (id) => {
+    await resetLockerAssign(id);
+    setIsModalOpen(false);
   };
 
   return (
@@ -45,21 +55,21 @@ function LockerAssignRow({ lockerAssign }){
           
         </td>
         <td className="px-4 py-3 text-white-700">
-          <ButtonDelete setIsModalOpen={() => handleDeleteClick(lockerAssign)} />
+          {lockerAssign?.locker?.status !== 'Disponible' && (
+            <ButtonReset setIsModalOpen={setIsModalOpen} />
+          )}
         </td>
       </tr>
       <tr>
         <td>
-          {/* <ConfirmDialog 
+          <ConfirmDialog 
             isOpen={isModalOpen}
-            onClose={() => {
-              setIsModalOpen(false);
-              setSelectedTemplate(null);
-            }}
-            onConfirm={handleConfirmDelete}
-            title="Eliminar Locker"
-            message={`¿Estás seguro de que deseas eliminar Locker "${selectedTemplate?.code}"?`}
-          /> */}
+            onClose={() => { setIsModalOpen(false); }}
+            onConfirm={() => handleConfirmReset(lockerAssign.id)}
+            title="Resetear Locker"
+            message={`¿Estás seguro de que deseas resetear Locker "${lockerAssign?.locker?.code}"?`}
+            btnText="Resetear"
+          />
         </td>
       </tr>
     </>

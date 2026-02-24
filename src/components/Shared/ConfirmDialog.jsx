@@ -1,4 +1,4 @@
-export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message }) {
+export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, btnText }) {
   if (!isOpen) return null;
 
   return (
@@ -29,7 +29,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
             }}
             className="px-4 py-2 text-sm font-mediumtext-white rounded-lg transition-colors shadow-lg shadow-red-900/20"
           >
-            Eliminar ahora
+           { btnText ? btnText : "Eliminar ahora" }
           </button>
         </div>
       </div>

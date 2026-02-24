@@ -123,22 +123,20 @@ export const LockerAssignProvider = ({ children }) => {
     }
   };
 
-  // *** Eliminar
-  const deleteLockerAssign = async (lockerAssign) => {
-    // try {
-    //   // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
-    //   // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
+    // *** Resetear Locker
+  const resetLockerAssign = async (id) => {
+    try {
+      // TODO: Colocar disponible locker, candado, quitar asignación empleados
+      setLockerAssignData(prevData => {
+        return prevData.filter(ev => ev.id !== id);
+      });
 
-    //   setLockerAssignData(prevData => {
-    //     return prevData.filter(ev => ev.id !== lockerAssign.id);
-    //   });
-
-    //   showNotification(`LockerAssignAssign ${lockerAssign.code} eliminado con éxito`);
-    //   return true;
-    // } catch (error) {
-    //   showNotification('Error al eliminar el calendario', error.message);
-    //   return false;
-    // }
+      showNotification(`Locker reseteado con éxito`);
+      return true;
+    } catch (error) {
+      showNotification('Error al resetear el Locker', 'error');
+      return false;
+    }
   };
 
   const getLockers = async (category) => {
@@ -184,7 +182,7 @@ export const LockerAssignProvider = ({ children }) => {
     loadLockerAssign,
     error,
     updateLockerAssign,
-    deleteLockerAssign,
+    resetLockerAssign,
     getLockers,
     getPadlocks,
     getEmployeesByCategory
