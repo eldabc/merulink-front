@@ -154,8 +154,7 @@ function LockerAssignForm({ mode = 'create' }) {
       }
   
       if (success) {
-        if (createMode) navigate(-1);
-        else navigate(-2);
+        navigate(-1);
       }
     };
 
