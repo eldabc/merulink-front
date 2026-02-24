@@ -133,6 +133,7 @@ const IconFemale = () => (
                 <th className="px-4 py-3 text-left font-semibold">Estatus</th>
                 <th className="px-4 py-3 text-left font-semibold">Código Locker</th>
                 <th className="px-4 py-3 text-left font-semibold">Candado</th>
+                <th className="px-4 py-3 text-left font-semibold">Asignado a:</th>
                 <th className="px-4 py-3 text-left font-semibold">Código Asig.</th>
                 <th className="px-4 py-3 text-left font-semibold">Fecha Asig.</th>
                 <th className="px-4 py-3 text-left font-semibold">Categoría</th>

@@ -60,25 +60,34 @@ export const LockerAssignProvider = ({ children }) => {
 
   // Armado JSON
   const formattedLockerAssign = (formData) => {
+    // console.log("formData", formData);
+    const wasAssigned = formData.employee.id ;
     const today = normalizeDateDDMMYYY(new Date());
+
     return {
       id: formData.id ? formData.id : Date.now(),
-      assignCode: `ASG-${formData.locker?.code}-${today}`,
-      assignDate: formData.assignDate ? formData.assignDate : today,
+      assignCode: wasAssigned ? `ASG-${formData.locker?.code}-${today}` : '',
+      assignDate: wasAssigned ? today : '',
       locker: {
         id: formData.locker?.id,
         code: formData.locker?.code,
-        status: formData.employeeId === '' ? 'Emparejado' : 'Ocupado',
+        status: wasAssigned ? 'Ocupado' : 'Emparejado',
         category:{
           id: formData.locker?.category?.id,
           key: formData.locker?.category?.key,
-          categoryName: formData.locker?.category?.name,
+          name: formData.locker?.category?.name,
         },
         padlock: {
           ...formData.padlock,
           status: 'Asignado',
         }
       },
+      employee: {
+        id: wasAssigned ? formData.employee.id : '',
+        name: wasAssigned ? `${formData.employee.firstName} ${formData.employee.lastName}` : '',
+        departement: formData.employee.department ? formData.employee.department : '',
+        // departmentName: formData.employee.departmentName,
+      }
     };
   }
 

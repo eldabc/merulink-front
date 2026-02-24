@@ -33,57 +33,99 @@ function LockerAssignForm({ mode = 'create' }) {
     const viewMode = mode === 'view';
     const editMode =  mode === 'edit';
 
-    useEffect(() => {
-      const fetchEmployeesInBackground = async (category) => {
+    // useEffect(() => {
+    //   const fetchEmployeesInBackground = async (category) => {
        
+    //     setLoadingEmployees(true);
+    //     try {
+    //       const empData = await getEmployeesByCategory(category);
+    //       setAvailableEmployees(empData);
+    //     } finally {
+    //       setLoadingEmployees(false);
+    //     }
+    //   };
+      
+    //   fetchEmployeesInBackground(lockerAssign?.locker?.category?.key);
+
+    // }, []);
+
+    // useEffect(() => {
+    //   const fetchPadlocks = async () => {
+    //     setLoadingData(true);
+        
+    //     const data = await getPadlocks();
+
+    //     setAvailablePadlocks(data);
+    //     setLoadingData(false);
+    //   };
+
+    //   fetchPadlocks();
+    // }, [lockerAssign]);
+
+    // useEffect(() => {
+    //   if (lockerAssign && (editMode || viewMode)) {
+    //     reset(
+    //       lockeAssignReset(lockerAssign)
+    //     );
+  
+    //   } else if (createMode) {
+    //     reset(
+    //       lockeAssignReset(null)
+    //     );
+    //   }
+    // }, [lockerAssign, mode, reset]);
+
+    // Carga inicial unificada
+    useEffect(() => {
+      const loadFormData = async () => {
+        setLoadingData(true);
         setLoadingEmployees(true);
+
         try {
-          const empData = await getEmployeesByCategory(category);
-          setAvailableEmployees(empData);
+          // Ejecuta las peticiones en paralelo para mantener el orden en form
+          const [padlocksData, employeesData] = await Promise.all([
+            getPadlocks(),
+            getEmployeesByCategory(lockerAssign?.locker?.category?.key)
+          ]);
+
+          setAvailablePadlocks(padlocksData);
+          setAvailableEmployees(employeesData);
+
+          // Cuando ya estan las listas se hace reset
+          if (lockerAssign && (editMode || viewMode)) {
+            // console.log("reset", lockerAssign)
+            reset({
+              lockerId: lockerAssign.locker?.id ?? null,
+              padlockId: lockerAssign.locker?.padlock?.id ?? '',
+              employeeId: lockerAssign.employee?.id ?? '',
+            });
+          }
+        } catch (error) {
+          console.error("Error cargando dependencias del formulario", error);
         } finally {
+          setLoadingData(false);
           setLoadingEmployees(false);
         }
       };
-      
-      fetchEmployeesInBackground(lockerAssign?.locker?.category?.key);
 
-    }, []);
-
-    useEffect(() => {
-      const fetchPadlocks = async () => {
-        setLoadingData(true);
-        
-        const data = await getPadlocks();
-
-        setAvailablePadlocks(data);
-        setLoadingData(false);
-      };
-
-      fetchPadlocks();
-    }, [lockerAssign]);
-
-    useEffect(() => {
-      if (lockerAssign && (editMode || viewMode)) {
-        reset(
-          lockeAssignReset(lockerAssign)
-        );
+      if (lockerAssign) {
+        loadFormData();
+      } 
+      // else if (createMode) {
+      //   reset({ lockerId: null, padlockId: '', employeeId: '' });
+      // }
+    }, [lockerAssign, mode, reset]); // Quitamos setValue, usamos reset con la data completa
   
-      } else if (createMode) {
-        reset(
-          lockeAssignReset(null)
-        );
-      }
-    }, [lockerAssign, mode, reset]);
-  
-    const lockeAssignReset = (lockerAssign) => {
+    // const lockeAssignReset = (lockerAssign) => {
+    //     console.log("holssas", lockerAssign?.locker?.padlock?.id  ?? '')
 
-      return {
-          lockerId: lockerAssign?.locker?.id ?? null,
-          padlockId: lockerAssign?.locker?.padlock?.id ?? '',
-          employeeId: lockerAssign?.employee?.id ?? '',
-      }
+    //   return {
+    //       lockerId: lockerAssign?.locker?.id ?? null,
+    //       padlockId: lockerAssign?.locker?.padlock?.id ?? '',
+    //       employeeId: lockerAssign?.employee?.id ?? '',
+    //   }
   
-    }
+    // }
   
     const onError = (formErrors) => {
       console.warn('Form validation errors:', formErrors);
@@ -91,15 +133,20 @@ function LockerAssignForm({ mode = 'create' }) {
     };
   
     const onSubmit = async (data) => {
+      // console.log("submit", data);
       let success = false;
       const padlockSelected = availablePadlocks.find(p => String(p.id).trim() === String(data.padlockId).trim());
+      const employeeSelected = availableEmployees.find(p => String(p.id).trim() === String(data.employeeId).trim());
+
       if (editMode && lockerAssign) {
         const dataEdit = {
-          ...data, 
           ...lockerAssign,
           padlock: {
             ...padlockSelected
           },
+          employee: {
+            ...employeeSelected
+          }
         }
         success = await updateLockerAssign(dataEdit);
       } else {

@@ -10,7 +10,7 @@ export const lockerAssigns = [
       category:{
         id: 1,
         key: 'D',
-        name: 'Mujeres',
+        name: 'Damas',
       },
       padlock: {
         id: 1,
@@ -42,9 +42,9 @@ export const lockerAssigns = [
       },
       padlock: {
         id: 2,
-        serial: 222255378,
-        pass: '11-22-33',
-        status: 'Asignado',
+        serial: 22245672,
+        pass: '44-55-66',
+        status: 'Disponible',
       }
     },
     employee: {
