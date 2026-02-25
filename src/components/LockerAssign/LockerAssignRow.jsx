@@ -57,7 +57,7 @@ function LockerAssignRow({ lockerAssign }){
         </td>
         <td className="px-4 py-3 text-white-700">
           {lockerAssign?.locker?.status !== 'Disponible' && (
-            <ButtonReset setIsModalOpen={setIsModalOpen} />
+            <ButtonReset setIsModalOpen={setIsModalOpen} title={lockerAssign?.locker?.code} />
           )}
         </td>
       </tr>

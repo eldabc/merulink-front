@@ -118,12 +118,12 @@ const IconFemale = () => (
             >
               <span className="text-3xl mb-1"><IconMale /></span>
               <span className="text-sm font-bold tracking-wider uppercase">Caballeros</span>
-              <div className='mt-1'>
+              <div className='mt-1 text-red-300'>
                 <ButtonReset 
                   setIsModalOpen={setIsModalOpen} 
-                  colorIcon={`${isActiveCatC ? 'border-blue-300 text-blue-300' : 'text-gray-500'}`}
-                  customStyle={`skip-style-btn ${isActiveCatC ? 'hover:bg-[#4e5052] hover:text-blue-400' : ''} `}
-                  title='s Caballeros'
+                  colorIcon={`${isActiveCatC ? 'hover:text-red-500' : 'text-gray-500'}`} 
+                  customStyle={`skip-style-btn ${isActiveCatC ? 'hover:text-red-500 hover:bg-[#4e5052]' : 'text-gray-500'}`}
+                  title='Caballeros'
                 />
               </div>
             </div>
@@ -138,12 +138,12 @@ const IconFemale = () => (
             >
               <span className="text-3xl mb-1"><IconFemale /></span>
               <span className="text-sm font-bold tracking-wider uppercase">Damas</span>
-              <div className='mt-1'>
+              <div className='mt-1 text-red-300'>
                 <ButtonReset 
                   setIsModalOpen={setIsModalOpen} 
-                  colorIcon={`${isActiveCatD ? 'border-pink-300 text-pink-300 0' : 'text-gray-500'}`} 
-                  customStyle={`skip-style-btn ${isActiveCatD ? ' hover:bg-[#4e5052] hover:text-pink-400' : ''} `}
-                  title='s Damas'
+                  colorIcon={`${isActiveCatD ? 'hover:text-red-500' : 'text-gray-500'}`} 
+                  customStyle={`skip-style-btn ${isActiveCatD ? 'hover:text-red-500 hover:bg-[#4e5052]' : 'text-gray-500'}`}
+                  title='Damas'
                 />
               </div> 
             </div>
@@ -179,7 +179,7 @@ const IconFemale = () => (
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
           totalPages={totalPages}
-          moduleName={'Candado'}
+          moduleName={'Lockers'}
         />
       </div>
   );
