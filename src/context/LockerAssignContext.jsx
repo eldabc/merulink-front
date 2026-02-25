@@ -117,7 +117,7 @@ export const LockerAssignProvider = ({ children }) => {
   };
 
     // *** Resetear 1 Locker todos de una categoría
-  const resetLockerAssign = async (id, categoryKey = '') => {
+  const resetLockerAssign = async (id, categoryKey = '', categoryName = '') => {
     try {
       if (categoryKey) {
         setAssignments(prev => {
@@ -131,7 +131,7 @@ export const LockerAssignProvider = ({ children }) => {
         });
       }
 
-      showNotification('Locker reseteado con éxito');
+      showNotification(`Locker ${categoryName} reseteado con éxito.`);
     } catch (error) {
       showNotification('Error al resetear el Locker', 'error');
       return false;

@@ -28,6 +28,7 @@ function LockerAssignList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeCat, setActiveCat] = useState('C');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categoryName, setCategoryName] = useState('');
   const isActiveCatD = activeCat === 'D';
   const isActiveCatC = activeCat === 'C';
 
@@ -40,9 +41,15 @@ function LockerAssignList() {
     setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
+  const handleActiveCategoryName = (key) => {
+    const category = lockerCategories.find(te => te.key === key);
+    setCategoryName(category.value);
+  };
+
   // Filtrar
   const filteredLockers = useMemo(() => {
-    
+
+    handleActiveCategoryName(activeCat);
     return lockerAssignData.filter(item => {
       const matchesCategory = item?.locker?.category?.key === activeCat;
       // console.log("Coincide:", matchesCategory, "Item key:, item?.locker?.category?.key);
@@ -63,10 +70,6 @@ function LockerAssignList() {
     // Se puede llamar a la lógica de filtrado existente
   };
 
-  const handkeActiveCategoryName = (key) => {
-    const category = lockerCategories.find(te => te.key === key);
-    return category.value;
-  };
 
 const IconMale = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
@@ -92,9 +95,10 @@ const IconFemale = () => (
 );
 
   const handleConfirmResetAll = async (categoryKey) => {
-    await resetLockerAssign(null, categoryKey);
+    await resetLockerAssign(null, categoryKey, categoryName);
     setIsModalOpen(false);
   };
+
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
         <div className="titles-table flex justify-between items-center mb-4">
@@ -183,7 +187,7 @@ const IconFemale = () => (
                       onClose={() => { setIsModalOpen(false); }}
                       onConfirm={() => handleConfirmResetAll(activeCat)}
                       title="Resetear Lockers"
-                      message={`¿Estás seguro que desea resetear TODOS los Locker de "${handkeActiveCategoryName(activeCat)}"?`}
+                      message={`¿Estás seguro que desea resetear TODOS los Locker de "${categoryName}"?`}
                       btnText="Resetear TODOS"
                     />
                 </td>
