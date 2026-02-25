@@ -44,20 +44,23 @@ function LockerAssignForm({ mode = 'create' }) {
 
         try {
           // Ejecuta las peticiones en paralelo para mantener el orden en form
-          const [padlocksData, employeesData] = await Promise.all([
+          const [padlocksData, employeesData, departmentsData] = await Promise.all([
             getPadlocks(),
-            getEmployeesByCategory(lockerAssign?.locker?.category?.key)
+            getEmployeesByCategory(lockerAssign?.locker?.category?.key),
+            getDepartments()
           ]);
 
           setAvailablePadlocks(padlocksData);
           setAvailableEmployees(employeesData);
+          setAvailableDepartments(departmentsData);
 
           // Cuando ya estan las listas se hace reset
           if (lockerAssign && (editMode || viewMode)) {
+            console.log("lockerAssign.employee?.department", lockerAssign.employee)
             reset({
               lockerId: lockerAssign.locker?.id ?? null,
               padlockId: lockerAssign.locker?.padlock?.id ?? '',
-              departmentId: lockerAssign.employee?.department ?? '',
+              departmentId: lockerAssign.employee?.departement ?? '',
               employeeId: lockerAssign.employee?.id ?? '',
             });
           }
@@ -75,16 +78,18 @@ function LockerAssignForm({ mode = 'create' }) {
     }, [lockerAssign, mode, reset]);
 
     useEffect(() => {
-      console.log("selectedDepartment", selectedDepartment)
+      console.log("11", selectedDepartment)
+      
       if (!selectedDepartment) { 
         setfilteredEmployees([]);
         return;
       }
+      console.log("selectedDepartment", selectedDepartment)
       // console.log('All availableEmployees:', availableEmployees);
       const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDepartment));
       // console.log('Filtered employees:', filteredEmp);
       setfilteredEmployees(filteredEmp);
-    }, [selectedDepartment]);
+    }, [selectedDepartment, availableDepartments]);
   
     const onError = (formErrors) => {
       console.warn('Form validation errors:', formErrors);
