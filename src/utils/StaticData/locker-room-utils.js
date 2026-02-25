@@ -10,7 +10,7 @@ export const lockers = [
     },
   },
   {
-    id: 1,
+    id: 9,
     code: "C-01",
     status: 'Disponible',
     category:{

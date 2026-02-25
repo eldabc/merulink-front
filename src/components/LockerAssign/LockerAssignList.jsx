@@ -162,8 +162,8 @@ const IconFemale = () => (
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((lockerAssign) => (
-                <LockerAssignRow key={lockerAssign.id} lockerAssign={lockerAssign}/>
+              {paginatedData.map((item) => (
+                <LockerAssignRow key={item.id} lockerAssign={item}/>
               ))}
             </tbody>
           </table>

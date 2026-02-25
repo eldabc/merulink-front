@@ -1,7 +1,7 @@
 export const lockerAssigns = [
   {
     id: 1,
-    assignCode: 'ASG-D-03',
+    assignCode: 'ASG-D-01',
     assignDate: '2024-06-01',
     locker: {
       id: 1,
@@ -32,7 +32,7 @@ export const lockerAssigns = [
     assignCode: 'ASG-C-01',
     assignDate: '2024-06-01',
     locker: {
-      id: 1,
+      id: 9,
       code: "C-01",
       status: 'Ocupado',
       category:{

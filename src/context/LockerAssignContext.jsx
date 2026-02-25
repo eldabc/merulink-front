@@ -21,7 +21,7 @@ export const LockerAssignProvider = ({ children }) => {
 
   // const [lockerAssignData, setLockerAssignData] = useState(lockerAssigns);
   const [assignments, setAssignments] = useState(lockerAssigns);
-  // const [loading, setLoading] = useState(false);
+  // const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const { showNotification } = useNotification();
 
@@ -30,7 +30,6 @@ export const LockerAssignProvider = ({ children }) => {
     const assignedLockerIds = assignments.map(a => a.locker.id);
 
     const availableLockersFormat = lockers
-      // .filter(locker => !assignedLockerIds.includes(locker.id))
        .filter(locker => !assignedLockerIds.includes(Number(locker.id)))
       .map((locker, index) => ({
         id: `temp-${locker.id}-${index}`,
@@ -43,31 +42,6 @@ export const LockerAssignProvider = ({ children }) => {
     return [...assignments, ...availableLockersFormat];
   }, [assignments, lockers]);
 
-  // const loadLockerAssign = useCallback(async () => {
-  //   // setLoading(true);
-  //   try {
-  //     const assignedLockerIds = assignments.map(a => a.locker.id);
-
-  // const availableLockersFormat = lockers
-  //   .filter(locker => !assignedLockerIds.includes(locker.id))
-  //   .map((locker, index) => ({
-  //     id: `temp-${locker.id}-${index}`,
-  //     locker: { ...locker }
-  //   }));
-
-  // return [...assignments, ...availableLockersFormat];
-      
-  //   } catch (err) {
-  //     showNotification('Error al cargar datos', err.message);
-  //   } finally {
-  //     // setLoading(false);
-  //   }
-  // }, [assignments]);
-
-  // useEffect(() => {
-  //   console.log('UseEffect LockerAssignContext');
-  //   loadLockerAssign();
-  // }, [loadLockerAssign]);
 
   // Armado JSON
   const formattedLockerAssign = (formData) => {
@@ -106,7 +80,7 @@ export const LockerAssignProvider = ({ children }) => {
   const updateLockerAssign = async (formData) => {
     try {
       const lockerId = formData.id;
-      // console.log("formData", formData);
+
       if (!lockerId) {
         showNotification('Error: No se encontró el ID de la Asignación', 'error');
         return false;
@@ -114,14 +88,25 @@ export const LockerAssignProvider = ({ children }) => {
 
       const updatedLockerAssign = formattedLockerAssign(formData);
       console.log("Actualizado:", updatedLockerAssign);
-      
-      // **Actualizar status locker** y Candado**
-      // Llamada a la API/Backend (onUpdate)
-      // await api.put(`/events/${lockerId}`, updatedLockerAssign); 
-      
-       setAssignments(prev =>
-      prev.map(a => a.id === updated.id ? updated : a)
-    );
+
+      setAssignments(prev => {
+
+        // Buscar si existe asignación para el locker
+        const exists = prev.some(a =>
+          Number(a.locker.id) === Number(updatedLockerAssign.locker.id)
+        );
+
+        if (exists) {
+          return prev.map(a =>
+            Number(a.locker.id) === Number(updatedLockerAssign.locker.id)
+              ? updatedLockerAssign
+              : a
+          );
+        }
+
+        return [...prev, updatedLockerAssign];
+      });
+
       showNotification(`Locker ${formData.locker?.code} actualizado con éxito`); 
       return true;
 
@@ -179,7 +164,7 @@ export const LockerAssignProvider = ({ children }) => {
         }
       
        return employees.filter(employee => employee.sex === category && employee.status === true && employee.useLocker === true);
-        // console.log("FilteredEmployees", filteredEmployees);
+
       } catch (error) {
       showNotification('Error al obtener Empleados por Categoría', error.message);
       return false;
