@@ -116,14 +116,20 @@ export const LockerAssignProvider = ({ children }) => {
     }
   };
 
-    // *** Resetear Locker
-  const resetLockerAssign = async (id) => {
+    // *** Resetear 1 Locker todos de una categoría
+  const resetLockerAssign = async (id, categoryKey = '') => {
     try {
-
-      setAssignments(prev => {
-        const filtered = prev.filter(a => a.id !== id);
-        return filtered;
-      });
+      if (categoryKey) {
+        setAssignments(prev => {
+          const filtered = prev.filter(a => a.locker.category.key !== categoryKey);
+          return filtered;
+        });
+      } else {
+        setAssignments(prev => {
+          const filtered = prev.filter(a => a.id !== id);
+          return filtered;
+        });
+      }
 
       showNotification('Locker reseteado con éxito');
     } catch (error) {

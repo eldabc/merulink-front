@@ -17,7 +17,7 @@ import '../../Tables.css';
 
 function LockerAssignList() {
   const navigate = useNavigate();
-  const { lockerAssignData } = useLockerAssigns();
+  const { lockerAssignData, resetLockerAssign } = useLockerAssigns();
 
   // Para buscador y paginación
   const itemsPerPage = 10;
@@ -90,6 +90,11 @@ const IconFemale = () => (
     <path d="M8 7a4 4 0 0 1 8 0" />
   </svg>
 );
+
+  const handleConfirmResetAll = async (categoryKey) => {
+    await resetLockerAssign(null, categoryKey);
+    setIsModalOpen(false);
+  };
   return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
         <div className="titles-table flex justify-between items-center mb-4">
@@ -176,7 +181,7 @@ const IconFemale = () => (
                    <ConfirmDialog 
                       isOpen={isModalOpen}
                       onClose={() => { setIsModalOpen(false); }}
-                      onConfirm={() => handleConfirmReset(lockerAssign.id)}
+                      onConfirm={() => handleConfirmResetAll(activeCat)}
                       title="Resetear Lockers"
                       message={`¿Estás seguro que desea resetear TODOS los Locker de "${handkeActiveCategoryName(activeCat)}"?`}
                       btnText="Resetear TODOS"
