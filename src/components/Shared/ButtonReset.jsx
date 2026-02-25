@@ -1,9 +1,10 @@
 
 import { ArrowPathRoundedSquareIcon } from '@heroicons/react/24/solid';
 
-function ButtonReset({ setIsModalOpen, colorIcon, customStyle, title  = '' }) {
+function ButtonReset({ setIsModalOpen, colorIcon, customStyle, title  = '', disabled = false }) {
   return (
     <button 
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
         setIsModalOpen(true);

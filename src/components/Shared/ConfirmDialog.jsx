@@ -11,9 +11,16 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
           <h3 className="text-lg font-bold text-white">{title || '¿Estás seguro?'}</h3>
         </div>
         
-        <p className="text-gray-400 text-sm mb-6">
-          {message || 'Esta acción no se puede deshacer. El evento será eliminado permanentemente.'}
-        </p>
+        <div className="text-gray-400 text-sm mb-6">
+          {message && (
+            <>
+            {message}
+            <div className="text-center bg-gray-600 rounded-2xl ">
+              <span className="block justify-center mt-2 text-[14px] text-red-500 text-shadow-amber-50 p-2">Esta acción no se puede deshacer.</span>
+            </div>
+          </>
+          ) || 'Esta acción no se puede deshacer. El evento será eliminado permanentemente.'}
+        </div>
 
         <div className="flex justify-end gap-3">
           <button

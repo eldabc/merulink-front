@@ -69,7 +69,7 @@ function LockerAssignRow({ lockerAssign }){
             onConfirm={() => handleConfirmReset(lockerAssign.id)}
             title="Resetear Locker"
             message={`¿Estás seguro de que deseas resetear Locker "${lockerAssign?.locker?.code}"?`}
-            btnText="Resetear"
+            btnText={`Resetear ${lockerAssign?.locker?.code} `}
           />
         </td>
       </tr>

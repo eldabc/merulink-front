@@ -119,16 +119,13 @@ export const LockerAssignProvider = ({ children }) => {
     // *** Resetear Locker
   const resetLockerAssign = async (id) => {
     try {
-      console.log("ID que se intenta resetear:", id);
-  console.log("Assignments antes:", assignments);
 
-  setAssignments(prev => {
-    const filtered = prev.filter(a => a.id !== id);
-    console.log("Assignments después:", filtered);
-    return filtered;
-  });
+      setAssignments(prev => {
+        const filtered = prev.filter(a => a.id !== id);
+        return filtered;
+      });
 
-  showNotification('Locker reseteado con éxito');
+      showNotification('Locker reseteado con éxito');
     } catch (error) {
       showNotification('Error al resetear el Locker', 'error');
       return false;

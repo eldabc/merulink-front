@@ -11,6 +11,7 @@ import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import ButtonReset from '../Shared/ButtonReset';
 import ConfirmDialog from '../Shared/ConfirmDialog';
+import { lockerCategories } from '../../utils/StaticData/locker-room-utils';
 
 import '../../Tables.css';
 
@@ -45,7 +46,6 @@ function LockerAssignList() {
     return lockerAssignData.filter(item => {
       const matchesCategory = item?.locker?.category?.key === activeCat;
       // console.log("Coincide:", matchesCategory, "Item key:, item?.locker?.category?.key);
-      
       return matchesCategory;
    });
   }, [lockerAssignData, activeCat]);
@@ -60,8 +60,12 @@ function LockerAssignList() {
   // Función para manejar el click y filtrar
   const handleFilterCategory = (category) => {
     setActiveCat(category);
-    // Aquí puedes llamar a tu lógica de filtrado existente
-    // p.ej: setValue('category', category); si usas React Hook Form
+    // Se puede llamar a la lógica de filtrado existente
+  };
+
+  const handkeActiveCategoryName = (key) => {
+    const category = lockerCategories.find(te => te.key === key);
+    return category.value;
   };
 
 const IconMale = () => (
@@ -120,6 +124,7 @@ const IconFemale = () => (
               <span className="text-sm font-bold tracking-wider uppercase">Caballeros</span>
               <div className='mt-1 text-red-300'>
                 <ButtonReset 
+                  disabled={activeCat !== 'C'}
                   setIsModalOpen={setIsModalOpen} 
                   colorIcon={`${isActiveCatC ? 'hover:text-red-500' : 'text-gray-500'}`} 
                   customStyle={`skip-style-btn ${isActiveCatC ? 'hover:text-red-500 hover:bg-[#4e5052]' : 'text-gray-500'}`}
@@ -140,6 +145,7 @@ const IconFemale = () => (
               <span className="text-sm font-bold tracking-wider uppercase">Damas</span>
               <div className='mt-1 text-red-300'>
                 <ButtonReset 
+                  disabled={activeCat !== 'D'}
                   setIsModalOpen={setIsModalOpen} 
                   colorIcon={`${isActiveCatD ? 'hover:text-red-500' : 'text-gray-500'}`} 
                   customStyle={`skip-style-btn ${isActiveCatD ? 'hover:text-red-500 hover:bg-[#4e5052]' : 'text-gray-500'}`}
@@ -165,6 +171,18 @@ const IconFemale = () => (
               {paginatedData.map((item) => (
                 <LockerAssignRow key={item.id} lockerAssign={item}/>
               ))}
+              <tr>
+                <td>
+                   <ConfirmDialog 
+                      isOpen={isModalOpen}
+                      onClose={() => { setIsModalOpen(false); }}
+                      onConfirm={() => handleConfirmReset(lockerAssign.id)}
+                      title="Resetear Lockers"
+                      message={`¿Estás seguro que desea resetear TODOS los Locker de "${handkeActiveCategoryName(activeCat)}"?`}
+                      btnText="Resetear TODOS"
+                    />
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
