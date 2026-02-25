@@ -12,68 +12,29 @@ import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import LabelFieldForm from "../Shared/LabelFieldForm";
 import { lockerCategories, lockers } from '../../utils/StaticData/locker-room-utils.js';
 import TitleHeader from '../Shared/TitleHeader';
+import { departments } from '../../utils/StaticData/departments-utils.js';
 
 function LockerAssignForm({ mode = 'create' }) {
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(lockerAssignValidationSchema),
     });
-    const { createLockerAssign, updateLockerAssign, getPadlocks, getEmployeesByCategory } = useLockerAssigns();
+    const { createLockerAssign, updateLockerAssign, getPadlocks, getEmployeesByCategory, getDepartments } = useLockerAssigns();
     
     const navigate = useNavigate();
     const location = useLocation();
   
-    const selectedPadlock = watch('padlockId')
+    const selectedPadlock = watch('padlockId');
+    const selectedDepartment = watch('departmentId');
     const lockerAssign = location.state?.data;
     const [availableEmployees, setAvailableEmployees] = useState([]);
+    const [filteredEmployees, setfilteredEmployees] = useState([]);
     const [availablePadlocks, setAvailablePadlocks] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
     const [loadingEmployees, setLoadingEmployees] = useState(false);
+    const [availableDepartments, setAvailableDepartments] = useState([]);
 
-    const createMode = mode === 'create'
     const viewMode = mode === 'view';
     const editMode =  mode === 'edit';
-
-    // useEffect(() => {
-    //   const fetchEmployeesInBackground = async (category) => {
-       
-    //     setLoadingEmployees(true);
-    //     try {
-    //       const empData = await getEmployeesByCategory(category);
-    //       setAvailableEmployees(empData);
-    //     } finally {
-    //       setLoadingEmployees(false);
-    //     }
-    //   };
-      
-    //   fetchEmployeesInBackground(lockerAssign?.locker?.category?.key);
-
-    // }, []);
-
-    // useEffect(() => {
-    //   const fetchPadlocks = async () => {
-    //     setLoadingData(true);
-        
-    //     const data = await getPadlocks();
-
-    //     setAvailablePadlocks(data);
-    //     setLoadingData(false);
-    //   };
-
-    //   fetchPadlocks();
-    // }, [lockerAssign]);
-
-    // useEffect(() => {
-    //   if (lockerAssign && (editMode || viewMode)) {
-    //     reset(
-    //       lockeAssignReset(lockerAssign)
-    //     );
-  
-    //   } else if (createMode) {
-    //     reset(
-    //       lockeAssignReset(null)
-    //     );
-    //   }
-    // }, [lockerAssign, mode, reset]);
 
     // Carga inicial unificada
     useEffect(() => {
@@ -93,10 +54,10 @@ function LockerAssignForm({ mode = 'create' }) {
 
           // Cuando ya estan las listas se hace reset
           if (lockerAssign && (editMode || viewMode)) {
-            // console.log("reset", lockerAssign)
             reset({
               lockerId: lockerAssign.locker?.id ?? null,
               padlockId: lockerAssign.locker?.padlock?.id ?? '',
+              departmentId: lockerAssign.employee?.department ?? '',
               employeeId: lockerAssign.employee?.id ?? '',
             });
           }
@@ -111,21 +72,19 @@ function LockerAssignForm({ mode = 'create' }) {
       if (lockerAssign) {
         loadFormData();
       } 
-      // else if (createMode) {
-      //   reset({ lockerId: null, padlockId: '', employeeId: '' });
-      // }
-    }, [lockerAssign, mode, reset]); // Quitamos setValue, usamos reset con la data completa
-  
-    // const lockeAssignReset = (lockerAssign) => {
-    //     console.log("holssas", lockerAssign?.locker?.padlock?.id  ?? '')
+    }, [lockerAssign, mode, reset]);
 
-    //   return {
-    //       lockerId: lockerAssign?.locker?.id ?? null,
-    //       padlockId: lockerAssign?.locker?.padlock?.id ?? '',
-    //       employeeId: lockerAssign?.employee?.id ?? '',
-    //   }
-  
-    // }
+    useEffect(() => {
+      console.log("selectedDepartment", selectedDepartment)
+      if (!selectedDepartment) { 
+        setfilteredEmployees([]);
+        return;
+      }
+      // console.log('All availableEmployees:', availableEmployees);
+      const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDepartment));
+      // console.log('Filtered employees:', filteredEmp);
+      setfilteredEmployees(filteredEmp);
+    }, [selectedDepartment]);
   
     const onError = (formErrors) => {
       console.warn('Form validation errors:', formErrors);
@@ -157,6 +116,19 @@ function LockerAssignForm({ mode = 'create' }) {
         navigate(-1);
       }
     };
+    
+    // useEffect(() => {
+    //   const fetchDeps = async () => {
+    //     setLoadingData(true);
+        
+    //     const data = await getDepartments(); 
+        
+    //     setAvailableDepartments(data);
+    //     setLoadingData(false);
+    //   };
+  
+    //   fetchDeps();
+    // }, []);
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -212,7 +184,7 @@ function LockerAssignForm({ mode = 'create' }) {
                       </div>
                     </div>
                     <div className="mt-6">    
-                      <h3 className='text-xl font-bold'>{editMode ? ( 'Editar Emparejar Casillero' ):( 'Emparejar Casillero')}</h3>
+                      <h3 className='text-xl font-bold'>{lockerAssign?.locker?.padlock?.id ? ( 'Editar Emparejar Casillero' ):( 'Emparejar Casillero')}</h3>
                         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
                                         md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                         md:[&>*:nth-child(2n)]:pl-4 p-7'
@@ -240,22 +212,41 @@ function LockerAssignForm({ mode = 'create' }) {
                       
                       {(selectedPadlock) && (
                         <>
-                        <h3 className='text-xl font-bold'>{editMode ? ( 'Editar Asignación de Casillero' ):( 'Asignar Casillero')}</h3>
+                        <h3 className='text-xl font-bold'>{lockerAssign?.employee?.id ? ( 'Editar Asignación de Casillero' ):( 'Asignar Casillero')}</h3>
                           <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
                                           md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
                                           md:[&>*:nth-child(2n)]:pl-4 p-7'
                           >
+                            <LabelFieldForm field="Departamento" simbol="*" />
+                            <div className='max-w-2xl'>
+                              <select 
+                                {...register('departmentId')}
+                                disabled={viewMode || loadingData}
+                                className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
+                                  ${(viewMode || loadingData) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
+                              >
+                                <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+                                
+                                {availableDepartments.map((item) => (
+                                  <option key={item.id} value={item.id} className='bg-[#3c4042]'>
+                                    {item.departmentName}
+                                  </option>
+                                ))}
+                              </select>
+                              {errors?.employeeId && <ErrorMessage msg={errors.employeeId.message} /> }  
+                            </div>
+
                             <LabelFieldForm field="Empleado" simbol="*" />
                             <div className='max-w-2xl'>
                               <select 
                                 {...register('employeeId')}
-                                disabled={viewMode || loadingEmployees}
+                                disabled={viewMode || loadingEmployees || !selectedDepartment}
                                 className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                  ${(viewMode || loadingEmployees) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
+                                  ${(viewMode || loadingEmployees || !selectedDepartment) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
                               >
                                 <option className="bg-[#3c4042]" value=""> {loadingEmployees ? "Cargando..." : "Seleccionar..."} </option>
                                 
-                                {availableEmployees.map((item) => (
+                                {filteredEmployees.map((item) => (
                                   <option key={item.id} value={item.id} className='bg-[#3c4042]'>
                                     {item.firstName} {item.lastName}
                                   </option>

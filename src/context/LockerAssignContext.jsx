@@ -6,6 +6,7 @@ import { lockers } from '../utils/StaticData/locker-room-utils.js';
 import { padlocks } from '../utils/StaticData/padlock-utils.js';
 import { employees } from '../utils/StaticData/employee-utils.js';
 import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
+import { departments } from '../utils/StaticData/departments-utils.js';
 
 const LockerAssignContext = createContext();
 
@@ -158,6 +159,15 @@ export const LockerAssignProvider = ({ children }) => {
     }
   }
 
+   const getDepartments = async () => {
+      try {
+        return departments;       
+      } catch (error) {
+        showNotification('Error al obtener Departamentos', error.message);
+        return [];
+      }
+    }
+
   const getEmployeesByCategory = async (category) => {
     try {
         if (category === 'C') {
@@ -165,7 +175,7 @@ export const LockerAssignProvider = ({ children }) => {
         } else if (category === 'D') {
           category = 'M';
         }
-      
+        // TODO: en back se debe validar también que traiga solo los employees que no tienen locker asignado.
        return employees.filter(employee => employee.sex === category && employee.status === true && employee.useLocker === true);
 
       } catch (error) {
@@ -177,13 +187,13 @@ export const LockerAssignProvider = ({ children }) => {
 
   const contextValue = {
     lockerAssignData,
-    // setLockerAssignData,
     // loadLockerAssign,
     error,
     updateLockerAssign,
     resetLockerAssign,
     getLockers,
     getPadlocks,
+    getDepartments,
     getEmployeesByCategory
   };
 
