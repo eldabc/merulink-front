@@ -71,28 +71,28 @@ function LockerAssignList() {
   };
 
 
-const IconMale = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
+  const IconMale = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
 
-const IconFemale = () => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className="w-8 h-8"
-  >
-    <path d="M12 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
-    <path d="M18 21a6 6 0 0 0-12 0" />
-    <path d="M8 7a4 4 0 0 1 8 0" />
-  </svg>
-);
+  const IconFemale = () => (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className="w-8 h-8"
+    >
+      <path d="M12 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+      <path d="M18 21a6 6 0 0 0-12 0" />
+      <path d="M8 7a4 4 0 0 1 8 0" />
+    </svg>
+  );
 
   const handleConfirmResetAll = async (categoryKey) => {
     await resetLockerAssign(null, categoryKey, categoryName);
@@ -170,8 +170,9 @@ const IconFemale = () => (
                 <th className="px-4 py-3 text-left font-semibold">Código Locker</th>
                 <th className="px-4 py-3 text-left font-semibold">Candado</th>
                 <th className="px-4 py-3 text-left font-semibold">Asignado a:</th>
-                <th className="px-4 py-3 text-left font-semibold">Código Asig.</th>
+                <th className="px-4 py-3 text-left font-semibold">Departamento:</th>
                 <th className="px-4 py-3 text-left font-semibold">Fecha Asig.</th>
+                <th className="px-4 py-3 text-left font-semibold">Código Asig.</th>
                 <th className="px-4 py-3 text-left font-semibold">Categoría</th>
                 <th className="px-4 py-3 text-left font-semibold">Acciones</th>
               </tr>

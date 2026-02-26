@@ -54,16 +54,6 @@ function LockerAssignForm({ mode = 'create' }) {
           setAvailableEmployees(employeesData);
           setAvailableDepartments(departmentsData);
 
-          // Cuando ya estan las listas se hace reset
-          if (lockerAssign && (editMode || viewMode)) {
-            console.log("lockerAssign.employee?.department", lockerAssign.employee)
-            reset({
-              lockerId: lockerAssign.locker?.id ?? null,
-              padlockId: lockerAssign.locker?.padlock?.id ?? '',
-              departmentId: lockerAssign.employee?.departement ?? '',
-              employeeId: lockerAssign.employee?.id ?? '',
-            });
-          }
         } catch (error) {
           console.error("Error cargando dependencias del formulario", error);
         } finally {
@@ -78,18 +68,31 @@ function LockerAssignForm({ mode = 'create' }) {
     }, [lockerAssign, mode, reset]);
 
     useEffect(() => {
-      console.log("11", selectedDepartment)
       
       if (!selectedDepartment) { 
         setfilteredEmployees([]);
         return;
       }
-      console.log("selectedDepartment", selectedDepartment)
-      // console.log('All availableEmployees:', availableEmployees);
-      const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDepartment));
-      // console.log('Filtered employees:', filteredEmp);
-      setfilteredEmployees(filteredEmp);
-    }, [selectedDepartment, availableDepartments]);
+
+      const selectedDep = selectedDepartment ? selectedDepartment : lockerAssign?.employee?.department;
+      
+        const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDep));
+        // console.log('selectedDep --:', selectedDepartment, lockerAssign?.employee?.department);
+        setfilteredEmployees(filteredEmp);
+    }, [selectedDepartment, availableEmployees]);
+
+
+    useEffect(() => {
+      // Cuando estan TODAS las listas se hace reset
+      if (lockerAssign && (editMode || viewMode)) {
+        reset({
+          lockerId: lockerAssign.locker?.id ?? null,
+          padlockId: lockerAssign.locker?.padlock?.id ?? '',
+          departmentId: lockerAssign.employee?.department ?? (selectedDepartment ?? ''),
+          employeeId: lockerAssign.employee?.id ?? '', //selectedDepartment !== lockerAssign?.employee?.department ? '' : lockerAssign.employee?.id,
+        });
+      }
+    }, [availableEmployees]);
   
     const onError = (formErrors) => {
       console.warn('Form validation errors:', formErrors);
@@ -238,7 +241,7 @@ function LockerAssignForm({ mode = 'create' }) {
                                   </option>
                                 ))}
                               </select>
-                              {errors?.employeeId && <ErrorMessage msg={errors.employeeId.message} /> }  
+                              {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} /> }  
                             </div>
 
                             <LabelFieldForm field="Empleado" simbol="*" />

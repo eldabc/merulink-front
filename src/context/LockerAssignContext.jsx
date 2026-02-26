@@ -19,8 +19,6 @@ export const useLockerAssigns = () => {
 // Provider con la lógica y el estado
 export const LockerAssignProvider = ({ children }) => {
 
-
-  // const [lockerAssignData, setLockerAssignData] = useState(lockerAssigns);
   const [assignments, setAssignments] = useState(lockerAssigns);
   // const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
@@ -71,8 +69,8 @@ export const LockerAssignProvider = ({ children }) => {
       employee: {
         id: wasAssigned ? formData.employee.id : '',
         name: wasAssigned ? `${formData.employee.firstName} ${formData.employee.lastName}` : '',
-        departement: formData.employee.department ? formData.employee.department : '',
-        // departmentName: formData.employee.departmentName,
+        department: wasAssigned ? formData.employee.department : '',
+        departmentName: wasAssigned ? formData.employee.departmentName : '',
       }
     };
   }
