@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, User } from "lucide-react";
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
@@ -13,14 +14,11 @@ import { calculateAge } from '../../utils/calculateAge-utils';
 import { employees } from '../../utils/StaticData/employee-utils';
 import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
 import { useEmployees } from '../../context/EmployeeContext';
+import FooterFormButtons from '../Shared/FooterFormButtons'
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
-export default function EmployeeForm({ mode = 'create', employee = null, onSave, onCancel }) {
-  const { toggleEmployeeField, getDepartments } = useEmployees();
-  const [activeTab, setActiveTab] = useState('personal');
-  const [availableDepartments, setAvailableDepartments] = useState([]);
-  const [loadingData, setLoadingData] = useState(false);
+export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//employee = null,
   
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
@@ -37,6 +35,17 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
     useLocker: false,
     useTransport: false
   });
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('personal');
+  const [availableDepartments, setAvailableDepartments] = useState([]);
+  const { toggleEmployeeField, getDepartments, createEmployee } = useEmployees();
+  const [loadingData, setLoadingData] = useState(false);
+
+  const editMode = mode === 'edit';
+  const employee = location.state?.data;
+  console.log("Employee Data Location:", employee);
 
   // calcular edad cuando cambie birthDate
   const watchedBirthDate = watch('birthDate');
@@ -146,22 +155,33 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
   }, [employee, mode, reset]);
 
   const onSubmit = async (data) => {
+    // console.log("submit", data);
+    let success = false;
     
     const departmentFound = availableDepartments.find(item => item.id === Number(data.department));
     const submissionData = { ...data, departmentName: departmentFound.departmentName };
 
-    //Armado números de teléfono
-    if (submissionData.mobilePhone) { submissionData.mobilePhone = `${submissionData.mobilePhoneCode}-${submissionData.mobilePhone}`; }
-
-    if (submissionData.homePhone) { 
-        submissionData.homePhone = `${submissionData.homePhoneCode}-${submissionData.homePhone}`;
-    } else {
-        submissionData.homePhone = null; 
-    }
-
     console.log('EmployeeForm data final:', submissionData);
 
-    if (onSave) await onSave(submissionData);
+    if (editMode && employee) {
+      // const dataEdit = {
+      //   ...lockerAssign,
+      //   padlock: {
+      //     ...padlockSelected
+      //   },
+      //   employee: {
+      //     ...employeeSelected
+      //   }
+      // }
+      success = await updateEmployee(submissionData);
+    } else {
+      success = await createEmployee(submissionData);
+    }
+
+    if (success) {
+      navigate(-1);
+    }
+
   };
 
   const onError = (formErrors) => {
@@ -317,9 +337,8 @@ export default function EmployeeForm({ mode = 'create', employee = null, onSave,
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
-          <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">{mode === 'edit' ? 'Guardar cambios' : 'Crear empleado'}</button>
-        </div>
+        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+      </div>
      </form>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNotification } from "../../context/NotificationContext";  
 import { useEmployees } from '../../context/EmployeeContext'; 
+import { useNavigate } from 'react-router-dom';
 
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
@@ -9,6 +10,8 @@ import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 import FilterByFields from '../Filters/FilterByFields';
+import TitleHeader from '../Shared/TitleHeader';
+import ButtonNavigate from '../Shared/ButtonNavigate';
 import '../../Tables.css';
 
 // Componente wrapper que proporciona el contexto
@@ -19,12 +22,13 @@ export default function EmployeeList() {
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [addEmployee, setAddEmployee] = useState(null);
-  const itemsPerPage = 10;
   const [show, setShow] = useState(false);
   const { showNotification } = useNotification();
+  const navigate = useNavigate();
+  const itemsPerPage = 10;
   
   // Leer del contexto (fuente única de verdad)
-  const { employeeData, setEmployeeData } = useEmployees();
+  const { employeeData, setEmployeeData, createEmployee } = useEmployees();
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
@@ -77,20 +81,6 @@ export default function EmployeeList() {
       }}
     />
   }
-  if (addEmployee) {
-    return (
-      <EmployeeAdd
-        employee={addEmployee}
-        onBack={() => setAddEmployee(null)}
-        onCreated={(newEmp) => {
-          // assign an id and prepend to list
-          setEmployeeData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
-          setAddEmployee(null);
-          showNotification('Éxito', 'Empleado creado correctamente.');
-        }}
-      />
-    );
-  }
 
 return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
@@ -98,15 +88,8 @@ return (
       {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
       <div className="titles-table flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Listado de Empleados</h2>
-        <div className="text-sm">
-          <button
-            onClick={() => setAddEmployee({})}
-            className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
-          >
-            ← Nuevo Registro
-          </button>
-        </div>
+        <TitleHeader title='Listado de Empleados' />
+        <ButtonNavigate url={`/empleados/nuevo`} navigate={navigate} />
       </div>
       {/* Filtro */}
       <FilterByFields

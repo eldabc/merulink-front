@@ -49,6 +49,45 @@ export const EmployeeProvider = ({ children }) => {
     showNotification("Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);    
   };
 
+  // Armado JSON
+  const formattedEmployees = (formData) => {
+  // const categoryData = lockerCategories.find(ca => ca.key === formData.category);
+    
+    // return {
+    //   id: formData.id ? formData.id : Date.now(),
+    //   code: formData.category && formData.code ? `${formData.category}-${formData.code}` : null,
+    //   category: {
+    //     id: categoryData.id,
+    //     key: categoryData.key,
+    //     name: categoryData.value,
+    //   },
+    //   status: formData.status ? formData.status : null,
+    // };
+  }
+
+  // *** Crear
+  const createEmployee = async (formData) => {
+    try {
+      //Armado números de teléfono
+      if (formData.mobilePhone) formData.mobilePhone = `${formData.mobilePhoneCode}-${formData.mobilePhone}`;
+
+      if (formData.homePhone) formData.homePhone = `${formData.homePhoneCode}-${formData.homePhone}`; 
+
+      console.log('data form:', formData);
+      const newEmployee = { id: Date.now(), ...formData };
+      // const newEmployee = formattedEmployees(formData);
+      // console.log("Creado", newEmployee);; 
+
+      setEmployeeData(prevData => [newEmployee, ...prevData]);
+      showNotification(`Empleado ${newEmployee.firstName} ${newEmployee.lastName} creado con éxito`);
+      
+      return true;
+    } catch (error) {
+      showNotification('Error al crear el Empleado', error.message);
+      return false;
+    }
+  };
+
   const getDepartments = async () => {
     try {
          return departments;       
@@ -62,6 +101,7 @@ export const EmployeeProvider = ({ children }) => {
     employeeData,
     setEmployeeData,
     toggleEmployeeField,
+    createEmployee,
     getDepartments
   };
 

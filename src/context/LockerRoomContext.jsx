@@ -49,7 +49,7 @@ export const LockerRoomProvider = ({ children }) => { //showNotification,
       },
       status: formData.status ? formData.status : null,
     };
-      }
+  }
 
   // *** Crear
   const createLocker = async (formData) => {

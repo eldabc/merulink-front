@@ -57,9 +57,7 @@ function PadlockList() {
         <div className="titles-table flex justify-between items-center mb-4">
           
           <TitleHeader title="Listado de Candados" />
-          <div className="text-sm">
-            <ButtonNavigate url={`/empleados/vestuarios/candados/nuevo`} navigate={navigate} />
-          </div>
+          <ButtonNavigate url={`/empleados/vestuarios/candados/nuevo`} navigate={navigate} />
         </div>
 
         <FilterByFields
