@@ -20,11 +20,11 @@ export const lockerAssigns = [
       }
     },
     employee: {
-      id: 1,
-      name: 'María Gómez',
+      id: 4,
+      name: 'Ana Martínez',
       sex: 'M',
-      department: 1,
-      departmentName: 'Administración',
+      department: 4,
+      departmentName: 'Alimentos y Bebidas',
     },
   },
   {

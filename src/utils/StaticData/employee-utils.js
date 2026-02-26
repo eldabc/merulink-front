@@ -250,7 +250,7 @@ export const employees = [
     status: true,
     useMeruLink: false,
     useHidCard: true,
-    useLocker: false,
+    useLocker: true,
     useTransport: false,
     contacts: [
       {

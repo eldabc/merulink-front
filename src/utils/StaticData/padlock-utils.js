@@ -3,7 +3,7 @@ export const padlocks = [
     id: 1,
     serial: 111155378,
     pass: '11-22-33',
-    status: 'Asignado',
+    status: 'Disponible',
   },
   {
     id: 2,
