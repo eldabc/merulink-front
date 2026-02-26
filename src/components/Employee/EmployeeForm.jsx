@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -9,6 +9,7 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import MeruLinkData from "./tabs/meruLinkData";
+import LockerAssign from "./tabs/LockerAssign";
 import TabButtonsManager from './tabs/TabButtonsManager';
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { employees } from '../../utils/StaticData/employee-utils';
@@ -18,7 +19,7 @@ import FooterFormButtons from '../Shared/FooterFormButtons'
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
-export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//employee = null,
+export default function EmployeeForm({ mode = 'create', onCancel }) {
   
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
@@ -40,8 +41,12 @@ export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//e
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('personal');
   const [availableDepartments, setAvailableDepartments] = useState([]);
-  const { toggleEmployeeField, getDepartments, createEmployee } = useEmployees();
+  const [lockerAssigns, setLockerAssigns] = useState([]);
+  const { toggleEmployeeField, getDepartments, createEmployee, getLockerAssigns } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
+  const selectedSex = watch('sex');
+  const changedUseLocker = watch('useLocker');
+
 
   const editMode = mode === 'edit';
   const employee = location.state?.data;
@@ -54,16 +59,25 @@ export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//e
   }, [watchedBirthDate, setValue]);
 
   useEffect(() => {
-    const fetchDeps = async () => {
+    const loadFormData = async () => {
       setLoadingData(true);
-      
-      const data = await getDepartments(); 
-      
-      setAvailableDepartments(data);
-      setLoadingData(false);
+      try {
+        const [departmentsData, lockerAssignsData] = await Promise.all([
+          getDepartments(),
+          getLockerAssigns(),
+        ]);
+
+        setAvailableDepartments(departmentsData);
+        setLockerAssigns(lockerAssignsData);
+          
+      } catch (error) {
+        console.error("Error cargando dependencias del formulario", error);
+      } finally {
+        setLoadingData(false);
+      }
     };
 
-    fetchDeps();
+     loadFormData();
   }, []);
 
   useEffect(() => {
@@ -84,7 +98,7 @@ export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//e
         placeOfBirth: employee.placeOfBirth ?? '',
         nationality: employee.nationality ?? 'V',
         age: employee.age ?? '',
-        sex: employee.sex ?? 'M',
+        sex: employee.sex ?? '',
         maritalStatus: employee.maritalStatus ?? 'Soltero',
         bloodType: employee.bloodType ?? 'O+',
         email: employee.email ?? '',
@@ -128,7 +142,7 @@ export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//e
         placeOfBirth: '',
         nationality: 'V',
         age: '',
-        sex: 'M',
+        sex: '',
         maritalStatus: 'Soltero',
         bloodType: 'O+',
         email: '',
@@ -225,6 +239,30 @@ export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//e
     setActiveTab('personal');
   };
 
+  const getActivetab = (activeTab) => {
+    switch (activeTab) {
+      case 'personal':
+        return <PersonalData register={register} errors={errors} employee={employee} />;
+      case 'work':
+        return <WorkData 
+                  register={register} 
+                  errors={errors} 
+                  employee={employee} 
+                  tempFlags={tempFlags}
+                  setTempFlags={setTempFlags} 
+                  availableDepartments={availableDepartments} 
+                  loadingData={loadingData} 
+                />;
+      case 'contact':
+        return <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;
+      case 'meruLink':
+        return <MeruLinkData register={register} errors={errors} employee={employee} />;
+      case 'lockerAssign':
+        return <LockerAssign register={register} errors={errors} lockerAssigns={lockerAssigns} selectedSex={selectedSex} useLocker={changedUseLocker}  />;
+    }
+  };
+console.log("lockerAssigns", lockerAssigns);
+console.log("selectedSex", selectedSex);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -326,14 +364,8 @@ export default function EmployeeForm({ mode = 'create', onSave, onCancel }) {//e
             errors={errors}
             tempFlags={tempFlags}
         />
-        <div className="mt-6">     
-            {activeTab === 'personal' && ( <PersonalData register={register} errors={errors} employee={employee} /> )}
-            {activeTab === 'work' && ( <WorkData 
-                                          register={register} errors={errors} employee={employee} tempFlags={tempFlags}
-                                          setTempFlags={setTempFlags} availableDepartments={availableDepartments} loadingData={loadingData} /> )}
-                                          
-            {activeTab === 'contact' && ( <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} /> )}
-            {activeTab === 'meruLink' && ( <MeruLinkData register={register} errors={errors} employee={employee} /> )}
+        <div className="mt-6">
+          {getActivetab(activeTab)}     
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3">

@@ -67,20 +67,24 @@ export default function WorkData({ register, errors, employee, tempFlags, setTem
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa HID Card?</span>
-              <input type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useHidCard")} disabled={!isEmployeeActive} />
+              <input type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${disabledClasses}`} onClick={() => toggleEmployeeField(employee?.id, "useHidCard")} disabled={!isEmployeeActive} />
             </label>
           </div>
 
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa Locker?</span>
-            <input type="checkbox" {...register('useLocker')} className={`w-4 h-4 rounded ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useLocker")} disabled={!isEmployeeActive} /> 
+            <input type="checkbox" 
+                   {...register('useLocker')} 
+                   className={`w-4 h-4 rounded ${disabledClasses}`} 
+                   onClick={() => toggleEmployeeField(employee?.id, "useLocker")} 
+                   disabled={!isEmployeeActive} /> 
             </label>
           </div>
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa Transporte?</span>
-              <input type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${disabledClasses}`} onClick={() => toggleEmployeeField(employee.id, "useTransport")} disabled={!isEmployeeActive} />
+              <input type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${disabledClasses}`} onClick={() => toggleEmployeeField(employee?.id, "useTransport")} disabled={!isEmployeeActive} />
             </label>
           </div>
         </div>

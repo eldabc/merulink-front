@@ -3,6 +3,7 @@ export const tabs = [
     { id: "work", label: "Datos laborales" },
     { id: "contact", label: "Datos de contactos" },
     { id: "meruLink", label: "Meru Link" },
+    { id: "lockerAssign", label: "Locker y Asignaciones" },
 ];
 
 export const tabsEvents = [

@@ -3,6 +3,7 @@ import { useNotification } from "../context/NotificationContext";
 
 import { departments } from '../utils/StaticData/departments-utils.js';
 import { employees } from '../utils/StaticData/employee-utils';
+import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 
 const EmployeeContext = createContext();
 
@@ -17,7 +18,10 @@ export const EmployeeProvider = ({ children }) => {
   const [employeeData, setEmployeeData] = useState(employees);
   const { showNotification } = useNotification();
 
-  const toggleEmployeeField = (id, field) => {       
+  const toggleEmployeeField = (id, field) => { 
+    
+    if (!id || !field) return; 
+    
     setEmployeeData(prev =>
       prev.map(emp => {
         if (emp.id !== id) {
@@ -96,13 +100,23 @@ export const EmployeeProvider = ({ children }) => {
       return [];
     }
   }
+
+    const getLockerAssigns = async () => {
+    try {
+         return lockerAssigns;       
+    } catch (error) {
+      showNotification('Error al obtener Asignaciones de Lockers', error.message);
+      return [];
+    }
+  }
   
   const contextValue = {
     employeeData,
     setEmployeeData,
     toggleEmployeeField,
     createEmployee,
-    getDepartments
+    getDepartments,
+    getLockerAssigns
   };
 
   return (

@@ -5,8 +5,10 @@ import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 import { lockers } from '../utils/StaticData/locker-room-utils.js';
 import { padlocks } from '../utils/StaticData/padlock-utils.js';
 import { employees } from '../utils/StaticData/employee-utils.js';
-import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
+
 import { departments } from '../utils/StaticData/departments-utils.js';
+import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
+import { getCategoryKey } from '../utils/LockerAssign/locker-assign-utils.js';
 
 const LockerAssignContext = createContext();
 
@@ -168,6 +170,7 @@ export const LockerAssignProvider = ({ children }) => {
 
   const getEmployeesByCategory = async (category) => {
     try {
+        // getCategoryKey(category);
         if (category === 'C') {
           category = 'H';
         } else if (category === 'D') {
