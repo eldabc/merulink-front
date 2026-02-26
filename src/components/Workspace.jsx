@@ -12,11 +12,13 @@ const EventsPage = lazy(() => import("./Events/EventsPage"));
 const DefaultWorkspace = lazy(() => import("./DefaultWorkspace"));
 const LockerAssignList = lazy(() => import("./LockerAssign/LockerAssignList"));
 const LockerAssignPage = lazy(() => import("./LockerAssign/LockerAssignPage"));
+const EmployeePage = lazy(() => import("./Employee/EmployeePage"));
 
 import { EventProvider } from "../context/EventContext";
 import { LockerRoomProvider } from "../context/LockerRoomContext";
 import { PadlockProvider } from "../context/PadlockContext";
 import { LockerAssignProvider } from "../context/LockerAssignContext";
+import { EmployeeProvider } from '../context/EmployeeContext'; 
 import { useNotification } from "../context/NotificationContext";
 
 const EventLayout = ({ showNotification }) => (
@@ -43,6 +45,12 @@ const LockerAssignLayout = () => (
   </LockerAssignProvider>
 );
 
+const EmployeeLayout = () => (
+  <EmployeeProvider>
+    <Outlet />
+  </EmployeeProvider>
+);
+
 export default function Workspace({ activeMenu, activePath }) {
   const { showNotification } = useNotification();
   return (
@@ -52,7 +60,9 @@ export default function Workspace({ activeMenu, activePath }) {
         <Route path="/ia" element={<div className="ia-workspace"><AssistantInput /></div>} />
 
         {/* RRHH */}
-        <Route path="/empleados" element={<div className="main-workspace"><EmployeeList /></div>} />
+        <Route element={<EmployeeLayout />}>
+          <Route path="/empleados/*" element={<div className="main-workspace"><EmployeePage /></div>} />
+        </Route>
         <Route path="/empleados/departamentos" element={<div className="main-workspace"><DepartmentList /></div>} />
         <Route path="/empleados/sub-departamentos" element={<div className="main-workspace"><SubDepartmentList /></div>} />
         <Route path="/empleados/cargos" element={<div className="main-workspace"><PositionList /></div>} />
@@ -71,11 +81,6 @@ export default function Workspace({ activeMenu, activePath }) {
         <Route element={<LockerAssignLayout />}>
           <Route path="/empleados/vestuarios/casilleros/*" element={<LockerAssignPage/> } />
         </Route>
-        
-        {/* Locker Assign */}
-        {/* <Route element={<LockerAssignLayout />}>
-          <Route path="/empleados/vestuarios/locker-assign/*" element={<LockerAssignList/> } />
-        </Route> */}
 
         {/* Calendario - Eventos */}
         <Route element={<EventLayout showNotification={showNotification} />}>

@@ -1,5 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { useNotification } from "../context/NotificationContext"; 
+
 import { departments } from '../utils/StaticData/departments-utils.js';
+import { employees } from '../utils/StaticData/employee-utils';
 
 const EmployeeContext = createContext();
 
@@ -9,9 +12,10 @@ export const useEmployees = () => {
 };
 
 // Provider con la lógica y el estado
-export const EmployeeProvider = ({ initialData, showNotification, children }) => {
+export const EmployeeProvider = ({ children }) => {
     
-  const [employeeData, setEmployeeData] = useState(initialData);
+  const [employeeData, setEmployeeData] = useState(employees);
+  const { showNotification } = useNotification();
 
   const toggleEmployeeField = (id, field) => {       
     setEmployeeData(prev =>

@@ -1,32 +1,18 @@
-import React, { useState, useEffect } from 'react';
-// import EmployeeFilter from './EmployeeFilter';
+import { useState, useEffect, useMemo } from 'react';
+import { useNotification } from "../../context/NotificationContext";  
+import { useEmployees } from '../../context/EmployeeContext'; 
+
 import EmployeeDetail from './EmployeeDetail';
 import EmployeeAdd from './EmployeeAdd';
-import { employees } from '../../utils/StaticData/employee-utils';
-import { useNotification } from "../../context/NotificationContext";  
-import { EmployeeProvider, useEmployees } from '../../context/EmployeeContext'; 
 import EmployeeRow from './EmployeeRow';
-import '../../Tables.css';
 import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 import FilterByFields from '../Filters/FilterByFields';
-import { useMemo } from 'react';
-
-
+import '../../Tables.css';
 
 // Componente wrapper que proporciona el contexto
 export default function EmployeeList() {
-  const { showNotification } = useNotification();
-  return (
-    <EmployeeProvider initialData={employees} showNotification={showNotification}>
-      <EmployeeListContent />
-    </EmployeeProvider>
-  );
-}
-
-// Componente interno que usa el contexto
-function EmployeeListContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
