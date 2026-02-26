@@ -50,7 +50,9 @@ function LockerRoomRow({ locker }) {
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.category?.name}</td>
         <td className="px-4 py-3 text-white-700">
+          {locker.status === 'Disponible' && (
            <ButtonDelete setIsModalOpen={() => handleDeleteClick(locker)} />
+          )}
         </td>
       </tr>
       <tr>

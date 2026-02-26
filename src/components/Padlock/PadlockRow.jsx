@@ -27,7 +27,9 @@ function PadlockRow({ padlock }) {
         <td className="px-4 py-3 text-white-800 font-medium">{padlock.serial}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{padlock?.pass}</td>
         <td className="px-4 py-3 text-white-700">
-          <ButtonDelete setIsModalOpen={() => handleDeleteClick(padlock)} />
+          {padlock.status === 'Disponible' && (
+           <ButtonDelete setIsModalOpen={() => handleDeleteClick(padlock)} />
+          )}
         </td>
       </tr>
       <tr>

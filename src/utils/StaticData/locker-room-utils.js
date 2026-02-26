@@ -2,7 +2,7 @@ export const lockers = [
   {
     id: 1,
     code: "D-01",
-    status: 'Disponible',
+    status: 'Ocupado',
     category:{
       id: 1,
       key: 'D',
@@ -12,7 +12,7 @@ export const lockers = [
   {
     id: 9,
     code: "C-01",
-    status: 'Disponible',
+    status: 'Ocupado',
     category:{
       id: 2,
       key: 'C',
