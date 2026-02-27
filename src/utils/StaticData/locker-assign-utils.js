@@ -55,4 +55,48 @@ export const lockerAssigns = [
       departmentName: 'Administración',
     },
   },
+  {
+    id: 3,
+    assignCode: 'ASG-D-03',
+    assignDate: '2024-06-02',
+    locker: {
+      id: 3,
+      code: "D-03",
+      status: 'Emparejado',
+      category:{
+        id: 1,
+        key: 'D',
+        name: 'Damas',
+      },
+      padlock: {
+        id: 3,
+        serial: 333456323,
+        pass: '77-88-99',
+        status: 'Asignado',
+      },  
+    },
+    employee: null,
+  },
+  {
+    id: 4,
+    assignCode: 'ASG-C-05',
+    assignDate: '2024-06-01',
+    locker: {
+      id: 5,
+      code: "C-05",
+      status: 'Emparejado',
+      category:{
+        id: 2,
+        key: 'C',
+        name: 'Caballeros',
+      },
+      padlock: {
+        id: 4,
+        serial: 444733328,
+        pass: '00-11-22',
+        status: 'Asignado',
+      },
+    },
+    employee: null,
+  },
 ];

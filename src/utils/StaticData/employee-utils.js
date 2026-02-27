@@ -10,7 +10,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Caracas',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 36,
     sex: 'H',
     maritalStatus: 'Casado',
@@ -41,7 +41,28 @@ export const employees = [
         phone: '0414-7654321',
         address: 'Caracas, Los Ruices'
       }
-    ]
+    ],
+    assign: {
+      id: 2,
+      assignCode: 'ASG-C-01',
+      assignDate: '2024-06-01',
+      locker: {
+        id: 9,
+        code: "C-01",
+        status: 'Ocupado',
+        category:{
+          id: 2,
+          key: 'C',
+          name: 'Caballeros',
+        },
+        padlock: {
+          id: 2,
+          serial: 22245672,
+          pass: '44-55-66',
+          status: 'Disponible',
+        }
+      },
+    }
   },
 
   {
@@ -54,7 +75,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Valencia',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 32,
     sex: 'H',
     maritalStatus: 'Soltero',
@@ -98,7 +119,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Maracay',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 40,
     sex: 'H',
     maritalStatus: 'Divorciado',
@@ -142,7 +163,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Barquisimeto',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 29,
     sex: 'M',
     maritalStatus: 'Soltera',
@@ -173,7 +194,28 @@ export const employees = [
         phone: '0426-3344556',
         address: 'Barquisimeto, Centro'
       }
-    ]
+    ],
+    assign: {
+      id: 1,
+      assignCode: 'ASG-D-01',
+      assignDate: '2024-06-01',
+      locker: {
+        id: 1,
+        code: "D-01",
+        status: 'Ocupado',
+        category:{
+          id: 1,
+          key: 'D',
+          name: 'Damas',
+        },
+        padlock: {
+          id: 1,
+          serial: 111155378,
+          pass: '11-22-33',
+          status: 'Asignado',
+        }
+      },
+    }
   },
 
   {
@@ -186,7 +228,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Caracas',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 45,
     sex: 'H',
     maritalStatus: 'Casado',
@@ -230,7 +272,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Mérida',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 27,
     sex: 'M',
     maritalStatus: 'Soltera',
@@ -261,7 +303,7 @@ export const employees = [
         phone: '0414-3344556',
         address: 'Mérida, Campo Claro'
       }
-    ]
+    ],
   },
 
   {
@@ -274,7 +316,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Caracas',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 23,
     sex: 'H',
     maritalStatus: 'Soltero',
@@ -305,7 +347,7 @@ export const employees = [
         phone: '0416-4433221',
         address: 'Caracas, La California'
       }
-    ]
+    ],
   },
 
   {
@@ -318,7 +360,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Valencia',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 31,
     sex: 'M',
     maritalStatus: 'Soltera',
@@ -349,7 +391,7 @@ export const employees = [
         phone: '0424-2211445',
         address: 'Valencia, Naguanagua'
       }
-    ]
+    ],
   },
 
   {
@@ -362,7 +404,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Barinas',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 42,
     sex: 'H',
     maritalStatus: 'Casado',
@@ -393,7 +435,7 @@ export const employees = [
         phone: '0412-8899775',
         address: 'Barinas, Alto Barinas'
       }
-    ]
+    ],
   },
 
   {
@@ -406,7 +448,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Puerto La Cruz',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 28,
     sex: 'M',
     maritalStatus: 'Soltera',
@@ -437,7 +479,7 @@ export const employees = [
         phone: '0416-6677889',
         address: 'Lechería'
       }
-    ]
+    ],
   },
 
   {
@@ -450,7 +492,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Carúpano',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 38,
     sex: 'H',
     maritalStatus: 'Divorciado',
@@ -481,7 +523,7 @@ export const employees = [
         phone: '0412-4433661',
         address: 'Carúpano, Centro'
       }
-    ]
+    ],
   },
 
   {
@@ -494,7 +536,7 @@ export const employees = [
     secondLastName: 'Gómez',
     birthDate: '1988-05-20',
     placeOfBirth: 'Maturín',
-    nationality: 'Venezolana',
+    nationality: 'V',
     age: 30,
     sex: 'M',
     maritalStatus: 'Soltera',

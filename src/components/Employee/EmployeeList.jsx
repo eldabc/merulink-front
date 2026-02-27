@@ -69,18 +69,18 @@ export default function EmployeeList() {
 
 
   // Si hay empleado seleccionado, mostrar detalle
-  if (selectedEmployee) {
-    const employeeSelected = employeeData.find(e => e.id === selectedEmployee);
-    return <EmployeeDetail 
-      employee={employeeSelected} 
-      onBack={() => setSelectedEmployee(null)} 
-      onUpdate={(updated) => {
-        setEmployeeData(prev => prev.map(e => e.id === employeeSelected.id ? { ...e, ...updated } : e));
-        showNotification('Éxito', 'Empleado actualizado correctamente.');
-        setSelectedEmployee(null);
-      }}
-    />
-  }
+  // if (selectedEmployee) {
+  //   const employeeSelected = employeeData.find(e => e.id === selectedEmployee);
+  //   return <EmployeeDetail 
+  //     employee={employeeSelected} 
+  //     onBack={() => setSelectedEmployee(null)} 
+  //     onUpdate={(updated) => {
+  //       setEmployeeData(prev => prev.map(e => e.id === employeeSelected.id ? { ...e, ...updated } : e));
+  //       showNotification('Éxito', 'Empleado actualizado correctamente.');
+  //       setSelectedEmployee(null);
+  //     }}
+  //   />
+  // }
 
 return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">

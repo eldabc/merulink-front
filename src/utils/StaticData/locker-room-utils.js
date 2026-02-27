@@ -43,12 +43,12 @@ export const lockers = [
     id: 4,
     code: "D-04",
     status: 'Disponible',
-  category:{
-      id: 1,
-      key: 'D',
-      name: 'Damas',
-    }, 
-  },
+    category:{
+        id: 1,
+        key: 'D',
+        name: 'Damas',
+      }, 
+    },
   {
     id: 5,
     code: "C-05",

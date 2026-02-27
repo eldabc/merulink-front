@@ -42,6 +42,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [activeTab, setActiveTab] = useState('personal');
   const [availableDepartments, setAvailableDepartments] = useState([]);
   const [lockerAssigns, setLockerAssigns] = useState([]);
+  const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const { employeeData, toggleEmployeeField, getDepartments, createEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
   const selectedSex = watch('sex');
@@ -57,7 +58,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     if (!employeeData.length) return;
     
     const  newNumber = employee?.numEmployee ?? newNumEmployee();
-    // const newNumber = newNumEmployee();
     setValue('numEmployee', newNumber);
 
   }, [employeeData, loadingEmployeeData]);
@@ -88,14 +88,25 @@ export default function EmployeeForm({ mode = 'create' }) {
 
      loadFormData();
   }, []);
+  
+  useEffect(() => {    
+    // if ((viewMode || editMode) && employee){
+     const lockerAssignEmp = employee?.assign
+            ? [...lockerAssigns, employee.assign]
+            : [...lockerAssigns];
+     setEmpLockerAssign(lockerAssignEmp);
+    // }
+  }, [lockerAssigns]);
 
   useEffect(() => {
-    if (employee && mode === 'edit') {
+    console.log("EempLockerAssign", empLockerAssign);
+
+    if (employee && (editMode || viewMode)) {
         reset( employeeReset() );
     } else if (mode === 'create') {
         reset(employeeReset() );
     }
-  }, [employee, mode, reset]);
+  }, [empLockerAssign]); //employee, mode, reset
 
   const onSubmit = async (data) => {
     // console.log("submit", data);
@@ -175,7 +186,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     const fullHomePhone = employee?.homePhone || '';
     const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
     const joinDate = employee?.joinDate ?? new Date().toISOString().split('T')[0];
-    // console.log("newNumEmployee()", employeeData);
+
     return {
         // numEmployee: employee?.numEmployee ?? newNumEmployee(),
         ci: employee?.ci ?? '',
@@ -209,6 +220,8 @@ export default function EmployeeForm({ mode = 'create' }) {
         useLocker: !!employee?.useLocker,
         useTransport: !!employee?.useTransport,
         contacts: employee?.contacts ?? [],
+        lockerAssingId: employee?.assign?.id ?? '',
+        padlockAssignPass: employee?.assign?.locker?.padlock?.pass ?? ''
     }
   };
 
@@ -246,7 +259,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                 mode={mode}
                 register={register} 
                 errors={errors} 
-                lockerAssigns={lockerAssigns} 
+                empLockerAssign={empLockerAssign} 
                 selectedSex={selectedSex} 
                 useLocker={changedUseLocker}  
                 setValue={setValue}
@@ -275,6 +288,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   </div>
                   <div>
                     <input
+                      readOnly={viewMode}
                       {...register('firstName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.firstName ? 'border-red-500' : ''}`}
                     />
@@ -286,6 +300,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   </div>
                   <div>
                     <input
+                      readOnly={viewMode}
                       {...register('secondName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondName ? 'border-red-500' : ''}`}
                     />
@@ -297,6 +312,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   </div>
                   <div>
                     <input
+                      readOnly={viewMode}
                       {...register('lastName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.lastName ? 'border-red-500' : ''}`}
                     />
@@ -308,6 +324,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   </div>
                   <div>
                     <input
+                      readOnly={viewMode}
                       {...register('secondLastName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondLastName ? 'border-red-500' : ''}`}
                     />

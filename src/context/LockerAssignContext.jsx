@@ -50,6 +50,15 @@ export const LockerAssignProvider = ({ children }) => {
     const wasAssigned = formData.employee.id ;
     const today = normalizeDateDDMMYYY(new Date());
 
+    const employeeDataSet = wasAssigned ? (
+      {
+        id: formData.employee.id,
+        name: `${formData.employee.firstName} ${formData.employee.lastName}`,
+        department: formData.employee.department,
+        departmentName: formData.employee.departmentName,
+      }
+    ) : null;
+
     return {
       id: formData.id ? formData.id : Date.now(),
       assignCode: wasAssigned ? `ASG-${formData.locker?.code}-${today}` : '',
@@ -68,12 +77,7 @@ export const LockerAssignProvider = ({ children }) => {
           status: 'Asignado',
         }
       },
-      employee: {
-        id: wasAssigned ? formData.employee.id : '',
-        name: wasAssigned ? `${formData.employee.firstName} ${formData.employee.lastName}` : '',
-        department: wasAssigned ? formData.employee.department : '',
-        departmentName: wasAssigned ? formData.employee.departmentName : '',
-      }
+      employee: employeeDataSet
     };
   }
 

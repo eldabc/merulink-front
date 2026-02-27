@@ -1,17 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 
-function LockerAssign({ mode, register, errors, lockerAssigns, selectedSex, useLocker, setValue }) {
+function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, useLocker, setValue }) {
   const { getLockerAssigns } = useEmployees();
-  // const selelectAssign = watch('lockerAssingId');
-  // console.log("useLocker", useLocker);  
+  const previousSex = useRef();
+  // console.log("mode", mode);  
+
+  useEffect(() => {
+    if (!previousSex.current) {
+      previousSex.current = selectedSex;
+      return;
+    }
+
+    if (previousSex.current !== selectedSex && mode !== 'create') {
+      setValue('lockerAssingId', '');
+      setValue('padlockAssignPass', '');
+    }
+
+  previousSex.current = selectedSex;
+  }, [selectedSex]);
 
   const renderLockerAssigns = () => {
     const lockerAssignCategoryKey = getCategoryKey(selectedSex);
-    console.log("selectedSex", selectedSex);
-    return lockerAssigns
+
+    return empLockerAssign
       .filter(assign => assign.locker.category.key === lockerAssignCategoryKey)
       .map(assign => (
         <option key={`lockerAssign-${assign.id}`} className='bg-[#3c4042]' value={assign.id}>
@@ -28,11 +42,10 @@ function LockerAssign({ mode, register, errors, lockerAssigns, selectedSex, useL
       return;
     }
 
-    const selectedAssign = lockerAssigns.find( a => String(a.id) === String(selectedId) );
+    const selectedAssign = empLockerAssign.find( a => String(a.id) === String(selectedId) );
     setValue('padlockAssignPass', selectedAssign?.locker?.padlock?.pass ?? '');
   };
 
-  // console.log("lockerAssigns", lockerAssigns)
   const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : (!useLocker ? "¡Empleado no tiene habilitado el uso de Locker!" : '');
   return (
     <>

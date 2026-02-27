@@ -72,32 +72,31 @@ export const EmployeeProvider = ({ children }) => {
 
   // Armado JSON
   const formattedEmployees = (formData) => {
-  // const categoryData = lockerCategories.find(ca => ca.key === formData.category);
+    const assignData = lockerAssigns.find(assign => String(assign.id) === String(formData.lockerAssingId));
     
-    // return {
-    //   id: formData.id ? formData.id : Date.now(),
-    //   code: formData.category && formData.code ? `${formData.category}-${formData.code}` : null,
-    //   category: {
-    //     id: categoryData.id,
-    //     key: categoryData.key,
-    //     name: categoryData.value,
-    //   },
-    //   status: formData.status ? formData.status : null,
-    // };
+    return {
+      id: formData.id ? formData.id : Date.now(),
+      mobilePhone: formData.mobilePhone ? `${formData.mobilePhoneCode}-${formData.mobilePhone}` : null,
+      homePhone: formData.homePhone ? `${formData.homePhoneCode}-${formData.homePhone}` : null,
+      ...formData,
+      assign: {
+        ...assignData
+      },
+    };
   }
 
   // *** Crear
   const createEmployee = async (formData) => {
     try {
       //Armado números de teléfono
-      if (formData.mobilePhone) formData.mobilePhone = `${formData.mobilePhoneCode}-${formData.mobilePhone}`;
+      // if (formData.mobilePhone) formData.mobilePhone = `${formData.mobilePhoneCode}-${formData.mobilePhone}`;
 
-      if (formData.homePhone) formData.homePhone = `${formData.homePhoneCode}-${formData.homePhone}`; 
+      // if (formData.homePhone) formData.homePhone = `${formData.homePhoneCode}-${formData.homePhone}`; 
 
-      console.log('data form:', formData);
-      const newEmployee = { id: Date.now(), ...formData };
-      // const newEmployee = formattedEmployees(formData);
-      // console.log("Creado", newEmployee);; 
+      // console.log('data form:', formData);
+      // const newEmployee = { id: Date.now(), ...formData };
+      const newEmployee = formattedEmployees(formData);
+      console.log("Creado", newEmployee);; 
 
       setEmployeeData(prevData => [newEmployee, ...prevData]);
       showNotification(`Empleado ${newEmployee.firstName} ${newEmployee.lastName} creado con éxito`);
@@ -120,7 +119,7 @@ export const EmployeeProvider = ({ children }) => {
 
     const getLockerAssigns = async () => {
     try {
-         return lockerAssigns;       
+      return lockerAssigns.filter(assign => !assign.employee);     
     } catch (error) {
       showNotification('Error al obtener Asignaciones de Lockers', error.message);
       return [];

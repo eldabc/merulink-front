@@ -1,15 +1,22 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 
-export default function EmployeeRow({ emp, setSelectedEmployee }) {
+export default function EmployeeRow({ emp }) {
   // Obtener la función del contexto
   const { toggleEmployeeField } = useEmployees(); 
+  const navigate = useNavigate();
+
+  const selectedEmployee = () => {
+    navigate("/empleados/ver", { 
+      state: { data: emp } 
+    }); 
+  };
 
   return (
     <tr
       key={emp.id}
-      onClick={() => setSelectedEmployee(emp.id)}
+      onClick={() => selectedEmployee(emp.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
       <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
