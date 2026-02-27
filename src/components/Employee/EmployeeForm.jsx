@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, User } from "lucide-react";
+import { User } from "lucide-react";
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import PersonalData from "./tabs/PersonalData";
@@ -12,14 +12,14 @@ import MeruLinkData from "./tabs/meruLinkData";
 import LockerAssign from "./tabs/LockerAssign";
 import TabButtonsManager from './tabs/TabButtonsManager';
 import { calculateAge } from '../../utils/calculateAge-utils';
-import { employees } from '../../utils/StaticData/employee-utils';
 import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
 import { useEmployees } from '../../context/EmployeeContext';
-import FooterFormButtons from '../Shared/FooterFormButtons'
+import FooterFormButtons from '../Shared/FooterFormButtons';
+import HeadFormButtons from '../Shared/HeadFormButtons';
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
-export default function EmployeeForm({ mode = 'create', onCancel }) {
+export default function EmployeeForm({ mode = 'create' }) {
   
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
@@ -42,17 +42,27 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
   const [activeTab, setActiveTab] = useState('personal');
   const [availableDepartments, setAvailableDepartments] = useState([]);
   const [lockerAssigns, setLockerAssigns] = useState([]);
-  const { toggleEmployeeField, getDepartments, createEmployee, getLockerAssigns } = useEmployees();
+  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
   const selectedSex = watch('sex');
   const changedUseLocker = watch('useLocker');
-
+  const watchedBirthDate = watch('birthDate');
 
   const editMode = mode === 'edit';
+  const viewMode = mode === 'view';
   const employee = location.state?.data;
 
+  useEffect(() => {
+    if (loadingEmployeeData) return;
+    if (!employeeData.length) return;
+    
+    const  newNumber = employee?.numEmployee ?? newNumEmployee();
+    // const newNumber = newNumEmployee();
+    setValue('numEmployee', newNumber);
+
+  }, [employeeData, loadingEmployeeData]);
+  
   // calcular edad cuando cambie birthDate
-  const watchedBirthDate = watch('birthDate');
   useEffect(() => {
     calculateAge(watchedBirthDate, setValue);
   }, [watchedBirthDate, setValue]);
@@ -81,89 +91,9 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
 
   useEffect(() => {
     if (employee && mode === 'edit') {
-      const fullMobilePhone = employee.mobilePhone || '';
-      const { code: mobileCode, number: mobileNumber } = splitPhone(fullMobilePhone);
-
-      const fullHomePhone = employee.homePhone || '';
-      const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
-      reset({
-        numEmployee: employee.numEmployee ?? '',
-        ci: employee.ci ?? '',
-        firstName: employee.firstName ?? '',
-        secondName: employee.secondName ?? '',
-        lastName: employee.lastName ?? '',
-        secondLastName: employee.secondLastName ?? '',
-        birthDate: employee.birthDate ?? null,
-        placeOfBirth: employee.placeOfBirth ?? '',
-        nationality: employee.nationality ?? 'V',
-        age: employee.age ?? '',
-        sex: employee.sex ?? '',
-        maritalStatus: employee.maritalStatus ?? 'Soltero',
-        bloodType: employee.bloodType ?? 'O+',
-        email: employee.email ?? '',
-        mobilePhoneCode: mobileCode || '0414',
-        mobilePhone: mobileNumber ?? '',
-        homePhoneCode: homeCode ?? '0286',
-        homePhone: homeNumber ?? null,
-        address: employee.address ?? '',
-        joinDate: employee.joinDate ?? null,
-        department: employee.department ?? '',
-        subDepartment: employee.subDepartment ?? '',
-        position: employee.position ?? '',
-        userName: employee.userName ?? '',
-        userPass: employee.userPass ?? '',
-        changePassNextLogin: !!employee.changePassNextLogin,
-        status: !!employee.status,
-        useMeruLink: !!employee.useMeruLink,
-        useHidCard: !!employee.useHidCard,
-        useLocker: !!employee.useLocker,
-        useTransport: !!employee.useTransport,
-        contacts: employee.contacts ?? [],
-      });
+        reset( employeeReset() );
     } else if (mode === 'create') {
-      // generar número de empleado automáticamente
-      const maxNum = Math.max( 0,
-        ...employees.map(e => {
-          const num = parseInt(e.numEmployee) || 0;
-          return num;
-        })
-      );
-      const newNumEmployee = String(maxNum + 1);
-
-      reset({
-        numEmployee: newNumEmployee,
-        ci: '',
-        firstName: '',
-        secondName: '',
-        lastName: '',
-        secondLastName: '',
-        birthDate: null,
-        placeOfBirth: '',
-        nationality: 'V',
-        age: '',
-        sex: '',
-        maritalStatus: 'Soltero',
-        bloodType: 'O+',
-        email: '',
-        mobilePhoneCode: '0414',
-        mobilePhone: '',
-        homePhoneCode: '0286',
-        homePhone: null,
-        address: '',
-        joinDate: new Date().toISOString().split('T')[0],
-        department: '',
-        subDepartment: '',
-        position: '',
-        userName: '',
-        userPass: '',
-        changePassNextLogin: false,
-        status: true,
-        useMeruLink: false,
-        useHidCard: false,
-        useLocker: false,
-        useTransport: false,
-        contacts: [],
-      });
+        reset(employeeReset() );
     }
   }, [employee, mode, reset]);
 
@@ -238,6 +168,61 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
     setActiveTab('personal');
   };
 
+  const employeeReset = () => {
+    const fullMobilePhone = employee?.mobilePhone || '';
+    const { code: mobileCode, number: mobileNumber } = splitPhone(fullMobilePhone);
+
+    const fullHomePhone = employee?.homePhone || '';
+    const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
+    const joinDate = employee?.joinDate ?? new Date().toISOString().split('T')[0];
+    // console.log("newNumEmployee()", employeeData);
+    return {
+        // numEmployee: employee?.numEmployee ?? newNumEmployee(),
+        ci: employee?.ci ?? '',
+        firstName: employee?.firstName ?? '',
+        secondName: employee?.secondName ?? '',
+        lastName: employee?.lastName ?? '',
+        secondLastName: employee?.secondLastName ?? '',
+        birthDate: employee?.birthDate ?? null,
+        placeOfBirth: employee?.placeOfBirth ?? '',
+        nationality: employee?.nationality ?? 'V',
+        age: employee?.age ?? '',
+        sex: employee?.sex ?? '',
+        maritalStatus: employee?.maritalStatus ?? 'Soltero',
+        bloodType: employee?.bloodType ?? 'O+',
+        email: employee?.email ?? '',
+        mobilePhoneCode: mobileCode || '0414',
+        mobilePhone: mobileNumber ?? '',
+        homePhoneCode: homeCode ?? '0286',
+        homePhone: homeNumber ?? null,
+        address: employee?.address ?? '',
+        joinDate: joinDate ?? null,
+        department: employee?.department ?? '',
+        subDepartment: employee?.subDepartment ?? '',
+        position: employee?.position ?? '',
+        userName: employee?.userName ?? '',
+        userPass: employee?.userPass ?? '',
+        changePassNextLogin: !!employee?.changePassNextLogin,
+        status: !!employee?.status,
+        useMeruLink: !!employee?.useMeruLink,
+        useHidCard: !!employee?.useHidCard,
+        useLocker: !!employee?.useLocker,
+        useTransport: !!employee?.useTransport,
+        contacts: employee?.contacts ?? [],
+    }
+  };
+
+  const newNumEmployee = () => {
+    // generar número de empleado automáticamente
+    const maxNum = Math.max( 0,
+      ...employeeData.map(e => {
+        const num = parseInt(e.numEmployee) || 0;
+        return num;
+      })
+    );
+    return String(maxNum + 1);
+  }
+
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'personal':
@@ -258,6 +243,7 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
         return <MeruLinkData register={register} errors={errors} employee={employee} />;
       case 'lockerAssign':
         return <LockerAssign 
+                mode={mode}
                 register={register} 
                 errors={errors} 
                 lockerAssigns={lockerAssigns} 
@@ -267,14 +253,12 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
               />;
     }
   };
-console.log("lockerAssigns", lockerAssigns);
+// console.log("lockerAssigns", lockerAssigns);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
-            <ArrowLeft className="w-4 h-4 text-white-500" />
-        </button>
+        {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/casilleros/editar" data={employee} /> }
       </div>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">

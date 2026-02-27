@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNotification } from "../context/NotificationContext"; 
 
 import { departments } from '../utils/StaticData/departments-utils.js';
@@ -15,8 +15,25 @@ export const useEmployees = () => {
 // Provider con la lógica y el estado
 export const EmployeeProvider = ({ children }) => {
     
-  const [employeeData, setEmployeeData] = useState(employees);
+  const [employeeData, setEmployeeData] = useState([]);
   const { showNotification } = useNotification();
+  const [loadingEmployeeData, setLoadingEmployeeData] = useState(false);
+
+  const loadEmployees = useCallback(async () => {
+      setLoadingEmployeeData(true);
+    try {
+      setEmployeeData(employees);
+    } catch (err) {
+      showNotification('Error al cargar datos', err.message);
+    } finally {
+      setLoadingEmployeeData(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('UseEffect EmployeeContext');
+    loadEmployees();
+  }, [loadEmployees]);
 
   const toggleEmployeeField = (id, field) => { 
     
@@ -111,6 +128,9 @@ export const EmployeeProvider = ({ children }) => {
   }
   
   const contextValue = {
+    loadEmployees,
+    loadingEmployeeData,
+    setLoadingEmployeeData,
     employeeData,
     setEmployeeData,
     toggleEmployeeField,

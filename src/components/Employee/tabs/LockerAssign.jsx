@@ -3,10 +3,10 @@ import { useEmployees } from '../../../context/EmployeeContext';
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 
-function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker, setValue }) {
+function LockerAssign({ mode, register, errors, lockerAssigns, selectedSex, useLocker, setValue }) {
   const { getLockerAssigns } = useEmployees();
   // const selelectAssign = watch('lockerAssingId');
-  console.log("useLocker", useLocker);  
+  // console.log("useLocker", useLocker);  
 
   const renderLockerAssigns = () => {
     const lockerAssignCategoryKey = getCategoryKey(selectedSex);
@@ -32,7 +32,7 @@ function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker,
     setValue('padlockAssignPass', selectedAssign?.locker?.padlock?.pass ?? '');
   };
 
-  console.log("lockerAssigns", lockerAssigns)
+  // console.log("lockerAssigns", lockerAssigns)
   const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : (!useLocker ? "¡Empleado no tiene habilitado el uso de Locker!" : '');
   return (
     <>
@@ -49,19 +49,19 @@ function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker,
         >
           <div className='max-w-3xl'>
             <select 
-              
               {...register('lockerAssingId', { onChange: handleAssignChange } )}
               className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
               `}// ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}
             >
               <option className='bg-[#3c4042]' value="">Seleccionar Locker...</option>
               {renderLockerAssigns()}
-            </select></div>
-            <LabelFieldForm field="Clave candado" simbol="*" />
-            <input disabled={true}  
-                  type="text" {...register('padlockAssignPass')} 
-                  className='filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed' 
-            />
+            </select>
+          </div>
+          <LabelFieldForm field="Clave candado" simbol="*" />
+          <input disabled={true}  
+                 type="text" {...register('padlockAssignPass')} 
+                 className='filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed' 
+          />
           
         </div>
       )
