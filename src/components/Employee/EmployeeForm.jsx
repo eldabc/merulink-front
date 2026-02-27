@@ -50,7 +50,6 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
 
   const editMode = mode === 'edit';
   const employee = location.state?.data;
-  console.log("Employee Data Location:", employee);
 
   // calcular edad cuando cambie birthDate
   const watchedBirthDate = watch('birthDate');
@@ -258,11 +257,17 @@ export default function EmployeeForm({ mode = 'create', onCancel }) {
       case 'meruLink':
         return <MeruLinkData register={register} errors={errors} employee={employee} />;
       case 'lockerAssign':
-        return <LockerAssign register={register} errors={errors} lockerAssigns={lockerAssigns} selectedSex={selectedSex} useLocker={changedUseLocker}  />;
+        return <LockerAssign 
+                register={register} 
+                errors={errors} 
+                lockerAssigns={lockerAssigns} 
+                selectedSex={selectedSex} 
+                useLocker={changedUseLocker}  
+                setValue={setValue}
+              />;
     }
   };
 console.log("lockerAssigns", lockerAssigns);
-console.log("selectedSex", selectedSex);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>

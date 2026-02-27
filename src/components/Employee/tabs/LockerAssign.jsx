@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
+import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 
-
-function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker }) {
+function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker, setValue }) {
   const { getLockerAssigns } = useEmployees();
+  // const selelectAssign = watch('lockerAssingId');
   console.log("useLocker", useLocker);  
 
   const renderLockerAssigns = () => {
@@ -17,7 +18,19 @@ function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker 
           {assign.locker.code}
         </option>
     ));
-  }
+  };
+
+  const handleAssignChange = (e) => {
+  const selectedId = e.target.value;
+
+    if (!selectedId) {
+      setValue('padlockAssignPass', '');
+      return;
+    }
+
+    const selectedAssign = lockerAssigns.find( a => String(a.id) === String(selectedId) );
+    setValue('padlockAssignPass', selectedAssign?.locker?.padlock?.pass ?? '');
+  };
 
   console.log("lockerAssigns", lockerAssigns)
   const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : (!useLocker ? "¡Empleado no tiene habilitado el uso de Locker!" : '');
@@ -30,15 +43,26 @@ function LockerAssign({ register, errors, lockerAssigns, selectedSex, useLocker 
           </span>
         </div>
       ) : (
-        <div>
-          <select  
-            {...register('lockerAssingId' )}//, { onChange: handleEventChange }
-            className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-            `}// ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}
-          >
-            <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-            {renderLockerAssigns()}
-          </select>
+        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border 
+                      border-[#ffffff21] md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
+                        md:[&>*:nth-child(2n)]:pl-4 p-7'
+        >
+          <div className='max-w-3xl'>
+            <select 
+              
+              {...register('lockerAssingId', { onChange: handleAssignChange } )}
+              className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
+              `}// ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}
+            >
+              <option className='bg-[#3c4042]' value="">Seleccionar Locker...</option>
+              {renderLockerAssigns()}
+            </select></div>
+            <LabelFieldForm field="Clave candado" simbol="*" />
+            <input disabled={true}  
+                  type="text" {...register('padlockAssignPass')} 
+                  className='filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed' 
+            />
+          
         </div>
       )
       }
