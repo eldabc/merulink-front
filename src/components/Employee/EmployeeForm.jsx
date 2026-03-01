@@ -240,7 +240,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'personal':
-        return <PersonalData register={register} errors={errors} employee={employee} />;
+        return <PersonalData viewMode={viewMode} register={register} errors={errors} employee={employee} />;
       case 'work':
         return <WorkData 
                   register={register} 
@@ -336,18 +336,19 @@ export default function EmployeeForm({ mode = 'create' }) {
                   </div>
                   <div>
                     <input
+                      disabled={true}
                       {...register('numEmployee')}
                       className={`w-20 px-2 py-1 text-sm rounded-lg filter-input bg-gray-700 cursor-not-allowed`}
                     />
                   </div>
                 </div>
               ) : (
-                <div>
+                {/* <div>
                 <h3 className="text-3xl font-semibold text-white-800">
                   {`${employee?.numEmployee ?? ''} ${employee?.firstName ?? ''} ${employee?.secondName ?? ''} ${employee?.lastName ?? ''} ${employee?.secondLastName ?? ''}`}
                 </h3>
                 <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
-                <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div>
+                <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div> */}
               )}
             
           </div>
