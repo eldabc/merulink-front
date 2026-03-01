@@ -186,6 +186,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     const fullHomePhone = employee?.homePhone || '';
     const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
     const joinDate = employee?.joinDate ?? new Date().toISOString().split('T')[0];
+    const birthDate = employee?.birthDate ? new Date(employee.birthDate).toISOString().split('T')[0] : null;
 
     return {
         // numEmployee: employee?.numEmployee ?? newNumEmployee(),
@@ -194,7 +195,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         secondName: employee?.secondName ?? '',
         lastName: employee?.lastName ?? '',
         secondLastName: employee?.secondLastName ?? '',
-        birthDate: employee?.birthDate ?? null,
+        birthDate: birthDate,
         placeOfBirth: employee?.placeOfBirth ?? '',
         nationality: employee?.nationality ?? 'V',
         age: employee?.age ?? '',

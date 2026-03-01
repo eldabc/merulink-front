@@ -75,10 +75,10 @@ export const EmployeeProvider = ({ children }) => {
     const assignData = lockerAssigns.find(assign => String(assign.id) === String(formData.lockerAssingId));
     
     return {
+      ...formData,
       id: formData.id ? formData.id : Date.now(),
       mobilePhone: formData.mobilePhone ? `${formData.mobilePhoneCode}-${formData.mobilePhone}` : null,
       homePhone: formData.homePhone ? `${formData.homePhoneCode}-${formData.homePhone}` : null,
-      ...formData,
       assign: {
         ...assignData
       },
