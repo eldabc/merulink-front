@@ -3,7 +3,7 @@ import LabelFieldForm from "../../Shared/LabelFieldForm";
 
 export default function PersonalData({ viewMode, employee = {}, register, errors }) {
   const isForm = typeof register === 'function';
-  const cursorNotAllowed = viewMode && 'cursor-not-allowed';
+  const cursorNotAllowed = viewMode && 'cursor-not-allowed opacity-50';
   
   if (isForm) {
    return (
@@ -44,7 +44,7 @@ export default function PersonalData({ viewMode, employee = {}, register, errors
 
         <div>
           <LabelFieldForm field="Edad" simbol="*"/>
-             <input readOnly={viewMode} {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 cursor-not-allowed`} disabled/>
+             <input readOnly={true} {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 ${cursorNotAllowed}`} disabled/>
           {errors?.age && <p className="text-red-400 text-xs mt-1">{errors.age.message}</p>}
         </div>
         

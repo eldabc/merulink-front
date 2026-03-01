@@ -52,7 +52,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
   const employee = location.state?.data;
-
+  
   useEffect(() => {
     if (loadingEmployeeData) return;
     if (!employeeData.length) return;
@@ -99,7 +99,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, [lockerAssigns]);
 
   useEffect(() => {
-    console.log("EempLockerAssign", empLockerAssign);
 
     if (employee && (editMode || viewMode)) {
         reset( employeeReset() );
@@ -243,6 +242,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         return <PersonalData viewMode={viewMode} register={register} errors={errors} employee={employee} />;
       case 'work':
         return <WorkData 
+                  viewMode={viewMode}
                   register={register} 
                   errors={errors} 
                   employee={employee} 
@@ -267,12 +267,11 @@ export default function EmployeeForm({ mode = 'create' }) {
               />;
     }
   };
-// console.log("lockerAssigns", lockerAssigns);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/casilleros/editar" data={employee} /> }
+        {(viewMode) && <HeadFormButtons url="/empleados/editar" data={employee} /> }
       </div>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
