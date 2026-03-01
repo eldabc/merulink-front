@@ -6,6 +6,8 @@ import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, useLocker, setValue }) {
   const { getLockerAssigns } = useEmployees();
   const previousSex = useRef();
+  const viewMode = mode === 'view';
+  const cursorNotAllowed = viewMode && 'cursor-not-allowed opacity-50';
   // console.log("mode", mode);  
 
   useEffect(() => {
@@ -62,9 +64,9 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, us
         >
           <div className='max-w-3xl'>
             <select 
+              disabled={viewMode}
               {...register('lockerAssingId', { onChange: handleAssignChange } )}
-              className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-              `}// ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}
+              className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${cursorNotAllowed} `} 
             >
               <option className='bg-[#3c4042]' value="">Seleccionar Locker...</option>
               {renderLockerAssigns()}
@@ -73,7 +75,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, us
           <LabelFieldForm field="Clave candado" simbol="*" />
           <input disabled={true}  
                  type="text" {...register('padlockAssignPass')} 
-                 className='filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed' 
+                 className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${cursorNotAllowed} `} 
           />
           
         </div>
