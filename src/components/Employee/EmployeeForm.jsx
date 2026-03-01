@@ -252,7 +252,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   loadingData={loadingData} 
                 />;
       case 'contact':
-        return <ContactData register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;
+        return <ContactData viewMode={viewMode} register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;
       case 'meruLink':
         return <MeruLinkData register={register} errors={errors} employee={employee} />;
       case 'lockerAssign':
