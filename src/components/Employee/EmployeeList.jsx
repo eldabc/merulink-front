@@ -3,8 +3,8 @@ import { useNotification } from "../../context/NotificationContext";
 import { useEmployees } from '../../context/EmployeeContext'; 
 import { useNavigate } from 'react-router-dom';
 
-import EmployeeDetail from './EmployeeDetail';
-import EmployeeAdd from './EmployeeAdd';
+// import EmployeeDetail from './EmployeeDetail';
+// import EmployeeAdd from './EmployeeAdd';
 import EmployeeRow from './EmployeeRow';
 import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
@@ -66,21 +66,6 @@ export default function EmployeeList() {
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-
-
-  // Si hay empleado seleccionado, mostrar detalle
-  // if (selectedEmployee) {
-  //   const employeeSelected = employeeData.find(e => e.id === selectedEmployee);
-  //   return <EmployeeDetail 
-  //     employee={employeeSelected} 
-  //     onBack={() => setSelectedEmployee(null)} 
-  //     onUpdate={(updated) => {
-  //       setEmployeeData(prev => prev.map(e => e.id === employeeSelected.id ? { ...e, ...updated } : e));
-  //       showNotification('Éxito', 'Empleado actualizado correctamente.');
-  //       setSelectedEmployee(null);
-  //     }}
-  //   />
-  // }
 
 return (
     <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">

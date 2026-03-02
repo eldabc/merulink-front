@@ -35,9 +35,9 @@ export const EmployeeProvider = ({ children }) => {
     loadEmployees();
   }, [loadEmployees]);
 
-  // ACtualizar campos checkboxs sin entrar en modo edit
+  // Actualizar campos checkboxs sin entrar en modo edit
   const toggleEmployeeField = (id, field) => { 
-    console.log("Checkbox", id, field)
+    console.log("Checkbox", id, field);
     if (!id || !field) return; 
     
     setEmployeeData(prev =>
@@ -55,16 +55,25 @@ export const EmployeeProvider = ({ children }) => {
           updatedEmployee.status = newStatus;
           
           if (newStatus === false) {
+        console.log("updateEmployee.userName ant", updateEmployee.userName)
+
             updatedEmployee.useMeruLink = false;
+            updateEmployee.userName = '';
+            updateEmployee.userPass = '';
             updatedEmployee.useLocker = false;
+            updateEmployee.assign = null;
             updatedEmployee.useHidCard = false;
             updatedEmployee.useTransport = false;
+        console.log("updateEmployee.userName des", updateEmployee.userName)
+
           }
             
         } else {
+        console.log("Sino")
+
           updatedEmployee[field] = !emp[field];
         }
-
+        console.log("updatedEmployee", updatedEmployee)
         return updatedEmployee;
       })
     );

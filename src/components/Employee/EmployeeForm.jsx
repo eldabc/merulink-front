@@ -282,6 +282,7 @@ export default function EmployeeForm({ mode = 'create' }) {
               />;
     }
   };
+  console.log("isEmployeeActive eee", isEmployeeActive)
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -367,13 +368,14 @@ export default function EmployeeForm({ mode = 'create' }) {
             
           </div>
           {(editMode || viewMode) && (
-            <div><label className="font-semibold">Estatus: </label>
-                <span className={`status-tag ${getStatusColor(employee.status)}`}  
+            <div>
+              <label className="font-semibold">Estatus: </label>
+                <span className={`status-tag ${getStatusColor(employee?.status)}`}  
                   onClick={(e) => {
                   e.stopPropagation();
                   toggleEmployeeField(employee.id, "status");
                 }}>
-                  {getStatusName(employee.status)}
+                  {getStatusName(employee?.status)}
                 </span>
             </div>
           )}
