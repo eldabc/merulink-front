@@ -65,18 +65,6 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
 
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">¿Usa Locker?</span>
-            <input 
-              disabled={!isEmployeeActive }//|| viewMode
-              type="checkbox" 
-              {...register('useLocker')} 
-              className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
-              onClick={() => !createMode && toggleEmployeeField(employee?.id, "useLocker")} 
-               /> 
-            </label>
-          </div>
-          <div className="flex items-center gap-4 pl-4">
-            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa Transporte?</span>
               <input 
                 disabled={!isEmployeeActive }//|| viewMode

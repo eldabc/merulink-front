@@ -79,6 +79,28 @@ export const lockerAssigns = [
   },
   {
     id: 4,
+    assignCode: 'ASG-C-02',
+    assignDate: '2024-06-01',
+    locker: {
+      id: 2,
+      code: "C-02",
+      status: 'Emparejado',
+      category:{
+        id: 2,
+        key: 'C',
+        name: 'Caballeros',
+      },
+      padlock: {
+        id: 5,
+        serial: 555545678,
+        pass: '33-44-55',
+        status: 'Asignado',
+      },
+    },
+    employee: null,
+  },
+  {
+    id: 5,
     assignCode: 'ASG-C-05',
     assignDate: '2024-06-01',
     locker: {

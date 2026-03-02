@@ -57,7 +57,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
-
   
   useEffect(() => {
     if (loadingEmployeeData) return;
@@ -277,6 +276,9 @@ export default function EmployeeForm({ mode = 'create' }) {
                 selectedSex={selectedSex} 
                 useLocker={changedUseLocker}  
                 setValue={setValue}
+                isEmployeeActive={isEmployeeActive}
+                watch={watch}
+                disabledClasses={disabledClasses}
               />;
     }
   };
@@ -284,7 +286,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        {(viewMode) && <HeadFormButtons url="/empleados/editar" data={employee} /> }
+        {(isEmployeeActive && viewMode) && <HeadFormButtons url="/empleados/editar" data={employee} /> }
       </div>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
