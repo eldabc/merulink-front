@@ -53,6 +53,10 @@ export default function EmployeeForm({ mode = 'create' }) {
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
   const employee = location.state?.data;
+  let isEmployeeActive;
+  (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
+  const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
+
   
   useEffect(() => {
     if (loadingEmployeeData) return;
@@ -237,7 +241,10 @@ export default function EmployeeForm({ mode = 'create' }) {
         return <PersonalData viewMode={viewMode} register={register} errors={errors} employee={employee} />;
       case 'work':
         return <WorkData 
+                  createMode={createMode}
                   viewMode={viewMode}
+                  isEmployeeActive={isEmployeeActive}
+                  cursorNotAllowed={disabledClasses}
                   register={register} 
                   errors={errors} 
                   employee={employee} 
@@ -249,7 +256,16 @@ export default function EmployeeForm({ mode = 'create' }) {
       case 'contact':
         return <ContactData viewMode={viewMode} register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;
       case 'meruLink':
-        return <MeruLinkData viewMode={viewMode} register={register} errors={errors} employee={employee} />;
+        return <MeruLinkData 
+                  createMode={createMode} 
+                  viewMode={viewMode} 
+                  isEmployeeActive={isEmployeeActive} 
+                  cursorNotAllowed={disabledClasses} 
+                  register={register} 
+                  errors={errors} 
+                  employee={employee} 
+                  tempFlags={tempFlags} 
+                />;
       case 'lockerAssign':
         return <LockerAssign 
                 mode={mode}

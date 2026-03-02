@@ -4,19 +4,18 @@ import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 
-export default function WorkData({ viewMode, register, errors, employee, tempFlags, setTempFlags, availableDepartments, loadingData }) {
+export default function WorkData({ createMode, viewMode, isEmployeeActive, cursorNotAllowed, register, errors, employee, tempFlags, setTempFlags, availableDepartments, loadingData }) {
   const { toggleEmployeeField } = useEmployees();
-  const isForm = typeof register === 'function';
-  const isObjectEmpty = (obj) => obj && Object.keys(obj).length === 0;
-  const isCreateMode = isForm && (!employee || isObjectEmpty(employee));
-  let isEmployeeActive;
+  // const isForm = typeof register === 'function';
+  // const isObjectEmpty = (obj) => obj && Object.keys(obj).length === 0;
+  // let isEmployeeActive;
   
-  const flags = isCreateMode ? tempFlags : employee;
-  (isCreateMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
+  // const flags = createMode ? tempFlags : employee;
+  // (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   //const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
-  const cursorNotAllowed = (viewMode ||  !isEmployeeActive) && 'cursor-not-allowed opacity-50';
+  // const cursorNotAllowed = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
 
-  if (isForm) {
+  // if (isForm) {
      return (
       <div className="
         grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
@@ -34,7 +33,10 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
         
         <div>
           <LabelFieldForm field="Departamento" simbol="*"/>
-            <select disabled={viewMode} {...register('department')} className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${cursorNotAllowed}`}>
+            <select 
+              disabled={viewMode} {...register('department')} 
+              className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${cursorNotAllowed}`}
+            >
               <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
               {availableDepartments.map((item) => ( 
                 <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.departmentName} </option>
@@ -60,14 +62,14 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
           {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa MeruLink?</span>
             <input 
               disabled={!isEmployeeActive || viewMode}
               type="checkbox" {...register('useMeruLink')} className={`w-4 h-4 rounded ${cursorNotAllowed}`}  checked={flags.useMeruLink}  
               onChange={(e) => {
-                if (isCreateMode) {
+                if (createMode) {
                  setTempFlags({ ...tempFlags, useMeruLink: e.target.checked });
                 } else {
                  toggleEmployeeField(employee.id, "useMeruLink");
@@ -75,15 +77,15 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
               }}
             />
           </label>
-        </div>
+        </div> */}
 
         <div className='flex flex-row'>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa HID Card?</span>
               <input 
-               disabled={!isEmployeeActive || viewMode}
-                type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${cursorNotAllowed}`} 
+               disabled={!isEmployeeActive }// || viewMode
+                type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
                 onClick={() => toggleEmployeeField(employee?.id, "useHidCard")} />
             </label>
           </div>
@@ -92,10 +94,10 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa Locker?</span>
             <input 
-              disabled={!isEmployeeActive || viewMode}
+              disabled={!isEmployeeActive }//|| viewMode
               type="checkbox" 
               {...register('useLocker')} 
-              className={`w-4 h-4 rounded ${cursorNotAllowed}`} 
+              className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
               onClick={() => toggleEmployeeField(employee?.id, "useLocker")} 
                /> 
             </label>
@@ -104,8 +106,8 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa Transporte?</span>
               <input 
-                disabled={!isEmployeeActive || viewMode}
-                type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${cursorNotAllowed}`} 
+                disabled={!isEmployeeActive }//|| viewMode
+                type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
                 onClick={() => toggleEmployeeField(employee?.id, "useTransport")} />
             </label>
           </div>
@@ -113,96 +115,4 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
         
       </div>
     );
-  }
- 
-  return ( "Por Eliminar" );
-  {/*
-    <div className="
-      grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
-      md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-      md:[&>*:nth-child(2n)]:pl-4
-    ">
-      <div>
-        <label className="font-semibold">Fecha Ingreso: </label>
-        {employee.joinDate}
-      </div>
-
-      <div>
-        <label className="font-semibold">Departamento: </label>
-        {employee.departmentName}
-      </div>
-
-      <div>
-        <label className="font-semibold">Sub-Departamento: </label>
-        {employee.subDepartment}
-      </div>
-
-      <div>
-        <label className="font-semibold">Cargo: </label>
-        {employee.position}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <table className='table-tags-check'>
-          <tbody>
-          <tr>
-            <td><label className="font-semibold">¿Usa Meru Link?</label></td>
-            <td>
-              <button type="button" className={`tags-work-btn ${cursorNotAllowed}`} onClick={() => toggleEmployeeField(employee.id, "useMeruLink")} disabled={!isEmployeeActive}>
-                {employee.useMeruLink ? (
-                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
-                ) : (
-                  <XCircleIcon className='w-5 h-5 text-red-400' />
-                )}
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td><label className="font-semibold">¿Usa Locker?</label></td>
-            <td>
-              <button type="button" className={`tags-work-btn ${cursorNotAllowed}`} onClick={() => toggleEmployeeField(employee.id, "useLocker")} disabled={!isEmployeeActive}>
-                {employee.useLocker ? (
-                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
-                ) : (
-                  <XCircleIcon className='w-5 h-5 text-red-400' />
-                )}
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <table className='table-tags-check'>
-          <tbody>
-          <tr>
-            <td><label className="font-semibold">¿Usa Tarjeta HID?</label></td>
-            <td>
-              <button type="button" className={`tags-work-btn ${cursorNotAllowed}`} onClick={() => toggleEmployeeField(employee.id, "useHidCard")} disabled={!isEmployeeActive}>
-                {employee.useHidCard ? (
-                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
-                ) : (
-                  <XCircleIcon className='w-5 h-5 text-red-400' />
-                )}
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td><label className="font-semibold">¿Usa Transporte?</label></td>
-            <td>
-              <button type="button" className={`tags-work-btn ${cursorNotAllowed}`} onClick={() => toggleEmployeeField(employee.id, "useTransport")} disabled={!isEmployeeActive}>
-                {employee.useTransport ? (
-                  <CheckCircleIcon className='w-5 h-5 text-green-400' />
-                ) : (
-                  <XCircleIcon className='w-5 h-5 text-red-400' />
-                )}
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>     
-      </div>
-    </div> 
-  */}
 }

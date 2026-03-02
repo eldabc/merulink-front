@@ -17,9 +17,9 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
               if (tab.id === 'meruLink') return meruLinkKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));
               return false;
             })();
-            // const isTabDisabled = tab.id === 'meruLink' && !employee.useMeruLink;
-            const useMeruLinkEnabled = employee?.useMeruLink ?? tempFlags.useMeruLink;
-            const isTabDisabled = tab.id === 'meruLink' && !useMeruLinkEnabled;
+
+            // const useMeruLinkEnabled = employee?.useMeruLink ?? tempFlags.useMeruLink;
+            // const isTabDisabled = tab.id === 'meruLink' && !useMeruLinkEnabled;
 
             return (
               <div key={tab.id} className="flex flex-col items-center sm:items-center"> 
@@ -30,9 +30,9 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
                     ${activeTab === tab.id
                       ? "border-blue-500 text-[#9fd8ff]"
                       : "border-transparent text-gray-400 hover:text-gray-200"}
-                    ${isTabDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
-                  `}
-                  disabled={isTabDisabled}
+                    
+                  `} // ${isTabDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
+                  // disabled={isTabDisabled}
                 >
                   {tab.label}
                   {tabError && ( <p className="px-2 py-1 rounded-full text-xs font-semibold bg-red-255 text-red-400 hover:text-red-800">Tienes campos erróneos en esta pestaña</p> )}

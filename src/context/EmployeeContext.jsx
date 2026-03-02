@@ -35,8 +35,9 @@ export const EmployeeProvider = ({ children }) => {
     loadEmployees();
   }, [loadEmployees]);
 
+  // ACtualizar campos checkboxs sin entrar en modo edit
   const toggleEmployeeField = (id, field) => { 
-    
+    console.log("Checkbox", id, field)
     if (!id || !field) return; 
     
     setEmployeeData(prev =>
