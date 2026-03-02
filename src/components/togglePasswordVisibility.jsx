@@ -14,7 +14,7 @@ export function PasswordInputEye({ register, errors, viewMode, useMeruLink }) {
     <div>
         <div className="relative w-full md:w-64">
           <input
-            readOnly={viewMode || !useMeruLink}
+            readOnly={viewMode }//|| !useMeruLink
             type={showPassword ? 'text' : 'password'}
             {...register('userPass')}
             className={`w-full px-3 py-2 pr-10 rounded-lg filter-input 

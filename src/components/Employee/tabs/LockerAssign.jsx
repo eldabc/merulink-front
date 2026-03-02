@@ -28,7 +28,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, us
     const lockerAssignCategoryKey = getCategoryKey(selectedSex);
 
     return empLockerAssign
-      .filter(assign => assign.locker.category.key === lockerAssignCategoryKey)
+      .filter(assign => assign.locker?.category?.key === lockerAssignCategoryKey)
       .map(assign => (
         <option key={`lockerAssign-${assign.id}`} className='bg-[#3c4042]' value={assign.id}>
           {assign.locker.code}

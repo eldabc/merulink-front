@@ -1,21 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 
 export default function WorkData({ createMode, viewMode, isEmployeeActive, cursorNotAllowed, register, errors, employee, tempFlags, setTempFlags, availableDepartments, loadingData }) {
   const { toggleEmployeeField } = useEmployees();
-  // const isForm = typeof register === 'function';
-  // const isObjectEmpty = (obj) => obj && Object.keys(obj).length === 0;
-  // let isEmployeeActive;
-  
-  // const flags = createMode ? tempFlags : employee;
-  // (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
-  //const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
-  // const cursorNotAllowed = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
 
-  // if (isForm) {
      return (
       <div className="
         grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
@@ -62,23 +52,6 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
           {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
         </div>
 
-        {/* <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">¿Usa MeruLink?</span>
-            <input 
-              disabled={!isEmployeeActive || viewMode}
-              type="checkbox" {...register('useMeruLink')} className={`w-4 h-4 rounded ${cursorNotAllowed}`}  checked={flags.useMeruLink}  
-              onChange={(e) => {
-                if (createMode) {
-                 setTempFlags({ ...tempFlags, useMeruLink: e.target.checked });
-                } else {
-                 toggleEmployeeField(employee.id, "useMeruLink");
-                }
-              }}
-            />
-          </label>
-        </div> */}
-
         <div className='flex flex-row'>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
@@ -86,7 +59,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
               <input 
                disabled={!isEmployeeActive }// || viewMode
                 type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
-                onClick={() => toggleEmployeeField(employee?.id, "useHidCard")} />
+                onClick={() => !createMode && toggleEmployeeField(employee?.id, "useHidCard")} />
             </label>
           </div>
 
@@ -98,7 +71,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
               type="checkbox" 
               {...register('useLocker')} 
               className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
-              onClick={() => toggleEmployeeField(employee?.id, "useLocker")} 
+              onClick={() => !createMode && toggleEmployeeField(employee?.id, "useLocker")} 
                /> 
             </label>
           </div>
@@ -108,7 +81,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
               <input 
                 disabled={!isEmployeeActive }//|| viewMode
                 type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
-                onClick={() => toggleEmployeeField(employee?.id, "useTransport")} />
+                onClick={() => !createMode && toggleEmployeeField(employee?.id, "useTransport")} />
             </label>
           </div>
         </div>

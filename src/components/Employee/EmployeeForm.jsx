@@ -16,6 +16,7 @@ import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
 import { useEmployees } from '../../context/EmployeeContext';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
+import LabelFieldForm from '../Shared/LabelFieldForm';
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
@@ -187,7 +188,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     const birthDate = employee?.birthDate ? new Date(employee.birthDate).toISOString().split('T')[0] : null;
 
     return {
-        // numEmployee: employee?.numEmployee ?? newNumEmployee(),
         ci: employee?.ci ?? '',
         firstName: employee?.firstName ?? '',
         secondName: employee?.secondName ?? '',
@@ -265,6 +265,8 @@ export default function EmployeeForm({ mode = 'create' }) {
                   errors={errors} 
                   employee={employee} 
                   tempFlags={tempFlags} 
+                  watch={watch}
+                  setValue={setValue}
                 />;
       case 'lockerAssign':
         return <LockerAssign 
@@ -291,58 +293,58 @@ export default function EmployeeForm({ mode = 'create' }) {
           </div>
 
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Empleado' ):( 'Registrar Empleado')}</h3>
-              {typeof register === 'function' ? (
+            <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')}</h3>
+              {/* {typeof register === 'function' ? ( */}
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Nombre: *</label>
+                    <LabelFieldForm field="Primer Nombre" simbol="*" />
                   </div>
                   <div>
                     <input
                       readOnly={viewMode}
                       {...register('firstName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.firstName ? 'border-red-500' : ''}`}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
                     {errors?.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}  
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Segundo Nombre:</label>
+                    <LabelFieldForm field="Segundo Nombre" />
                   </div>
                   <div>
                     <input
                       readOnly={viewMode}
                       {...register('secondName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondName ? 'border-red-500' : ''}`}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
                     {errors?.secondName && <p className="text-red-400 text-xs mt-1">{errors.secondName.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Primer Apellido: *</label>
+                    <LabelFieldForm field="Primer Apellido" simbol="*" />
                   </div>
                   <div>
                     <input
                       readOnly={viewMode}
                       {...register('lastName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.lastName ? 'border-red-500' : ''}`}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
                     {errors?.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Segundo Apellido:</label>
+                    <LabelFieldForm field="Segundo Apellido" />
                   </div>
                   <div>
                     <input
                       readOnly={viewMode}
                       {...register('secondLastName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${errors?.secondLastName ? 'border-red-500' : ''}`}
+                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
                     {errors?.secondLastName && <p className="text-red-400 text-xs mt-1">{errors.secondLastName.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">No. Empleado: *</label>
+                    <LabelFieldForm field="No. Empleado" simbol="*" />
                   </div>
                   <div>
                     <input
@@ -352,17 +354,17 @@ export default function EmployeeForm({ mode = 'create' }) {
                     />
                   </div>
                 </div>
-              ) : (
-                {/* <div>
+              {/*) : (
+                 <div>
                 <h3 className="text-3xl font-semibold text-white-800">
                   {`${employee?.numEmployee ?? ''} ${employee?.firstName ?? ''} ${employee?.secondName ?? ''} ${employee?.lastName ?? ''} ${employee?.secondLastName ?? ''}`}
                 </h3>
                 <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
-                <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div> */}
-              )}
+                <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div> 
+               )}*/}
             
           </div>
-          {mode === 'edit' && (
+          {(editMode || viewMode) && (
             <div><label className="font-semibold">Estatus: </label>
                 <span className={`status-tag ${getStatusColor(employee.status)}`}  
                   onClick={(e) => {
