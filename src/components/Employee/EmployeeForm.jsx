@@ -43,12 +43,13 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [availableDepartments, setAvailableDepartments] = useState([]);
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
-  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
+  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
   const selectedSex = watch('sex');
   const changedUseLocker = watch('useLocker');
   const watchedBirthDate = watch('birthDate');
 
+  const createMode = mode === 'create';
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
   const employee = location.state?.data;
@@ -90,12 +91,10 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, []);
   
   useEffect(() => {    
-    // if ((viewMode || editMode) && employee){
      const lockerAssignEmp = employee?.assign
             ? [...lockerAssigns, employee.assign]
             : [...lockerAssigns];
      setEmpLockerAssign(lockerAssignEmp);
-    // }
   }, [lockerAssigns]);
 
   useEffect(() => {
@@ -112,27 +111,23 @@ export default function EmployeeForm({ mode = 'create' }) {
     let success = false;
     
     const departmentFound = availableDepartments.find(item => item.id === Number(data.department));
-    const submissionData = { ...data, departmentName: departmentFound.departmentName };
+    const submissionData = { ...data, departmentName: departmentFound?.departmentName };
 
     console.log('EmployeeForm data final:', submissionData);
 
     if (editMode && employee) {
-      // const dataEdit = {
-      //   ...lockerAssign,
-      //   padlock: {
-      //     ...padlockSelected
-      //   },
-      //   employee: {
-      //     ...employeeSelected
-      //   }
-      // }
-      success = await updateEmployee(submissionData);
+      const dataEdit = {
+        id: employee.id,
+        ...data
+      }
+      success = await updateEmployee(dataEdit);
     } else {
       success = await createEmployee(submissionData);
     }
 
     if (success) {
-      navigate(-1);
+      if (mode === 'create') navigate(-1);
+        else navigate(-2);
     }
 
   };
@@ -214,7 +209,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         userName: employee?.userName ?? '',
         userPass: employee?.userPass ?? '',
         changePassNextLogin: !!employee?.changePassNextLogin,
-        status: !!employee?.status,
+        status: createMode ? true : !!employee?.status,
         useMeruLink: !!employee?.useMeruLink,
         useHidCard: !!employee?.useHidCard,
         useLocker: !!employee?.useLocker,

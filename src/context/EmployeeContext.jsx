@@ -108,6 +108,34 @@ export const EmployeeProvider = ({ children }) => {
     }
   };
 
+  // *** Actualizar
+  const updateEmployee = async (formData) => {
+    try {
+      const employeeId = formData.id;
+
+      if (!employeeId) {
+        showNotification('Error: No se encontró el ID del Empleado', 'error');
+        return false;
+      }
+
+      const updatedEmployee = formattedEmployees(formData);
+      console.log("Actualizado:", updatedEmployee);
+      
+      setEmployeeData(prevData => {
+        return prevData.map(emp => 
+          emp.id === employeeId ? updatedEmployee : emp 
+        );
+      });
+
+      showNotification(`Empleado ${updatedEmployee.firstName} ${updatedEmployee.lastName} actualizado con éxito`); 
+      return true;
+
+    } catch (error) {
+      showNotification('Error al actualizar: ' + error.message, 'error');
+      return false;
+    }
+  };
+
   const getDepartments = async () => {
     try {
          return departments;       
@@ -134,6 +162,7 @@ export const EmployeeProvider = ({ children }) => {
     setEmployeeData,
     toggleEmployeeField,
     createEmployee,
+    updateEmployee,
     getDepartments,
     getLockerAssigns
   };

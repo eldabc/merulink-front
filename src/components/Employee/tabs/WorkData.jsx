@@ -12,9 +12,9 @@ export default function WorkData({ viewMode, register, errors, employee, tempFla
   let isEmployeeActive;
   
   const flags = isCreateMode ? tempFlags : employee;
-  (isCreateMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false)
+  (isCreateMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   //const disabledClasses = isEmployeeActive ? 'hover:bg-gray-700' : 'opacity-50 cursor-not-allowed';
-  const cursorNotAllowed = (viewMode || isEmployeeActive) && 'cursor-not-allowed opacity-50';
+  const cursorNotAllowed = (viewMode ||  !isEmployeeActive) && 'cursor-not-allowed opacity-50';
 
   if (isForm) {
      return (
