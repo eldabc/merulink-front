@@ -130,7 +130,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                             subDepartmentName: subDepartmentData?.subDepartmentName ?? 'No Aplica' 
                            };
 
-    console.log('EmployeeForm data final:', submissionData);
+    console.log('Data submit:', submissionData);
 
     if (editMode && employee) {
       success = await updateEmployee(submissionData);
