@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { User } from "lucide-react";
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
@@ -240,14 +240,14 @@ export default function EmployeeForm({ mode = 'create' }) {
                   createMode={createMode}
                   viewMode={viewMode}
                   isEmployeeActive={isEmployeeActive}
-                  cursorNotAllowed={disabledClasses}
+                  disabledClasses={disabledClasses}
                   register={register} 
                   errors={errors} 
-                  employee={employee} 
-                  tempFlags={tempFlags}
-                  setTempFlags={setTempFlags} 
+                  employee={employee}  
                   availableDepartments={availableDepartments} 
-                  loadingData={loadingData} 
+                  loadingData={loadingData}
+                  setValue={setValue}
+                  watch={watch}
                 />;
       case 'contact':
         return <ContactData viewMode={viewMode} register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;

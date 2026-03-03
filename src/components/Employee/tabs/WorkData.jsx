@@ -3,8 +3,19 @@ import { useEffect, useState } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 
-export default function WorkData({ createMode, viewMode, isEmployeeActive, cursorNotAllowed, register, errors, employee, tempFlags, setTempFlags, availableDepartments, loadingData }) {
+export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, setValue , watch }) { // tempFlags, setTempFlags,
   const { toggleEmployeeField } = useEmployees();
+  const selectedDepartmentId = watch('department');
+  const [subDepartments, setSubDepartments] = useState([]);
+
+  useEffect (() => {
+    if(selectedDepartmentId) {
+      const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
+      setSubDepartments(selectedDepartment?.subDepartments ?? []);
+    } else {
+      setValue('subDepartment', '');
+    }
+  }, [selectedDepartmentId]);
 
      return (
       <div className="
@@ -16,7 +27,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
             <input 
               readOnly={viewMode} 
               type="date" {...register('joinDate')} 
-              className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${cursorNotAllowed}`} 
+              className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${disabledClasses}`} 
             />
           {errors.joinDate && <p className="text-red-400 text-xs mt-1">{errors.joinDate.message}</p>}
         </div>
@@ -25,7 +36,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
           <LabelFieldForm field="Departamento" simbol="*"/>
             <select 
               disabled={viewMode} {...register('department')} 
-              className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${cursorNotAllowed}`}
+              className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
             >
               <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
               {availableDepartments.map((item) => ( 
@@ -37,17 +48,23 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
 
         <div>
           <LabelFieldForm field="Sub-Departamento" />
-          <input 
-            readOnly={viewMode} 
-            {...register('subDepartment')} className={`w-full px-3 py-2 rounded-lg filter-input ${cursorNotAllowed}`}
-          />
+          <select 
+              disabled={viewMode || !selectedDepartmentId} {...register('subDepartment')} 
+              className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 
+                ${!selectedDepartmentId && 'cursor-not-allowed'} ${disabledClasses}`}
+          >
+            <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+            {subDepartments.map((item) => ( 
+              <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.subDepartmentName} </option>
+            ))}
+        </select>
         </div>
 
         <div>
           <LabelFieldForm field="Cargo" simbol="*"/>
             <input 
               readOnly={viewMode} 
-              {...register('position')} className={`w-full px-3 py-2 rounded-lg filter-input ${cursorNotAllowed}`} 
+              {...register('position')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
             />
           {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
         </div>
@@ -58,7 +75,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
               <span className="text-sm">¿Usa HID Card?</span>
               <input 
                disabled={!isEmployeeActive }// || viewMode
-                type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
+                type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
                 onClick={() => !createMode && toggleEmployeeField(employee?.id, "useHidCard")} />
             </label>
           </div>
@@ -68,7 +85,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, curso
               <span className="text-sm">¿Usa Transporte?</span>
               <input 
                 disabled={!isEmployeeActive }//|| viewMode
-                type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && cursorNotAllowed}`} 
+                type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
                 onClick={() => !createMode && toggleEmployeeField(employee?.id, "useTransport")} />
             </label>
           </div>
