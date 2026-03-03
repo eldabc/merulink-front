@@ -7,8 +7,8 @@ export default function EmployeeRow({ emp }) {
   const { toggleEmployeeField } = useEmployees(); 
   const navigate = useNavigate();
 
-  const selectedEmployee = () => {
-    navigate("/empleados/ver", { 
+  const selectedEmployee = (id) => {
+    navigate(`/empleados/ver/${id}`, { 
       state: { data: emp } 
     }); 
   };

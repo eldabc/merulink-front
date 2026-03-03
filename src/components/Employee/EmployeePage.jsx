@@ -11,8 +11,8 @@ export default function LockerAssignPage() {
         <Routes>
           <Route path="/" element={<EmployeeList />} />
           <Route path="nuevo" element={<EmployeeForm />} />
-          <Route path="ver" element={<EmployeeForm mode="view" />} />
-          <Route path="editar" element={<EmployeeForm  mode="edit" />} />
+          <Route path="ver/:id" element={<EmployeeForm mode="view" />} />
+          <Route path="editar/:id" element={<EmployeeForm  mode="edit" />} />
         </Routes>
       </main>
     </>

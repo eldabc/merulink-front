@@ -55,25 +55,18 @@ export const EmployeeProvider = ({ children }) => {
           updatedEmployee.status = newStatus;
           
           if (newStatus === false) {
-        console.log("updateEmployee.userName ant", updateEmployee.userName)
-
             updatedEmployee.useMeruLink = false;
-            updateEmployee.userName = '';
-            updateEmployee.userPass = '';
+            updatedEmployee.userName = '';
+            updatedEmployee.userPass = '';
             updatedEmployee.useLocker = false;
-            updateEmployee.assign = null;
+            updatedEmployee.assign = null;
             updatedEmployee.useHidCard = false;
             updatedEmployee.useTransport = false;
-        console.log("updateEmployee.userName des", updateEmployee.userName)
-
           }
             
         } else {
-        console.log("Sino")
-
           updatedEmployee[field] = !emp[field];
         }
-        console.log("updatedEmployee", updatedEmployee)
         return updatedEmployee;
       })
     );

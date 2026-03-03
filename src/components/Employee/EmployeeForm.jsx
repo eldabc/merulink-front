@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { User } from "lucide-react";
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
@@ -39,21 +39,23 @@ export default function EmployeeForm({ mode = 'create' }) {
   });
 
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const [activeTab, setActiveTab] = useState('personal');
   const [availableDepartments, setAvailableDepartments] = useState([]);
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
+  const { id } = useParams();
+  const employee = employeeData.find(e => e.id === Number(id));
+  
   const selectedSex = watch('sex');
   const changedUseLocker = watch('useLocker');
   const watchedBirthDate = watch('birthDate');
-
   const createMode = mode === 'create';
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
-  const employee = location.state?.data;
+
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
@@ -102,13 +104,8 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, [lockerAssigns]);
 
   useEffect(() => {
-
-    if (employee && (editMode || viewMode)) {
         reset( employeeReset() );
-    } else if (mode === 'create') {
-        reset(employeeReset() );
-    }
-  }, [empLockerAssign]); //employee, mode, reset
+  }, [empLockerAssign]);
 
   const onSubmit = async (data) => {
     // console.log("submit", data);
@@ -282,12 +279,12 @@ export default function EmployeeForm({ mode = 'create' }) {
               />;
     }
   };
-  console.log("isEmployeeActive eee", isEmployeeActive)
+  // console.log("isEmployeeActive", isEmployeeActive);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        {(isEmployeeActive && viewMode) && <HeadFormButtons url="/empleados/editar" data={employee} /> }
+        {(isEmployeeActive && viewMode) && <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} /> }{/*TODO: todas las rutas funcionen sin data  */}
       </div>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
@@ -297,7 +294,6 @@ export default function EmployeeForm({ mode = 'create' }) {
 
           <div>
             <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')}</h3>
-              {/* {typeof register === 'function' ? ( */}
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                   <div>
                     <LabelFieldForm field="Primer Nombre" simbol="*" />
