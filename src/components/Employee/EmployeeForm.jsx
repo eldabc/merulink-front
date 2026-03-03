@@ -39,13 +39,14 @@ export default function EmployeeForm({ mode = 'create' }) {
   });
 
   const navigate = useNavigate();
-  // const location = useLocation();
   const [activeTab, setActiveTab] = useState('personal');
   const [availableDepartments, setAvailableDepartments] = useState([]);
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
+  const selectedDepartmentId = watch('department');
+  const [subDepartments, setSubDepartments] = useState([]);
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
   
@@ -104,24 +105,35 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, [lockerAssigns]);
 
   useEffect(() => {
-        reset( employeeReset() );
+    reset( employeeReset() );
   }, [empLockerAssign]);
+
+  useEffect (() => {
+    if(selectedDepartmentId) {
+      const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
+      setSubDepartments(selectedDepartment?.subDepartments ?? []);
+    } else {
+      setValue('subDepartment', '');
+    }
+  }, [selectedDepartmentId, lockerAssigns]);
 
   const onSubmit = async (data) => {
     // console.log("submit", data);
     let success = false;
     
-    const departmentFound = availableDepartments.find(item => item.id === Number(data.department));
-    const submissionData = { ...data, departmentName: departmentFound?.departmentName };
+    const departmentData = availableDepartments.find(item => item.id === Number(data.department));
+    const subDepartmentData = subDepartments.find(item => item.id === Number(data.subDepartment));
+    const submissionData = { 
+                            id: employee?.id ?? null,
+                            ...data, 
+                            departmentName: departmentData?.departmentName, 
+                            subDepartmentName: subDepartmentData?.subDepartmentName ?? 'No Aplica' 
+                           };
 
     console.log('EmployeeForm data final:', submissionData);
 
     if (editMode && employee) {
-      const dataEdit = {
-        id: employee.id,
-        ...data
-      }
-      success = await updateEmployee(dataEdit);
+      success = await updateEmployee(submissionData);
     } else {
       success = await createEmployee(submissionData);
     }
@@ -246,8 +258,8 @@ export default function EmployeeForm({ mode = 'create' }) {
                   employee={employee}  
                   availableDepartments={availableDepartments} 
                   loadingData={loadingData}
-                  setValue={setValue}
-                  watch={watch}
+                  selectedDepartmentId={selectedDepartmentId}
+                  subDepartments={subDepartments}
                 />;
       case 'contact':
         return <ContactData viewMode={viewMode} register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;

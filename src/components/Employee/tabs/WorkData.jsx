@@ -3,19 +3,8 @@ import { useEffect, useState } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 
-export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, setValue , watch }) { // tempFlags, setTempFlags,
+export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, setValue , watch, selectedDepartmentId, subDepartments }) { // tempFlags, setTempFlags,
   const { toggleEmployeeField } = useEmployees();
-  const selectedDepartmentId = watch('department');
-  const [subDepartments, setSubDepartments] = useState([]);
-
-  useEffect (() => {
-    if(selectedDepartmentId) {
-      const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
-      setSubDepartments(selectedDepartment?.subDepartments ?? []);
-    } else {
-      setValue('subDepartment', '');
-    }
-  }, [selectedDepartmentId]);
 
      return (
       <div className="
@@ -49,9 +38,9 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
         <div>
           <LabelFieldForm field="Sub-Departamento" />
           <select 
-              disabled={viewMode || !selectedDepartmentId} {...register('subDepartment')} 
+              disabled={viewMode || !selectedDepartmentId || subDepartments.length === 0} {...register('subDepartment')} 
               className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 
-                ${!selectedDepartmentId && 'cursor-not-allowed'} ${disabledClasses}`}
+                ${(!selectedDepartmentId || subDepartments.length === 0) && 'cursor-not-allowed'} ${disabledClasses}`}
           >
             <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
             {subDepartments.map((item) => ( 
