@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
 import { lockers, lockerCategories } from '../utils/StaticData/locker-room-utils';
 import { useNotification } from "../context/NotificationContext";
+import axios from 'axios';
+import { ENV } from '../config/env';
 
 const LockerRoomContext = createContext();
-
 
 // hook personalizado para usar el contexto
 export const useLockers = () => {
@@ -11,22 +12,25 @@ export const useLockers = () => {
 };
 
 // Provider con la lógica y el estado
-export const LockerRoomProvider = ({ children }) => { //showNotification, 
+export const LockerRoomProvider = ({ children }) => { 
 
 
   const [lockerData, setLockerData] = useState([]);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { showNotification } = useNotification();
 
   const loadLockers = useCallback(async () => {
-    // setLoading(true);
+    setLoading(true);
     try {
-      setLockerData(lockers);
-    } catch (err) {
-      showNotification('Error al cargar datos', err.message);
+      
+      const response = await axios.get(ENV.API_BACK_URL);
+      setLockerData(response.data.data);
+
+    } catch (error) {
+      showNotification('Error al cargar lockers', error.message, 'error');
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   }, []);
 

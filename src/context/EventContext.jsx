@@ -4,6 +4,8 @@ import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { INITIAL_EVENTS, fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
+import { ENV } from '../config/env';
+
 const EventContext = createContext();
 
 const { getLocationById } = useLocationsHook();
@@ -27,7 +29,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
-  const API_KEY = import.meta.env.VITE_API_KEY;
+  const API_KEY = ENV.API_KEY;
 
   const getTemplatesOnly = useCallback(async (selectedCategory) => {
     setLoadingTemplates(true);
