@@ -6,10 +6,10 @@ const NotificationContext = createContext();
 export function NotificationProvider({ children }) {
   const [notif, setNotif] = useState(null);
 
-  const showNotification = (title, message) => {
-    setNotif({ title, message });
+  const showNotification = (title, message, type) => {
+    setNotif({ title, message, type });
 
-    setTimeout(() => setNotif(null), 2500);
+    setTimeout(() => setNotif(null), 5000);
   };
 
   const closeNotification = () => setNotif(null);
@@ -24,6 +24,7 @@ export function NotificationProvider({ children }) {
           title={notif.title}
           message={notif.message}
           onClose={closeNotification}
+          type={notif.type}
         />
       )}
     </NotificationContext.Provider>
