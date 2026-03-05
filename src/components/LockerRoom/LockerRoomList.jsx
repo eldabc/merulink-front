@@ -9,13 +9,13 @@ import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
-
+import RowTableLoading from '../Shared/RowTableLoading';
 import '../../Tables.css';
 
 
 function LockerRoomList() {
   const navigate = useNavigate();
-  const { lockerData } = useLockers();
+  const { lockerData, loading } = useLockers();
 
   // Para buscador y paginación
   const itemsPerPage = 10;
@@ -89,12 +89,18 @@ function LockerRoomList() {
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((locker) => (
-                <LockerRoomRow 
-                  key={locker.id}
-                  locker={locker} 
-                />
-              ))}
+              {loading ? (
+                <RowTableLoading />
+              ) : (
+                <>
+                  {paginatedData.map((locker) => (
+                    <LockerRoomRow 
+                      key={locker.id}
+                      locker={locker} 
+                    />
+                  ))}
+                </>
+              )}   
             </tbody>
           </table>
         </div>

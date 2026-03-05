@@ -14,7 +14,6 @@ export const useLockers = () => {
 // Provider con la lógica y el estado
 export const LockerRoomProvider = ({ children }) => { 
 
-
   const [lockerData, setLockerData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -127,6 +126,7 @@ export const LockerRoomProvider = ({ children }) => {
 
 
   const contextValue = {
+    loading,
     lockerData,
     setLockerData,
     loadLockers,
