@@ -81,7 +81,7 @@ function LockerRoomForm({ mode = 'create' }) {
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode) && <HeadFormButtons url={`/empleados/vestuarios/lockers/editar/${locker.id}`} data={[]} /> }
+        {(viewMode) && <HeadFormButtons url={`/empleados/vestuarios/lockers/editar/${locker?.id}`} data={[]} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 

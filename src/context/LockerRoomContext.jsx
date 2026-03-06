@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
-import { lockers, lockerCategories } from '../utils/StaticData/locker-room-utils';
+import { lockerCategories } from '../utils/StaticData/locker-room-utils';
 import { useNotification } from "../context/NotificationContext";
 import axios from 'axios';
 import { ENV } from '../config/env';
