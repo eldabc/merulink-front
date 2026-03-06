@@ -11,8 +11,8 @@ export default function LockerRoomPage() {
         <Routes>
           <Route path="/" element={<LockerRoomList />} />
           <Route path="nuevo" element={<LockerRoomForm />} />
-          <Route path="ver" element={<LockerRoomForm mode="view" />} />
-          <Route path="editar" element={<LockerRoomForm  mode="edit" />} />
+          <Route path="ver/:id" element={<LockerRoomForm mode="view" />} />
+          <Route path="editar/:id" element={<LockerRoomForm  mode="edit" />} />
 
         </Routes>
       </main>

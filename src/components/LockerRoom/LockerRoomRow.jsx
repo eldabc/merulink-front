@@ -16,9 +16,9 @@ function LockerRoomRow({ locker }) {
   
   const lockerCategory = lockerCategories.find(c => c.key === locker.category);
 
-  const selectedLocker = (locker) => {
-    navigate("/empleados/vestuarios/lockers/ver", { 
-      state: { data: locker } 
+  const selectedLocker = (id) => {
+    navigate(`/empleados/vestuarios/lockers/ver/${id}`, { 
+      state: { data: [] } 
     }); 
   };
 
@@ -39,7 +39,7 @@ function LockerRoomRow({ locker }) {
     <>
       <tr
         key={locker.id}
-        onClick={() => selectedLocker(locker)}
+        onClick={() => selectedLocker(locker.id)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.status === 'Disponible' ? (

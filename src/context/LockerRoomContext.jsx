@@ -22,8 +22,8 @@ export const LockerRoomProvider = ({ children }) => {
   const loadLockers = useCallback(async () => {
     setLoading(true);
     try {
-      
-      const response = await axios.get(ENV.API_BACK_URL);
+
+      const response = await axios.get(`${ENV.API_BACK_URL}/lockers`);
       setLockerData(response.data.data);
 
     } catch (error) {
@@ -61,47 +61,45 @@ export const LockerRoomProvider = ({ children }) => {
       const newLocker = formattedLockers(formData);
       console.log("Creado", newLocker);
 
-      // const response = await api.post('/subdepartments', newEvent); 
-      // const createdRecord = await response.json(); 
+      const response = await axios.post(`${ENV.API_BACK_URL}/lockers`, newLocker);
+      setLockerData(prev => [...prev, response.data.data]);
 
-      setLockerData(prevData => [newLocker, ...prevData]);
+      setLockerData(prevData => [response.data.data, ...prevData]);
       showNotification(`Locker ${newLocker.code} creado con éxito`);
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el locker', error.message);
+      showNotification('Error al crear el locker', error.response.data.message, 'error');
       return false;
     }
   };
 
   // *** Actualizar
-  const updateLocker = async (formData, messagge) => {
+  const updateLocker = async (formData) => {
     try {
       const lockerId = formData.id;
-      if (!messagge) messagge = "Locker actualizado";
 
       if (!lockerId) {
-        showNotification('Error: No se encontró el ID del locker', 'error');
+        showNotification('No se encontró el ID del locker', error.response.data.message, 'error');
         return false;
       }
 
       const updatedLocker = formattedLockers(formData);
       console.log("Actualizado:", updatedLocker);
       
-      // Llamada a la API/Backend (onUpdate)
-      // await api.put(`/events/${lockerId}`, updatedLocker); 
+      const response = await axios.put(`${ENV.API_BACK_URL}/lockers/${lockerId}`, updatedLocker);
       
       setLockerData(prevData => {
-        return prevData.map(locker => 
-          locker.id === lockerId ? updatedLocker : locker 
-        );
+        const filteredData = prevData.filter(locker => locker.id !== lockerId);
+        // El dato actualizado primero
+        return [response.data.data, ...filteredData];
       });
 
       showNotification(`Locker ${formData.code} actualizado con éxito`); 
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar: ' + error.message, 'error');
+      showNotification('Error al actualizar:', error.response.data.message, 'error');
       return false;
     }
   };

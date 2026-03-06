@@ -1,8 +1,7 @@
 import LabelFieldForm from "../Shared/LabelFieldForm";
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 
-function LockerFormContent({ register, errors, createMode, viewMode, editMode  }) {
-  // console.log("createMode", createMode)
+function LockerFormContent({ register, errors, selectedCategory, viewMode, editMode  }) {
   return (
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Locker' ):( 'Datos Locker')}</h3>
@@ -13,14 +12,17 @@ function LockerFormContent({ register, errors, createMode, viewMode, editMode  }
         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
           
           <LabelFieldForm field="Código" simbol="*" />
-          <div className="w-full max-w-2xl">
-            <input 
-              readOnly={viewMode}
-              {...register('code')} 
-              type='text' 
-              className={`w-full px-3 py-2 rounded-lg filter-input border`} 
-            />
-            {errors?.code && <ErrorMessage msg={errors.code.message} /> }  
+          <div className="flex flex-row items-center">
+            <span className="opacity-50 inline-flex items-center justify-center bg-gray-400 px-2 h-[40px] rounded-sm text-lg leading-none">{selectedCategory}</span>
+            <div className="w-full max-w-2xl">
+              <input 
+                readOnly={viewMode}
+                {...register('code')} 
+                type='text' 
+                className={`w-full px-3 py-2 rounded-lg filter-input border`} 
+              />
+              {errors?.code && <ErrorMessage msg={errors.code.message} /> }  
+            </div>
           </div>
 
           <LabelFieldForm field="Estatus" simbol="*" />

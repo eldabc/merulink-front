@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLockers } from '../../context/LockerRoomContext';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,14 +16,14 @@ function LockerRoomForm({ mode = 'create' }) {
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(lockerValidationSchema),
   });
-  const { createLocker, updateLocker } = useLockers();
+  const { lockerData, createLocker, updateLocker } = useLockers();
   
   const navigate = useNavigate();
-  const location = useLocation();
+  const { id } = useParams();
+  const locker = lockerData.find(e => e.id === Number(id));
   const selectedCategory = watch('category');
-  const locker = location.state?.data;
-  
-  const createMode = mode === 'create'
+
+  const createMode = mode === 'create';
   const viewMode = mode === 'view';
   const editMode =  mode === 'edit';
 
@@ -81,7 +81,7 @@ function LockerRoomForm({ mode = 'create' }) {
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/lockers/editar" data={locker} /> }
+        {(viewMode) && <HeadFormButtons url={`/empleados/vestuarios/lockers/editar/${locker.id}`} data={[]} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
@@ -123,7 +123,7 @@ function LockerRoomForm({ mode = 'create' }) {
                     <LockerFormContent
                       register={register}
                       errors={errors}
-                      createMode={createMode}
+                      selectedCategory={selectedCategory}
                       viewMode={viewMode}
                       editMode={editMode}
                     />
