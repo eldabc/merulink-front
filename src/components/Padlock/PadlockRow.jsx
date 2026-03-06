@@ -7,16 +7,16 @@ function PadlockRow({ padlock }) {
 
   const navigate = useNavigate();
 
-  const selectedPadlock = (padlock) => {
-  navigate("/empleados/vestuarios/candados/ver", { 
-    state: { data: padlock } 
-  }); 
+  const selectedPadlock = (id) => {
+    navigate(`/empleados/vestuarios/candados/ver/${id}`, { 
+      state: { data: [] } 
+    }); 
   };
   return (
     <>
       <tr
         key={padlock.id}
-        onClick={() => selectedPadlock(padlock)}
+        onClick={() => selectedPadlock(padlock.id)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">{padlock.status === 'Disponible' ? (

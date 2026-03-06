@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { usePadlocks } from '../../context/PadlockContext';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,15 +13,14 @@ import LabelFieldForm from "../Shared/LabelFieldForm";
 
 
 function PadlockForm ({ mode = 'create' }) {
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(padlockValidationSchema),
     });
-    const { createPadlock, updatePadlock } = usePadlocks();
-    
+    const { padlockData, createPadlock, updatePadlock } = usePadlocks();
+  
+    const { id } = useParams();  
     const navigate = useNavigate();
-    const location = useLocation();
-    const selectedCategory = watch('pass');
-    const padlock = location.state?.data;
+    const padlock = padlockData.find(e => e.id === Number(id));
     
     const createMode = mode === 'create'
     const viewMode = mode === 'view';

@@ -11,8 +11,8 @@ export default function PadlockPage() {
         <Routes>
           <Route path="/" element={<PadlockList />} />
           <Route path="nuevo" element={<PadlockForm />} />
-          <Route path="ver" element={<PadlockForm mode="view" />} />
-          <Route path="editar" element={<PadlockForm  mode="edit" />} />
+          <Route path="ver/:id" element={<PadlockForm mode="view" />} />
+          <Route path="editar/:id" element={<PadlockForm  mode="edit" />} />
         </Routes>
       </main>
     </>
