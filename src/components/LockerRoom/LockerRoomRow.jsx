@@ -6,6 +6,7 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
 import { getStatusColor } from '../../utils/status-utils';
+import { statusConfig } from '../../utils/statusesConfig.js';
 
 function LockerRoomRow({ locker }) {
 
@@ -15,6 +16,7 @@ function LockerRoomRow({ locker }) {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   
   const lockerCategory = lockerCategories.find(c => c.key === locker.category);
+  const currentStatus = statusConfig[locker.status];
 
   const selectedLocker = (id) => {
     navigate(`/empleados/vestuarios/lockers/ver/${id}`, { 
@@ -42,11 +44,11 @@ function LockerRoomRow({ locker }) {
         onClick={() => selectedLocker(locker.id)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
-        <td className="px-4 py-3 text-white-800 font-medium ">{locker.status === 'Disponible' ? (
-          <span className={getStatusColor(locker.status)} title='Locker Disponible'>Disponible</span>
-        ) : (
-          <span className={getStatusColor(locker.status)} title='Locker Ocupado'>Ocupado</span>
-        )}</td>
+        <td className="px-4 py-3 text-white-800 font-medium ">
+          <span className={getStatusColor(locker.status)} title={currentStatus.title}>
+            {currentStatus.label}
+          </span>
+        </td>
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.category?.name}</td>
         <td className="px-4 py-3 text-white-700">

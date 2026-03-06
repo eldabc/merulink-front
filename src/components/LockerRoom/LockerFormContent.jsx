@@ -29,7 +29,7 @@ function LockerFormContent({ register, errors, selectedCategory, viewMode, editM
           <div>
             <select 
               {...register('status')}
-              disabled={true} //createMode || viewMode || editMode
+              disabled={true}
               className={`text-xl w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 cursor-not-allowed`}
             >
               <option className='bg-[#3c4042]' value="">Seleccionar...</option>

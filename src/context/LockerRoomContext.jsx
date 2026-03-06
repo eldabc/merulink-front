@@ -23,7 +23,7 @@ export const LockerRoomProvider = ({ children }) => {
     setLoading(true);
     try {
 
-      const response = await axios.get(`${ENV.API_BACK_URL}/lockers`);
+      const response = await axios.get(`${ENV.API_BACK_URL}lockers`);
       setLockerData(response.data.data);
 
     } catch (error) {
@@ -61,7 +61,7 @@ export const LockerRoomProvider = ({ children }) => {
       const newLocker = formattedLockers(formData);
       console.log("Creado", newLocker);
 
-      const response = await axios.post(`${ENV.API_BACK_URL}/lockers`, newLocker);
+      const response = await axios.post(`${ENV.API_BACK_URL}lockers`, newLocker);
       setLockerData(prev => [...prev, response.data.data]);
 
       setLockerData(prevData => [response.data.data, ...prevData]);
@@ -87,7 +87,7 @@ export const LockerRoomProvider = ({ children }) => {
       const updatedLocker = formattedLockers(formData);
       console.log("Actualizado:", updatedLocker);
       
-      const response = await axios.put(`${ENV.API_BACK_URL}/lockers/${lockerId}`, updatedLocker);
+      const response = await axios.put(`${ENV.API_BACK_URL}lockers/${lockerId}`, updatedLocker);
       
       setLockerData(prevData => {
         const filteredData = prevData.filter(locker => locker.id !== lockerId);
@@ -107,17 +107,16 @@ export const LockerRoomProvider = ({ children }) => {
   // *** Eliminar
   const deleteLocker = async (locker) => {
     try {
-      // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
-      // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
+      await axios.delete(`${ENV.API_BACK_URL}lockers/${locker.id}`);
 
       setLockerData(prevData => {
-        return prevData.filter(ev => ev.id !== locker.id);
+        return prevData.filter(item => item.id !== locker.id);
       });
 
       showNotification(`Locker ${locker.code} eliminado con éxito`);
       return true;
     } catch (error) {
-      showNotification('Error al eliminar el calendario', error.message);
+      showNotification('Error al eliminar Locker', error.response.data.message, 'error');
       return false;
     }
   };
