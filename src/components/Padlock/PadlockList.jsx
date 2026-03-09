@@ -9,12 +9,13 @@ import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
+import RowTableLoading from '../Shared/RowTableLoading';
 
 import '../../Tables.css';
 
 function PadlockList() {
   const navigate = useNavigate();
-  const { padlockData } = usePadlocks();
+  const { loading, padlockData } = usePadlocks();
 
   // Para buscador y paginación
   const itemsPerPage = 10;
@@ -83,9 +84,13 @@ function PadlockList() {
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((padlock) => (
-                <PadlockRow key={padlock.id} padlock={padlock}/>
-              ))}
+              {loading ? (
+                <RowTableLoading />
+              ) : (
+                paginatedData.map((padlock) => (
+                  <PadlockRow key={padlock.id} padlock={padlock}/>
+                ))
+              )} 
             </tbody>
           </table>
         </div>

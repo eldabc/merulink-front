@@ -1,9 +1,9 @@
+import axios from 'axios';
+import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
-import { padlocks } from '../utils/StaticData/padlock-utils';
 import { useNotification } from "../context/NotificationContext";
 
 const PadlockContext = createContext();
-
 
 // hook personalizado para usar el contexto
 export const usePadlocks = () => {
@@ -14,19 +14,21 @@ export const usePadlocks = () => {
 export const PadlockProvider = ({ children }) => {
 
   const [padlockData, setPadlockData] = useState([]);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { showNotification } = useNotification();
 
   const loadPadlocks = useCallback(async () => {
-    // setLoading(true);
+    setLoading(true);
     try {
-      setPadlockData(padlocks);
 
-    } catch (err) {
-      showNotification('Error al cargar datos', err.message);
+      const response = await axios.get(`${ENV.API_BACK_URL}padlocks`);
+      setPadlockData(response.data.data);
+
+    } catch (error) {
+      showNotification('Error al cargar datos', error.message, 'error');
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -118,6 +120,7 @@ export const PadlockProvider = ({ children }) => {
 
 
   const contextValue = {
+    loading,
     padlockData,
     setPadlockData,
     loadPadlocks,

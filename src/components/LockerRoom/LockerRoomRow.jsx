@@ -45,7 +45,7 @@ function LockerRoomRow({ locker }) {
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">
-          <span className={getStatusColor(locker.status)} title={currentStatus.title}>
+          <span className={getStatusColor(locker.status)} title={currentStatus.title.locker}>
             {currentStatus.label}
           </span>
         </td>
