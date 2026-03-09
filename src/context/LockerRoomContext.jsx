@@ -62,7 +62,6 @@ export const LockerRoomProvider = ({ children }) => {
       console.log("Creado", newLocker);
 
       const response = await axios.post(`${ENV.API_BACK_URL}lockers`, newLocker);
-      setLockerData(prev => [...prev, response.data.data]);
 
       setLockerData(prevData => [response.data.data, ...prevData]);
       showNotification(`Locker ${newLocker.code} creado con éxito`);

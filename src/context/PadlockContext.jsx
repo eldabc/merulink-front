@@ -55,66 +55,64 @@ export const PadlockProvider = ({ children }) => {
       const newPadlock = formattedPadlocks(formData);
       console.log("Creado", newPadlock);
 
-      // const response = await api.post('/subdepartments', newEvent); 
-      // const createdRecord = await response.json(); 
+      const response = await axios.post(`${ENV.API_BACK_URL}padlocks`, newPadlock);
+      setPadlockData(prevData => [response.data.data, ...prevData]);
 
-      setPadlockData(prevData => [newPadlock, ...prevData]);
-      showNotification(`Locker ${newPadlock.code} creado con éxito`);
+      showNotification(`Candado ${newPadlock.serial} creado con éxito`);
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el padlock', error.message);
+      showNotification('Error al crear el padlock', error.response.data.message, 'error');
       return false;
     }
   };
 
   // *** Actualizar
-  const updatePadlock = async (formData, messagge) => {
+  const updatePadlock = async (formData) => {
     try {
       const padlockId = formData.id;
-      if (!messagge) messagge = "Locker actualizado";
 
       if (!padlockId) {
         showNotification('Error: No se encontró el ID del Candado', 'error');
         return false;
       }
 
-      const updatedLocker = formattedPadlocks(formData);
-      console.log("Actualizado:", updatedLocker);
+      const updatedPadlock = formattedPadlocks(formData);
+      console.log("Actualizado:", updatedPadlock);
       
-      // Llamada a la API/Backend (onUpdate)
-      // await api.put(`/events/${padlockId}`, updatedLocker); 
+      const response = await axios.put(`${ENV.API_BACK_URL}padlocks/${padlockId}`, updatedPadlock);
       
       setPadlockData(prevData => {
-        return prevData.map(padlock => 
-          padlock.id === padlockId ? updatedLocker : padlock 
-        );
+        const filteredData = prevData.filter(padlock => padlock.id !== padlockId);
+        return [response.data.data, ...filteredData];
       });
 
-      showNotification(`Locker ${formData.serial} actualizado con éxito`); 
+      showNotification(`Candado ${updatedPadlock.serial} actualizado con éxito`); 
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar: ' + error.message, 'error');
+      showNotification('Error al actualizar:', error.response.data.message, 'error');
       return false;
     }
   };
 
   // *** Eliminar
   const deletePadlock = async (padlock) => {
+     setLoading(true);
     try {
-      // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
-      // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
+      await axios.delete(`${ENV.API_BACK_URL}padlocks/${padlock.id}`);
 
       setPadlockData(prevData => {
-        return prevData.filter(ev => ev.id !== padlock.id);
+        return prevData.filter(item => item.id !== padlock.id);
       });
 
-      showNotification(`Locker ${padlock.code} eliminado con éxito`);
+      showNotification(`Candado ${padlock.serial} eliminado con éxito`);
       return true;
     } catch (error) {
-      showNotification('Error al eliminar el calendario', error.message);
+      showNotification('Error al eliminar el Candado', error.message, 'error');
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 

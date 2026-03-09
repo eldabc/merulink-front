@@ -6,42 +6,41 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
 import { getStatusColor } from '../../utils/status-utils';
-import { statusConfig } from '../../utils/statusesConfig.js';
+import { STATUSES, statusConfig } from '../../utils/statusesConfig.js';
 
 function LockerRoomRow({ locker }) {
 
   const navigate = useNavigate();
   const { deleteLocker } = useLockers();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [selectedLocker, setSelectedLocker] = useState(null);
   
-  const lockerCategory = lockerCategories.find(c => c.key === locker.category);
   const currentStatus = statusConfig[locker.status];
 
-  const selectedLocker = (id) => {
+  const handleSelectedLocker = (id) => {
     navigate(`/empleados/vestuarios/lockers/ver/${id}`, { 
       state: { data: [] } 
     }); 
   };
 
   const handleDeleteClick = (template) => {
-      setSelectedTemplate(template);
-      setIsModalOpen(true);
-    };
+    setSelectedLocker(template);
+    setIsModalOpen(true);
+  };
   
   const handleConfirmDelete = async () => {
-    if (!selectedTemplate) return;
+    if (!selectedLocker) return;
 
-    await deleteLocker(selectedTemplate);
+    await deleteLocker(selectedLocker);
     setIsModalOpen(false);
-    setSelectedTemplate(null);
+    setSelectedLocker(null);
   };
 
   return (
     <>
       <tr
         key={locker.id}
-        onClick={() => selectedLocker(locker.id)}
+        onClick={() => handleSelectedLocker(locker.id)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium ">
@@ -52,7 +51,7 @@ function LockerRoomRow({ locker }) {
         <td className="px-4 py-3 text-white-800 font-medium">{locker.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{locker.category?.name}</td>
         <td className="px-4 py-3 text-white-700">
-          {locker.status === 'Disponible' && (
+          {STATUSES.AVAILABLE === locker.status && (
            <ButtonDelete setIsModalOpen={() => handleDeleteClick(locker)} />
           )}
         </td>
@@ -63,11 +62,11 @@ function LockerRoomRow({ locker }) {
             isOpen={isModalOpen}
             onClose={() => {
               setIsModalOpen(false);
-              setSelectedTemplate(null);
+              setSelectedLocker(null);
             }}
             onConfirm={handleConfirmDelete}
             title="Eliminar Locker"
-            message={`¿Estás seguro de que deseas eliminar Locker "${selectedTemplate?.code}"?`}
+            message={`¿Estás seguro de que deseas eliminar Locker "${selectedLocker?.code}"?`}
           />
         </td>
       </tr>

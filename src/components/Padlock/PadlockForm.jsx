@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { usePadlocks } from '../../context/PadlockContext';
 
@@ -10,7 +10,7 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import LabelFieldForm from "../Shared/LabelFieldForm";
-
+import { STATUSES } from '../../utils/statusesConfig.js';
 
 function PadlockForm ({ mode = 'create' }) {
   const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({
@@ -91,7 +91,9 @@ function PadlockForm ({ mode = 'create' }) {
   
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/candados/editar" data={padlock} /> }
+          {(viewMode && STATUSES.AVAILABLE === padlock?.status) && (
+            <HeadFormButtons url={`/empleados/vestuarios/candados/editar/${padlock.id}`} data={[]} />
+          )}
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
@@ -104,9 +106,8 @@ function PadlockForm ({ mode = 'create' }) {
                    <input 
                       readOnly={viewMode}
                       {...register('serial')} 
-                      type='text' 
                       className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
-                      placeholder='Ingrese Contraseña para el Candado'
+                      placeholder='Ingrese serial'
                       maxLength={40}
                     />
                   {errors?.serial && <ErrorMessage msg={errors.serial.message} /> }  
