@@ -49,7 +49,7 @@ function LockerAssignForm({ mode = 'create' }) {
             getEmployeesByCategory(lockerAssign?.locker?.category?.key),
             getDepartments()
           ]);
-
+          console.log("departmentsData", departmentsData)
           setAvailablePadlocks(padlocksData);
           setAvailableEmployees(employeesData);
           setAvailableDepartments(departmentsData);

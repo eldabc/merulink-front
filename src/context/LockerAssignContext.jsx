@@ -30,7 +30,7 @@ export const LockerAssignProvider = ({ children }) => {
     if (lockers.length === 0 || assignments.length === 0) return [];
 
     const assignedLockerIds = assignments.map(a => a.locker.id);
-    console.log('lockers assignments', lockers, assignments);
+    console.log('lockers assignments', assignments);
 
     const availableLockersFormat = lockers
        .filter(locker => !assignedLockerIds.includes(Number(locker.id))) // Cambiar getLockers para que traiga solo disponibles
@@ -216,6 +216,9 @@ export const LockerAssignProvider = ({ children }) => {
           category = 'M';
         }
         // TODO: en back se debe validar también que traiga solo los employees que no tienen locker asignado.
+        const response = await axios.get(`${ENV.API_BACK_URL}employees?sex=${category}&unassigned=true`);
+        console.log('response 22', response.data.data);
+        return response.data.data;
        return employees.filter(employee => employee.sex === category && employee.status === true && employee.useLocker === true);
 
       } catch (error) {
