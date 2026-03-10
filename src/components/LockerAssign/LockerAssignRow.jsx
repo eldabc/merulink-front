@@ -15,8 +15,8 @@ function LockerAssignRow({ lockerAssign }){
 
   const selectedLockerAssign = (lockerAssign) => {
     // TODO: segun permisos debe navegar a 'ver' o 'editar', por ahora va a editar
-    navigate("/empleados/vestuarios/casilleros/editar", { 
-      state: { data: lockerAssign } 
+    navigate(`/empleados/vestuarios/casilleros/editar/${lockerAssign.id}`, { 
+      state: { data: [] } 
     }); 
   };
 

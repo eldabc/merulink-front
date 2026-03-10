@@ -3,7 +3,6 @@ import { useLockerAssigns } from '../../context/LockerAssignContext';
 import { useEffect, useMemo, useState } from 'react';
 
 import TitleHeader from '../Shared/TitleHeader';
-import ButtonNavigate from '../Shared/ButtonNavigate';
 import LockerAssignRow from './LockerAssignRow'; 
 import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
@@ -12,12 +11,13 @@ import { normalizeText } from '../../utils/text-utils';
 import ButtonReset from '../Shared/ButtonReset';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import { lockerCategories } from '../../utils/StaticData/locker-room-utils';
+import RowTableLoading from '../Shared/RowTableLoading';
 
 import '../../Tables.css';
 
 function LockerAssignList() {
   const navigate = useNavigate();
-  const { lockerAssignData, resetLockerAssign } = useLockerAssigns();
+  const { loading, lockerAssignData, resetLockerAssign } = useLockerAssigns();
 
   // Para buscador y paginación
   const itemsPerPage = 10;
@@ -178,21 +178,28 @@ function LockerAssignList() {
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((item) => (
-                <LockerAssignRow key={item.id} lockerAssign={item}/>
-              ))}
-              <tr>
-                <td>
-                   <ConfirmDialog 
-                      isOpen={isModalOpen}
-                      onClose={() => { setIsModalOpen(false); }}
-                      onConfirm={() => handleConfirmResetAll(activeCat)}
-                      title="Resetear Lockers"
-                      message={`¿Estás seguro que desea resetear TODOS los Locker de "${categoryName}"?`}
-                      btnText="Resetear TODOS"
-                    />
-                </td>
-              </tr>
+              {loading ? (
+                <RowTableLoading colSpan={9} />
+              ) : (
+                <>
+                  {paginatedData.map((item) => (
+                    <LockerAssignRow key={item.id} lockerAssign={item}/>
+                  ))}
+                  
+                  <tr>
+                    <td>
+                      <ConfirmDialog 
+                          isOpen={isModalOpen}
+                          onClose={() => { setIsModalOpen(false); }}
+                          onConfirm={() => handleConfirmResetAll(activeCat)}
+                          title="Resetear Lockers"
+                          message={`¿Estás seguro que desea resetear TODOS los Locker de "${categoryName}"?`}
+                          btnText="Resetear TODOS"
+                        />
+                    </td>
+                  </tr>
+                </>
+              )}
             </tbody>
           </table>
         </div>

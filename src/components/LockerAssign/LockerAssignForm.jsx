@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useLockerAssigns } from '../../context/LockerAssignContext.jsx';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,22 +10,20 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import LabelFieldForm from "../Shared/LabelFieldForm";
-import { lockerCategories, lockers } from '../../utils/StaticData/locker-room-utils.js';
-import TitleHeader from '../Shared/TitleHeader';
-import { departments } from '../../utils/StaticData/departments-utils.js';
 
 function LockerAssignForm({ mode = 'create' }) {
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(lockerAssignValidationSchema),
     });
-    const { createLockerAssign, updateLockerAssign, getPadlocks, getEmployeesByCategory, getDepartments } = useLockerAssigns();
+    const { lockerAssignData, createLockerAssign, updateLockerAssign, getPadlocks, getEmployeesByCategory, getDepartments } = useLockerAssigns();
     
     const navigate = useNavigate();
-    const location = useLocation();
-  
     const selectedPadlock = watch('padlockId');
     const selectedDepartment = watch('departmentId');
-    const lockerAssign = location.state?.data;
+
+    const { id } = useParams();
+    const lockerAssign = lockerAssignData.find(e => e.id === Number(id));
+
     const [availableEmployees, setAvailableEmployees] = useState([]);
     const [filteredEmployees, setfilteredEmployees] = useState([]);
     const [availablePadlocks, setAvailablePadlocks] = useState([]);
@@ -38,6 +36,8 @@ function LockerAssignForm({ mode = 'create' }) {
 
     // Carga inicial unificada
     useEffect(() => {
+    console.log("lockerAssign: ",lockerAssign );
+
       const loadFormData = async () => {
         setLoadingData(true);
         setLoadingEmployees(true);
@@ -140,7 +140,7 @@ function LockerAssignForm({ mode = 'create' }) {
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-          {(viewMode) && <HeadFormButtons url="/empleados/vestuarios/casilleros/editar" data={lockerAssign} /> }
+          {(viewMode) && <HeadFormButtons url={`/empleados/vestuarios/casilleros/editar/${lockerAssign?.id}`} data={[]} /> }
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 

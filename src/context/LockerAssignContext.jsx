@@ -1,17 +1,15 @@
+import axios from 'axios';
+import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect, useMemo  } from 'react';
 import { useNotification } from "./NotificationContext";
 
-import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
-import { lockers } from '../utils/StaticData/locker-room-utils.js';
 import { padlocks } from '../utils/StaticData/padlock-utils.js';
 import { employees } from '../utils/StaticData/employee-utils.js';
 
 import { departments } from '../utils/StaticData/departments-utils.js';
 import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
-import { getCategoryKey } from '../utils/LockerAssign/locker-assign-utils.js';
 
 const LockerAssignContext = createContext();
-
 
 // hook personalizado para usar el contexto
 export const useLockerAssigns = () => {
@@ -21,27 +19,54 @@ export const useLockerAssigns = () => {
 // Provider con la lógica y el estado
 export const LockerAssignProvider = ({ children }) => {
 
-  const [assignments, setAssignments] = useState(lockerAssigns);
-  // const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
+  const [lockers, setLockers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [assignments, setAssignments] = useState([]);
   const { showNotification } = useNotification();
 
-
   const lockerAssignData = useMemo(() => {
+
+    if (lockers.length === 0 || assignments.length === 0) return [];
+
     const assignedLockerIds = assignments.map(a => a.locker.id);
+    console.log('lockers assignments', lockers, assignments);
 
     const availableLockersFormat = lockers
-       .filter(locker => !assignedLockerIds.includes(Number(locker.id)))
+       .filter(locker => !assignedLockerIds.includes(Number(locker.id))) // Cambiar getLockers para que traiga solo disponibles
       .map((locker, index) => ({
         id: `temp-${locker.id}-${index}`,
         locker: {
           ...locker,
-          status: 'Disponible'
         }
       }));
 
     return [...assignments, ...availableLockersFormat];
   }, [assignments, lockers]);
+
+  useEffect(() => {
+    console.log('UseEffect LockerAssignContext');
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+
+        const [lockersData, assignsData] = await Promise.all([
+          getLockers(),
+          axios.get(`${ENV.API_BACK_URL}assigns`)
+        ]);
+
+        setLockers(lockersData);
+        setAssignments(assignsData.data.data);
+        
+      } catch (error) {
+        showNotification('Error obteniendo los datos', error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
   // Armado JSON
@@ -61,7 +86,7 @@ export const LockerAssignProvider = ({ children }) => {
 
     return {
       id: formData.id ? formData.id : Date.now(),
-      assignCode: wasAssigned ? `ASG-${formData.locker?.code}-${today}` : '',
+      assignCode: wasAssigned ? `ASG${formData.locker?.code}-${today}` : '',
       assignDate: wasAssigned ? today : '',
       locker: {
         id: formData.locker?.id,
@@ -93,6 +118,14 @@ export const LockerAssignProvider = ({ children }) => {
 
       const updatedLockerAssign = formattedLockerAssign(formData);
       console.log("Actualizado:", updatedLockerAssign);
+
+      const response = await axios.put(`${ENV.API_BACK_URL}assigns/${lockerId}`, updatedLockerAssign);
+      console.log("response.data.data:", response.data.data);
+      // setLockerData(prevData => {
+      //   const filteredData = prevData.filter(locker => locker.id !== lockerId);
+      //   // El dato actualizado primero
+      //   return [response.data.data, ...filteredData];
+      // });
 
       setAssignments(prev => {
 
@@ -145,7 +178,9 @@ export const LockerAssignProvider = ({ children }) => {
 
   const getLockers = async (category) => {
     try {
-      return lockers.filter(locker => locker.category === category && locker.status === 'Disponible');
+      const responseLockers = await axios.get(`${ENV.API_BACK_URL}lockers`);
+      // console.log('responseLockers', responseLockers.data.data);
+      return responseLockers.data.data;
       
     } catch (error) {
       showNotification('Error al obtener Lockers', error.message);
@@ -191,8 +226,8 @@ export const LockerAssignProvider = ({ children }) => {
 
 
   const contextValue = {
+    loading,
     lockerAssignData,
-    // loadLockerAssign,
     error,
     updateLockerAssign,
     resetLockerAssign,
