@@ -27,7 +27,7 @@ export const LockerAssignProvider = ({ children }) => {
 
   const lockerAssignData = useMemo(() => {
 
-    if (lockers.length === 0 || assignments.length === 0) return [];
+    if (lockers.length === 0 && assignments.length === 0) return [];
 
     const availableLockersFormat = lockers
       .map((locker, index) => ({
@@ -62,6 +62,7 @@ export const LockerAssignProvider = ({ children }) => {
     };
 
     fetchData();
+
   }, []);
 
 
@@ -106,9 +107,9 @@ export const LockerAssignProvider = ({ children }) => {
   // *** Actualizar
   const updateLockerAssign = async (formData) => {
     try {
-      const lockerId = formData.id;
+      const assignId = formData.id;
 
-      if (!lockerId) {
+      if (!assignId) {
         showNotification('Error: No se encontró el ID de la Asignación', 'error');
         return false;
       }
@@ -116,37 +117,17 @@ export const LockerAssignProvider = ({ children }) => {
       const updatedLockerAssign = formattedLockerAssign(formData);
       console.log("Actualizado:", updatedLockerAssign);
 
-      const response = await axios.put(`${ENV.API_BACK_URL}assigns/${lockerId}`, updatedLockerAssign);
-      console.log("response.data.data:", response.data.data);
-      // setLockerData(prevData => {
-      //   const filteredData = prevData.filter(locker => locker.id !== lockerId);
-      //   // El dato actualizado primero
-      //   return [response.data.data, ...filteredData];
-      // });
-
-      setAssignments(prev => {
-
-        // Buscar si existe asignación para el locker
-        const exists = prev.some(a =>
-          Number(a.locker.id) === Number(updatedLockerAssign.locker.id)
-        );
-
-        if (exists) {
-          return prev.map(a =>
-            Number(a.locker.id) === Number(updatedLockerAssign.locker.id)
-              ? updatedLockerAssign
-              : a
-          );
-        }
-
-        return [...prev, updatedLockerAssign];
+      const response = await axios.post(`${ENV.API_BACK_URL}assigns`, updatedLockerAssign);
+      setAssignments(prevData => {
+        const filteredData = prevData.filter(assign => Number(assign.id) !== Number(assignId));
+        return [response.data.data, ...filteredData];
       });
 
       showNotification(`Locker ${formData.locker?.code} actualizado con éxito`); 
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar: ' + error.message, 'error');
+      showNotification('Error al actualizar: ' + error.response.data.message, 'error');
       return false;
     }
   };

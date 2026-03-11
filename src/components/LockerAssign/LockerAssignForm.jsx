@@ -36,7 +36,7 @@ function LockerAssignForm({ mode = 'create' }) {
 
     // Carga inicial unificada
     useEffect(() => {
-    console.log("lockerAssign: ",lockerAssign );
+    // console.log("lockerAssign: ",lockerAssign );
 
       const loadFormData = async () => {
         setLoadingData(true);
@@ -104,6 +104,7 @@ function LockerAssignForm({ mode = 'create' }) {
       let success = false;
       const padlockSelected = availablePadlocks.find(p => String(p.id).trim() === String(data.padlockId).trim());
       const employeeSelected = availableEmployees.find(p => String(p.id).trim() === String(data.employeeId).trim());
+      const departmentelected = availableDepartments.find(p => String(p.id).trim() === String(data.departmentId).trim());
 
       if (editMode && lockerAssign) {
         const dataEdit = {
@@ -112,7 +113,8 @@ function LockerAssignForm({ mode = 'create' }) {
             ...padlockSelected
           },
           employee: {
-            ...employeeSelected
+            ...employeeSelected,
+            departmentName: departmentelected.departmentName
           }
         }
         success = await updateLockerAssign(dataEdit);
