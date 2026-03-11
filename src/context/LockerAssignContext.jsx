@@ -29,11 +29,7 @@ export const LockerAssignProvider = ({ children }) => {
 
     if (lockers.length === 0 || assignments.length === 0) return [];
 
-    const assignedLockerIds = assignments.map(a => a.locker.id);
-    console.log('lockers assignments', assignments);
-
     const availableLockersFormat = lockers
-       .filter(locker => !assignedLockerIds.includes(Number(locker.id))) // Cambiar getLockers para que traiga solo disponibles
       .map((locker, index) => ({
         id: `${locker.id}${index}${Date.now()}`,
         locker: {
@@ -78,7 +74,8 @@ export const LockerAssignProvider = ({ children }) => {
     const employeeDataSet = wasAssigned ? (
       {
         id: formData.employee.id,
-        name: `${formData.employee.firstName} ${formData.employee.lastName}`,
+        firstName: formData.employee.firstName,
+        lastName: formData.employee.lastName,
         department: formData.employee.department,
         departmentName: formData.employee.departmentName,
       }
@@ -176,10 +173,10 @@ export const LockerAssignProvider = ({ children }) => {
     }
   };
 
-  const getLockers = async (category) => {
+  const getLockers = async (categoryKey) => {
     try {
-      const responseLockers = await axios.get(`${ENV.API_BACK_URL}lockers`);
-      // console.log('responseLockers', responseLockers.data.data);
+      const responseLockers = await axios.get(`${ENV.API_BACK_URL}lockers?available=true`); //categoryKey=${categoryKey}&
+      // console.log('responseLockers', categoryKey, responseLockers.data.data);
       return responseLockers.data.data;
       
     } catch (error) {
@@ -188,10 +185,14 @@ export const LockerAssignProvider = ({ children }) => {
     }
   }
 
-  const getPadlocks = async () => {
+  const getPadlocks = async (lockerAssign) => {
     try {
-      return padlocks.filter(padlock => padlock.status === 'Disponible');
-      
+      const padlockAssigned = lockerAssign?.locker?.padlock;
+      const response = await axios.get(`${ENV.API_BACK_URL}padlocks?available=true`);
+      if (padlockAssigned) {
+        return [...response.data.data, padlockAssigned];     
+      }
+        return response.data.data;     
     } catch (error) {
       showNotification('Error al obtener Padlocks', error.message);
       return false;
@@ -200,7 +201,8 @@ export const LockerAssignProvider = ({ children }) => {
 
    const getDepartments = async () => {
       try {
-        return departments;       
+        const response = await axios.get(`${ENV.API_BACK_URL}departments`);
+        return response.data.data;       
       } catch (error) {
         showNotification('Error al obtener Departamentos', error.message);
         return [];

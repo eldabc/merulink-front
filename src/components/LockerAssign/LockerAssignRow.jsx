@@ -49,7 +49,9 @@ function LockerAssignRow({ lockerAssign }){
         
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.locker?.code}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.locker?.padlock?.serial}</td>
-        <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.employee?.name}</td>
+        <td className="px-4 py-3 text-white-800 font-medium">
+          {lockerAssign?.employee?.firstName} {lockerAssign?.employee?.lastName}
+        </td>
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.employee?.departmentName}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerAssign?.assignDate}</td>
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.assignCode}</td>

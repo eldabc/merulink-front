@@ -22,7 +22,7 @@ function LockerAssignForm({ mode = 'create' }) {
     const selectedDepartment = watch('departmentId');
 
     const { id } = useParams();
-    const lockerAssign = lockerAssignData.find(e => e.id === Number(id));
+    const lockerAssign = lockerAssignData.find(e => Number(e.id) === Number(id));
 
     const [availableEmployees, setAvailableEmployees] = useState([]);
     const [filteredEmployees, setfilteredEmployees] = useState([]);
@@ -45,11 +45,11 @@ function LockerAssignForm({ mode = 'create' }) {
         try {
           // Ejecuta las peticiones en paralelo para mantener el orden en form
           const [padlocksData, employeesData, departmentsData] = await Promise.all([
-            getPadlocks(),
+            getPadlocks(lockerAssign),
             getEmployeesByCategory(lockerAssign),
             getDepartments()
           ]);
-          console.log("employeesData", employeesData);
+
           setAvailablePadlocks(padlocksData);
           setAvailableEmployees(employeesData);
           setAvailableDepartments(departmentsData);
@@ -148,7 +148,7 @@ function LockerAssignForm({ mode = 'create' }) {
                 {lockerAssign?.employee?.id && (
                   <>
                    <div className="flex items-center space-x-2">
-                  <LabelFieldForm field="Código" simbol="*" />
+                  <LabelFieldForm field="Código Asignación" />
                   <div className="">
                       <span className="px-2 py-1 rounded bg-[#505253] text-sm font-medium">
                         {lockerAssign?.assignCode ?? ''}
@@ -156,7 +156,7 @@ function LockerAssignForm({ mode = 'create' }) {
                   </div>
                   </div>
                    <div className="flex items-center space-x-2">
-                  <LabelFieldForm field="Fecha" simbol="*" />
+                  <LabelFieldForm field="Fecha" />
                   <div className="">
                       <span className="px-2 py-1 rounded bg-[#505253] text-sm font-medium">
                         {lockerAssign?.assignDate ?? ''}
@@ -203,7 +203,7 @@ function LockerAssignForm({ mode = 'create' }) {
                               {...register('padlockId')}
                               disabled={viewMode || loadingData}
                               className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                ${(viewMode || loadingData) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
+                                ${(viewMode || loadingData) ? 'opacity-50 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
                             >
                               <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
                               
@@ -231,7 +231,7 @@ function LockerAssignForm({ mode = 'create' }) {
                                 {...register('departmentId')}
                                 disabled={viewMode || loadingData}
                                 className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                  ${(viewMode || loadingData) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
+                                  ${(viewMode || loadingData) ? 'opacity-50 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
                               >
                                 <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
                                 
@@ -250,7 +250,7 @@ function LockerAssignForm({ mode = 'create' }) {
                                 {...register('employeeId')}
                                 disabled={viewMode || loadingEmployees || !selectedDepartment}
                                 className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                  ${(viewMode || loadingEmployees || !selectedDepartment) ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
+                                  ${(viewMode || loadingEmployees || !selectedDepartment) ? 'opacity-50 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
                               >
                                 <option className="bg-[#3c4042]" value=""> {loadingEmployees ? "Cargando..." : "Seleccionar..."} </option>
                                 
