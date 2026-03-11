@@ -46,10 +46,10 @@ function LockerAssignForm({ mode = 'create' }) {
           // Ejecuta las peticiones en paralelo para mantener el orden en form
           const [padlocksData, employeesData, departmentsData] = await Promise.all([
             getPadlocks(),
-            getEmployeesByCategory(lockerAssign?.locker?.category?.key),
+            getEmployeesByCategory(lockerAssign),
             getDepartments()
           ]);
-          console.log("departmentsData", departmentsData)
+          console.log("employeesData", employeesData);
           setAvailablePadlocks(padlocksData);
           setAvailableEmployees(employeesData);
           setAvailableDepartments(departmentsData);

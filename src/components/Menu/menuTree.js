@@ -17,7 +17,7 @@ export const menuTree = {
         _meta: { label: "Vestuarios", path: "/empleados/vestuarios" },
         Lockers: { _meta: { label: "Lockers", path: "/empleados/vestuarios/lockers" } },
         Candados: { _meta: { label: "Candados", path: "/empleados/vestuarios/candados" } },
-        Casilleros: { _meta: { label: "Casilleros", path: "/empleados/vestuarios/casilleros" } },
+        Casilleros: { _meta: { label: "Asignación", path: "/empleados/vestuarios/casilleros" } },
       }
     },
     Sistemas: {

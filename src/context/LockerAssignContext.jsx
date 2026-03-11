@@ -35,7 +35,7 @@ export const LockerAssignProvider = ({ children }) => {
     const availableLockersFormat = lockers
        .filter(locker => !assignedLockerIds.includes(Number(locker.id))) // Cambiar getLockers para que traiga solo disponibles
       .map((locker, index) => ({
-        id: `temp-${locker.id}-${index}`,
+        id: `${locker.id}${index}${Date.now()}`,
         locker: {
           ...locker,
         }
@@ -207,19 +207,24 @@ export const LockerAssignProvider = ({ children }) => {
       }
     }
 
-  const getEmployeesByCategory = async (category) => {
+  const getEmployeesByCategory = async (lockerAssign) => {
     try {
-        // getCategoryKey(category);
-        if (category === 'C') {
-          category = 'H';
-        } else if (category === 'D') {
-          category = 'M';
+      let categoryKey = lockerAssign?.locker?.category?.key;
+      const employee = lockerAssign?.employee;
+
+        // getCategoryKey(categoryKey);
+        if (categoryKey === 'C') {
+          categoryKey = 'H';
+        } else if (categoryKey === 'D') {
+          categoryKey = 'M';
         }
-        // TODO: en back se debe validar también que traiga solo los employees que no tienen locker asignado.
-        const response = await axios.get(`${ENV.API_BACK_URL}employees?sex=${category}&unassigned=true`);
-        console.log('response 22', response.data.data);
-        return response.data.data;
-       return employees.filter(employee => employee.sex === category && employee.status === true && employee.useLocker === true);
+
+        const response = await axios.get(`${ENV.API_BACK_URL}employees?sex=${categoryKey}&unassigned=true`);
+        
+        if (employee) {
+          return [...response.data.data, employee];
+        }
+        return [...response.data.data];
 
       } catch (error) {
       showNotification('Error al obtener Empleados por Categoría', error.message);
