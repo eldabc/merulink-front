@@ -36,12 +36,11 @@ function LockerAssignForm({ mode = 'create' }) {
 
     // Carga inicial unificada
     useEffect(() => {
-    // console.log("lockerAssign: ",lockerAssign );
+
+      setLoadingData(true);
+      setLoadingEmployees(true);
 
       const loadFormData = async () => {
-        setLoadingData(true);
-        setLoadingEmployees(true);
-
         try {
           // Ejecuta las peticiones en paralelo para mantener el orden en form
           const [padlocksData, employeesData, departmentsData] = await Promise.all([
@@ -75,10 +74,9 @@ function LockerAssignForm({ mode = 'create' }) {
       }
 
       const selectedDep = selectedDepartment ? selectedDepartment : lockerAssign?.employee?.department;
-      
-        const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDep));
-        // console.log('selectedDep --:', selectedDepartment, lockerAssign?.employee?.department);
-        setfilteredEmployees(filteredEmp);
+      const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDep));
+
+      setfilteredEmployees(filteredEmp);
     }, [selectedDepartment, availableEmployees]);
 
 
@@ -89,10 +87,11 @@ function LockerAssignForm({ mode = 'create' }) {
           lockerId: lockerAssign.locker?.id ?? null,
           padlockId: lockerAssign.locker?.padlock?.id ?? '',
           departmentId: lockerAssign.employee?.department ?? (selectedDepartment ?? ''),
-          employeeId: lockerAssign.employee?.id ?? '', //selectedDepartment !== lockerAssign?.employee?.department ? '' : lockerAssign.employee?.id,
+          employeeId: lockerAssign.employee?.id ?? '',
         });
       }
-    }, [availableEmployees]);
+
+    }, [filteredEmployees]); //availableEmployees
   
     const onError = (formErrors) => {
       console.warn('Form validation errors:', formErrors);
@@ -126,19 +125,6 @@ function LockerAssignForm({ mode = 'create' }) {
         navigate(-1);
       }
     };
-    
-    // useEffect(() => {
-    //   const fetchDeps = async () => {
-    //     setLoadingData(true);
-        
-    //     const data = await getDepartments(); 
-        
-    //     setAvailableDepartments(data);
-    //     setLoadingData(false);
-    //   };
-  
-    //   fetchDeps();
-    // }, []);
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -233,7 +219,7 @@ function LockerAssignForm({ mode = 'create' }) {
                                 {...register('departmentId')}
                                 disabled={viewMode || loadingData}
                                 className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                  ${(viewMode || loadingData) ? 'opacity-50 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
+                                  ${(viewMode || loadingData) && 'opacity-50 cursor-not-allowed'}`}
                               >
                                 <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
                                 
@@ -252,7 +238,7 @@ function LockerAssignForm({ mode = 'create' }) {
                                 {...register('employeeId')}
                                 disabled={viewMode || loadingEmployees || !selectedDepartment}
                                 className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                  ${(viewMode || loadingEmployees || !selectedDepartment) ? 'opacity-50 cursor-not-allowed' : ''}`} //bg-[#2a2d2e]
+                                  ${(viewMode || loadingEmployees || !selectedDepartment) && 'opacity-50 cursor-not-allowed'}`}
                               >
                                 <option className="bg-[#3c4042]" value=""> {loadingEmployees ? "Cargando..." : "Seleccionar..."} </option>
                                 
