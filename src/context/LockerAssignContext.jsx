@@ -28,14 +28,14 @@ export const LockerAssignProvider = ({ children }) => {
   const lockerAssignData = useMemo(() => {
 
     if (lockers.length === 0 && assignments.length === 0) return [];
+    const assignedLockerIds = assignments.map(a => a.locker.id);
 
     const availableLockersFormat = lockers
-      .map((locker, index) => ({
-        id: `${locker.id}${index}${Date.now()}`,
-        locker: {
-          ...locker,
-        }
-      }));
+    .filter(locker => !assignedLockerIds.includes(Number(locker.id)))
+    .map((locker, index) => ({
+      id: `${locker.id}${index}${Date.now()}`,
+      locker: { ...locker }
+    }));
 
     return [...assignments, ...availableLockersFormat];
   }, [assignments, lockers]);
@@ -118,8 +118,11 @@ export const LockerAssignProvider = ({ children }) => {
       console.log("Actualizado:", updatedLockerAssign);
 
       const response = await axios.post(`${ENV.API_BACK_URL}assigns`, updatedLockerAssign);
+      
       setAssignments(prevData => {
-        const filteredData = prevData.filter(assign => Number(assign.id) !== Number(assignId));
+        const filteredData = prevData.filter(
+          assign => Number(assign.locker.id) !== Number(response.data.data.locker.id)
+        );
         return [response.data.data, ...filteredData];
       });
 
