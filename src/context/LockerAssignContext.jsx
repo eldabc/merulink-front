@@ -116,6 +116,8 @@ export const LockerAssignProvider = ({ children }) => {
 
       const updatedLockerAssign = formattedLockerAssign(formData);
       console.log("Actualizado:", updatedLockerAssign);
+      
+      const customMessage = updatedLockerAssign.employee ? 'Asignado' : 'Emparejado';
 
       const response = await axios.post(`${ENV.API_BACK_URL}assigns`, updatedLockerAssign);
       
@@ -126,7 +128,7 @@ export const LockerAssignProvider = ({ children }) => {
         return [response.data.data, ...filteredData];
       });
 
-      showNotification(`Locker ${formData.locker?.code} actualizado con éxito`); 
+      showNotification(`Locker ${formData.locker?.code} ${customMessage} con éxito`); 
       return true;
 
     } catch (error) {

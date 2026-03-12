@@ -79,7 +79,7 @@ function LockerAssignForm({ mode = 'create' }) {
     }, [selectedDepartment, availableEmployees]);
 
     useEffect(() => {
-      if (!loadingData && (editMode || viewMode)) {
+      if (!loadingData && lockerAssign && (editMode || viewMode)) {
         reset({
           lockerId: lockerAssign.locker?.id ?? null,
           padlockId: lockerAssign.locker?.padlock?.id ?? '',
