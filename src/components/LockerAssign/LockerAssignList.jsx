@@ -17,7 +17,7 @@ import '../../Tables.css';
 
 function LockerAssignList() {
   const navigate = useNavigate();
-  const { loading, lockerAssignData, resetLockerAssign } = useLockerAssigns();
+  const { loading, loadingReset, lockerAssignData, resetLockerAssign } = useLockerAssigns();
 
   // Para buscador y paginación
   const itemsPerPage = 10;
@@ -133,7 +133,7 @@ function LockerAssignList() {
               <span className="text-sm font-bold tracking-wider uppercase">Caballeros</span>
               <div className='mt-1 text-red-300'>
                 <ButtonReset 
-                  disabled={activeCat !== 'C'}
+                  disabled={activeCat !== 'C' || loadingReset}
                   setIsModalOpen={setIsModalOpen} 
                   colorIcon={`${isActiveCatC ? 'hover:text-red-500' : 'text-gray-500'}`} 
                   customStyle={`skip-style-btn ${isActiveCatC ? 'hover:text-red-500 hover:bg-[#4e5052]' : 'text-gray-500'}`}
@@ -154,7 +154,7 @@ function LockerAssignList() {
               <span className="text-sm font-bold tracking-wider uppercase">Damas</span>
               <div className='mt-1 text-red-300'>
                 <ButtonReset 
-                  disabled={activeCat !== 'D'}
+                  disabled={activeCat !== 'D'  || loadingReset}
                   setIsModalOpen={setIsModalOpen} 
                   colorIcon={`${isActiveCatD ? 'hover:text-red-500' : 'text-gray-500'}`} 
                   customStyle={`skip-style-btn ${isActiveCatD ? 'hover:text-red-500 hover:bg-[#4e5052]' : 'text-gray-500'}`}

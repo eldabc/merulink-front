@@ -11,7 +11,7 @@ function LockerAssignRow({ lockerAssign }){
  
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { resetLockerAssign } = useLockerAssigns();  
+  const { loadingReset, resetLockerAssign } = useLockerAssigns();  
 
   const selectedLockerAssign = (lockerAssign) => {
     // TODO: segun permisos debe navegar a 'ver' o 'editar', por ahora va a editar
@@ -60,7 +60,7 @@ function LockerAssignRow({ lockerAssign }){
         </td>
         <td className="px-4 py-3 text-white-700">
           {lockerAssign?.locker?.status !== 'Disponible' && (
-            <ButtonReset setIsModalOpen={setIsModalOpen} title={lockerAssign?.locker?.code} />
+            <ButtonReset setIsModalOpen={setIsModalOpen} title={lockerAssign?.locker?.code} disabled={loadingReset} />
           )}
         </td>
       </tr>

@@ -22,11 +22,12 @@ export const LockerAssignProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [lockers, setLockers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingReset, setLoadingReset] = useState(false);
+  const [resetAssign ,setResetAssign] = useState(false);
   const [assignments, setAssignments] = useState([]);
   const { showNotification } = useNotification();
 
   const lockerAssignData = useMemo(() => {
-
     if (lockers.length === 0 && assignments.length === 0) return [];
     const assignedLockerIds = assignments.map(a => a.locker.id);
 
@@ -63,7 +64,7 @@ export const LockerAssignProvider = ({ children }) => {
 
     fetchData();
 
-  }, []);
+  }, [resetAssign]);
 
 
   // Armado JSON
@@ -137,24 +138,21 @@ export const LockerAssignProvider = ({ children }) => {
     }
   };
 
-    // *** Resetear 1 Locker todos de una categoría
+    // *** Resetear 1 Locker o Todos de una categoría
   const resetLockerAssign = async (id, categoryKey = '', categoryName = '') => {
     try {
-      if (categoryKey) {
-        setAssignments(prev => {
-          const filtered = prev.filter(a => a.locker.category.key !== categoryKey);
-          return filtered;
-        });
-      } else {
-        setAssignments(prev => {
-          const filtered = prev.filter(a => a.id !== id);
-          return filtered;
-        });
-      }
-
+      setLoadingReset(true);
+        if (categoryKey) {
+          await axios.delete(`${ENV.API_BACK_URL}assigns?categoryKey=${categoryKey}`);
+        } else {
+          await axios.delete(`${ENV.API_BACK_URL}assigns/${id}`);
+        }
+      setLoadingReset(false);
+      setResetAssign(true);
+      
       showNotification(`Locker ${categoryName} reseteado con éxito.`);
     } catch (error) {
-      showNotification('Error al resetear el Locker', 'error');
+      showNotification('Error al resetear el Locker', error.message, 'error');
       return false;
     }
   };
@@ -223,6 +221,7 @@ export const LockerAssignProvider = ({ children }) => {
 
   const contextValue = {
     loading,
+    loadingReset,
     lockerAssignData,
     error,
     updateLockerAssign,
