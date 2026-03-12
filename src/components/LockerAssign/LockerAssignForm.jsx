@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLockerAssigns } from '../../context/LockerAssignContext.jsx';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -22,12 +22,12 @@ function LockerAssignForm({ mode = 'create' }) {
     const selectedDepartment = watch('departmentId');
 
     const { id } = useParams();
-    const lockerAssign = lockerAssignData.find(e => Number(e.id) === Number(id));
+    const lockerAssign = lockerAssignData.find(a => Number(a.id) === Number(id));
 
     const [availableEmployees, setAvailableEmployees] = useState([]);
     const [filteredEmployees, setfilteredEmployees] = useState([]);
     const [availablePadlocks, setAvailablePadlocks] = useState([]);
-    const [loadingData, setLoadingData] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
     const [loadingEmployees, setLoadingEmployees] = useState(false);
     const [availableDepartments, setAvailableDepartments] = useState([]);
 
@@ -35,9 +35,7 @@ function LockerAssignForm({ mode = 'create' }) {
     const editMode =  mode === 'edit';
 
     // Carga inicial unificada
-    useEffect(() => {
-
-      setLoadingData(true);
+    useEffect(() => { 
       setLoadingEmployees(true);
 
       const loadFormData = async () => {
@@ -61,37 +59,36 @@ function LockerAssignForm({ mode = 'create' }) {
         }
       };
 
-      if (lockerAssign) {
-        loadFormData();
-      } 
-    }, [lockerAssign, mode, reset]);
+      loadFormData();
+    }, [lockerAssign, mode ]); //reset
 
     useEffect(() => {
       
-      if (!selectedDepartment) { 
+      if (!selectedDepartment && !loadingData) { 
+        console.log("!selectedDepartment")
         setfilteredEmployees([]);
         return;
       }
+      setLoadingEmployees(true);
 
-      const selectedDep = selectedDepartment ? selectedDepartment : lockerAssign?.employee?.department;
-      const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDep));
+      const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDepartment));     
+      setfilteredEmployees(filteredEmp);  
 
-      setfilteredEmployees(filteredEmp);
+      if (selectedDepartment !== lockerAssign?.employee?.department) setLoadingEmployees(false);
+
     }, [selectedDepartment, availableEmployees]);
 
-
     useEffect(() => {
-      // Cuando estan TODAS las listas se hace reset
-      if (lockerAssign && (editMode || viewMode)) {
+      if (!loadingData && (editMode || viewMode)) {
         reset({
           lockerId: lockerAssign.locker?.id ?? null,
           padlockId: lockerAssign.locker?.padlock?.id ?? '',
           departmentId: lockerAssign.employee?.department ?? (selectedDepartment ?? ''),
           employeeId: lockerAssign.employee?.id ?? '',
         });
+        setLoadingEmployees(false);
       }
-
-    }, [filteredEmployees]); //availableEmployees
+    }, [availableEmployees]); //filteredEmployees
   
     const onError = (formErrors) => {
       console.warn('Form validation errors:', formErrors);
@@ -113,7 +110,7 @@ function LockerAssignForm({ mode = 'create' }) {
           },
           employee: {
             ...employeeSelected,
-            departmentName: departmentelected.departmentName
+            departmentName: departmentelected?.departmentName
           }
         }
         success = await updateLockerAssign(dataEdit);
@@ -191,9 +188,9 @@ function LockerAssignForm({ mode = 'create' }) {
                               {...register('padlockId')}
                               disabled={viewMode || loadingData}
                               className={`text-xl w-64 px-3 py-2 rounded-lg filter-input text-gray-300
-                                ${(viewMode || loadingData) ? 'opacity-50 cursor-not-allowed' : 'bg-[#2a2d2e]'}`}
+                                ${(viewMode || loadingData) && 'opacity-50 cursor-not-allowed'}`}
                             >
-                              <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+                              <option value="" className="bg-[#3c4042]"> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
                               
                               {availablePadlocks.map((item) => (
                                 <option key={item.id} value={item.id} className='bg-[#3c4042]'>
@@ -206,7 +203,7 @@ function LockerAssignForm({ mode = 'create' }) {
                           </div>
                         </div>
                       
-                      {(selectedPadlock) && (
+                      {(selectedPadlock && !loadingData) && (
                         <>
                         <h3 className='text-xl font-bold'>{lockerAssign?.employee?.id ? ( 'Editar Asignación de Casillero' ):( 'Asignar Casillero')}</h3>
                           <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
