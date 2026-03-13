@@ -1,7 +1,7 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 export default function ContactData({ viewMode, register, errors, employee, fields = [], append, remove }) {
-  const isForm = typeof register === 'function';
+  // const isForm = typeof register === 'function';
   const cursorNotAllowed = viewMode && 'cursor-not-allowed opacity-50';
 
   const handleAddContact = () => {
@@ -17,7 +17,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
     }
   };
 
-  if (isForm) {
+  // if (isForm) {
     return (
       <div className="p-4 rounded border border-[#ffffff21]">
         <div className="flex justify-between items-center mb-4">
@@ -124,33 +124,5 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
         )}
       </div>
     );
-  }
-
-  return ("Por Eliminar");
-  {/*
-    
-    <table className="w-full border rounded overflow-hidden">
-      <thead>
-        <tr className="tr-thead-table">
-          <th className="p-2 text-left">Nombres</th>
-          <th className="p-2 text-left">Apellidos</th>
-          <th className="p-2 text-left">Parentesco</th>
-          <th className="p-2 text-left">Teléfono</th>
-          <th className="p-2 text-left">Dirección</th>
-        </tr>
-      </thead>
-      <tbody>
-        {employee?.contacts?.map((contact) => (
-          <tr key={contact.id} className="tr-table">
-            <td className="p-2"><span className="p-1 w-full">{contact.name}</span></td>
-                <td className="p-2"><span className="p-1 w-full">{contact.lastName}</span> </td>
-                <td className="p-2"><span className="p-1 w-full">{contact.relationship}</span> </td>
-                <td className="p-2"><span className="p-1 w-full">{contact.phone}</span> </td>
-                <td className="p-2"><span className="p-1 w-full">{contact.address}</span> </td>
-            </tr>
-        ))}      
-    </tbody>
-    </table>
-   
-  */}
+  // }
 }

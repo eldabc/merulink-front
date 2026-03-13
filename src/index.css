@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer components {
+  .div-border {
+    @apply border border-[#ffffff21] md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21] md:[&>*:nth-child(2n)]:pl-4 p-7;
+  }
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
