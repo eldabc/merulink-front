@@ -162,14 +162,14 @@ export default function Calendar() {
     <div className='container'>
       <div className='calendar-container'>
         <div className='demo-app-main'>
-          <div className='w-full flex justify-around mb-2'> 
+          <div className='w-full flex flex-col md:flex-row items-center justify-around gap-4 mb-2'> 
             <div className="flex gap-2">
               <button onClick={handlePrev} className="bg-gray-700 p-2 rounded">Ant.</button>
               <button onClick={handleNext} className="bg-gray-700 p-2 rounded">Sig.</button>
             </div>
             <div className='flex flex-col items-center'>
-              <h3 className="text-2xl font-bold text-white">Calendario Plaza Meru</h3>
-              <span className="text-2xl font-bold text-white capitalize">
+              <h3 className="text-lg md:text-2xl font-bold text-white">Calendario Plaza Meru</h3>
+              <span className="text-lg md:text-2xl font-bold text-white capitalize">
                 {currentTitle}
               </span>
             </div>
