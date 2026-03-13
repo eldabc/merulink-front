@@ -4,6 +4,10 @@
   .div-border {
     @apply border border-[#ffffff21] md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21] md:[&>*:nth-child(2n)]:pl-4 p-7;
   }
+
+  .input-locker {
+    @apply text-xl w-64 px-3 py-2 rounded-lg bg-[#3c4042] text-gray-300 border border-transparent focus:border-blue-500 outline-none transition-all;
+  }
 }
 
 :root {
