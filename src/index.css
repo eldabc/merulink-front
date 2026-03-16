@@ -6,7 +6,7 @@
   }
 
   .input-locker {
-    @apply text-xl w-64 px-3 py-2 rounded-lg bg-[#3c4042] text-gray-300 border border-transparent focus:border-blue-500 outline-none transition-all;
+    @apply w-64 px-3 py-2 rounded-lg bg-[#3c4042] text-gray-300 border border-transparent focus:border-blue-500 outline-none transition-all;
   }
 }
 

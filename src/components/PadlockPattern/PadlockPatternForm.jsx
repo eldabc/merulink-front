@@ -91,11 +91,38 @@ function PadlockPatternForm ({ mode = 'create' }) {
                   <div className='div-border'>
                     <div className="mt-6">     
                       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Patrón' ):( 'Datos del Patrón')}</h3>
+                      <div className="flex flex-col md:flex-row gap-2 md:col-span-1">
+                        <LabelFieldForm field="Modelo/Nombre del Candado" simbol="*" />
+                        <input 
+                          {...register('modelName')}
+                          type="text" 
+                          placeholder="Ej: Lock Pro V2"
+                          className="input-locker w-full placeholder:opacity-50 " 
+                        />
+                        {errors?.modelName && <ErrorMessage msg={errors.modelName.message} /> }  
+                      </div>
+                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
+                          {/* <div className="grid grid-cols-1  gap-6"> */}
+                            {/* <div className="flex flex-col gap-2 md:col-span-2"> */}
+                              <div className='grid grid-cols-1 gap-2 items-center'>
+                                <LabelFieldForm field="Paso 1: (OBLIGATORIO)" simbol="*" />
+                                <span className='text-gray-400 text-sm italic'>Instrucciones de Reinicio</span>
+                              </div>
+                              <textarea 
+                                {...register('resetInstructions')}
+                                placeholder="Describe cómo resetear el candado..."
+                                rows="4"
+                                className="input-locker w-full py-2 placeholder:opacity-50 "
+                              />
+                              {errors?.resetInstructions && <ErrorMessage msg={errors.resetInstructions.message} /> }  
+                            {/* </div> */}
+                          {/* </div> */}
+                        </div>
                       <div className='div-border'>
                         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
                           <div className="bg-[#2f3d44] p-5 rounded-2xl border border-white/5 shadow-inner">
                             <label className="text-[#9fd8ff] text-xs uppercase tracking-widest font-bold mb-4 block">
-                              Configuración de Secuencia de Apertura
+                              Configura los pasos siguientes
                             </label>
                             
                             <div className="space-y-4">
@@ -105,7 +132,7 @@ function PadlockPatternForm ({ mode = 'create' }) {
                                     <div className="flex flex-col gap-2">
                                       <span className="text-gray-400 text-[10px] uppercase ml-1">Paso</span>
                                       <div className="flex items-center justify-center bg-[#3c4042] text-[#9fd8ff] font-bold rounded-lg h-[46px] w-[50px] border border-white/10 shadow-md">
-                                        #{index + 1}
+                                        #{index + 2}
                                       </div>  
                                     </div>
                                     <div className="flex flex-col gap-2">
@@ -142,7 +169,7 @@ function PadlockPatternForm ({ mode = 'create' }) {
                                           {...register(`unlockSequence.${index}.amount`)}
                                           type="number" 
                                           min="1"
-                                          className="input-locker w-full placeholder:opacity-50 placeholder:text-lg"
+                                          className="input-locker w-full placeholder:opacity-50 "
                                           placeholder='Ingresa cantidad'
                                         />  
                                         {/* Eliminar paso (solo si hay más de uno) */}
@@ -173,32 +200,6 @@ function PadlockPatternForm ({ mode = 'create' }) {
                             >
                               <span className="text-lg">+</span> Añadir nuevo paso
                             </button>
-                          </div>
-                        </div>
-
-                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="flex flex-col gap-2 md:col-span-1">
-                              <LabelFieldForm field="Modelo del Dispositivo" simbol="*" />
-                              <input 
-                                {...register('modelName')}
-                                type="text" 
-                                placeholder="Ej: Lock Pro V2"
-                                className="input-locker w-full placeholder:opacity-50 placeholder:text-lg" 
-                              />
-                              {errors?.modelName && <ErrorMessage msg={errors.modelName.message} /> }  
-                            </div>
-
-                            <div className="flex flex-col gap-2 md:col-span-2">
-                              <LabelFieldForm field="Instrucciones de Reinicio" simbol="*" />
-                              <textarea 
-                                {...register('resetInstructions')}
-                                placeholder="Describe cómo resetear el candado..."
-                                rows="4"
-                                className="input-locker w-full py-2 placeholder:opacity-50 placeholder:text-lg"
-                              />
-                              {errors?.resetInstructions && <ErrorMessage msg={errors.resetInstructions.message} /> }  
-                            </div>
                           </div>
                         </div>
                       </div>
