@@ -22,7 +22,7 @@ export const PadlockPatternProvider = ({ children }) => {
     setLoading(true);
     try {
 
-      const response = await axios.get(`${ENV.API_BACK_URL}padlockPatterns`);
+      const response = await axios.get(`${ENV.API_BACK_URL}padlocks/patterns`);
       setPadlockPatternData(response.data.data);
 
     } catch (error) {

@@ -1,66 +1,36 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePadlocks } from '../../context/PadlockContext';
+import { usePadlockPatterns } from '../../context/PadlockPatternContext';
 
-import ButtonDelete from '../Shared/ButtonDelete';
-import { STATUSES, statusConfig } from '../../utils/statusesConfig.js';
-import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid';
-import ConfirmDialog from '../Shared/ConfirmDialog';
-
-function PadlockpatternRow({ padlock }) {
+function PadlockpatternRow({ padlockPattern }) {
 
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { loading, deletePadlock } = usePadlocks();
-  const [selectedPadlock, setSelectedPadlock] = useState(null);
-  
-  const currentStatus = statusConfig[padlock.status];
 
   const handleSelectedPadlock = (id) => {
-    navigate(`/empleados/vestuarios/candados/ver/${id}`, { 
+    navigate(`/empleados/vestuarios/candados/patrones/ver/${id}`, { 
       state: { data: [] } 
     }); 
-  };
-
-  const handleDeleteClick = (padlock) => {
-    setSelectedPadlock(padlock);
-    setIsModalOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!selectedPadlock) return;
-
-    await deletePadlock(selectedPadlock);
-    setIsModalOpen(false);
-    setSelectedPadlock(null);
   };
 
   return (
     <>
       <tr
-        key={padlock.id}
-        onClick={() => handleSelectedPadlock(padlock.id)}
+        key={padlockPattern.id}
+        onClick={() => handleSelectedPadlock(padlockPattern.id)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
-        <td className="px-4 py-3 text-white-800 font-medium">{padlock.name} </td>
-        <td className="px-4 py-3 text-white-800 font-medium">{padlock.serial} </td>
-        <td className="px-4 py-3 text-white-800 font-medium">{padlock?.pass}</td>
-        <td className="px-4 py-3 text-white-700">
-          {(STATUSES.AVAILABLE === padlock.status && !loading) && (
-           <ButtonDelete setIsModalOpen={() => handleDeleteClick(padlock)} />
-          )}
+        <td className="px-4 py-3 text-white-800 font-medium">{padlockPattern.model_name} </td>
+        <td className="px-4 py-3 text-white-800 font-medium">
+          <ul className="mt-2 space-y-2">
+            {padlockPattern.unlock_sequence.map((step, index) => (
+              <li key={index} className="p-2 rounded bg-[#2f3d44] ">
+                <span className="font-semibold text-[#9fd8ff]">Paso {index + 1}: </span>
+                {step.action} {step.value} {step.value > 1 ? 'veces' : 'vez'} hacia la {step.direction}
+              </li>
+            ))}
+          </ul>
         </td>
-      </tr>
-      <tr>
-        <td>
-          <ConfirmDialog 
-            isOpen={isModalOpen}
-            onClose={() => { setIsModalOpen(false); }}
-            onConfirm={handleConfirmDelete}
-            title="Eliminar Candado"
-            message={`¿Estás seguro de que deseas eliminar Candado "${padlock?.serial}"?`}
-          />
-        </td>
+        <td className="px-4 py-3 text-white-800 font-medium">{padlockPattern.reset_instructions}</td>        
       </tr>
     </>
   )

@@ -37,9 +37,8 @@ function PadlockPatternPatternList() {
             <thead>
               <tr className="tr-thead-table">
                 <th className="px-4 py-3 text-left font-semibold">Modelo Candado</th>
-                <th className="px-4 py-3 text-left font-semibold">Secuencia Desbloqueo</th>
+                <th className="px-4 py-3 text-left font-semibold md:w-4xl">Secuencia Desbloqueo</th>
                 <th className="px-4 py-3 text-left font-semibold">Reinicio</th>
-                <th className="px-4 py-3 text-left font-semibold">Acciones</th>
               </tr>
             </thead>
             <tbody>
