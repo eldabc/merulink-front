@@ -41,7 +41,7 @@ export const PadlockProvider = ({ children }) => {
   const formattedPadlocks = (formData) => {
 
     return {
-      id: Date.now(), // ID temporal
+      id: formData.id ? formData.id : Date.now(),
       serial: formData.serial ? formData.serial : null,
       pass: formData.pass ? formData.pass : null,
       status: formData.status ? formData.status : null,

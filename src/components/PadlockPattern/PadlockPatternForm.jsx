@@ -10,10 +10,9 @@ import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import LabelFieldForm from "../Shared/LabelFieldForm";
-import { STATUSES } from '../../utils/statusesConfig.js';
 
 function PadlockPatternForm ({ mode = 'create' }) {
-  const { register, handleSubmit, reset, setValue, control, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(padlockPatternValidationSchema),
         defaultValues: {
           unlockSequence: [{ action: 'girar', direction: 'derecha', amount: 1 }]
@@ -28,30 +27,30 @@ function PadlockPatternForm ({ mode = 'create' }) {
   
     const { id } = useParams();  
     const navigate = useNavigate();
-    const padlock = padlockPatternData.find(e => e.id === Number(id));
-    
+    const padlockPattern = padlockPatternData.find(e => e.id === Number(id));
+
     const createMode = mode === 'create'
     const viewMode = mode === 'view';
     const editMode =  mode === 'edit';
   
     useEffect(() => {
-      if (padlock && (editMode || viewMode)) {
+      if (padlockPattern && (editMode || viewMode)) {
         reset(
-          padlockReset(padlock)
+          padlockPatternReset(padlockPattern)
         );
   
       } else if (createMode) {
         reset(
-          padlockReset(null)
+          padlockPatternReset(null)
         );
       }
-    }, [padlock, mode, reset]);
+    }, [padlockPattern, mode, reset]);
   
-    const padlockReset = (padlock) => {
+    const padlockPatternReset = (padlockPattern) => {
       return {
-          serial: padlock?.serial ?? '',
-          pass: padlock?.pass ?? '',
-          status: padlock?.status ?? (createMode ? 'Disponible' : null),
+        modelName: padlockPattern?.modelName ?? '',
+        resetInstructions: padlockPattern?.resetInstructions ?? '',
+        unlockSequence: padlockPattern?.unlockSequence ?? fields,
       }
   
     }
@@ -64,10 +63,10 @@ function PadlockPatternForm ({ mode = 'create' }) {
     const onSubmit = async (data) => {
       let success = false;
   
-      if (editMode && padlock) {
+      if (editMode && padlockPattern) {
         const dataEdit = { 
           ...data, 
-          id: padlock.id, 
+          id: padlockPattern.id, 
         }
         success = await updatePadlockPattern(dataEdit);
       } else {
@@ -75,16 +74,14 @@ function PadlockPatternForm ({ mode = 'create' }) {
       }
   
       if (success) {
-        if (createMode) navigate(-1);
-        else navigate(-2);
+        navigate(-1);
       }
     };
   
-  
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-          {(viewMode && STATUSES.AVAILABLE === padlock?.status) && (
-            <HeadFormButtons url={`/empleados/vestuarios/candados/editar/${padlock.id}`} data={[]} />
+          {viewMode && (
+            <HeadFormButtons url={`/empleados/vestuarios/candados/editar/${padlockPattern.id}`} data={[]} />
           )}
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
@@ -118,7 +115,7 @@ function PadlockPatternForm ({ mode = 'create' }) {
                                         className="input-locker w-full"
                                       >
                                         <option value="girar">Girar 🔄</option>
-                                        <option value="empujar">Empujar 🔘</option>
+                                        <option value="presionar">Presionar 🔘</option>
                                         <option value="halar">Halar ⬆️</option>
                                       </select>
                                         {errors?.unlockSequence?.[index]?.action && <ErrorMessage msg={errors.unlockSequence?.[index]?.action.message} /> }  

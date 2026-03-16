@@ -3,7 +3,6 @@ import * as yup from 'yup';
 export const padlockPatternValidationSchema = yup.object().shape({
   unlockSequence: yup.array().of(
       yup.object().shape({
-        id: yup.number(),
 
         action: yup
             .string()
@@ -16,9 +15,10 @@ export const padlockPatternValidationSchema = yup.object().shape({
             .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
         
         amount: yup
-            .string()
+            .number()
             .required('Cantidad es requerida')
-            .matches(/^[0-9-]+$/, 'Solo se permiten números.'),
+            .typeError('Solo se permiten números.')
+            .moreThan(0, 'El valor debe ser al menos 1'),
       })
   ),
   modelName: yup.string()

@@ -38,13 +38,13 @@ export const PadlockPatternProvider = ({ children }) => {
   }, [loadPadlockPatterns]);
 
   // Armado JSON
-  const formattedPadlockPatternPatterns = (formData) => {
+  const formattedPadlockPatterns = (formData) => {
 
     return {
-      id: Date.now(), // ID temporal
-      serial: formData.serial ? formData.serial : null,
-      pass: formData.pass ? formData.pass : null,
-      status: formData.status ? formData.status : null,
+      id: formData.id ? formData.id : Date.now(),
+      modelName: formData.modelName ? formData.modelName : null,
+      resetInstructions: formData.resetInstructions ? formData.resetInstructions : null,
+      unlockSequence: formData.unlockSequence ? formData.unlockSequence : null,
     };
   }
 
@@ -52,17 +52,17 @@ export const PadlockPatternProvider = ({ children }) => {
   const createPadlockPattern = async (formData) => {
     try {
       
-      const newPadlockPattern = formattedPadlockPatternPatterns(formData);
+      const newPadlockPattern = formattedPadlockPatterns(formData);
       console.log("Creado", newPadlockPattern);
 
-      const response = await axios.post(`${ENV.API_BACK_URL}padlockPatterns`, newPadlockPattern);
+      const response = await axios.post(`${ENV.API_BACK_URL}padlocks/patterns`, newPadlockPattern);
       setPadlockPatternData(prevData => [response.data.data, ...prevData]);
 
-      showNotification(`Candado ${newPadlockPattern.serial} creado con éxito`);
+      showNotification(`Patrón ${newPadlockPattern.modelName} creado con éxito`);
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el padlockPattern', error.response.data.message, 'error');
+      showNotification('Error al crear patrón', error.response.data.message, 'error');
       return false;
     }
   };
@@ -73,21 +73,21 @@ export const PadlockPatternProvider = ({ children }) => {
       const padlockPatternId = formData.id;
 
       if (!padlockPatternId) {
-        showNotification('Error: No se encontró el ID del Candado', 'error');
+        showNotification('Error:', 'No se encontró el ID del patrón', 'error');
         return false;
       }
 
-      const updatedPadlockPattern = formattedPadlockPatternPatterns(formData);
+      const updatedPadlockPattern = formattedPadlockPatterns(formData);
       console.log("Actualizado:", updatedPadlockPattern);
       
-      const response = await axios.put(`${ENV.API_BACK_URL}padlockPatterns/${padlockPatternId}`, updatedPadlockPattern);
+      const response = await axios.put(`${ENV.API_BACK_URL}padlocks/patterns/${updatedPadlockPattern.id}`, updatedPadlockPattern);
       
       setPadlockPatternData(prevData => {
         const filteredData = prevData.filter(padlockPattern => padlockPattern.id !== padlockPatternId);
         return [response.data.data, ...filteredData];
       });
 
-      showNotification(`Candado ${updatedPadlockPattern.serial} actualizado con éxito`); 
+      showNotification(`Patrón ${updatedPadlockPattern.modelName} actualizado con éxito`); 
       return true;
 
     } catch (error) {
