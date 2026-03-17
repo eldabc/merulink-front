@@ -2,9 +2,11 @@ import { useEffect, useRef } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
+import PadlockPatternSteps from "../../Shared/PadlockPatternSteps";
+import ResetInstructions from '../../Shared/ResetInstructions.jsx';
 
-function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, useLocker, setValue, isEmployeeActive, watch, disabledClasses }) {
-  const { getLockerAssigns } = useEmployees();
+function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, setValue, isEmployeeActive, watch, disabledClasses, unlockSequence }) {
+
   const previousSex = useRef();
   const useLockerWatch = watch('useLocker');
   const viewMode = mode === 'view'; 
@@ -99,6 +101,23 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, us
                       type="text" {...register('padlockAssignPass')} 
                       className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
                 />
+              </div>
+              <div className='flex flex-col border border-[#ffffff21] md:pl-4 p-7'>
+                <LabelFieldForm field="Patrón de Candado"/>
+
+                <ResetInstructions register={register} errors={errors} />
+                                      
+                {unlockSequence.map((field, index) => (
+                  <PadlockPatternSteps
+                    key={index}
+                    field={field}
+                    index={index}
+                    register={register}
+                    errors={errors}
+                    showAddBtn={unlockSequence.length > 1}
+                    disabled={true}
+                  />
+                ))}
               </div>
             </>
           )}

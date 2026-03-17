@@ -6,7 +6,7 @@ export const getStatusColor = (status) => {
   // Obtener la clase
   const specificClass = statusConfig[status];
 
-  return `${baseClasses} ${specificClass.classes}`;
+  return `${baseClasses} ${specificClass?.classes}`;
 };
 
 export const getStatusName = (status) => {

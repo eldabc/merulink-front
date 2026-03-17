@@ -60,6 +60,28 @@ export const employees = [
           serial: 22245672,
           pass: '44-55-66',
           status: 'Disponible',
+          padlockPattern: {
+            id: 1,
+            modelName: "Modelo Base",
+            resetInstructions: "Hacer un mínimo de dos giros en cualquier dirección para reiniciar.",
+            unlockSequence: [
+                {
+                    action: "girar",
+                    amount: 1,
+                    direction: "derecha"
+                },
+                {
+                    action: "girar",
+                    amount: 2,
+                    direction: "izquierda"
+                },
+                {
+                    action: "girar",
+                    amount: 1,
+                    direction: "derecha"
+                }
+            ]
+          }
         }
       },
     }

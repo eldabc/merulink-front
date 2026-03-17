@@ -24,6 +24,9 @@ export default function EmployeeForm({ mode = 'create' }) {
   
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
+    // defaultValues: {
+    //   unlockSequence: [{ action: 'girar', direction: 'derecha', amount: 1 }]
+    // }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -31,6 +34,10 @@ export default function EmployeeForm({ mode = 'create' }) {
     name: 'contacts',
   });
 
+  // const { fieldsA, appendA, removeA } = useFieldArray({
+  //   control,
+  //   name: 'unlockSequence',
+  // });
   const [tempFlags, setTempFlags] = useState({
     useMeruLink: false,
     useHidCard: false,
@@ -228,7 +235,9 @@ export default function EmployeeForm({ mode = 'create' }) {
         useTransport: !!employee?.useTransport,
         contacts: employee?.contacts ?? [],
         lockerAssingId: employee?.assign?.id ?? '',
-        padlockAssignPass: employee?.assign?.locker?.padlock?.pass ?? ''
+        padlockAssignPass: employee?.assign?.locker?.padlock?.pass ?? '',
+        resetInstructions: employee?.assign?.locker?.padlock?.padlockPattern?.resetInstructions ?? '',
+        unlockSequence: employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence ?? [],
     }
   };
 
@@ -283,15 +292,15 @@ export default function EmployeeForm({ mode = 'create' }) {
                 errors={errors} 
                 empLockerAssign={empLockerAssign} 
                 selectedSex={selectedSex} 
-                useLocker={changedUseLocker}  
                 setValue={setValue}
                 isEmployeeActive={isEmployeeActive}
                 watch={watch}
                 disabledClasses={disabledClasses}
+                unlockSequence={employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence}
               />;
     }
   };
-  // console.log("isEmployeeActive", isEmployeeActive);
+  // console.log("fieldsA", employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
