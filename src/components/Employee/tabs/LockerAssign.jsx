@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
@@ -9,6 +9,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
 
   const previousSex = useRef();
   const useLockerWatch = watch('useLocker');
+  const lockerAssingIdWatch = watch('lockerAssingId');
   const viewMode = mode === 'view'; 
 
    useEffect (() => {
@@ -17,6 +18,11 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
         setValue('padlockAssignPass', '');
     }
   }, [mode]);
+
+  const lockerAssignSelected = empLockerAssign.find(
+    d => d.locker?.id === Number(lockerAssingIdWatch)
+  );
+  console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected)
 
   useEffect(() => {
     if (!previousSex.current) {
@@ -103,21 +109,69 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
                 />
               </div>
               <div className='flex flex-col border border-[#ffffff21] md:pl-4 p-7'>
-                <LabelFieldForm field="Patrón de Candado"/>
+                {lockerAssignSelected  && (
+                  <>
+                    <LabelFieldForm field="Patrón de Candado"/>
+                    <ResetInstructions register={register} errors={errors} value={lockerAssignSelected?.locker?.padlock?.pattern?.resetInstructions} />
+                                          
+                   {lockerAssignSelected?.locker?.padlock?.pattern?.unlockSequence?.map((field, index) => {
+                      return (
+                        <div key={field.id || index} className="flex items-end gap-4 animate-in fade-in slide-in-from-left-2">
+                          <div className="grid grid-cols-1 sm:grid-cols-[60px_1fr_1fr_1fr] gap-4 flex-1">
+                            
+                            {/* Paso */}
+                            <div className="flex flex-col gap-2">
+                              <span className="text-gray-400 text-[10px] uppercase ml-1">Paso</span>
+                              <div className="flex items-center justify-center bg-[#3c4042] text-[#9fd8ff] font-bold rounded-lg h-[46px] w-[50px] border border-white/10 shadow-md">
+                                #{index + 1}
+                              </div>  
+                            </div>
 
-                <ResetInstructions register={register} errors={errors} />
-                                      
-                {unlockSequence.map((field, index) => (
-                  <PadlockPatternSteps
-                    key={index}
-                    field={field}
-                    index={index}
-                    register={register}
-                    errors={errors}
-                    showAddBtn={unlockSequence.length > 1}
-                    disabled={true}
-                  />
-                ))}
+                            {/* Acción */}
+                            <div className="flex flex-col gap-2">
+                              <span className="text-gray-400 text-[10px] uppercase ml-1">Acción</span>
+                              <select 
+                                value={field.action || ''}
+                                disabled
+                                className="input-locker w-full"
+                              >
+                                <option value="girar">Girar 🔄</option>
+                                <option value="presionar">Presionar 🔘</option>
+                                <option value="halar">Halar ⬆️</option>
+                              </select>
+                            </div>
+
+                            {/* Dirección */}
+                            <div className="flex flex-col gap-2">
+                              <span className="text-gray-400 text-[10px] uppercase ml-1">Dirección</span>
+                              <select 
+                                value={field.direction || ''}
+                                disabled
+                                className="input-locker w-full"
+                              >
+                                <option value="derecha">Derecha ➡️</option>
+                                <option value="izquierda">Izquierda ⬅️</option>
+                                <option value="arriba">Arriba ⬆️</option>
+                                <option value="abajo">Abajo ⬇️</option>
+                              </select>
+                            </div>
+
+                            {/* Cantidad */}
+                            <div className="flex flex-col gap-2">
+                              <span className="text-gray-400 text-[10px] uppercase ml-1">Cantidad</span>
+                              <input
+                                value={field.amount || ''}
+                                disabled
+                                className="input-locker w-full"
+                              />
+                            </div>
+
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
               </div>
             </>
           )}

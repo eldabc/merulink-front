@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { ENV } from '../config/env';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNotification } from "../context/NotificationContext"; 
 
@@ -150,9 +152,11 @@ export const EmployeeProvider = ({ children }) => {
 
     const getLockerAssigns = async () => {
     try {
-      return lockerAssigns.filter(assign => !assign.employee);     
+      // return lockerAssigns.filter(assign => !assign.employee);
+      const response = await axios.get(`${ENV.API_BACK_URL}assigns?unassigned=true`);
+      return response.data.data;
     } catch (error) {
-      showNotification('Error al obtener Asignaciones de Lockers', error.message);
+      showNotification('Error al obtener Asignaciones de Lockers', error.message, 'error');
       return [];
     }
   }
