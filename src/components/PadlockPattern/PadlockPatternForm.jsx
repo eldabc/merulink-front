@@ -122,7 +122,6 @@ function PadlockPatternForm ({ mode = 'create' }) {
                                   register={register}
                                   errors={errors}
                                   showAddBtn={fields.length > 1}
-                                  mode={mode}
                                 />
                               ))}
                             </div>

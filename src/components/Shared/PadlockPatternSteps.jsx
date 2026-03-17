@@ -1,5 +1,5 @@
-function PadlockPatternSteps({ field, index, errors, register, showAddBtn, disabled }) {
-  const viewMode = disabled;
+function PadlockPatternSteps({ field, index, errors, register, showAddBtn, viewMode }) {
+
   const disabledClasses = viewMode && 'cursor-not-allowed';
 
   return (
@@ -15,7 +15,8 @@ function PadlockPatternSteps({ field, index, errors, register, showAddBtn, disab
           <span className="text-gray-400 text-[10px] uppercase ml-1">Acción</span>
           <select 
             disabled={viewMode}
-            {...register(`unlockSequence.${index}.action`)} 
+            {...(!viewMode ? register(`unlockSequence.${index}.action`) : {})}
+            defaultValue={field.action || ''}
             className={`input-locker w-full ${disabledClasses}`}
           >
             <option value="girar">Girar 🔄</option>
@@ -29,7 +30,8 @@ function PadlockPatternSteps({ field, index, errors, register, showAddBtn, disab
           <span className="text-gray-400 text-[10px] uppercase ml-1">Dirección</span>
           <select 
             disabled={viewMode}
-            {...register(`unlockSequence.${index}.direction`)} 
+            {...(!viewMode ? register(`unlockSequence.${index}.direction`) : {})}
+            defaultValue={field.direction || ''}
             className={`input-locker w-full ${disabledClasses}`}
           >
             <option value="derecha">Derecha ➡️</option>
@@ -44,8 +46,9 @@ function PadlockPatternSteps({ field, index, errors, register, showAddBtn, disab
           <span className="text-gray-400 text-[10px] uppercase ml-1">Cantidad</span>
           <div className="flex gap-2">
             <input
-              readOnly={viewMode} 
-              {...register(`unlockSequence.${index}.amount`)}
+              readOnly={viewMode}
+              {...(!viewMode ? register(`unlockSequence.${index}.amount`) : {})}
+              defaultValue={field.amount || ''}
               type="number" 
               min="1"
               className={`input-locker w-full placeholder:opacity-50 ${disabledClasses}`}

@@ -22,7 +22,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
   const lockerAssignSelected = empLockerAssign.find(
     d => d.locker?.id === Number(lockerAssingIdWatch)
   );
-  console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected)
+  // console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected)
 
   useEffect(() => {
     if (!previousSex.current) {
@@ -63,10 +63,10 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
     setValue('padlockAssignPass', selectedAssign?.locker?.padlock?.pass ?? '');
   };
 
-  const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : ''; //(!useLocker ? "¡Empleado no tiene habilitado el uso de Locker!" : '')
+  const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : '';
   return (
     <>
-      {(!selectedSex ) ? (//|| !useLocker
+      {(!selectedSex ) ? (
         <div className="text-center bg-gray-600 rounded-2xl ">
           <span className="block justify-center mt-2 text-[14px] text-red-500 text-shadow-amber-50 p-2">
             {messagge}
@@ -111,63 +111,23 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
               <div className='flex flex-col border border-[#ffffff21] md:pl-4 p-7'>
                 {lockerAssignSelected  && (
                   <>
-                    <LabelFieldForm field="Patrón de Candado"/>
-                    <ResetInstructions register={register} errors={errors} value={lockerAssignSelected?.locker?.padlock?.pattern?.resetInstructions} />
+                    <LabelFieldForm field="Patrón de Candado" />
+                    <ResetInstructions 
+                      register={register} 
+                      errors={errors} 
+                      value={lockerAssignSelected?.locker?.padlock?.pattern?.resetInstructions}
+                      viewMode={true} 
+                    />
                                           
                    {lockerAssignSelected?.locker?.padlock?.pattern?.unlockSequence?.map((field, index) => {
                       return (
-                        <div key={field.id || index} className="flex items-end gap-4 animate-in fade-in slide-in-from-left-2">
-                          <div className="grid grid-cols-1 sm:grid-cols-[60px_1fr_1fr_1fr] gap-4 flex-1">
-                            
-                            {/* Paso */}
-                            <div className="flex flex-col gap-2">
-                              <span className="text-gray-400 text-[10px] uppercase ml-1">Paso</span>
-                              <div className="flex items-center justify-center bg-[#3c4042] text-[#9fd8ff] font-bold rounded-lg h-[46px] w-[50px] border border-white/10 shadow-md">
-                                #{index + 1}
-                              </div>  
-                            </div>
-
-                            {/* Acción */}
-                            <div className="flex flex-col gap-2">
-                              <span className="text-gray-400 text-[10px] uppercase ml-1">Acción</span>
-                              <select 
-                                value={field.action || ''}
-                                disabled
-                                className="input-locker w-full"
-                              >
-                                <option value="girar">Girar 🔄</option>
-                                <option value="presionar">Presionar 🔘</option>
-                                <option value="halar">Halar ⬆️</option>
-                              </select>
-                            </div>
-
-                            {/* Dirección */}
-                            <div className="flex flex-col gap-2">
-                              <span className="text-gray-400 text-[10px] uppercase ml-1">Dirección</span>
-                              <select 
-                                value={field.direction || ''}
-                                disabled
-                                className="input-locker w-full"
-                              >
-                                <option value="derecha">Derecha ➡️</option>
-                                <option value="izquierda">Izquierda ⬅️</option>
-                                <option value="arriba">Arriba ⬆️</option>
-                                <option value="abajo">Abajo ⬇️</option>
-                              </select>
-                            </div>
-
-                            {/* Cantidad */}
-                            <div className="flex flex-col gap-2">
-                              <span className="text-gray-400 text-[10px] uppercase ml-1">Cantidad</span>
-                              <input
-                                value={field.amount || ''}
-                                disabled
-                                className="input-locker w-full"
-                              />
-                            </div>
-
-                          </div>
-                        </div>
+                        <PadlockPatternSteps
+                          key={`${lockerAssignSelected?.id}-${index}`}
+                          field={field}
+                          index={index}
+                          showAddBtn={false}
+                          viewMode={true}
+                        />
                       );
                     })}
                   </>
