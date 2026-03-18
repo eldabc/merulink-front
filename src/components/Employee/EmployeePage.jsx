@@ -4,7 +4,7 @@ import EmployeeList from './EmployeeList';
 import EmployeeForm from './EmployeeForm';
  
 
-export default function LockerAssignPage() {
+export default function EmployeePage() {
   return (
     <>
       <main className="flex-1 rounded p-4 min-h-[60vh]">

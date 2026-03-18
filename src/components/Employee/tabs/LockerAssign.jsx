@@ -22,7 +22,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
   const lockerAssignSelected = empLockerAssign.find(
     d => d.locker?.id === Number(lockerAssingIdWatch)
   );
-  // console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected)
+  console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected, empLockerAssign)
 
   useEffect(() => {
     if (!previousSex.current) {
@@ -45,7 +45,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
     return empLockerAssign
       .filter(assign => assign.locker?.category?.key === lockerAssignCategoryKey)
       .map(assign => (
-        <option key={`lockerAssign-${assign.id}`} className='bg-[#3c4042]' value={assign.id}>
+        <option key={`lockerAssign-${assign?.id}`} className='bg-[#3c4042]' value={assign?.locker?.id}>
           {assign.locker.code}
         </option>
     ));
@@ -61,6 +61,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
 
     const selectedAssign = empLockerAssign.find( a => String(a.id) === String(selectedId) );
     setValue('padlockAssignPass', selectedAssign?.locker?.padlock?.pass ?? '');
+    setValue('padlockAssignSerial', selectedAssign?.locker?.padlock?.serial ?? '');
   };
 
   const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : '';
@@ -105,6 +106,10 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
                 <LabelFieldForm field="Clave candado" simbol="*" />
                 <input disabled={true}  
                       type="text" {...register('padlockAssignPass')} 
+                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
+                />
+                <input disabled={true}  
+                      type="text" {...register('padlockAssignSerial')} 
                       className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
                 />
               </div>

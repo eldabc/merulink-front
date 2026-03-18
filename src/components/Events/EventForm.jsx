@@ -12,7 +12,7 @@ import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
 
-export default function EventForm({ mode = 'create', onBack }) {
+export default function EventForm({ mode = 'create' }) { //, onBack
   
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
@@ -260,7 +260,8 @@ export default function EventForm({ mode = 'create', onBack }) {
                 </div>
               )}
             </div>
-            <FooterFormButtons onBack={onBack} isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+            <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} /> 
+            {/* onBack={onBack} */}
           </form>
         </div>
       </div>

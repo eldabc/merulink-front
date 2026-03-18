@@ -1,31 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowLeft, User } from "lucide-react";
-import { departments } from '../../utils/StaticData/departments-utils';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { departmentValidationSchema } from '../../utils/Validations/departmentValidationSchema';
 import { useDepartments } from '../../context/DepartmentContext';
-import { PencilIcon } from "@heroicons/react/24/solid";
+import FooterFormButtons from '../Shared/FooterFormButtons';
+import HeadFormButtons from '../Shared/HeadFormButtons';
+import LabelFieldForm from '../Shared/LabelFieldForm';
+import ErrorMessage from '../Shared/ErrorMessage';
+import TitleHeader from '../Shared/TitleHeader';
 import '../../Tables.css';
 
-export default function DepartmentForm({ mode = 'create', department = null, onBack, onSave, onUpdate }) {
+export default function DepartmentForm({ mode = 'create', onUpdate }) { //, department = null, onBack, onSave
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const { departmentData, createDepartment } = useDepartments();
   
-  const { toggleDepartmentField } = useDepartments();
-  
-
-  const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ //control, watch, setValue, 
     resolver: yupResolver(departmentValidationSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'contacts',
-  });
+  // const { fields, append, remove } = useFieldArray({
+  //   control,
+  //   name: 'contacts',
+  // });
+
+  const { id } = useParams();
+  const createMode = mode === 'create';
+  const viewMode = mode === 'view';
+  const editMode = mode === 'edit';
+  const department = departmentData.find(e => e.id === Number(id));
+
+  const disabledClasses = viewMode && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {
-    if (department && mode === 'edit' || mode === 'view') {
+    if (department && mode === 'edit' || viewMode) {
  
       reset({
         code: department?.code ?? '',
@@ -35,7 +44,7 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
 
       // generar número de departamento automáticamente
       const maxNum = Math.max( 0,
-        ...departments.map(d => {
+        ...departmentData.map(d => {
           const num = parseInt(d.code) || 0;
           return num;
         })
@@ -49,7 +58,22 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
   }, [department, mode, reset]);
 
   const onSubmit = async (data) => {
-    if (onSave) await onSave(data);
+    let success = false;
+
+    if (editMode && department) {
+      const dataEdit = { 
+        ...data, 
+        id: locker.id, 
+      }
+      success = await updateDepartment(dataEdit);
+    } else {
+      success = await createDepartment(data);
+    }
+
+    if (success) {
+      if (createMode) navigate(-1);
+      else navigate(-2);
+    }
   };
 
   const onError = (formErrors) => {
@@ -69,64 +93,55 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    
+    {(viewMode) && <HeadFormButtons url={`/empleados/departamentos/editar/${department?.id}`} data={[]} /> }
     <form onSubmit={handleSubmit(onSubmit, onError)}>
-      <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-        <button onClick={() => setIsEditing(true)} className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
-          <PencilIcon className="w-4 h-4 text-white-500" />
-        </button>
-        <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
-            <ArrowLeft className="w-4 h-4 text-white-500" />
-        </button>
-      </div>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
-          <div className="w-30 h-10 overflow-hidden flex items-center justify-center ml-2.5"></div>
-          <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')}</h3>
-            <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
-              <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1">Nombre Departamento: *</label>
-              </div>
+          <div className='mx-auto'>
+              <TitleHeader title={mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full m-6 text-xs">
+                
+                <LabelFieldForm field="Nombre Departamento" simbol="*" dinamicClasses="text-xl"/>
               <div>
                 <input
-                  readOnly={mode === 'view'}
+                  readOnly={viewMode}
                   {...register('departmentName')}
-                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.departmentName ? 'border-red-500' : ''}
-                  ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                  className={`md:w-full px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                 />
-                {errors?.departmentName && <p className="text-red-400 text-xs mt-1">{errors.departmentName.message}</p>}  
+                {errors?.departmentName && <ErrorMessage msg={errors.departmentName.message} /> }  
               </div>
-              <div>
-                <label className="block text-xl font-medium text-right text-gray-300 mt-1">Código: *</label>
-              </div>
-              <div>
+
+                
+              <div className='flex flex-col md:flex-row'>
+                <LabelFieldForm field="Código" simbol="*"/>
                 <input
-                  readOnly={mode === 'view'}
+                  readOnly={viewMode}
                   {...register('code')}
-                  className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${errors?.code ? 'border-red-500' : ''}
-                    ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
-                />
-                {errors?.code && <p className="text-red-400 text-xs mt-1">{errors.code.message}</p>}  
+                  className={`md:ml-5 w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                /> 
+                {errors?.code && <ErrorMessage msg={errors.code.message} /> }  
               </div>
             </div>
           </div>
         </div>
         {department?.subDepartments && (
-          <div className="mt-6">
-            <h3 className="text-2xl font-bold mb-4 text-white">Sub-Departamentos</h3>
-            <div className="rounded-lg shadow">
-              <table className="min-w-full border-collapse text-sm sm:text-base">
+          <div className="mt-6  ">
+            <div className="shadow md:w-2xl mx-auto mb-4">
+              
+              <TitleHeader title="Sub-Departamentos" />
+              <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">
-                    <th className="px-4 py-3 text-left font-semibold">Código</th>
-                    <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
+                    <th className="px-4 py-3 text-center font-semibold">Código</th>
+                    <th className="px-4 py-3 text-center font-semibold">Sub-Departamento</th>
                   </tr>
                 </thead>
                 <tbody>
                   {department.subDepartments.map((dep) => (
                     <tr key={dep.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
-                      <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>
-                      <td className="px-4 py-3 text-white-700">{dep.subDepartmentName}</td>
+                      <td className="px-4 py-3 text-center font-medium">{dep.code}</td>
+                      <td className="px-4 py-3 text-center">{dep.name}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -135,14 +150,8 @@ export default function DepartmentForm({ mode = 'create', department = null, onB
           </div>
         )}
       </div>
-      <div className="mt-6 flex justify-end gap-3">
-        <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
-        {mode !== 'view' && (
-          <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-            {mode === 'edit' ? 'Guardar cambios' : 'Crear Departamento'}
-          </button>
-        )}
-      </div>
+
+      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
      </form>
     </div>
   );

@@ -236,6 +236,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         contacts: employee?.contacts ?? [],
         lockerAssingId: employee?.assign?.id ?? '',
         padlockAssignPass: employee?.assign?.locker?.padlock?.pass ?? '',
+        padlockAssignSerial: employee?.assign?.locker?.padlock?.serial ?? '',
         resetInstructions: employee?.assign?.locker?.padlock?.padlockPattern?.resetInstructions ?? '',
         unlockSequence: employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence ?? [],
     }
