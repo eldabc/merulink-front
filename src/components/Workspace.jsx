@@ -3,7 +3,7 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 const Calendar = lazy(() => import("./Calendar/Calendar"));
 const AssistantInput = lazy(() => import("./AssistantInput"));
 const DepartmentPage = lazy(() => import("./Department/DepartmentPage"));
-const SubDepartmentList = lazy(() => import("./SubDepartment/SubDepartmentList"));
+const SubDepartmentPage = lazy(() => import("./SubDepartment/SubDepartmentPage"));
 const PositionList = lazy(() => import("./Positions/PositionList"));
 const LockerRoomPage = lazy(() => import("./LockerRoom/LockerRoomPage"));
 const PadlockPage = lazy(() => import("./Padlock/PadlockPage"));
@@ -19,6 +19,7 @@ import { PadlockProvider } from "../context/PadlockContext";
 import { LockerAssignProvider } from "../context/LockerAssignContext";
 import { EmployeeProvider } from '../context/EmployeeContext'; 
 import { DepartmentProvider } from '../context/DepartmentContext'; 
+import { SubDepartmentProvider } from '../context/SubDepartmentContext'; 
 import { PadlockPatternProvider } from '../context/PadlockPatternContext'; 
 import { useNotification } from "../context/NotificationContext";
 
@@ -58,6 +59,12 @@ const DepartmentLayout = () => (
   </DepartmentProvider>
 )
 
+const SubDepartmentLayout = () => (
+  <SubDepartmentProvider>
+    <Outlet />
+  </SubDepartmentProvider>
+)
+
 const PadlockPatternLayout = () => (
   <PadlockPatternProvider>
     <Outlet />
@@ -81,8 +88,12 @@ export default function Workspace({ activeMenu, activePath }) {
         <Route element={<DepartmentLayout />}>
           <Route path="/empleados/departamentos/*" element={<div className="main-workspace"><DepartmentPage /></div>} />
         </Route>
-
-        <Route path="/empleados/sub-departamentos" element={<div className="main-workspace"><SubDepartmentList /></div>} />
+        
+        {/* SubDepartamentos */}
+        <Route element={<SubDepartmentLayout />}>
+          <Route path="/empleados/sub-departamentos/*" element={<div className="main-workspace"><SubDepartmentPage /></div>} />
+        </Route>
+        
         <Route path="/empleados/cargos" element={<div className="main-workspace"><PositionList /></div>} />
         
         {/* Locker Room */}

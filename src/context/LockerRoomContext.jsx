@@ -1,8 +1,8 @@
+import axios from 'axios';
+import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect  } from 'react';
 import { lockerCategories } from '../utils/StaticData/locker-room-utils';
 import { useNotification } from "../context/NotificationContext";
-import axios from 'axios';
-import { ENV } from '../config/env';
 
 const LockerRoomContext = createContext();
 

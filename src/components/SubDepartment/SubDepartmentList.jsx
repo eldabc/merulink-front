@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNotification } from "../../context/NotificationContext";  
 import { SubDepartmentProvider, useSubDepartments } from "../../context/SubDepartmentContext";
 import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
@@ -9,31 +9,21 @@ import SubDepartmentAdd from './SubDepartmentAdd';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
-import { useMemo } from 'react';
+import RowTableLoading from '../Shared/RowTableLoading';
 
-export default function SubSubDepartmentList() {
-	const { showNotification } = useNotification();
-		return (
-			<SubDepartmentProvider initialData={subDepartments} showNotification={showNotification}>
-				<SubDepartmentListContent />
-			</SubDepartmentProvider>
-		);
-}
+export default function SubDepartmentList() {
 
-// Componente interno que usa el contexto
-function SubDepartmentListContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
   const [hasSearched, setHasSearched] = useState(false);
-  const [selectedSubDepartment, setSelectedSubDepartment] = useState(null);
+  // const [selectedSubDepartment, setSelectedSubDepartment] = useState(null);
   const [addSubDepartment, setAddSubDepartment] = useState(null);
-  const itemsPerPage = 10;
   const [show, setShow] = useState(false);
   const { showNotification } = useNotification();
-  
-  // Leer del contexto (fuente única de verdad)
   const { subDepartmentData, setSubDepartmentData } = useSubDepartments();
+
+  const itemsPerPage = 10;
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
@@ -47,7 +37,7 @@ function SubDepartmentListContent() {
 
   const SUB_DEPARTMENTS_SEARCH_FIELDS = [
     'code', 
-    'subDepartmentName',
+    'name',
     'departmentName'
   ];
 
@@ -64,24 +54,25 @@ function SubDepartmentListContent() {
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredSubDepartments : subDepartmentData;
+  
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-
+  console.log("paginatedSubDepartments", paginatedSubDepartments)
   // Si hay departamento seleccionado, mostrar detalle
-  if (selectedSubDepartment) {
-    const subDepartmentSelected = subDepartmentData .find(d => d.id === selectedSubDepartment);
-    return <SubDepartmentForm 
-			mode="view"
-      subDepartment={subDepartmentSelected} 
-      onBack={() => setSelectedSubDepartment(null)} 
-      onUpdate={(updated) => {
-        setSubDepartmentData(prev => prev.map(e => e.id === subDepartmentSelected.id ? { ...e, ...updated } : e));
-        showNotification('Éxito', 'Sub-Departamento actualizado correctamente.');
-        setSelectedSubDepartment(null);
-      }}
-    />
-  }
+  // if (selectedSubDepartment) {
+  //   const subDepartmentSelected = subDepartmentData .find(d => d.id === selectedSubDepartment);
+  //   return <SubDepartmentForm 
+	// 		mode="view"
+  //     subDepartment={subDepartmentSelected} 
+  //     onBack={() => setSelectedSubDepartment(null)} 
+  //     onUpdate={(updated) => {
+  //       setSubDepartmentData(prev => prev.map(e => e.id === subDepartmentSelected.id ? { ...e, ...updated } : e));
+  //       showNotification('Éxito', 'Sub-Departamento actualizado correctamente.');
+  //       setSelectedSubDepartment(null);
+  //     }}
+  //   />
+  // }
   if (addSubDepartment) {
     return (
       <SubDepartmentAdd
@@ -134,15 +125,18 @@ function SubDepartmentListContent() {
               </tr>
             </thead>
             <tbody>
-              {paginatedSubDepartments.map((subDep) => (
-                subDep.status && (
+              {loading ? (
+                <RowTableLoading />
+              ) : (
+                <>
+                {paginatedSubDepartments.map((subDep) => (
                   <SubDepartmentRow 
                     key={subDep.id}
                     subDep={subDep} 
-                    setSelectedSubDepartment={setSelectedSubDepartment}
                   />
-                )
-              ))}
+                ))}
+                </>
+              )} 
             </tbody>
           </table>
         </div>
@@ -158,7 +152,7 @@ function SubDepartmentListContent() {
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
           totalPages={totalPages}
-          moduleName={'Departamento'}
+          moduleName={'Subdepartamento'}
         />
       </div>
   );

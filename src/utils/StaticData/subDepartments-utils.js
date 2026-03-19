@@ -3,7 +3,7 @@ export const subDepartments = [
   {
     "id": 1,
     "code": 11,
-    "subDepartmentName": "Contabilidad",
+    "name": "Contabilidad",
     "departmentId": 1,
     "departmentName": "Administración",
     "departmentCode": 1,
@@ -12,7 +12,7 @@ export const subDepartments = [
   {
     "id": 2,
     "code": 12,
-    "subDepartmentName": "Auditoría",
+    "name": "Auditoría",
     "departmentId": 1,
     "departmentName": "Administración",
     "departmentCode": 1,
@@ -21,7 +21,7 @@ export const subDepartments = [
   {
     "id": 3,
     "code": 13,
-    "subDepartmentName": "Cobranza",
+    "name": "Cobranza",
     "departmentId": 1,
     "departmentName": "Administración",
     "departmentCode": 1,
@@ -30,7 +30,7 @@ export const subDepartments = [
   {
     "id": 4,
     "code": 14,
-    "subDepartmentName": "Tributos",
+    "name": "Tributos",
     "departmentId": 1,
     "departmentName": "Administración",
     "departmentCode": 1,
@@ -39,7 +39,7 @@ export const subDepartments = [
   {
     "id": 5,
     "code": 15,
-    "subDepartmentName": "Compras",
+    "name": "Compras",
     "departmentId": 1,
     "departmentName": "Administración",
     "departmentCode": 1,
@@ -48,7 +48,7 @@ export const subDepartments = [
   {
     "id": 6,
     "code": 16,
-    "subDepartmentName": "Almacen",
+    "name": "Almacen",
     "departmentId": 1,
     "departmentName": "Administración",
     "departmentCode": 1,
@@ -59,7 +59,7 @@ export const subDepartments = [
   {
     "id": 7,
     "code": 21,
-    "subDepartmentName": "Front Desk",
+    "name": "Front Desk",
     "departmentId": 2,
     "departmentName": "Recepción",
     "departmentCode": 2,
@@ -68,7 +68,7 @@ export const subDepartments = [
   {
     "id": 8,
     "code": 22,
-    "subDepartmentName": "Reserva",
+    "name": "Reserva",
     "departmentId": 2,
     "departmentName": "Recepción",
     "departmentCode": 2,
@@ -77,7 +77,7 @@ export const subDepartments = [
   {
     "id": 9,
     "code": 23,
-    "subDepartmentName": "Botones",
+    "name": "Botones",
     "departmentId": 2,
     "departmentName": "Recepción",
     "departmentCode": 2,
@@ -88,7 +88,7 @@ export const subDepartments = [
   {
     "id": 10,
     "code": 31,
-    "subDepartmentName": "Supervisoras",
+    "name": "Supervisoras",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
     "departmentCode": 3,
@@ -97,7 +97,7 @@ export const subDepartments = [
   {
     "id": 11,
     "code": 32,
-    "subDepartmentName": "Aseadora",
+    "name": "Aseadora",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
     "departmentCode": 3,
@@ -106,7 +106,7 @@ export const subDepartments = [
   {
     "id": 12,
     "code": 33,
-    "subDepartmentName": "Camareras",
+    "name": "Camareras",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
     "departmentCode": 3,
@@ -115,7 +115,7 @@ export const subDepartments = [
   {
     "id": 15,
     "code": 34,
-    "subDepartmentName": "Lavanderia",
+    "name": "Lavanderia",
     "departmentId": 3,
     "departmentName": "Ama de Llaves",
     "departmentCode": 3,
@@ -126,7 +126,7 @@ export const subDepartments = [
   {
     "id": 16,
     "code": 41,
-    "subDepartmentName": "Cocina",
+    "name": "Cocina",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
     "departmentCode": 4,
@@ -135,7 +135,7 @@ export const subDepartments = [
   {
     "id": 17,
     "code": 42,
-    "subDepartmentName": "Restaurante",
+    "name": "Restaurante",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
     "departmentCode": 4,
@@ -144,7 +144,7 @@ export const subDepartments = [
   {
     "id": 18,
     "code": 43,
-    "subDepartmentName": "Barra",
+    "name": "Barra",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
     "departmentCode": 4,
@@ -153,7 +153,7 @@ export const subDepartments = [
   {
     "id": 19,
     "code": 44,
-    "subDepartmentName": "Cajero",
+    "name": "Cajero",
     "departmentId": 4,
     "departmentName": "Alimentos y Bebidas",
     "departmentCode": 4,
@@ -164,7 +164,7 @@ export const subDepartments = [
   {
     "id": 20,
     "code": 51,
-    "subDepartmentName": "Ventas",
+    "name": "Ventas",
     "departmentId": 5,
     "departmentName": "Ventas",
     "departmentCode": 5,
@@ -173,7 +173,7 @@ export const subDepartments = [
   {
     "id": 21,
     "code": 52,
-    "subDepartmentName": "Banquetes",
+    "name": "Banquetes",
     "departmentId": 5,
     "departmentName": "Ventas",
     "departmentCode": 5,

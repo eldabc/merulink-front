@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { yupResolver } from '@hookform/resolvers/yup';
 import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
 import { departments } from '../../utils/StaticData/departments-utils';  
@@ -9,13 +11,19 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft } from "lucide-react";
 import '../../Tables.css';
 
-export default function SubDepartmentForm({ mode = 'create', subDepartment = null, onBack, onSave, onUpdate }) {
-  const [isEditing, setIsEditing] = useState(false); 
-  const { createSubDepartment, updateSubDepartment } = useSubDepartments();
+export default function SubDepartmentForm({ mode = 'create', onBack }) { //, subDepartment = null, onSave, onUpdate
+  // const [isEditing, setIsEditing] = useState(false); 
+  const { subDepartmentData, createSubDepartment, updateSubDepartment } = useSubDepartments();
 
-  const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({ //, watch, control
     resolver: yupResolver(subDepartmentValidationSchema),
   });
+
+  const { id } = useParams();
+  const createMode = mode === 'create';
+  const viewMode = mode === 'view';
+  const editMode = mode === 'edit';
+  const subDepartment = subDepartmentData.find(e => e.id === Number(id));
 
   // Generar código
   const generateNewCode = (departmentId) => {
@@ -47,16 +55,16 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   };
 
   useEffect(() => {
-    if (subDepartment && mode === 'edit' || mode === 'view') {
+    if (subDepartment && editMode || viewMode) {
       reset({
         code: subDepartment?.code ?? '',
-        subDepartmentName: subDepartment?.subDepartmentName ?? '',
+        name: subDepartment?.name ?? '',
         departmentId: subDepartment?.departmentId ?? '',
       });
-    } else if (mode === 'create') {
+    } else if (createMode) {
       reset({
         code: '',
-        subDepartmentName: '',
+        name: '',
         departmentId: '',
       });
     }
@@ -65,7 +73,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
   const onSubmit = async (data) => {
     let success = false;
     
-    if (mode === 'edit' && subDepartment) {
+    if (editMode && subDepartment) {
         console.log("Actualizando:", data);
         
         const updatedData = { ...subDepartment, ...data };
@@ -83,7 +91,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
     if (!formErrors) return;
   };
   
-  if (isEditing){ return <SubDepartmentForm mode="edit" subDepartment={subDepartment} onBack={() => setIsEditing(false)} />;}
+  // if (isEditing){ return <SubDepartmentForm mode="edit" subDepartment={subDepartment} onBack={() => setIsEditing(false)} />;}
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -100,17 +108,17 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-30 h-10 overflow-hidden flex items-center justify-center ml-2.5"></div>
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Sub-Departamento' ):( 'Datos Sub-Departamento')}</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Sub-Departamento' ):( 'Datos Sub-Departamento')}</h3>
             <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1"> Departamento: *</label>
               </div>
               <div>
                 <select 
-                  disabled= {mode === 'view'}
+                  disabled= {viewMode}
                   {...register('departmentId', { onChange: handleDepartmentChange })} 
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.departmentId ? 'border-red-500' : ''}
-                   ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
+                   ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                     {departments.map(dep => (
                       <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
@@ -123,12 +131,12 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
               </div>
               <div>
                 <input
-                  readOnly={mode === 'view'}
-                  {...register('subDepartmentName')}
-                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.subDepartmentName ? 'border-red-500' : ''}
-                  ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                  readOnly={viewMode}
+                  {...register('name')}
+                  className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.name ? 'border-red-500' : ''}
+                  ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
                 />
-                {errors?.subDepartmentName && <p className="text-red-400 text-xs mt-1">{errors.subDepartmentName.message}</p>}  
+                {errors?.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}  
               </div>
               <div>
                 <label className="block text-xl font-medium text-gray-300 mt-1">Código: *</label>
@@ -144,7 +152,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
             </div>
           </div>
         </div>
-        {mode === 'view' && (
+        {viewMode && (
           <div className="mt-6">
             <h3 className="text-2xl font-bold mb-4 text-white">Departamento</h3>
             <div className="rounded-lg shadow">
@@ -157,8 +165,8 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
                 </thead>
                 <tbody>
                   <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
-                    <td className="px-4 py-3 text-white-800 font-medium">{subDepartment.departmentCode}</td>
-                    <td className="px-4 py-3 text-white-700">{subDepartment.departmentName}</td>
+                    <td className="px-4 py-3 text-white-800 font-medium">{subDepartment?.department?.code}</td>
+                    <td className="px-4 py-3 text-white-700">{subDepartment?.department?.departmentName}</td>
                   </tr>
                 </tbody>
               </table>
@@ -170,7 +178,7 @@ export default function SubDepartmentForm({ mode = 'create', subDepartment = nul
         <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
         {mode !== 'view' && (
           <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-            {mode === 'edit' ? 'Guardar cambios' : 'Crear Sub-Departamento'}
+            {editMode ? 'Guardar cambios' : 'Crear Sub-Departamento'}
           </button>
         )}
       </div>

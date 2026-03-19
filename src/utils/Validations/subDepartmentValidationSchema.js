@@ -9,7 +9,7 @@ export const subDepartmentValidationSchema = yup.object().shape({
     .matches(/^[0-9]+$/, 'Solo se permiten números.')
     .max(3, 'Debe contener 3 dígitos'), 
 
-  subDepartmentName: yup
+  name: yup
     .string()
     .required('Nombre del subdepartamento es requerido')
     .max(30, 'Debe contener máximo 30 caracteres')
