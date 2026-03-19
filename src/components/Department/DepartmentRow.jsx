@@ -2,20 +2,19 @@ import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useDepartments } from '../../context/DepartmentContext';
-import { getStatusColor, getStatusName } from '../../utils/status-utils';
-import { XMarkIcon } from '@heroicons/react/24/solid';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 
 export default function EmployeeRow({ dep }) {
   
   const navigate = useNavigate();
+  const { deleteDepartment } = useDepartments();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   
   const blockBtn = dep.subDepartments?.length > 0 ? true : false;
   const title = blockBtn ? 'No se puede eliminar, departamento tiene subDepartamentos asociados' : 'Eliminar';
-  // console.log("dep", dep);
+  
 
   const handleSelectedDepartment = (id) => {
     navigate(`/empleados/departamentos/ver/${id}`, { 
@@ -31,7 +30,7 @@ export default function EmployeeRow({ dep }) {
   const handleConfirmDelete = async () => {
     if (!selectedDepartment) return;
 
-    await deletePadlock(selectedDepartment);
+    await deleteDepartment(selectedDepartment);
     setIsModalOpen(false);
     setSelectedDepartment(null);
   };
@@ -60,11 +59,11 @@ export default function EmployeeRow({ dep }) {
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
-            setSelectedLocker(null);
+            setSelectedDepartment(null);
           }}
           onConfirm={handleConfirmDelete}
           title="Eliminar Departamento"
-          message={`¿Estás seguro de que deseas eliminar Departamento "${selectedDepartment?.code}"?`}
+          message={`¿Está seguro de que desea eliminar el Departamento "${selectedDepartment?.departmentName}"?`}
         />
       </td>
     </tr>

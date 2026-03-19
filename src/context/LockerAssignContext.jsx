@@ -3,10 +3,6 @@ import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect, useMemo  } from 'react';
 import { useNotification } from "./NotificationContext";
 
-import { padlocks } from '../utils/StaticData/padlock-utils.js';
-import { employees } from '../utils/StaticData/employee-utils.js';
-
-import { departments } from '../utils/StaticData/departments-utils.js';
 import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
 
 const LockerAssignContext = createContext();
@@ -38,7 +34,7 @@ export const LockerAssignProvider = ({ children }) => {
       locker: { ...locker }
     }));
 
-    return [...assignments, ...availableLockersFormat];
+    return [...availableLockersFormat, ...assignments];
   }, [assignments, lockers]);
 
   useEffect(() => {

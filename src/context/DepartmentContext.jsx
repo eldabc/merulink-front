@@ -23,7 +23,6 @@ export const DepartmentProvider = ({ children }) => {
     try {
 
       const response = await axios.get(`${ENV.API_BACK_URL}departments`);
-      console.log("des", response.data.data)
       setDepartmentData(response.data.data);
 
     } catch (error) {
@@ -75,7 +74,7 @@ export const DepartmentProvider = ({ children }) => {
       const departmentId = formData.id;
 
       if (!departmentId) {
-        showNotification('No se encontró el ID del department', error.response.data.message, 'error');
+        showNotification('No se encontró el ID del departamento', error.response.data.message, 'error');
         return false;
       }
 
@@ -83,10 +82,9 @@ export const DepartmentProvider = ({ children }) => {
       console.log("Actualizado:", updatedDepartment);
       
       const response = await axios.put(`${ENV.API_BACK_URL}departments/${departmentId}`, updatedDepartment);
-      
+
       setDepartmentData(prevData => {
         const filteredData = prevData.filter(department => department.id !== departmentId);
-        // El dato actualizado primero
         return [response.data.data, ...filteredData];
       });
 
@@ -99,13 +97,30 @@ export const DepartmentProvider = ({ children }) => {
     }
   };
   
-  // Se puede añadir más funciones (ojo)
+  // Eliminar
+  const deleteDepartment = async (department) => {
+    try {
+      await axios.delete(`${ENV.API_BACK_URL}departments/${department.id}`);
+
+      setDepartmentData(prevData => {
+        return prevData.filter(item => item.id !== department.id);
+      });
+
+      showNotification(`Departamento ${department.departmentName} eliminado con éxito`);
+      return true;
+    } catch (error) {
+      showNotification('Error al eliminar Departamento', error.response.data.message, 'error');
+      return false;
+    }
+  };
+  
   const contextValue = {
     departmentData,
     loading,
     setDepartmentData,
     createDepartment,
     updateDepartment,
+    deleteDepartment,
   };
 
   return (

@@ -11,19 +11,14 @@ import ErrorMessage from '../Shared/ErrorMessage';
 import TitleHeader from '../Shared/TitleHeader';
 import '../../Tables.css';
 
-export default function DepartmentForm({ mode = 'create', onUpdate }) { //, department = null, onBack, onSave
+export default function DepartmentForm({ mode = 'create', onUpdate }) {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const { departmentData, createDepartment } = useDepartments();
+  const { departmentData, createDepartment, updateDepartment } = useDepartments();
   
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ //control, watch, setValue, 
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(departmentValidationSchema),
   });
-
-  // const { fields, append, remove } = useFieldArray({
-  //   control,
-  //   name: 'contacts',
-  // });
 
   const { id } = useParams();
   const createMode = mode === 'create';
@@ -63,7 +58,7 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) { //, depa
     if (editMode && department) {
       const dataEdit = { 
         ...data, 
-        id: locker.id, 
+        id: department.id, 
       }
       success = await updateDepartment(dataEdit);
     } else {
@@ -98,7 +93,7 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) { //, depa
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
-          <div className='mx-auto'>
+          <div className='mx-auto mt-6'>
               <TitleHeader title={mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full m-6 text-xs">
                 

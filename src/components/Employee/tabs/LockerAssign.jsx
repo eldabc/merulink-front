@@ -103,13 +103,13 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
                 </div>
                 <LabelFieldForm field="Serial candado" simbol="*" />
                 <input disabled={true}  
-                      type="text" {...register('padlockAssignSerial')} 
-                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
+                      {...register('padlockAssignSerial')} 
+                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl cursor-not-allowed ${disabledClasses} `} 
                 />
                 <LabelFieldForm field="Clave candado" simbol="*" />
                 <input disabled={true}  
-                      type="text" {...register('padlockAssignPass')} 
-                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
+                      {...register('padlockAssignPass')} 
+                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl cursor-not-allowed ${disabledClasses} `} 
                 />
               </div>
               <div className='flex flex-col border border-[#ffffff21] md:pl-4 p-7'>
