@@ -14,15 +14,12 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
 
    useEffect (() => {
     if(!useLockerWatch) {
-        setValue('lockerAssingId', '');
-        setValue('padlockAssignPass', '');
+      setValue('lockerAssingId', '');
+      setValue('padlockAssignPass', '');
+      setValue('padlockAssignSerial', '');
     }
-  }, [mode]);
 
-  const lockerAssignSelected = empLockerAssign.find(
-    d => d.locker?.id === Number(lockerAssingIdWatch)
-  );
-  console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected, empLockerAssign)
+  }, [mode, useLockerWatch]); 
 
   useEffect(() => {
     if (!previousSex.current) {
@@ -34,9 +31,10 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
     if (previousSex.current !== selectedSex && mode !== 'create') {
       setValue('lockerAssingId', '');
       setValue('padlockAssignPass', '');
+      setValue('padlockAssignSerial', '');
     }
 
-  previousSex.current = selectedSex;
+    previousSex.current = selectedSex;
   }, [selectedSex]);
 
   const renderLockerAssigns = () => {
@@ -44,25 +42,29 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
 
     return empLockerAssign
       .filter(assign => assign.locker?.category?.key === lockerAssignCategoryKey)
-      .map(assign => (
-        <option key={`lockerAssign-${assign?.id}`} className='bg-[#3c4042]' value={assign?.locker?.id}>
+      .map((assign, index) => (
+        <option key={`lockerAssign-${assign?.id}-${index}`} className='bg-[#3c4042]' value={assign?.locker?.id}>
           {assign.locker.code}
         </option>
-    ));
+      ));
   };
 
-  const handleAssignChange = (e) => {
-  const selectedId = e.target.value;
+  const lockerAssignSelected = empLockerAssign.find(
+    d => d.locker?.id === Number(lockerAssingIdWatch)
+  );
+
+  useEffect(() => {
+    const selectedId = lockerAssingIdWatch;
 
     if (!selectedId) {
       setValue('padlockAssignPass', '');
+      setValue('padlockAssignSerial', '');
       return;
     }
-
-    const selectedAssign = empLockerAssign.find( a => String(a.id) === String(selectedId) );
-    setValue('padlockAssignPass', selectedAssign?.locker?.padlock?.pass ?? '');
-    setValue('padlockAssignSerial', selectedAssign?.locker?.padlock?.serial ?? '');
-  };
+    // console.log("lockerAssignSelected", lockerAssingIdWatch, lockerAssignSelected);
+    setValue('padlockAssignPass', lockerAssignSelected?.locker?.padlock?.pass ?? '');
+    setValue('padlockAssignSerial', lockerAssignSelected?.locker?.padlock?.serial ?? '');
+  }, [lockerAssignSelected]);
 
   const messagge = !selectedSex ? "¡Debe seleccionar Sexo!" : '';
   return (
@@ -77,39 +79,36 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
         <>
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">¿Usa Locker?</span>
-            <input 
-              disabled={!isEmployeeActive || viewMode}
-              type="checkbox" 
-              {...register('useLocker')} 
-              className={`w-4 h-4 rounded ${disabledClasses}`} 
-              // onClick={() => !createMode && toggleEmployeeField(employee?.id, "useLocker")} 
-               /> 
+              <span className="text-sm">¿Usa Locker?</span>
+              <input 
+                disabled={!isEmployeeActive || viewMode}
+                type="checkbox" 
+                {...register('useLocker')} 
+                className={`w-4 h-4 rounded ${disabledClasses}`} 
+              /> 
             </label>
           </div>
           {useLockerWatch && (
             <>
-              <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border 
-                        border-[#ffffff21] md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                          md:[&>*:nth-child(2n)]:pl-4 p-7'
-              >
+              <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
                 <div className='max-w-3xl'>
                   <select 
                     disabled={viewMode}
-                    {...register('lockerAssingId', { onChange: handleAssignChange } )}
+                    {...register('lockerAssingId')}
                     className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses} `} 
                   >
                     <option className='bg-[#3c4042]' value="">Seleccionar Locker...</option>
                     {renderLockerAssigns()}
                   </select>
                 </div>
+                <LabelFieldForm field="Serial candado" simbol="*" />
+                <input disabled={true}  
+                      type="text" {...register('padlockAssignSerial')} 
+                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
+                />
                 <LabelFieldForm field="Clave candado" simbol="*" />
                 <input disabled={true}  
                       type="text" {...register('padlockAssignPass')} 
-                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
-                />
-                <input disabled={true}  
-                      type="text" {...register('padlockAssignSerial')} 
                       className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl  bg-gray-700 text-gray-300 cursor-not-allowed ${disabledClasses} `} 
                 />
               </div>
