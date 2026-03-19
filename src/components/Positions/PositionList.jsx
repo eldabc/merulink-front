@@ -98,11 +98,11 @@ function PositionListContent() {
   }
 
   return (
-      <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
+      <div className="main-data-cont table-container">
         
         {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
-        <div className="titles-table flex justify-between items-center mb-4">
+        <div className="titles-table">
           <h2 className="text-2xl font-bold">Listado de Cargos</h2>
           <div className="text-sm">
             <button

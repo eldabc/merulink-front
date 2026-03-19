@@ -13,7 +13,7 @@ function BankingMondaysList({events, allBankingEvents}) {
   };
 
   return (
-    <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
+    <div className="main-data-cont table-container">
 
       {events && events.length === 0 ? (
         <div className="p-4">No existe calendario Bancario para este año.</div>

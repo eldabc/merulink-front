@@ -89,7 +89,7 @@ function PadlockPatternForm ({ mode = 'create' }) {
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
-              <div className="titles-table flex justify-center items-center mb-4"></div>
+              <div className="titles-table"></div>
               <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
                   <div className='div-border'>
                     <div className="mt-6">     

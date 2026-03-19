@@ -55,8 +55,8 @@ function LockerRoomList() {
   const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-      <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
-        <div className="titles-table flex justify-between items-center mb-4">
+      <div className="main-data-cont table-container">
+        <div className="titles-table">
           
           <TitleHeader title="Listado de Lockers" />
           <div className="text-sm">

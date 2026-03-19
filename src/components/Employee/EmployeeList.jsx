@@ -3,8 +3,6 @@ import { useNotification } from "../../context/NotificationContext";
 import { useEmployees } from '../../context/EmployeeContext'; 
 import { useNavigate } from 'react-router-dom';
 
-// import EmployeeDetail from './EmployeeDetail';
-// import EmployeeAdd from './EmployeeAdd';
 import EmployeeRow from './EmployeeRow';
 import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
@@ -68,11 +66,11 @@ export default function EmployeeList() {
   const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
 return (
-    <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
+    <div className="main-data-cont table-container">
       
       {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
-      <div className="titles-table flex justify-between items-center mb-4">
+      <div className="titles-table">
         <TitleHeader title='Listado de Empleados' />
         <ButtonNavigate url={`/empleados/nuevo`} navigate={navigate} />
       </div>

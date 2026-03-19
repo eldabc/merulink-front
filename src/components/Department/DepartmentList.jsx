@@ -4,8 +4,6 @@ import { useDepartments } from "../../context/DepartmentContext";
 
 import DepartmentRow from './DepartmentRow';
 import Pagination from '../Pagination';
-import DepartmentForm from './DepartmentForm';
-import DepartmentAdd from './DepartmentAdd';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
@@ -19,8 +17,7 @@ export default function DepartmentList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  // const [addDepartment, setAddDepartment] = useState(null);
+  // const [selectedDepartment, setSelectedDepartment] = useState(null);
   const { loading, departmentData, setDepartmentData } = useDepartments();
 
   const itemsPerPage = 10;
@@ -58,37 +55,23 @@ export default function DepartmentList() {
     setCurrentPage(1);
   };
 
-  if (selectedDepartment) {
-    const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
-    return <DepartmentForm 
-      mode="view"
-      department={departmentSelected} 
-      onBack={() => setSelectedDepartment(null)} 
-      onUpdate={(updated) => {
-        setDepartmentData(prev => prev.map(e => e.id === departmentSelected.id ? { ...e, ...updated } : e));
-        showNotification('Éxito', 'Departamento actualizado correctamente.');
-        setSelectedDepartment(null);
-      }}
-    />
-  }
-
-  // if (addDepartment) {
-  //   return (
-  //     <DepartmentAdd
-  //       department={addDepartment}
-  //       onBack={() => setAddDepartment(null)}
-  //       onCreated={(newEmp) => {
-  //         setDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
-  //         setAddDepartment(null);
-  //         showNotification('Éxito', 'Departamento creado correctamente.');
-  //       }}
-  //     />
-  //   );
+  // if (selectedDepartment) {
+  //   const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
+  //   return <DepartmentForm 
+  //     mode="view"
+  //     department={departmentSelected} 
+  //     onBack={() => setSelectedDepartment(null)} 
+  //     onUpdate={(updated) => {
+  //       setDepartmentData(prev => prev.map(e => e.id === departmentSelected.id ? { ...e, ...updated } : e));
+  //       showNotification('Éxito', 'Departamento actualizado correctamente.');
+  //       setSelectedDepartment(null);
+  //     }}
+  //   />
   // }
 
   return (
-      <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
-        <div className="titles-table flex justify-between items-center mb-4">
+      <div className="main-data-cont table-container">
+        <div className="titles-table">
           <TitleHeader title="Listado de Departamentos" />
           <ButtonNavigate url={`/empleados/departamentos/nuevo`} navigate={navigate}  />
         </div>
@@ -126,7 +109,7 @@ export default function DepartmentList() {
                     <DepartmentRow 
                       key={dep.id}
                       dep={dep} 
-                      setSelectedDepartment={setSelectedDepartment}
+                      // setSelectedDepartment={setSelectedDepartment}
                     />
                   ))
                 )

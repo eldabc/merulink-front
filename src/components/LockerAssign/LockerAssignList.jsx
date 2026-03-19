@@ -100,8 +100,8 @@ function LockerAssignList() {
   };
 
   return (
-    <div className="md:min-w-4xl overflow-x-auto table-container p-4 bg-white-50 rounded-lg">
-        <div className="titles-table flex justify-between items-center mb-4">
+    <div className="main-data-cont table-container">
+        <div className="titles-table">
           
           <TitleHeader title="Asignación de Casilleros" />
         </div>

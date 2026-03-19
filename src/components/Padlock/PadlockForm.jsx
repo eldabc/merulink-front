@@ -97,7 +97,7 @@ function PadlockForm ({ mode = 'create' }) {
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
-              <div className="titles-table flex justify-center items-center mb-4">
+              <div className="titles-table">
               <div className="justify-center w-64">
                 <div className='mt-5'>
                   <h2 className="block text-2xl font-bold text-center"> Serial: *</h2>
