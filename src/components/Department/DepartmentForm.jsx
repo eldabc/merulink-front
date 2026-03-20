@@ -121,7 +121,7 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) {
           </div>
         </div>
         {department?.subDepartments && (
-          <div className="mt-6  ">
+          <div className="mt-6">
             <div className="shadow md:w-2xl mx-auto mb-4">
               
               <TitleHeader title="Sub-Departamentos" />

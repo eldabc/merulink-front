@@ -1,27 +1,29 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNotification } from "../../context/NotificationContext";  
-import { SubDepartmentProvider, useSubDepartments } from "../../context/SubDepartmentContext";
-import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
+import { useSubDepartments } from "../../context/SubDepartmentContext";
 import SubDepartmentRow from './SubDepartmentRow';
 import Pagination from '../Pagination';
-import SubDepartmentForm from './SubDepartmentForm';
 import SubDepartmentAdd from './SubDepartmentAdd';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
 import RowTableLoading from '../Shared/RowTableLoading';
+import TitleHeader from '../Shared/TitleHeader';
+import ButtonNavigate from '../Shared/ButtonNavigate';
 
 export default function SubDepartmentList() {
 
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
   const [hasSearched, setHasSearched] = useState(false);
-  // const [selectedSubDepartment, setSelectedSubDepartment] = useState(null);
+
   const [addSubDepartment, setAddSubDepartment] = useState(null);
   const [show, setShow] = useState(false);
   const { showNotification } = useNotification();
-  const { subDepartmentData, setSubDepartmentData } = useSubDepartments();
+  const { loading, subDepartmentData, setSubDepartmentData } = useSubDepartments();
 
   const itemsPerPage = 10;
 
@@ -58,21 +60,7 @@ export default function SubDepartmentList() {
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-  console.log("paginatedSubDepartments", paginatedSubDepartments)
-  // Si hay departamento seleccionado, mostrar detalle
-  // if (selectedSubDepartment) {
-  //   const subDepartmentSelected = subDepartmentData .find(d => d.id === selectedSubDepartment);
-  //   return <SubDepartmentForm 
-	// 		mode="view"
-  //     subDepartment={subDepartmentSelected} 
-  //     onBack={() => setSelectedSubDepartment(null)} 
-  //     onUpdate={(updated) => {
-  //       setSubDepartmentData(prev => prev.map(e => e.id === subDepartmentSelected.id ? { ...e, ...updated } : e));
-  //       showNotification('Éxito', 'Sub-Departamento actualizado correctamente.');
-  //       setSelectedSubDepartment(null);
-  //     }}
-  //   />
-  // }
+  
   if (addSubDepartment) {
     return (
       <SubDepartmentAdd
@@ -90,21 +78,11 @@ export default function SubDepartmentList() {
 
   return (
       <div className="main-data-cont table-container">
-        
-        {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
-
         <div className="titles-table">
-          <h2 className="text-2xl font-bold">Listado de Sub-Departamentos</h2>
-          <div className="text-sm">
-            <button
-              onClick={() => setAddSubDepartment({})}
-              className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
-            >
-              ← Nuevo Registro
-            </button>
-          </div>
+          <TitleHeader title="Listado de Sub-Departamentos" />
+          <ButtonNavigate url={`/empleados/sub-departamentos/nuevo`} navigate={navigate}  />
         </div>
-        {/* Filtro */}
+
         <FilterByFields
           searchValue={searchValue}
           onSearchChange={setSearchValue}
@@ -141,7 +119,6 @@ export default function SubDepartmentList() {
           </table>
         </div>
 
-        {/* Paginación */}
         <Pagination
           paginatedData={paginatedSubDepartments }
           startIndex={startIndex}
