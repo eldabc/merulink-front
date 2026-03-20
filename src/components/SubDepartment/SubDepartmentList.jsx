@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useNotification } from "../../context/NotificationContext";  
+// import { useNotification } from "../../context/NotificationContext";  
 import { useSubDepartments } from "../../context/SubDepartmentContext";
 import SubDepartmentRow from './SubDepartmentRow';
 import Pagination from '../Pagination';
-import SubDepartmentAdd from './SubDepartmentAdd';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
@@ -17,25 +16,25 @@ export default function SubDepartmentList() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
+  // const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
   const [hasSearched, setHasSearched] = useState(false);
 
-  const [addSubDepartment, setAddSubDepartment] = useState(null);
-  const [show, setShow] = useState(false);
-  const { showNotification } = useNotification();
+  // const [addSubDepartment, setAddSubDepartment] = useState(null);
+  // const [show, setShow] = useState(false);
+  // const { showNotification } = useNotification();
   const { loading, subDepartmentData, setSubDepartmentData } = useSubDepartments();
 
   const itemsPerPage = 10;
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
-    if (searchValue.trim() || filterStatus !== 'all') {
+    if (searchValue.trim()) { //|| filterStatus !== 'all'
       setHasSearched(true);
     } else {
       setHasSearched(false);
     }
     setCurrentPage(1);
-  }, [searchValue, filterStatus]);
+  }, [searchValue]); // , filterStatus
 
   const SUB_DEPARTMENTS_SEARCH_FIELDS = [
     'code', 
@@ -49,10 +48,10 @@ export default function SubDepartmentList() {
           subDepartmentData,
           searchValue,
           SUB_DEPARTMENTS_SEARCH_FIELDS,
-          filterStatus,
+          // filterStatus,
           normalizeText
       );
-  }, [subDepartmentData, searchValue, filterStatus]);
+  }, [subDepartmentData, searchValue]); // , filterStatus
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredSubDepartments : subDepartmentData;
@@ -60,21 +59,6 @@ export default function SubDepartmentList() {
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-  
-  // if (addSubDepartment) {
-  //   return (
-  //     <SubDepartmentAdd
-  //       subDepartment={addSubDepartment}
-  //       onBack={() => setAddSubDepartment(null)}
-  //       onCreated={(newEmp) => {
-  //         // assign an id and prepend to list
-  //         setSubDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
-  //         setAddSubDepartment(null);
-  //         showNotification('Éxito', 'Sub-Departamento creado correctamente.');
-  //       }}
-  //     />
-  //   );
-  // }
 
   return (
       <div className="main-data-cont table-container">
@@ -86,7 +70,7 @@ export default function SubDepartmentList() {
         <FilterByFields
           searchValue={searchValue}
           onSearchChange={setSearchValue}
-          filterStatus={filterStatus}
+          // filterStatus={filterStatus}
           onFilterStatus={setFilterStatus}
           moduleName='Sub-Departamento'
           placeholder='Ingrese código o nombre de Sub-departamento'
