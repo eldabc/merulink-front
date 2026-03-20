@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { subDepartments } from '../../utils/StaticData/subDepartments-utils';
-import { getDisabledClasses } from '../../utils/global-utils';  
+import { getDisabledClasses, generateCodeSubDep } from '../../utils/global-utils';  
 import { subDepartmentValidationSchema } from '../../utils/Validations/subDepartmentValidationSchema';
 import { useSubDepartments } from '../../context/SubDepartmentContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
@@ -16,7 +15,7 @@ import ErrorMessage from '../Shared/ErrorMessage';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import '../../Tables.css';
 
-export default function SubDepartmentForm({ mode = 'create', onBack }) {
+export default function SubDepartmentForm({ mode = 'create' }) {
 
   const navigate = useNavigate();
   const [loadingData, setLoadingData] = useState(true);
@@ -32,32 +31,18 @@ export default function SubDepartmentForm({ mode = 'create', onBack }) {
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
   const subDepartment = subDepartmentData.find(e => e.id === Number(id));
-  const disabledClasses = getDisabledClasses(viewMode, globalLoading)
-  // const disabledClasses = viewMode && 'cursor-not-allowed opacity-50';
-
-  // Generar código
-  const generateNewCode = (departmentId) => {
-    // convertir a número
-    const depIdNum = parseInt(departmentId, 10);
-    if (isNaN(depIdNum) || depIdNum <= 0) return '';
-
-    const countSubDepartments = subDepartments.filter(sub => sub.departmentId === depIdNum).length;
-
-    const newSubCodeSuffix = countSubDepartments + 1;
-    const newCode = `${depIdNum}${newSubCodeSuffix}`;
-
-    return String(newCode);
-  };
+  const disabledClasses = getDisabledClasses(viewMode, globalLoading);
+  console.log("subDepartmentData", subDepartmentData)
 
   // Al seleccionar
   const handleDepartmentChange = (e) => {
     const selectedDepartmentId = e.target.value;
     
     // establecer valor en react-hook-form
-    setValue('departmentId', selectedDepartmentId, { shouldValidate: true });
+    // setValue('departmentId', selectedDepartmentId, { shouldValidate: true });
 
     if (selectedDepartmentId) {       
-      const newCode = generateNewCode(selectedDepartmentId);
+      const newCode = generateCodeSubDep(selectedDepartmentId, subDepartmentData);
       setValue('code', newCode, { shouldValidate: true });
     } else {
       setValue('code', '', { shouldValidate: true });
@@ -76,14 +61,8 @@ export default function SubDepartmentForm({ mode = 'create', onBack }) {
       reset({
         code: subDepartment?.code ?? '',
         name: subDepartment?.name ?? '',
-        departmentId: subDepartment?.departmentId ?? '',
+        departmentId: subDepartment?.department.id ?? '',
       });
-    // } else if (createMode) {
-      // reset({
-      //   code: '',
-      //   name: '',
-      //   departmentId: '',
-      // });
     }
   }, [subDepartment, mode, reset]);
 
@@ -91,16 +70,16 @@ export default function SubDepartmentForm({ mode = 'create', onBack }) {
     let success = false;
     
     if (editMode && subDepartment) {
-        console.log("Actualizando:", data);
-        
         const updatedData = { ...subDepartment, ...data };
         success = await updateSubDepartment(updatedData);
     } else {
-        console.log("Creando:", data);
         success = await createSubDepartment(data);
     }
 
-    if (success) onBack();
+    if (success) {
+      if (createMode) navigate(-1);
+      else navigate(-2);
+    }
   };
 
   const onError = (formErrors) => {

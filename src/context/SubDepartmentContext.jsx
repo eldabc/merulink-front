@@ -38,15 +38,14 @@ export const SubDepartmentProvider = ({ children }) => {
     loadSubDepartments();
   }, [loadSubDepartments]);
 
-  // *** Crear
-  const formattedSubDepartment = async (formData) => {
+
+  const formattedSubDepartment = (formData) => {
     const departmentData =  getDepartmentNameById(formData.departmentId);
 
     return {
       id: formData.id ? formData.id : Date.now(),
       code: formData.code,
       name: formData.name,
-      status: true,
       department: { 
         id: formData.departmentId, 
         departmentCode: departmentData.code,
@@ -55,6 +54,8 @@ export const SubDepartmentProvider = ({ children }) => {
       
     };
   };
+
+  // *** Crear
   const createSubDepartment = async (formData) => {
 
     try {
@@ -70,7 +71,7 @@ export const SubDepartmentProvider = ({ children }) => {
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el sub-departamento', 'error');
+      showNotification('Error al crear el sub-departamento', error.response.data.message, 'error');
       return false;
     }
   };
@@ -86,11 +87,9 @@ export const SubDepartmentProvider = ({ children }) => {
         departmentName: departmentData.departmentName, 
     };
     
-    try {
-        // Llamada a la API/Backend (onUpdate)
-        // await api.put(`/subdepartments/${finalData.id}`, finalData); 
+    try { 
         
-        setSubDepartmentData(prevData => { // Actualiza el estado centralizado
+        setSubDepartmentData(prevData => {
           return prevData.map(subDep => 
             subDep.id === finalData.id ? finalData : subDep 
           );

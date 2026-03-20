@@ -61,20 +61,20 @@ export default function SubDepartmentList() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
   
-  if (addSubDepartment) {
-    return (
-      <SubDepartmentAdd
-        subDepartment={addSubDepartment}
-        onBack={() => setAddSubDepartment(null)}
-        onCreated={(newEmp) => {
-          // assign an id and prepend to list
-          setSubDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
-          setAddSubDepartment(null);
-          showNotification('Éxito', 'Sub-Departamento creado correctamente.');
-        }}
-      />
-    );
-  }
+  // if (addSubDepartment) {
+  //   return (
+  //     <SubDepartmentAdd
+  //       subDepartment={addSubDepartment}
+  //       onBack={() => setAddSubDepartment(null)}
+  //       onCreated={(newEmp) => {
+  //         // assign an id and prepend to list
+  //         setSubDepartmentData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
+  //         setAddSubDepartment(null);
+  //         showNotification('Éxito', 'Sub-Departamento creado correctamente.');
+  //       }}
+  //     />
+  //   );
+  // }
 
   return (
       <div className="main-data-cont table-container">
