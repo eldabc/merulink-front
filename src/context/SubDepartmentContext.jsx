@@ -41,7 +41,7 @@ export const SubDepartmentProvider = ({ children }) => {
 
   const formattedSubDepartment = (formData) => {
     const departmentData =  getDepartmentNameById(formData.departmentId);
-
+    
     return {
       id: formData.id ? formData.id : Date.now(),
       code: formData.code,
@@ -79,27 +79,29 @@ export const SubDepartmentProvider = ({ children }) => {
 
   // *** Actualizar
   const updateSubDepartment = async (formData) => {
-    const departmentData =  getDepartmentNameById(formData.departmentId);
-
-    const finalData = {
-        ...formData,
-        departmentCode: departmentData.code, 
-        departmentName: departmentData.departmentName, 
-    };
-    
     try { 
+      const subDepartmentId = formData.id;
+
+      if (!subDepartmentId) {
+        showNotification('No se encontró el ID del Subdepartamento', error.response.data.message, 'error');
+        return false;
+      }
+  
+      const updateSubDep = formattedSubDepartment(formData);
+      console.log("Actualizado:", updateSubDep);
+      
+      const response = await axios.put(`${ENV.API_BACK_URL}subdepartments/${subDepartmentId}`, updateSubDep);
         
         setSubDepartmentData(prevData => {
-          return prevData.map(subDep => 
-            subDep.id === finalData.id ? finalData : subDep 
-          );
+          const filteredData = prevData.filter(subDepartment => subDepartment.id !== subDepartmentId);
+          return [response.data.data, ...filteredData];
         });
 
-        showNotification('Sub-Departamento actualizado con éxito'); 
+        showNotification(`Sub-Departamento ${updateSubDep.name} actualizado con éxito`); 
         return true;
 
     } catch (error) {
-        showNotification('Error al actualizar', 'error');
+        showNotification('Error al actualizar', error.response.data.message, 'error');
         return false;
     }
   };
