@@ -1,36 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowLeft } from "lucide-react";
+import { getDisabledClasses } from '../../utils/global-utils';  
 import { positionValidationSchema } from '../../utils/Validations/positionValidationSchema';
 import { usePositions } from '../../context/PositionContext';
-import { PencilIcon } from "@heroicons/react/24/solid";
-import '../../Tables.css';
-import { departments } from '../../utils/StaticData/departments-utils';
+import { useGlobalData } from '../../context/GlobalDataContext';
+
 import { subDepartments } from '../../utils/StaticData/subDepartments-utils'; 
 import { newCodePosition } from '../../utils/Positions/positions-utils'
+import TitleHeader from '../Shared/TitleHeader';
+import HeadFormButtons from '../Shared/HeadFormButtons';
+import FooterFormButtons from '../Shared/FooterFormButtons';
+import ErrorMessage from '../Shared/ErrorMessage';
+import LabelFieldForm from '../Shared/LabelFieldForm';
+import '../../Tables.css';
 
-export default function PositionForm({ mode = 'create', position = null, onBack }) {
-  const { positionData } = usePositions();
-  const [isEditing, setIsEditing] = useState(false);
+export default function PositionForm({ mode = 'create' }) {
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { positionData, createPosition } = usePositions();
+  const { departments, globalLoading, loadDepartments } = useGlobalData();
+  const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
+
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(positionValidationSchema),
-    // 1. Valores por defecto al cargar
     defaultValues: {
       code: '',
-      positionName: '',
+      name: '',
       departmentId: '',
       subDepartmentId: ''
     }
   });
 
-  const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
   const selectedDepartmentId = watch('departmentId');
-  const selectedSubDepartmentId = watch('subDepartmentId');
+  const selectedSubDepartmentId = watch('subDepartmentId');  
+  const position = positionData.find(e => e.id === Number(id));
+  const createMode = mode === 'create';
+  const viewMode = mode === 'view';
+  const editMode = mode === 'edit';
+  const disabledClasses = getDisabledClasses(viewMode, globalLoading);
+  const subDepartmentIdDisabled = !selectedDepartmentId && 'cursor-not-allowed opacity-50';
 
-  // --- EFECTO 1: Inicialización (Solo cuando entra en edición o carga inicial) ---
+  useEffect(() => {  
+    if (departments.length === 0) {
+      loadDepartments(); 
+    }
+  }, []);
+
   useEffect(() => {
-    if ((mode === 'edit' || mode === 'view') && position) {
+    if ((editMode || viewMode) && position) {
       reset(position);
       // Cargar subdepartamentos filtrados si ya hay un departamento
       const filtered = subDepartments.filter(sd => String(sd.departmentId) === String(position.departmentId));
@@ -38,37 +58,48 @@ export default function PositionForm({ mode = 'create', position = null, onBack 
     }
   }, [mode, position, reset]);
 
-  // --- EFECTO 2: Lógica de Filtrado de Sub-departamentos ---
   useEffect(() => {
     if (selectedDepartmentId) {
-      const filtered = subDepartments.filter(sd => String(sd.departmentId) === String(selectedDepartmentId));
-      setFilteredSubDepartments(filtered);
+      const filtered = departments.find(sd => String(sd.id) === String(selectedDepartmentId));
+      setFilteredSubDepartments(filtered.subDepartments);
       
-      // Si el departamento NO tiene subdepartamentos, generamos código ya mismo
-      if (filtered.length === 0) {
+      // Sino hay Subdepartments genera código
+      if (filtered.subDepartments.length === 0) {
         const newCode = newCodePosition(selectedDepartmentId, 0, positionData);
         setValue('code', newCode);
       } else {
-        // Si hay subdepartamentos, limpiamos el código hasta que elijan uno
         setValue('code', '');
       }
     } else {
       setFilteredSubDepartments([]);
       setValue('code', '');
     }
-  }, [selectedDepartmentId, positionData, setValue]);
+  }, [selectedDepartmentId, positionData]);
 
-  // --- EFECTO 3: Lógica de Código por Sub-departamento ---
+  // Código por Sub-departamento
   useEffect(() => {
     if (selectedSubDepartmentId) {
       const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData);
       setValue('code', newCode);
     }
-  }, [selectedSubDepartmentId, selectedDepartmentId, positionData, setValue]);
+  }, [selectedSubDepartmentId]);
 
-  // ... resto del componente
+
   const onSubmit = async (data) => {
-    if (onSave) await onSave(data);
+    let success = false;
+    
+    if (editMode && position) {
+        const updatedData = { ...position, ...data };
+        success = await updatePosition(updatedData);
+    } else {
+        success = await createPosition(data);
+    }
+
+    if (success) {
+      if (createMode) navigate(-1);
+      else navigate(-2);
+    }
+    // if (onSave) await onSave(data);
   };
 
   const onError = (formErrors) => {
@@ -76,94 +107,74 @@ export default function PositionForm({ mode = 'create', position = null, onBack 
     if (!formErrors) return;
   };
   
-  const handleEditSave = async (formData) => {
-    // Llamar al backend para actualizar aquí (PUT)
-    if (onUpdate) onUpdate(formData);
-    setIsEditing(false);
-  };
-
-  if (isEditing) {
-    return <PositionForm mode="edit" position={position} onBack={() => setIsEditing(false)} onSave={handleEditSave} />;
-  }
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    {(viewMode) && <HeadFormButtons url={`/empleados/cargos/editar/${position?.id}`} data={[]} /> }
+
       <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <div className="buttons-bar flex gap-2 aling-items-right justify-end">
-              <button onClick={() => setIsEditing(true)} className="buttons-bar-btn flex text-3xl font-semibold" title="Editar">
-                <PencilIcon className="w-4 h-4 text-white-500" />
-              </button>
-              <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">
-                  <ArrowLeft className="w-4 h-4 text-white-500" />
-              </button>
-            </div>
+            
             <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
               <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
                 <div className="w-30 h-10 overflow-hidden flex items-center justify-center ml-2.5"></div>
                 <div>
-                  <h3 className="text-2xl font-bold mb-4 text-white">{mode === 'edit' ? ( 'Editar Cargo' ):( 'Datos del Cargo')}</h3>
-                  <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full mb-3">
-                    <div>
-                      <label className="block text-xl font-medium text-gray-300 mt-1">Departamento: *</label>
-                    </div>
+                  <TitleHeader title={editMode ? ( 'Editar Cargo' ):( 'Datos del Cargo')} />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3">
+
+                      <LabelFieldForm field="Departamento" simbol="*"/>
                     <div>
                       <select 
-                        disabled= {mode === 'view'}
+                        disabled= {viewMode}
                         {...register('departmentId')} 
-                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.departmentId ? 'border-red-500' : ''}
-                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}>
-                        <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}>
+
+                          <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
+
                           {departments.map(dep => (
                             <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
                           ))}
                       </select>
-                      {errors?.departmentId && <p className="text-red-400 text-xs mt-1">{errors.departmentId.message}</p>}  
+                      {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} />}  
                     </div>
 
-                    <div>
-                      <label className="block text-xl font-medium text-right text-gray-300 mt-1">Sub-departamento: </label>
-                    </div>
+                      <LabelFieldForm field="Sub-departamento" simbol="*"/>
                     <div>
                       <select 
-                        disabled={mode === 'view' || !selectedDepartmentId}
-                        {...register('subDepartmentId')} 
-                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${errors.subDepartmentId ? 'border-red-500' : ''}
-                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                        disabled={viewMode || !selectedDepartmentId}
+                        {...register('subDepartmentId')} //, { onChange: handleSubDepartmentChange }
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
                       >
                         <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                         {filteredSubDepartments.map(subDep => (
                           <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
-                            {subDep.subDepartmentName}
+                            {subDep.name}
                           </option>
                         ))}
                       </select>
-                      {errors?.code && <p className="text-red-400 text-xs mt-1">{errors.code.message}</p>}  
+                      {errors?.subDepartmentId && <ErrorMessage msg={errors.subDepartmentId.message} />}  
                     </div>
                   </div>
                   <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
-                    <div>
-                      <label className="block text-xl font-medium text-gray-300 mt-1">Nombre Cargo: *</label>
-                    </div>
+
+                      <LabelFieldForm field="Nombre Cargo" simbol="*"/>
                     <div>
                       <input
-                        readOnly={mode === 'view'}
-                        {...register('positionName')}
-                        className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${errors?.positionName ? 'border-red-500' : ''}
-                        ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                        readOnly={viewMode}
+                        {...register('name')}
+                        className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                       />
-                      {errors?.positionName && <p className="text-red-400 text-xs mt-1">{errors.positionName.message}</p>}  
+                      {errors?.name && <ErrorMessage msg={errors.name.message} />}  
                     </div>
-                    <div>
-                      <label className="block text-xl font-medium text-right text-gray-300 mt-1">Código: *</label>
-                    </div>
+
+                      <LabelFieldForm field="Código" simbol="*"/>
                     <div>
                       <input
-                        readOnly={mode === 'view'}
+                        readOnly={true}
                         {...register('code')}
-                        className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${errors?.code ? 'border-red-500' : ''}
-                          ${mode === 'view' ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-900'}`}
+                        className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed`}
                       />
-                      {errors?.code && <p className="text-red-400 text-xs mt-1">{errors.code.message}</p>}  
+                      {errors?.code && <ErrorMessage msg={errors.code.message} />}  
                     </div>
                   </div>
                 </div>
@@ -192,14 +203,7 @@ export default function PositionForm({ mode = 'create', position = null, onBack 
                 </div>
               )}
             </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <button type="button" onClick={onBack} className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg">Cancelar</button>
-              {mode !== 'view' && (
-                <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-                  {mode === 'edit' ? 'Guardar cambios' : 'Crear Cargo'}
-                </button>
-              )}
-            </div>
+            <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
            </form>
     </div>
   );

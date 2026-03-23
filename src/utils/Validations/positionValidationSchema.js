@@ -10,10 +10,10 @@ export const positionValidationSchema = yup.object().shape({
     .max(4, 'Debe contener máximo 4 dígitos')
     .min(3, 'Debe contener mínimo 3 dígitos'), 
     
-  positionName: yup
+  name: yup
     .string()
-    .required('Nombre del departamento es requerido')
+    .required('Nombre de Cargo es requerido')
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-\/]+$/, "Solo se permiten letras y los signos '-','/'.")
-    .max(40, 'Debe contener máximo 40 dígitos'),
+    .max(30, 'Debe contener máximo 30 dígitos'),
     
 });

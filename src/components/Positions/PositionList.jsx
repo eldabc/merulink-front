@@ -1,65 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNotification } from "../../context/NotificationContext";  
-import { PositionProvider, usePositions } from "../../context/PositionContext";
-import { positions } from '../../utils/StaticData/positions-utils';
+import { usePositions } from "../../context/PositionContext";
+
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 import FilterByFields from '../Filters/FilterByFields';
 import Pagination from '../Pagination';
-import { useMemo } from 'react';
 import PositionRow from './PositionRow';
 import PositionForm from './PositionForm';
-import PositionAdd from './PositionAdd';
+import TitleHeader from '../Shared/TitleHeader';
+import ButtonNavigate from '../Shared/ButtonNavigate';
+import RowTableLoading  from '../Shared/RowTableLoading';
 
 export default function PositionList() {
-  const { showNotification } = useNotification();
-    return (
-      <PositionProvider initialData={positions} showNotification={showNotification}>
-        <PositionListContent />
-      </PositionProvider>
-    );
-}
-
-// Componente interno que usa el contexto
-function PositionListContent() {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus
   const [hasSearched, setHasSearched] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState(null);
-  const [addPosition, setAddPosition] = useState(null);
+  // const [selectedPosition, setSelectedPosition] = useState(null);
   const itemsPerPage = 10;
-  const [show, setShow] = useState(false);
-  const { showNotification } = useNotification();
+  // const [show, setShow] = useState(false);
+  // const { showNotification } = useNotification();
   
   // Fuente única de verdad
-  const { positionData, setPositionData } = usePositions();
+  const { loading, positionData } = usePositions();
 
-  // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
+  // Ejecutar búsqueda automáticamente al teclear
   useEffect(() => {
-    if (searchValue.trim() || filterStatus !== 'all') {
+    if (searchValue.trim()) {
       setHasSearched(true);
     } else {
       setHasSearched(false);
     }
     setCurrentPage(1);
-  }, [searchValue, filterStatus]);
+  }, [searchValue]);
 
   const POSITIONS_SEARCH_FIELDS = [
     'code', 
-    'positionName'
+    'name'
   ];
 
-  // Filtrar empleados
+  // Filtrar
   const filteredPositions = useMemo(() => {
       return filterData(
           positionData,
           searchValue,
           POSITIONS_SEARCH_FIELDS,
-          filterStatus,
+          "",
           normalizeText
       );
-  }, [positionData, searchValue, filterStatus]);
+  }, [positionData, searchValue]);
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredPositions : positionData;
@@ -69,56 +60,44 @@ function PositionListContent() {
 
 
   // Si hay seleccionado, mostrar detalle
-  if (selectedPosition) {
-    const positionSelected = positionData.find(d => d.id === selectedPosition);
-    return <PositionForm 
-            mode="view"
-            position={positionSelected} 
-            onBack={() => setSelectedPosition(null)} 
-            onUpdate={(updated) => {
-              setPositionData(prev => prev.map(e => e.id === positionSelected.id ? { ...e, ...updated } : e));
-              showNotification('Éxito', 'Cargo actualizado correctamente.');
-              setSelectedPosition(null);
-            }}
-            />
-  }
-  if (addPosition) {
-    return (
-      <PositionAdd
-        position={addPosition}
-        onBack={() => setAddPosition(null)}
-        onCreated={(newEmp) => {
-          // assign an id and prepend to list
-          setPositionData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
-          setAddPosition(null);
-          showNotification('Éxito', 'Cargo creado correctamente.');
-        }}
-      />
-    );
-  }
+  // if (selectedPosition) {
+  //   const positionSelected = positionData.find(d => d.id === selectedPosition);
+  //   return <PositionForm 
+  //           mode="view"
+  //           position={positionSelected} 
+  //           onBack={() => setSelectedPosition(null)} 
+  //           onUpdate={(updated) => {
+  //             setPositionData(prev => prev.map(e => e.id === positionSelected.id ? { ...e, ...updated } : e));
+  //             showNotification('Éxito', 'Cargo actualizado correctamente.');
+  //             setSelectedPosition(null);
+  //           }}
+  //           />
+  // }
+  // if (addPosition) {
+  //   return (
+  //     <PositionAdd
+  //       position={addPosition}
+  //       onBack={() => setAddPosition(null)}
+  //       onCreated={(newEmp) => {
+  //         // assign an id and prepend to list
+  //         setPositionData(prev => [{ ...newEmp, id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1 }, ...prev]);
+  //         setAddPosition(null);
+  //         showNotification('Éxito', 'Cargo creado correctamente.');
+  //       }}
+  //     />
+  //   );
+  // }
 
   return (
-      <div className="main-data-cont table-container">
-        
-        {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
-
+      <div className="main-data-cont table-container">      
         <div className="titles-table">
-          <h2 className="text-2xl font-bold">Listado de Cargos</h2>
-          <div className="text-sm">
-            <button
-              onClick={() => setAddPosition({})}
-              className="mb-6 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold transition flex items-center gap-2"
-            >
-              ← Nuevo Registro
-            </button>
-          </div>
+          <TitleHeader title="Listado de Cargos" />
+          <ButtonNavigate url={`/empleados/cargos/nuevo`} navigate={navigate}  />
         </div>
-        {/* Filtro */}
+
         <FilterByFields
           searchValue={searchValue}
           onSearchChange={setSearchValue}
-          filterStatus={filterStatus}
-          onFilterStatus={setFilterStatus}
           moduleName='Cargo'
           placeholder={'Ingrese código o nombre del cargo'}
         />
@@ -133,18 +112,21 @@ function PositionListContent() {
               </tr>
             </thead>
             <tbody>
-              {paginatedPositions.map((position) => (
-                <PositionRow 
-                  key={position.id}
-                  position={position} 
-                  setSelectedPosition={setSelectedPosition}
-                />
-              ))}
+              {loading ? (
+                <RowTableLoading />
+              ) : (
+                paginatedPositions.map((position) => (
+                  <PositionRow 
+                    key={position.id}
+                    position={position} 
+                    // setSelectedPosition={setSelectedPosition}
+                  />
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Paginación */}
         <Pagination
           paginatedData={paginatedPositions}
           startIndex={startIndex}

@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useNotification } from "../../context/NotificationContext";  
 import { useSubDepartments } from "../../context/SubDepartmentContext";
-import SubDepartmentRow from './SubDepartmentRow';
+
 import Pagination from '../Pagination';
+import SubDepartmentRow from './SubDepartmentRow';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
@@ -16,25 +16,20 @@ export default function SubDepartmentList() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
-  // const [filterStatus, setFilterStatus] = useState('all'); // se deja por ahora mientras se define como gestionaremos estatus para departamentos
   const [hasSearched, setHasSearched] = useState(false);
-
-  // const [addSubDepartment, setAddSubDepartment] = useState(null);
-  // const [show, setShow] = useState(false);
-  // const { showNotification } = useNotification();
-  const { loading, subDepartmentData, setSubDepartmentData } = useSubDepartments();
+  const { loading, subDepartmentData } = useSubDepartments();
 
   const itemsPerPage = 10;
 
-  // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
+  // Ejecutar búsqueda automáticamente al teclear
   useEffect(() => {
-    if (searchValue.trim()) { //|| filterStatus !== 'all'
+    if (searchValue.trim()) {
       setHasSearched(true);
     } else {
       setHasSearched(false);
     }
     setCurrentPage(1);
-  }, [searchValue]); // , filterStatus
+  }, [searchValue]);
 
   const SUB_DEPARTMENTS_SEARCH_FIELDS = [
     'code', 
@@ -48,10 +43,10 @@ export default function SubDepartmentList() {
           subDepartmentData,
           searchValue,
           SUB_DEPARTMENTS_SEARCH_FIELDS,
-          // filterStatus,
+          "",
           normalizeText
       );
-  }, [subDepartmentData, searchValue]); // , filterStatus
+  }, [subDepartmentData, searchValue]);
 
   // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredSubDepartments : subDepartmentData;
@@ -70,8 +65,6 @@ export default function SubDepartmentList() {
         <FilterByFields
           searchValue={searchValue}
           onSearchChange={setSearchValue}
-          // filterStatus={filterStatus}
-          onFilterStatus={setFilterStatus}
           moduleName='Sub-Departamento'
           placeholder='Ingrese código o nombre de Sub-departamento'
         />

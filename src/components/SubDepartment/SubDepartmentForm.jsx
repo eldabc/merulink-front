@@ -34,7 +34,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
   console.log("subDepartmentData", subDepartmentData)
 
-  // Al seleccionar
+  // Al seleccionar departamento
   const handleDepartmentChange = (e) => {
     const selectedDepartmentId = e.target.value;
     
@@ -93,6 +93,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
     {(viewMode) && <HeadFormButtons url={`/empleados/sub-departamentos/editar/${subDepartment?.id}`} data={[]} /> }
 
     <form onSubmit={handleSubmit(onSubmit, onError)}>
+
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className='mx-auto mt-6'>
@@ -107,7 +108,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
                   {...register('departmentId', { onChange: handleDepartmentChange })} 
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}>
 
-                  <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
+                    <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
 
                     {departments.map(dep => (
                       <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
@@ -132,7 +133,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
                   <input
                     readOnly={true}
                     {...register('code')}
-                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
+                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed`}
                   />
                   {errors?.code && <ErrorMessage msg={errors.code.message} /> }  
                 </div>

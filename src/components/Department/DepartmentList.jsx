@@ -55,20 +55,6 @@ export default function DepartmentList() {
     setCurrentPage(1);
   };
 
-  // if (selectedDepartment) {
-  //   const departmentSelected = departmentData.find(d => d.id === selectedDepartment);
-  //   return <DepartmentForm 
-  //     mode="view"
-  //     department={departmentSelected} 
-  //     onBack={() => setSelectedDepartment(null)} 
-  //     onUpdate={(updated) => {
-  //       setDepartmentData(prev => prev.map(e => e.id === departmentSelected.id ? { ...e, ...updated } : e));
-  //       showNotification('Éxito', 'Departamento actualizado correctamente.');
-  //       setSelectedDepartment(null);
-  //     }}
-  //   />
-  // }
-
   return (
       <div className="main-data-cont table-container">
         <div className="titles-table">
@@ -108,8 +94,7 @@ export default function DepartmentList() {
                   paginatedDepartments.map((dep) => (
                     <DepartmentRow 
                       key={dep.id}
-                      dep={dep} 
-                      // setSelectedDepartment={setSelectedDepartment}
+                      dep={dep}
                     />
                   ))
                 )

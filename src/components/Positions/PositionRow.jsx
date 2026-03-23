@@ -1,19 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePositions } from '../../context/PositionContext';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function PositionRow({ position, setSelectedPosition }) {
-  // Obtener la función del contexto
-  // const { toggleEmployeeField } = usePositions(); 
+export default function PositionRow({ position }) {
+
+  const navigate = useNavigate();
+
+   const handleSelectedPosition = (id) => {
+    navigate(`/empleados/cargos/ver/${id}`, { 
+      state: { data: [] } 
+    }); 
+  };
 
   return (
     <tr
       key={position.id}
-      onClick={() => setSelectedPosition(position.id)}
+      onClick={() => handleSelectedPosition(position.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
       <td className="px-4 py-3 text-white-800 font-medium">{position.code}</td>
-      <td className="px-4 py-3 text-white-700">{position.positionName}</td>
+      <td className="px-4 py-3 text-white-700">{position.name}</td>
       <td className="px-4 py-3">
         <button 
           // onClick={(e) => {
