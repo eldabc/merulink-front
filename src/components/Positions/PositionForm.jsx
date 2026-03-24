@@ -41,7 +41,7 @@ export default function PositionForm({ mode = 'create' }) {
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
-  const subDepartmentIdDisabled = !selectedDepartmentId && 'cursor-not-allowed opacity-50';
+  const subDepartmentIdDisabled = filteredSubDepartments.length === 0 && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {  
     if (departments.length === 0) {
@@ -65,7 +65,7 @@ export default function PositionForm({ mode = 'create' }) {
       
       // Sino hay Subdepartments genera código
       if (filtered.subDepartments.length === 0) {
-        const newCode = newCodePosition(selectedDepartmentId, 0, positionData);
+        const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments);
         setValue('code', newCode);
       } else {
         setValue('code', '');
@@ -79,7 +79,7 @@ export default function PositionForm({ mode = 'create' }) {
   // Código por Sub-departamento
   useEffect(() => {
     if (selectedSubDepartmentId) {
-      const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData);
+      const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments);
       setValue('code', newCode);
     }
   }, [selectedSubDepartmentId]);
@@ -99,7 +99,6 @@ export default function PositionForm({ mode = 'create' }) {
       if (createMode) navigate(-1);
       else navigate(-2);
     }
-    // if (onSave) await onSave(data);
   };
 
   const onError = (formErrors) => {
@@ -141,7 +140,7 @@ export default function PositionForm({ mode = 'create' }) {
                       <LabelFieldForm field="Sub-departamento" simbol="*"/>
                     <div>
                       <select 
-                        disabled={viewMode || !selectedDepartmentId}
+                        disabled={viewMode || filteredSubDepartments.length === 0}
                         {...register('subDepartmentId')} //, { onChange: handleSubDepartmentChange }
                         className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
                       >

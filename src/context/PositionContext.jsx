@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
 import { useNotification } from "../context/NotificationContext";
+import { useGlobalData } from './GlobalDataContext';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const PositionContext = createContext();
@@ -15,6 +16,7 @@ export const PositionProvider = ({ children }) => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [positionData, setPositionData] = useState([]);
+  const { departments } = useGlobalData();
 
   const loadPositions = useCallback(async () => {
     setLoading(true);
@@ -36,8 +38,11 @@ export const PositionProvider = ({ children }) => {
   }, [loadPositions]);
 
   const formattedPosition = (formData) => {
-    const departmentData =  getDepartmentNameById(formData.departmentId);
-    
+    const departmentData =  departments.find(d => String(d.id) === String(formData.departmentId));
+    const subDepartmentData = departmentData?.subDepartments?.find(
+        sub => String(sub.id) === String(formData.subDepartmentId)
+    );
+
     return {
       id: formData.id ? formData.id : Date.now(),
       code: formData.code,
@@ -47,8 +52,8 @@ export const PositionProvider = ({ children }) => {
         departmentName: departmentData.departmentName
       },
       subDepartment: { 
-        id: formData.subDepartmentId, 
-        name: departmentData.name
+        id: subDepartmentData?.id ?? null, 
+        name: subDepartmentData?.name
       },
       
     };

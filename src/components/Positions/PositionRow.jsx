@@ -6,8 +6,12 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 export default function PositionRow({ position }) {
 
   const navigate = useNavigate();
+  
+  const subDepartmentName = position.subDepartment?.name ?? (
+    <span className="italic text-gray-500">No Aplica</span>
+  );
 
-   const handleSelectedPosition = (id) => {
+  const handleSelectedPosition = (id) => {
     navigate(`/empleados/cargos/ver/${id}`, { 
       state: { data: [] } 
     }); 
@@ -21,6 +25,8 @@ export default function PositionRow({ position }) {
     >
       <td className="px-4 py-3 text-white-800 font-medium">{position.code}</td>
       <td className="px-4 py-3 text-white-700">{position.name}</td>
+      <td className="px-4 py-3 text-white-700">{position.department.departmentName}</td>
+      <td className="px-4 py-3 text-white-700">{subDepartmentName}</td>
       <td className="px-4 py-3">
         <button 
           // onClick={(e) => {
