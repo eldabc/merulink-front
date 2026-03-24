@@ -15,7 +15,7 @@ export default function PositionRow({ position }) {
 
   const blockBtn = position.employees?.length > 0 ? true : false;
   const disabledClasses = getDisabledClasses(blockBtn);
-  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, cargo tiene Emplados asociados' : 'Eliminar';
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, cargo tiene Empleados asociados' : 'Eliminar';
 
   const subDepartmentName = position.subDepartment?.name ?? (
     <span className="italic text-gray-500">No Aplica</span>

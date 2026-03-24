@@ -1,16 +1,12 @@
 
-export const newCodePosition = (selectedDepartmentId, selectedSubDepartmentId = 0, positionData, departments ) => {
-  let newNumPosition = 0;
+export const newCodePosition = (selectedDepartmentId, selectedSubDepartmentId = 0, positionData, departments, currentPosition ) => {
 
   const filteredPositionsByDept = positionData.filter(pos => {
-    return String(pos.department.id) === String(selectedDepartmentId)
+    return (String(pos.department.id) === String(selectedDepartmentId) && String(pos.id) !== String(currentPosition))
   });
-
-  if (filteredPositionsByDept.length > 0) {
-    newNumPosition = filteredPositionsByDept.length + 1
-  }  
-
- const founded = departments.flatMap(d => d.subDepartments)
+ 
+  const newNumPosition = filteredPositionsByDept.length;
+  const founded = departments.flatMap(d => d.subDepartments)
                   .find(s => String(s.id) === String(selectedSubDepartmentId));
 
   const subDepartmentCode = founded?.code ? founded.code : `${selectedDepartmentId}0`;
