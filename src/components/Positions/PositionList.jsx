@@ -80,7 +80,7 @@ export default function PositionList() {
             </thead>
             <tbody>
               {loading ? (
-                <RowTableLoading />
+                <RowTableLoading colSpan={5} />
               ) : (
                 paginatedPositions.map((position) => (
                   <PositionRow 

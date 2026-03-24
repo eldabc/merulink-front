@@ -13,7 +13,7 @@ export default function EmployeeRow({ dep }) {
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   
   const blockBtn = dep.subDepartments?.length > 0 ? true : false;
-  const title = blockBtn ? 'No se puede eliminar, departamento tiene subDepartamentos asociados' : 'Eliminar';
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, departamento tiene subDepartamentos asociados' : 'Eliminar';
   
 
   const handleSelectedDepartment = (id) => {
@@ -47,7 +47,7 @@ export default function EmployeeRow({ dep }) {
       <td className="px-4 py-3">
         <ButtonDelete 
           setIsModalOpen={() => handleDeleteClick(dep)} 
-          title={title}
+          title={deleteBtnTitle}
           dinamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
           disabled={blockBtn} 
         />

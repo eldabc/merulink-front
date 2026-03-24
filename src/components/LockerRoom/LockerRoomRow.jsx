@@ -4,7 +4,6 @@ import { useLockers } from '../../context/LockerRoomContext';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
-import { lockerCategories } from '../../utils/StaticData/locker-room-utils.js';
 import { getStatusColor } from '../../utils/status-utils';
 import { STATUSES, statusConfig } from '../../utils/statusesConfig.js';
 

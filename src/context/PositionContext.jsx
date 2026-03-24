@@ -79,10 +79,58 @@ export const PositionProvider = ({ children }) => {
       return false;
     }
   };
+
+  // *** Actualizar
+  const updatePosition = async (formData) => {
+    try {
+      const positionId = formData.id;
+
+      if (!positionId) {
+        showNotification('No se encontró ID de cargo', error.response.data.message, 'error');
+        return false;
+      }
+
+      const updatedPosition = formattedPosition(formData);
+      console.log("Actualizado:", updatedPosition);
+      
+      const response = await axios.put(`${ENV.API_BACK_URL}positions/${positionId}`, updatedPosition);
+      
+      setPositionData(prevData => {
+        const filteredData = prevData.filter(position => position.id !== positionId);
+        return [response.data.data, ...filteredData];
+      });
+
+      showNotification(`Cargo ${formData.name} actualizado con éxito`); 
+      return true;
+
+    } catch (error) {
+      showNotification('Error al actualizar:', error.response.data.message, 'error');
+      return false;
+    }
+  };
+
+  // *** Eliminar
+  const deletePosition = async (position) => {
+    try {
+      await axios.delete(`${ENV.API_BACK_URL}positions/${position.id}`);
+
+      setPositionData(prevData => {
+        return prevData.filter(item => item.id !== position.id);
+      });
+
+      showNotification(`Cargo ${position.name} eliminado con éxito`);
+      return true;
+    } catch (error) {
+      showNotification('Error al eliminar Cargo', error.response.data.message, 'error');
+      return false;
+    }
+  };
   
   const contextValue = {
     loading,
     createPosition,
+    updatePosition,
+    deletePosition,
     positionData,
     setPositionData, 
   };

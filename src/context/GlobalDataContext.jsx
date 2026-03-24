@@ -15,7 +15,7 @@ export const GlobalDataProvider = ({ children }) => {
       const [depRes] = await Promise.all([
         getDepartments(),
       ]);
-      console.log("contexto global departamentos: ", depRes);
+
       setDepartments(depRes);
     } catch (error) {
       console.error("Error cargando maestros:", error);

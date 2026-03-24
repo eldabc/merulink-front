@@ -7,7 +7,6 @@ import { positionValidationSchema } from '../../utils/Validations/positionValida
 import { usePositions } from '../../context/PositionContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { subDepartments } from '../../utils/StaticData/subDepartments-utils'; 
 import { newCodePosition } from '../../utils/Positions/positions-utils'
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -20,7 +19,7 @@ export default function PositionForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { positionData, createPosition } = usePositions();
+  const { positionData, createPosition, updatePosition } = usePositions();
   const { departments, globalLoading, loadDepartments } = useGlobalData();
   const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
 
@@ -41,7 +40,7 @@ export default function PositionForm({ mode = 'create' }) {
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
-  const subDepartmentIdDisabled = filteredSubDepartments.length === 0 && 'cursor-not-allowed opacity-50';
+  const subDepartmentIdDisabled = filteredSubDepartments?.length === 0 && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {  
     if (departments.length === 0) {
@@ -49,38 +48,56 @@ export default function PositionForm({ mode = 'create' }) {
     }
   }, []);
 
+  useEffect(() => {    
+    if (departments.length > 0 && position?.department?.id) {
+      // Cargar subdepartamentos filtrados si ya cargó departamentos
+      const filtered = departments?.find(sd => String(sd.id) === String(position?.department?.id));
+      setFilteredSubDepartments(filtered?.subDepartments);
+      // console.log("departments.subDepartments", filtered)
+    }
+  }, [departments]);
+
   useEffect(() => {
-    if ((editMode || viewMode) && position) {
-      reset(position);
-      // Cargar subdepartamentos filtrados si ya hay un departamento
-      const filtered = subDepartments.filter(sd => String(sd.departmentId) === String(position.departmentId));
-      setFilteredSubDepartments(filtered);
+    if (position) {
+      reset({
+        code: position?.code ?? '',
+        name: position?.name ?? '',
+        departmentId: position?.department?.id ?? '',
+        subDepartmentId: position?.subDepartment?.id ?? '',
+      });
     }
   }, [mode, position, reset]);
 
   useEffect(() => {
-    if (selectedDepartmentId) {
-      const filtered = departments.find(sd => String(sd.id) === String(selectedDepartmentId));
-      setFilteredSubDepartments(filtered.subDepartments);
-      
-      // Sino hay Subdepartments genera código
-      if (filtered.subDepartments.length === 0) {
-        const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments);
-        setValue('code', newCode);
-      } else {
+    if (!viewMode) {
+      if (selectedDepartmentId) {
         setValue('code', '');
+
+        const filtered = departments.find(sd => String(sd.id) === String(selectedDepartmentId));
+        setFilteredSubDepartments(filtered?.subDepartments);
+        
+        // Sino hay Subdepartments genera código
+        if (filtered?.subDepartments.length === 0) {
+          const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments, position?.id);
+          setValue('code', newCode);
+          // console.log("code 3;", newCode);
+        } 
+
+      } else {
+        setFilteredSubDepartments([]);
+        setValue('code', '');
+        // console.log("code 4;");
       }
-    } else {
-      setFilteredSubDepartments([]);
-      setValue('code', '');
     }
+    
   }, [selectedDepartmentId, positionData]);
 
   // Código por Sub-departamento
   useEffect(() => {
-    if (selectedSubDepartmentId) {
-      const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments);
+    if (selectedSubDepartmentId && !viewMode) {
+      const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments, position?.id);
       setValue('code', newCode);
+      console.log("code 1;", newCode);
     }
   }, [selectedSubDepartmentId]);
 
@@ -145,7 +162,7 @@ export default function PositionForm({ mode = 'create' }) {
                         className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
                       >
                         <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                        {filteredSubDepartments.map(subDep => (
+                        {filteredSubDepartments?.map(subDep => (
                           <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
                             {subDep.name}
                           </option>
@@ -171,7 +188,7 @@ export default function PositionForm({ mode = 'create' }) {
                       <input
                         readOnly={true}
                         {...register('code')}
-                        className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed`}
+                        className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
                       />
                       {errors?.code && <ErrorMessage msg={errors.code.message} />}  
                     </div>
