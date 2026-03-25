@@ -6,25 +6,30 @@ import { usePadlocks } from '../../context/PadlockContext';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { padlockValidationSchema } from '../../utils/Validations/padlockValidationSchema';
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
+import { getDisabledClasses } from '../../utils/global-utils';  
 
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import LabelFieldForm from "../Shared/LabelFieldForm";
+import TitleHeader from "../Shared/TitleHeader";
 import { STATUSES } from '../../utils/statusesConfig.js';
 
 function PadlockForm ({ mode = 'create' }) {
+
   const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(padlockValidationSchema),
-    });
-    const { padlockData, createPadlock, updatePadlock } = usePadlocks();
+  });
+
+  const { padlockData, createPadlock, updatePadlock } = usePadlocks();
+
+  const { id } = useParams();  
+  const navigate = useNavigate();
+  const padlock = padlockData.find(e => e.id === Number(id));
   
-    const { id } = useParams();  
-    const navigate = useNavigate();
-    const padlock = padlockData.find(e => e.id === Number(id));
-    
-    const createMode = mode === 'create'
-    const viewMode = mode === 'view';
-    const editMode =  mode === 'edit';
+  const createMode = mode === 'create'
+  const viewMode = mode === 'view';
+  const editMode =  mode === 'edit';
+  const disabledClasses = getDisabledClasses(viewMode);
   
     useEffect(() => {
       if (padlock && (editMode || viewMode)) {
@@ -96,58 +101,44 @@ function PadlockForm ({ mode = 'create' }) {
           )}
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+           
             <form onSubmit={handleSubmit(onSubmit, onError)}> 
-              <div className="titles-table">
-              <div className="justify-center w-64">
-                <div className='mt-5'>
-                  <h2 className="block text-2xl font-bold text-center"> Serial: *</h2>
-                </div>
-                <div className='mt-5'>
-                   <input 
-                      readOnly={viewMode}
-                      {...register('serial')} 
-                      className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
-                      placeholder='Ingrese serial'
-                      maxLength={40}
-                    />
-                  {errors?.serial && <ErrorMessage msg={errors.serial.message} /> }  
-                </div>
-              </div>
-              </div>
               <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
-                  <div className='border border-[#ffffff21]
-                                  md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                  md:[&>*:nth-child(2n)]:pl-4 p-7'
-                  >
+                  <div className='div-border'>
                     <div className="mt-6">     
-                      <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Padlock' ):( 'Datos Padlock')}</h3>
-                      <div className='border border-[#ffffff21]
-                                      md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                      md:[&>*:nth-child(2n)]:pl-4 p-7'
-                      >
-                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
+
+                      <TitleHeader title={editMode ? ( 'Editar Padlock' ):( 'Datos Padlock')} dinamicClasses="mb-5" />
+                      <div className="mx-auto w-64 mb-5"></div>
+                      <div className='div-border'>
+                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-8'>
                           
+                          <LabelFieldForm field="Serial" simbol="*" />
+                          <input 
+                              readOnly={viewMode}
+                              {...register('serial')} 
+                              className={`px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic ${disabledClasses}`}
+                              placeholder='Ingrese serial'
+                              maxLength={40}
+                            />
+                          {errors?.serial && <ErrorMessage msg={errors.serial.message} /> }  
+
                           <LabelFieldForm field="Contraseña Numérica" simbol="*" />
-                          <div className="w-full max-w-2xl">
                             <input 
                               readOnly={viewMode}
                               {...register('pass')}
                               onChange={handlePassChange} 
                               type='text' 
-                              className={`w-full px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic`}
+                              className={`px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic ${disabledClasses}`}
                               placeholder='Ejemplo: 55-44-23'
                             />
                             {errors?.pass && <ErrorMessage msg={errors.pass.message} /> }  
-                          </div>
 
                           <LabelFieldForm field="Estatus" simbol="*" />
                           <div>
                             <select 
                               {...register('status')}
-                              disabled={createMode || viewMode || editMode}
-                              className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                                ${viewMode || createMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
-                                
+                              disabled={true}
+                              className={`w-full px-3 py-2 rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
                             >
                               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                               <option className='bg-[#3c4042]' value="Disponible">Disponible</option>
@@ -155,14 +146,6 @@ function PadlockForm ({ mode = 'create' }) {
                             </select>
                             {errors?.status && <ErrorMessage msg={errors.status.message} /> }  
                           </div>
-                        </div>
-
-                      
-                        
-                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
-                                        md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                        md:[&>*:nth-child(2n)]:pl-4 p-7'
-                        >
                         </div>
                       </div>
                     </div>

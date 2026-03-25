@@ -30,14 +30,6 @@ export default function PositionForm({ mode = 'create' }) {
     );
   }, [filteredSubDepartments]);
 
-  useEffect(() => {
-      // if (filteredSubDepartments.length === 0) {
-      //   setValue('subDepartmentId', '');
-      // }
-
-    trigger('subDepartmentId');
-  }, [filteredSubDepartments]);
-
   const { register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -47,6 +39,10 @@ export default function PositionForm({ mode = 'create' }) {
       subDepartmentId: ''
     }
   });
+
+  useEffect(() => {
+    trigger('subDepartmentId');
+  }, [filteredSubDepartments]);
 
   const selectedDepartmentId = watch('departmentId');
   const selectedSubDepartmentId = watch('subDepartmentId');  
@@ -94,13 +90,11 @@ export default function PositionForm({ mode = 'create' }) {
         if (filtered?.subDepartments.length === 0) {
           const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments, position?.id);
           setValue('code', newCode);
-          // console.log("code 3;", newCode);
         } 
 
       } else {
         setFilteredSubDepartments([]);
         setValue('code', '');
-        // console.log("code 4;");
       }
     }
     
@@ -111,7 +105,6 @@ export default function PositionForm({ mode = 'create' }) {
     if (selectedSubDepartmentId && !viewMode) {
       const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments, position?.id);
       setValue('code', newCode);
-      console.log("code 1;", newCode);
     }
   }, [selectedSubDepartmentId]);
 
