@@ -71,10 +71,10 @@ function LockerAssignForm({ mode = 'create' }) {
       }
       setLoadingEmployees(true);
 
-      const filteredEmp = availableEmployees.filter(e => String(e.department) === String(selectedDepartment));     
+      const filteredEmp = availableEmployees.filter(e => String(e.department.id) === String(selectedDepartment));     
       setfilteredEmployees(filteredEmp);  
 
-      if (selectedDepartment !== lockerAssign?.employee?.department) setLoadingEmployees(false);
+      if (selectedDepartment !== lockerAssign?.employee?.department.id) setLoadingEmployees(false);
 
     }, [selectedDepartment, availableEmployees]);
 
@@ -83,7 +83,7 @@ function LockerAssignForm({ mode = 'create' }) {
         reset({
           lockerId: lockerAssign.locker?.id ?? null,
           padlockId: lockerAssign.locker?.padlock?.id ?? '',
-          departmentId: lockerAssign.employee?.department ?? (selectedDepartment ?? ''),
+          departmentId: lockerAssign.employee?.department.id ?? (selectedDepartment ?? ''),
           employeeId: lockerAssign.employee?.id ?? '',
         });
         setLoadingEmployees(false);
@@ -152,10 +152,7 @@ function LockerAssignForm({ mode = 'create' }) {
                 )}
               </div>
               <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
-                  <div className='border border-[#ffffff21]
-                                  md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                  md:[&>*:nth-child(2n)]:pl-4 p-7'
-                  >
+                  <div className='div-border'>
                     <div className="w-full bg-[#2f3d44] text-white rounded-lg shadow-md p-4 flex flex-col sm:flex-row sm:items-center sm:justify-start sm:space-x-8">
                       <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-300">Código:</span>
@@ -178,10 +175,8 @@ function LockerAssignForm({ mode = 'create' }) {
                     </div>
                     <div className="mt-6">    
                       <h3 className='text-xl font-bold'>{lockerAssign?.locker?.padlock?.id ? ( 'Editar Emparejar Casillero' ):( 'Emparejar Casillero')}</h3>
-                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
-                                        md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                        md:[&>*:nth-child(2n)]:pl-4 p-7'
-                        >
+                        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border div-border'>
+
                           <LabelFieldForm field="Candado" simbol="*" />
                           <div className="max-w-2xl">
                             <select 
@@ -206,10 +201,8 @@ function LockerAssignForm({ mode = 'create' }) {
                       {(selectedPadlock && !loadingData) && (
                         <>
                         <h3 className='text-xl font-bold'>{lockerAssign?.employee?.id ? ( 'Editar Asignación de Casillero' ):( 'Asignar Casillero')}</h3>
-                          <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
-                                          md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                          md:[&>*:nth-child(2n)]:pl-4 p-7'
-                          >
+                          <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border div-border'>
+                            
                             <LabelFieldForm field="Departamento" simbol="*" />
                             <div className='max-w-2xl'>
                               <select 
@@ -250,8 +243,7 @@ function LockerAssignForm({ mode = 'create' }) {
                           </div>
                         </>
                       )}
-                    </div>
-                    
+                    </div> 
                   </div>
               </div>
               <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />

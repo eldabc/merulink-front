@@ -9,7 +9,6 @@ import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 
 const EmployeeContext = createContext();
 
-// hook personalizado para usar el contexto
 export const useEmployees = () => {
   return useContext(EmployeeContext);
 };
@@ -24,9 +23,12 @@ export const EmployeeProvider = ({ children }) => {
   const loadEmployees = useCallback(async () => {
       setLoadingEmployeeData(true);
     try {
-      setEmployeeData(employees);
+      const response = await axios.get(`${ENV.API_BACK_URL}employees`);
+      setEmployeeData(response.data.data);
+      // console.log("data", response.data.data)
+
     } catch (err) {
-      showNotification('Error al cargar datos', err.message);
+      showNotification('Error al cargar datos', err.message, 'error');
     } finally {
       setLoadingEmployeeData(false);
     }

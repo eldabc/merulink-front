@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNotification } from "../../context/NotificationContext";  
 import { useEmployees } from '../../context/EmployeeContext'; 
 import { useNavigate } from 'react-router-dom';
 
@@ -18,10 +17,7 @@ export default function EmployeeList() {
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [addEmployee, setAddEmployee] = useState(null);
   const [show, setShow] = useState(false);
-  const { showNotification } = useNotification();
   const navigate = useNavigate();
   const itemsPerPage = 10;
   
@@ -67,14 +63,12 @@ export default function EmployeeList() {
 
 return (
     <div className="main-data-cont table-container">
-      
-      {show && ( <Notification title={show.title} message={show.message} onClose={() => setShow(null)} /> )}
 
       <div className="titles-table">
         <TitleHeader title='Listado de Empleados' />
         <ButtonNavigate url={`/empleados/nuevo`} navigate={navigate} />
       </div>
-      {/* Filtro */}
+
       <FilterByFields
         searchValue={searchValue}
         onSearchChange={setSearchValue}
@@ -104,14 +98,12 @@ return (
               <EmployeeRow 
                 key={emp.id}
                 emp={emp} 
-                setSelectedEmployee={setSelectedEmployee}
               />
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Paginación */}
       <Pagination
 				paginatedData={paginatedData}
 				startIndex={startIndex}

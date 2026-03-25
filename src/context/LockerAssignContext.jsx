@@ -129,7 +129,7 @@ export const LockerAssignProvider = ({ children }) => {
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar: ' + error.response.data.message, 'error');
+      showNotification('Error al actualizar:', error.response.data.message, 'error');
       return false;
     }
   };
@@ -160,7 +160,7 @@ export const LockerAssignProvider = ({ children }) => {
       return responseLockers.data.data;
       
     } catch (error) {
-      showNotification('Error al obtener Lockers', error.message);
+      showNotification('Error al obtener Lockers', error.message, 'error');
       return false;
     }
   }
@@ -174,7 +174,7 @@ export const LockerAssignProvider = ({ children }) => {
       }
         return response.data.data;     
     } catch (error) {
-      showNotification('Error al obtener Padlocks', error.message);
+      showNotification('Error al obtener Padlocks', error.message, 'error');
       return false;
     }
   }
@@ -184,7 +184,7 @@ export const LockerAssignProvider = ({ children }) => {
         const response = await axios.get(`${ENV.API_BACK_URL}departments`);
         return response.data.data;       
       } catch (error) {
-        showNotification('Error al obtener Departamentos', error.message);
+        showNotification('Error al obtener Departamentos', error.message, 'error');
         return [];
       }
     }
@@ -194,7 +194,7 @@ export const LockerAssignProvider = ({ children }) => {
       let categoryKey = lockerAssign?.locker?.category?.key;
       const employee = lockerAssign?.employee;
 
-        // getCategoryKey(categoryKey);
+      // getCategoryKey(categoryKey);
         if (categoryKey === 'C') {
           categoryKey = 'H';
         } else if (categoryKey === 'D') {
@@ -209,9 +209,9 @@ export const LockerAssignProvider = ({ children }) => {
         return [...response.data.data];
 
       } catch (error) {
-      showNotification('Error al obtener Empleados por Categoría', error.message);
-      return false;
-    }
+        showNotification('Error al obtener Empleados por Categoría', error.message, 'error');
+        return false;
+      }
   }
 
 

@@ -2,21 +2,24 @@ import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
-import { User } from "lucide-react";
+import { useEmployees } from '../../context/EmployeeContext';
+
+import { getDisabledClasses } from '../../utils/global-utils';  
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
+import { calculateAge } from '../../utils/calculateAge-utils';
+import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
+
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import MeruLinkData from "./tabs/meruLinkData";
 import LockerAssign from "./tabs/LockerAssign";
 import TabButtonsManager from './tabs/TabButtonsManager';
-import { calculateAge } from '../../utils/calculateAge-utils';
-import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
-import { useEmployees } from '../../context/EmployeeContext';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import LabelFieldForm from '../Shared/LabelFieldForm';
+import { User } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
@@ -34,10 +37,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     name: 'contacts',
   });
 
-  // const { fieldsA, appendA, removeA } = useFieldArray({
-  //   control,
-  //   name: 'unlockSequence',
-  // });
   const [tempFlags, setTempFlags] = useState({
     useMeruLink: false,
     useHidCard: false,
@@ -58,7 +57,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   const employee = employeeData.find(e => e.id === Number(id));
   
   const selectedSex = watch('sex');
-  const changedUseLocker = watch('useLocker');
   const watchedBirthDate = watch('birthDate');
   const createMode = mode === 'create';
   const editMode = mode === 'edit';
@@ -66,7 +64,9 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
-  const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
+  // const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
+  const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);
+
   
   useEffect(() => {
     if (loadingEmployeeData) return;
