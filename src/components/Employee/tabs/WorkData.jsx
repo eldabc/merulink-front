@@ -2,37 +2,35 @@ import { useEffect, useState } from 'react';
 
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
+import ErrorMessage from '../../Shared/ErrorMessage';
 
-export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, setValue , watch, selectedDepartmentId, subDepartments }) { // tempFlags, setTempFlags,
+export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments }) {
   const { toggleEmployeeField } = useEmployees();
 
      return (
-      <div className="
-        grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border border-[#ffffff21]
-        md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-        md:[&>*:nth-child(2n)]:pl-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border div-border">
         <div>
           <LabelFieldForm field="Fecha de Ingreso" simbol="*"/>
             <input 
               readOnly={viewMode} 
               type="date" {...register('joinDate')} 
-              className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${disabledClasses}`} 
+              className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
             />
-          {errors.joinDate && <p className="text-red-400 text-xs mt-1">{errors.joinDate.message}</p>}
+          {errors.joinDate && <ErrorMessage msg={errors.joinDate.message} />}
         </div>
         
         <div>
           <LabelFieldForm field="Departamento" simbol="*"/>
             <select 
               disabled={viewMode} {...register('department')} 
-              className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
+              className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
             >
               <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
               {availableDepartments.map((item) => ( 
                 <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.departmentName} </option>
               ))}
             </select>
-          {errors.department && <p className="text-red-400 text-xs mt-1">{errors.department.message}</p>}
+          {errors.department && <ErrorMessage msg={errors.department.message} />}
         </div>
 
         <div>
@@ -43,12 +41,10 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
                 className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 
                   ${(!selectedDepartmentId || subDepartments.length === 0) && 'cursor-not-allowed'} ${disabledClasses}`}
             >
-              <>
-                <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
-                {subDepartments?.map((item) => ( 
-                  <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.subDepartmentName} </option>
-                ))}
-              </>
+              <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+              {subDepartments?.map((item) => ( 
+                <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.name} </option>
+              ))}
             </select> 
           ) : (
             <span className="font-bold"> No Aplica </span>
@@ -61,7 +57,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
               readOnly={viewMode} 
               {...register('position')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
             />
-          {errors.position && <p className="text-red-400 text-xs mt-1">{errors.position.message}</p>}
+          {errors.position && <ErrorMessage msg={errors.position.message} />}
         </div>
 
         <div className='flex flex-row'>
@@ -85,7 +81,6 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
             </label>
           </div>
         </div>
-        
       </div>
     );
 }

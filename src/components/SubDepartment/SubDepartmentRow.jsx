@@ -8,7 +8,7 @@ export default function SubDepartmentRow({ subDep }) {
   const navigate = useNavigate();
   const { toggleSubDepartmentStatus } = useSubDepartments(); 
 
-   const handleSelectedSubDepartment = (id) => {
+  const handleSelectedSubDepartment = (id) => {
     navigate(`/empleados/sub-departamentos/ver/${id}`, { 
       state: { data: [] } 
     }); 

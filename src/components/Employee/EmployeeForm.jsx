@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
+import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
@@ -19,6 +20,8 @@ import TabButtonsManager from './tabs/TabButtonsManager';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import LabelFieldForm from '../Shared/LabelFieldForm';
+import TitleHeader from '../Shared/TitleHeader';
+import ErrorMessage from '../Shared/ErrorMessage';
 import { User } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
@@ -46,9 +49,11 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
-  const [availableDepartments, setAvailableDepartments] = useState([]);
+  
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
+  const [availableDepartments, setAvailableDepartments] = useState([]);
+  const { departments, globalLoading, loadDepartments } = useGlobalData();
   const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
   const selectedDepartmentId = watch('department');
@@ -67,7 +72,12 @@ export default function EmployeeForm({ mode = 'create' }) {
   // const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
   const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);
 
-  
+  // useEffect(() => {  
+  //   if (departments.length === 0) {
+  //     loadDepartments(); 
+  //   }
+  // }, [mode]);
+
   useEffect(() => {
     if (loadingEmployeeData) return;
     if (!employeeData.length) return;
@@ -222,9 +232,9 @@ export default function EmployeeForm({ mode = 'create' }) {
         homePhone: homeNumber ?? null,
         address: employee?.address ?? '',
         joinDate: joinDate ?? null,
-        department: employee?.department ?? '',
-        subDepartment: employee?.subDepartment ?? '',
-        position: employee?.position ?? '',
+        department: employee?.department.id ?? '',
+        subDepartment: employee?.subDepartment.id ?? '',
+        position: employee?.position.id ?? '',
         userName: employee?.userName ?? '',
         userPass: employee?.userPass ?? '',
         changePassNextLogin: !!employee?.changePassNextLogin,
@@ -305,7 +315,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
-      <div className="buttons-bar flex gap-2 aling-items-right justify-end">
+      <div className="aling-items-right">
         {(isEmployeeActive && viewMode) && <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} /> }{/*TODO: todas las rutas funcionen sin data  */}
       </div>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
@@ -315,7 +325,7 @@ export default function EmployeeForm({ mode = 'create' }) {
           </div>
 
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')}</h3>
+            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} />
                 <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
                   <div>
                     <LabelFieldForm field="Primer Nombre" simbol="*" />
@@ -326,7 +336,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                       {...register('firstName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
-                    {errors?.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName.message}</p>}  
+                    {errors?.firstName && <ErrorMessage msg={errors.firstName.message} />}  
                   </div>
 
                   <div>
@@ -338,7 +348,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                       {...register('secondName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
-                    {errors?.secondName && <p className="text-red-400 text-xs mt-1">{errors.secondName.message}</p>}
+                    {errors?.secondName && <ErrorMessage msg={errors.secondName.message} />}
                   </div>
 
                   <div>
@@ -350,7 +360,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                       {...register('lastName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
-                    {errors?.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName.message}</p>}
+                    {errors?.lastName && <ErrorMessage msg={errors.lastName.message} />}
                   </div>
 
                   <div>
@@ -362,7 +372,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                       {...register('secondLastName')}
                       className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                     />
-                    {errors?.secondLastName && <p className="text-red-400 text-xs mt-1">{errors.secondLastName.message}</p>}
+                    {errors?.secondLastName && <ErrorMessage msg={errors.secondLastName.message} />}
                   </div>
                   <div>
                     <LabelFieldForm field="No. Empleado" simbol="*" />
@@ -371,19 +381,10 @@ export default function EmployeeForm({ mode = 'create' }) {
                     <input
                       disabled={true}
                       {...register('numEmployee')}
-                      className={`w-20 px-2 py-1 text-sm rounded-lg filter-input bg-gray-700 cursor-not-allowed`}
+                      className={`w-20 px-2 py-1 text-sm rounded-lg filter-input cursor-not-allowed`}
                     />
                   </div>
-                </div>
-              {/*) : (
-                 <div>
-                <h3 className="text-3xl font-semibold text-white-800">
-                  {`${employee?.numEmployee ?? ''} ${employee?.firstName ?? ''} ${employee?.secondName ?? ''} ${employee?.lastName ?? ''} ${employee?.secondLastName ?? ''}`}
-                </h3>
-                <p className="text-white-600 mt-1"> Cargo: {employee.position} </p>
-                <p className="text-white-600 mt-1"> Departamento: {employee.department} </p></div> 
-               )}*/}
-            
+                </div>  
           </div>
           {(editMode || viewMode) && (
             <div>
@@ -406,13 +407,14 @@ export default function EmployeeForm({ mode = 'create' }) {
             errors={errors}
             tempFlags={tempFlags}
         />
+
         <div className="mt-6">
           {getActivetab(activeTab)}     
         </div>
       </div>
-      <div className="mt-6 flex justify-end gap-3">
-        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
-      </div>
+
+      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+
      </form>
     </div>
   );

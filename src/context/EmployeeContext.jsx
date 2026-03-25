@@ -2,9 +2,8 @@ import axios from 'axios';
 import { ENV } from '../config/env';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNotification } from "../context/NotificationContext"; 
+import { useGlobalData } from './GlobalDataContext';
 
-import { departments } from '../utils/StaticData/departments-utils.js';
-import { employees } from '../utils/StaticData/employee-utils';
 import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 
 const EmployeeContext = createContext();
@@ -18,11 +17,14 @@ export const EmployeeProvider = ({ children }) => {
     
   const [employeeData, setEmployeeData] = useState([]);
   const { showNotification } = useNotification();
+  const { departments, loadDepartments } = useGlobalData();
   const [loadingEmployeeData, setLoadingEmployeeData] = useState(false);
 
   const loadEmployees = useCallback(async () => {
       setLoadingEmployeeData(true);
     try {
+      
+      loadDepartments();
       const response = await axios.get(`${ENV.API_BACK_URL}employees`);
       setEmployeeData(response.data.data);
       // console.log("data", response.data.data)
@@ -145,9 +147,10 @@ export const EmployeeProvider = ({ children }) => {
 
   const getDepartments = async () => {
     try {
-         return departments;       
+        console.log("departments", departments)
+        return departments;
     } catch (error) {
-      showNotification('Error al obtener Departamentos', error.message);
+      showNotification('Error al obtener Departamentos', error.message, 'error');
       return [];
     }
   }
