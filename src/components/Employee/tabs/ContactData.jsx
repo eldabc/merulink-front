@@ -1,11 +1,14 @@
+import { getDisabledClasses } from '../../../utils/global-utils';  
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 
-export default function ContactData({ viewMode, register, errors, employee, fields = [], append, remove }) {
-  // const isForm = typeof register === 'function';
-  const cursorNotAllowed = viewMode && 'cursor-not-allowed opacity-50';
+export default function ContactData({ viewMode, register, errors, fields = [], append, remove }) {
+
+  const disabledClasses = getDisabledClasses(viewMode);
+  
+  const addContacts = fields.length < 5 ? true : false;
 
   const handleAddContact = () => {
-    if (typeof append === 'function') {
+    if (typeof append === 'function' && addContacts) {
       append({
         id: Date.now(),
         name: '',
@@ -17,7 +20,6 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
     }
   };
 
-  // if (isForm) {
     return (
       <div className="p-4 rounded border border-[#ffffff21]">
         <div className="flex justify-between items-center mb-4">
@@ -26,7 +28,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
             disabled={viewMode}
             type="button"
             onClick={handleAddContact}
-            className={`flex items-center gap-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm ${cursorNotAllowed}`} 
+            className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm ${!addContacts && 'cursor-not-allowed opacity-50'} ${disabledClasses}`} 
           >
             <PlusIcon className="w-4 h-4" />
             Agregar Contacto
@@ -56,7 +58,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
                         readOnly={viewMode}
                         {...register(`contacts.${index}.name`)}
                         placeholder="Nombre"
-                        className={`w-full px-2 py-1 rounded filter-input text-sm ${cursorNotAllowed}`}
+                        className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.name && (
                         <p className="text-red-400 text-xs mt-1">{errors.contacts[index].name.message}</p>
@@ -67,7 +69,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
                         readOnly={viewMode}
                         {...register(`contacts.${index}.lastName`)}
                         placeholder="Apellido"
-                        className={`w-full px-2 py-1 rounded filter-input text-sm ${cursorNotAllowed}`}
+                        className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.lastName && (
                         <p className="text-red-400 text-xs mt-1">{errors.contacts[index].lastName.message}</p>
@@ -78,7 +80,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
                         readOnly={viewMode}
                         {...register(`contacts.${index}.relationship`)}
                         placeholder="Parentesco"
-                        className={`w-full px-2 py-1 rounded filter-input text-sm ${cursorNotAllowed}`}
+                        className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.relationship && (
                         <p className="text-red-400 text-xs mt-1">{errors.contacts[index].relationship.message}</p>
@@ -89,7 +91,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
                         readOnly={viewMode}
                         {...register(`contacts.${index}.phone`)}
                         placeholder="0414-1234567"
-                        className={`w-full px-2 py-1 rounded filter-input text-sm ${cursorNotAllowed}`}
+                        className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.phone && (
                         <p className="text-red-400 text-xs mt-1">{errors.contacts[index].phone.message}</p>
@@ -100,7 +102,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
                         readOnly={viewMode}
                         {...register(`contacts.${index}.address`)}
                         placeholder="Dirección"
-                        className={`w-full px-2 py-1 rounded filter-input text-sm ${cursorNotAllowed}`}
+                        className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.address && (
                         <p className="text-red-400 text-xs mt-1">{errors.contacts[index].address.message}</p>
@@ -111,7 +113,7 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
                         disabled={viewMode}
                         type="button"
                         onClick={() => remove(index)}
-                        className={`inline-flex items-center justify-center p-1 rounded ${cursorNotAllowed}`}
+                        className={`inline-flex items-center justify-center p-1 rounded ${disabledClasses}`}
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>
@@ -124,5 +126,4 @@ export default function ContactData({ viewMode, register, errors, employee, fiel
         )}
       </div>
     );
-  // }
 }

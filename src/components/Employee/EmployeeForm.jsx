@@ -140,7 +140,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   useEffect(() => {
     if (selectedSubDepartmentId) {
-      
+
       const positionsBySubDepartment = selectedDepartmentData.positions.filter(
           pos => pos.subDepartment?.id === Number(selectedSubDepartmentId)
       );
@@ -225,18 +225,17 @@ export default function EmployeeForm({ mode = 'create' }) {
     const fullHomePhone = employee?.homePhone || '';
     const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
     const joinDate = employee?.joinDate ?? new Date().toISOString().split('T')[0];
-    const birthDate = employee?.birthDate ? new Date(employee.birthDate).toISOString().split('T')[0] : null;
+    const birthdate = employee?.birthdate ? new Date(employee.birthdate).toISOString().split('T')[0] : null;
 
-    return {
+    const employeeDataForm = {
         ci: employee?.ci ?? '',
         firstName: employee?.firstName ?? '',
         secondName: employee?.secondName ?? '',
         lastName: employee?.lastName ?? '',
         secondLastName: employee?.secondLastName ?? '',
-        birthDate: birthDate,
+        birthDate: birthdate,
         placeOfBirth: employee?.placeOfBirth ?? '',
         nationality: employee?.nationality ?? 'V',
-        age: employee?.age ?? '',
         sex: employee?.sex ?? '',
         maritalStatus: employee?.maritalStatus ?? 'Soltero',
         bloodType: employee?.bloodType ?? 'O+',
@@ -265,6 +264,9 @@ export default function EmployeeForm({ mode = 'create' }) {
         resetInstructions: employee?.assign?.locker?.padlock?.padlockPattern?.resetInstructions ?? '',
         unlockSequence: employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence ?? [],
     }
+    if (createMode) return { ...employeeDataForm, age: '' };
+
+    return employeeDataForm;
   };
 
   const getActivetab = (activeTab) => {

@@ -90,7 +90,7 @@ export const employeeValidationSchema = yup.object().shape({
   joinDate: yup.string().required('Fecha de ingreso es requerida'),
   department: yup.string().required('Departamento es requerido'),
   subDepartment: yup.string(),
-  position: yup.string().required('Cargo es requerido').matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
+  position: yup.string().required('Cargo es requerido'),
   userName: yup
     .string()
     .nullable()

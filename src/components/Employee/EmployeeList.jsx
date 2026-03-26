@@ -9,6 +9,7 @@ import { filterData } from '../../utils/filter-utils';
 import FilterByFields from '../Filters/FilterByFields';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
+import RowTableLoading from '../Shared/RowTableLoading';
 import '../../Tables.css';
 
 // Componente wrapper que proporciona el contexto
@@ -22,7 +23,7 @@ export default function EmployeeList() {
   const itemsPerPage = 10;
   
   // Leer del contexto (fuente única de verdad)
-  const { employeeData, setEmployeeData, createEmployee } = useEmployees();
+  const { loadingEmployeeData, employeeData, setEmployeeData, createEmployee } = useEmployees();
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
@@ -94,12 +95,13 @@ return (
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((emp) => (
-              <EmployeeRow 
-                key={emp.id}
-                emp={emp} 
-              />
-            ))}
+            {loadingEmployeeData ? (
+                <RowTableLoading colSpan={8} />
+              ) : (
+                paginatedData.map((emp) => (
+                  <EmployeeRow key={emp.id} emp={emp} />
+                ))
+              )}
           </tbody>
         </table>
       </div>
