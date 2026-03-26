@@ -10,6 +10,7 @@ import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
+import { newNumEmployee } from '../../utils/Employees/employee-utils';
 
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
@@ -30,9 +31,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
-    // defaultValues: {
-    //   unlockSequence: [{ action: 'girar', direction: 'derecha', amount: 1 }]
-    // }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -52,37 +50,34 @@ export default function EmployeeForm({ mode = 'create' }) {
   
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
+  const [positions, setPositions] = useState([]);
   const [availableDepartments, setAvailableDepartments] = useState([]);
   const { departments, globalLoading, loadDepartments } = useGlobalData();
   const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
-  const selectedDepartmentId = watch('department');
   const [subDepartments, setSubDepartments] = useState([]);
+  const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
+
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
   
   const selectedSex = watch('sex');
   const watchedBirthDate = watch('birthDate');
+  const selectedDepartmentId = watch('department');
+  const selectedSubDepartmentId = watch('subDepartment');
   const createMode = mode === 'create';
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
 
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
-  // const disabledClasses = (viewMode || !isEmployeeActive) && 'cursor-not-allowed opacity-50';
   const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);
-
-  // useEffect(() => {  
-  //   if (departments.length === 0) {
-  //     loadDepartments(); 
-  //   }
-  // }, [mode]);
 
   useEffect(() => {
     if (loadingEmployeeData) return;
     if (!employeeData.length) return;
     
-    const  newNumber = employee?.numEmployee ?? newNumEmployee();
+    const  newNumber = employee?.numEmployee ?? newNumEmployee(employeeData);
     setValue('numEmployee', newNumber);
 
   }, [employeeData, loadingEmployeeData]);
@@ -126,13 +121,33 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, [empLockerAssign]);
 
   useEffect (() => {
-    if(selectedDepartmentId) {
+    
+    setValue('subDepartment', '');
+    setValue('position', '');
+    setPositions([]);
+
+    if(selectedDepartmentId) {  
       const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
+      
+      if (selectedDepartment?.subDepartments?.length === 0) {
+        console.log("no tiene sub", selectedDepartment)
+        setPositions(selectedDepartment?.positions);
+      }
       setSubDepartments(selectedDepartment?.subDepartments ?? []);
-    } else {
-      setValue('subDepartment', '');
+      setSelectedDepartmentData(selectedDepartment ?? []);
     }
   }, [selectedDepartmentId, lockerAssigns]);
+
+  useEffect(() => {
+    if (selectedSubDepartmentId) {
+      
+      const positionsBySubDepartment = selectedDepartmentData.positions.filter(
+          pos => pos.subDepartment?.id === Number(selectedSubDepartmentId)
+      );
+      console.log("positionsBySubDepartment", positionsBySubDepartment)
+      setPositions(positionsBySubDepartment);
+    }
+  }, [selectedSubDepartmentId])
 
   const onSubmit = async (data) => {
     // console.log("submit", data);
@@ -252,17 +267,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     }
   };
 
-  const newNumEmployee = () => {
-    // generar número de empleado automáticamente
-    const maxNum = Math.max( 0,
-      ...employeeData.map(e => {
-        const num = parseInt(e.numEmployee) || 0;
-        return num;
-      })
-    );
-    return String(maxNum + 1);
-  }
-
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'personal':
@@ -280,6 +284,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   loadingData={loadingData}
                   selectedDepartmentId={selectedDepartmentId}
                   subDepartments={subDepartments}
+                  positions={positions}
                 />;
       case 'contact':
         return <ContactData viewMode={viewMode} register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;

@@ -4,7 +4,8 @@ import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
 
-export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments }) {
+export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
+  
   const { toggleEmployeeField } = useEmployees();
 
      return (
@@ -47,17 +48,28 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
               ))}
             </select> 
           ) : (
-            <span className="font-bold"> No Aplica </span>
+            <span className="text-gray-500 italic"> No Aplica </span>
           )}
         </div>
 
         <div>
           <LabelFieldForm field="Cargo" simbol="*"/>
-            <input 
-              readOnly={viewMode} 
-              {...register('position')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
-            />
-          {errors.position && <ErrorMessage msg={errors.position.message} />}
+          {positions.length > 0 ? (
+            <>
+            <select 
+              disabled={viewMode } {...register('position')} 
+              className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+            >
+              <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+              {positions.map((item) => ( 
+                <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.name} </option>
+              ))}
+            </select>
+            {errors.position && <ErrorMessage msg={errors.position.message} />}
+            </>
+          ) : (
+            <span className="text-gray-500 italic"> Sin cargos registrados </span>
+          )}
         </div>
 
         <div className='flex flex-row'>
