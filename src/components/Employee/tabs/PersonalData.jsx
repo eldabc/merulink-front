@@ -11,10 +11,10 @@ export default function PersonalData({ viewMode, employee = {}, register, errors
         <div>
           <LabelFieldForm field="Fecha de Nacimiento" />
             <input 
-              readOnly={viewMode} type="date" {...register('birthDate')} 
+              readOnly={viewMode} type="date" {...register('birthdate')} 
               className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 text-gray-300 ${cursorNotAllowed}`} 
             />
-          {errors.birthDate && <p className="text-red-400 text-xs mt-1">{errors.birthDate.message}</p>}
+          {errors.birthdate && <p className="text-red-400 text-xs mt-1">{errors.birthdate.message}</p>}
         </div>
         <div className="w-full">
           <LabelFieldForm field="Lugar de Nacimiento" />

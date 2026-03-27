@@ -43,14 +43,14 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
     return empLockerAssign
       .filter(assign => assign.locker?.category?.key === lockerAssignCategoryKey)
       .map((assign, index) => (
-        <option key={`lockerAssign-${assign?.id}-${index}`} className='bg-[#3c4042]' value={assign?.locker?.id}>
+        <option key={`lockerAssign-${assign?.id}-${index}`} className='bg-[#3c4042]' value={assign?.id}>
           {assign.locker.code}
         </option>
       ));
   };
 
   const lockerAssignSelected = empLockerAssign.find(
-    d => d.locker?.id === Number(lockerAssingIdWatch)
+    assign => assign?.id === Number(lockerAssingIdWatch)
   );
 
   useEffect(() => {

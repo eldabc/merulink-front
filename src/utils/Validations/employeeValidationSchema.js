@@ -36,7 +36,7 @@ export const employeeValidationSchema = yup.object().shape({
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/, 'Solo se permiten letras.')
     .optional(),
     
-  birthDate: yup
+  birthdate: yup
     .date()
     .optional()
     .nullable()
@@ -59,7 +59,7 @@ export const employeeValidationSchema = yup.object().shape({
     // )
 
   placeOfBirth: yup.string(),
-  nationality: yup.string(),
+  nationality: yup.string().required('Nacionalidad es requerida'),
   
   age: yup.string().matches(/^[0-9]*$/, 'Solo se permiten números.'), 
   sex: yup.string().required('Sexo es requerido'),

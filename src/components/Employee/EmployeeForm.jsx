@@ -62,7 +62,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const employee = employeeData.find(e => e.id === Number(id));
   
   const selectedSex = watch('sex');
-  const watchedBirthDate = watch('birthDate');
+  const watchedBirthDate = watch('birthdate');
   const selectedDepartmentId = watch('department');
   const selectedSubDepartmentId = watch('subDepartment');
   const createMode = mode === 'create';
@@ -82,7 +82,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   }, [employeeData, loadingEmployeeData]);
   
-  // calcular edad cuando cambie birthDate
+  // calcular edad cuando cambie birthdate
   useEffect(() => {
     calculateAge(watchedBirthDate, setValue);
   }, [watchedBirthDate, setValue]);
@@ -130,7 +130,7 @@ export default function EmployeeForm({ mode = 'create' }) {
       const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
       
       if (selectedDepartment?.subDepartments?.length === 0) {
-        console.log("no tiene sub", selectedDepartment)
+        // console.log("no tiene sub", selectedDepartment)
         setPositions(selectedDepartment?.positions);
       }
       setSubDepartments(selectedDepartment?.subDepartments ?? []);
@@ -144,7 +144,7 @@ export default function EmployeeForm({ mode = 'create' }) {
       const positionsBySubDepartment = selectedDepartmentData.positions.filter(
           pos => pos.subDepartment?.id === Number(selectedSubDepartmentId)
       );
-      console.log("positionsBySubDepartment", positionsBySubDepartment)
+      // console.log("positionsBySubDepartment", positionsBySubDepartment)
       setPositions(positionsBySubDepartment);
     }
   }, [selectedSubDepartmentId])
@@ -153,13 +153,18 @@ export default function EmployeeForm({ mode = 'create' }) {
     // console.log("submit", data);
     let success = false;
     
-    const departmentData = availableDepartments.find(item => item.id === Number(data.department));
-    const subDepartmentData = subDepartments.find(item => item.id === Number(data.subDepartment));
+    // const departmentData = availableDepartments.find(item => item.id === Number(data.department));
+    // const subDepartmentData = subDepartments.find(item => item.id === Number(data.subDepartment));
+    // const assignData = empLockerAssign.find(item => item?.locker.id === Number(data.lockerAssingId));
+    // console.log("assignData", assignData)
+    // console.log("assignData.id", assignData.id)
+    console.log("empLockerAssign", empLockerAssign)
     const submissionData = { 
                             id: employee?.id ?? null,
                             ...data, 
-                            departmentName: departmentData?.departmentName, 
-                            subDepartmentName: subDepartmentData?.subDepartmentName ?? 'No Aplica' 
+                            // departmentName: departmentData?.departmentName, 
+                            // subDepartmentName: subDepartmentData?.subDepartmentName ?? 'No Aplica',
+                            // assignId: assignData.id
                            };
 
     console.log('Data submit:', submissionData);
@@ -185,7 +190,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     const tabFieldMap = {
       personal: [
         'numEmployee', 'firstName', 'secondName', 'lastName', 'secondLastName',
-        'birthDate', 'placeOfBirth', 'nationality', 'age', 'sex', 'ci', 'maritalStatus',
+        'birthdate', 'placeOfBirth', 'nationality', 'age', 'sex', 'ci', 'maritalStatus',
         'bloodType', 'email', 'mobilePhoneCode', 'mobilePhone', 'homePhoneCode', 'homePhone', 'address'
       ],
       work: [ 'joinDate', 'department', 'subDepartment', 'position'],
@@ -233,7 +238,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         secondName: employee?.secondName ?? '',
         lastName: employee?.lastName ?? '',
         secondLastName: employee?.secondLastName ?? '',
-        birthDate: birthdate,
+        birthdate: birthdate,
         placeOfBirth: employee?.placeOfBirth ?? '',
         nationality: employee?.nationality ?? 'V',
         sex: employee?.sex ?? '',

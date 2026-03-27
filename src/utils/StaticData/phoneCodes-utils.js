@@ -6,6 +6,7 @@ export const splitPhone = (fullNumber) => {
   
     return { code, number };
 };
+
 export const phoneCodes = [
   {
     "id": 1,

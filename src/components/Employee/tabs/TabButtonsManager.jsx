@@ -8,7 +8,7 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
             // determine if this tab currently has errors from formState.errors
             const tabError = (() => {
               if (!errors) return false;
-              const personalKeys = ['numEmployee','birthDate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
+              const personalKeys = ['numEmployee','birthdate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
               const workKeys = ['joinDate','department','subDepartment','position'];
               const meruLinkKeys = ['userName', 'userPass'];
               if (tab.id === 'personal') return personalKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));

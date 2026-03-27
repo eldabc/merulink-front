@@ -4,8 +4,8 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { useNotification } from "../context/NotificationContext"; 
 import { useGlobalData } from './GlobalDataContext';
 
-import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
-
+// import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
+import {mapEmployeeToBackend} from '../utils/mappers/employeeMapper';
 const EmployeeContext = createContext();
 
 export const useEmployees = () => {
@@ -81,38 +81,33 @@ export const EmployeeProvider = ({ children }) => {
 
   // Armado JSON
   const formattedEmployees = (formData) => {
-    const assignData = lockerAssigns.find(assign => String(assign.id) === String(formData.lockerAssingId));
-    
-    return {
-      ...formData,
-      id: formData.id ? formData.id : Date.now(),
-      mobilePhone: formData.mobilePhone ? `${formData.mobilePhoneCode}-${formData.mobilePhone}` : null,
-      homePhone: formData.homePhone ? `${formData.homePhoneCode}-${formData.homePhone}` : null,
-      assign: {
-        ...assignData
-      },
-    };
+
+    console.log("formData Context", formData);
+    const mappedData = mapEmployeeToBackend(formData);
+    console.log("mappedData", mappedData);
+    return mappedData;
   }
 
   // *** Crear
   const createEmployee = async (formData) => {
     try {
-      //Armado números de teléfono
-      // if (formData.mobilePhone) formData.mobilePhone = `${formData.mobilePhoneCode}-${formData.mobilePhone}`;
 
-      // if (formData.homePhone) formData.homePhone = `${formData.homePhoneCode}-${formData.homePhone}`; 
-
-      // console.log('data form:', formData);
-      // const newEmployee = { id: Date.now(), ...formData };
       const newEmployee = formattedEmployees(formData);
-      console.log("Creado", newEmployee);; 
+      console.log("Creado", newEmployee);
+      
+      const response = await axios.post(`${ENV.API_BACK_URL}employees`, newEmployee);
+      const newEmpResponse = response.data.data;
+      console.log("newEmpResponse", newEmpResponse);
+      setEmployeeData(prevData => {
+        return [newEmpResponse, ...prevData]; 
+      });
 
-      setEmployeeData(prevData => [newEmployee, ...prevData]);
-      showNotification(`Empleado ${newEmployee.firstName} ${newEmployee.lastName} creado con éxito`);
+      showNotification(`Empleado ${newEmpResponse.firstName} ${newEmpResponse.lastName} creado con éxito`);
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el Empleado', error.message);
+      console.log("errores", error)
+      showNotification('Error al crear el Empleado', error.response.data.message, 'error');
       return false;
     }
   };
@@ -140,14 +135,13 @@ export const EmployeeProvider = ({ children }) => {
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar: ' + error.message, 'error');
+      showNotification('Error al actualizar:', error.message, 'error');
       return false;
     }
   };
 
   const getDepartments = async () => {
     try {
-        console.log("departments", departments)
         return departments;
     } catch (error) {
       showNotification('Error al obtener Departamentos', error.message, 'error');
