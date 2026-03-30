@@ -393,8 +393,9 @@ export default function EmployeeForm({ mode = 'create' }) {
                     <input
                       disabled={true}
                       {...register('numEmployee')}
-                      className={`w-20 px-2 py-1 text-sm rounded-lg filter-input cursor-not-allowed`}
+                      className={`w-20 px-2 py-1 text-sm rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
                     />
+                    {errors?.numEmployee && <ErrorMessage msg={errors.numEmployee.message} />}
                   </div>
                 </div>  
           </div>

@@ -1,11 +1,10 @@
 import { phoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 
-export default function PersonalData({ viewMode, employee = {}, register, errors }) {
-  const isForm = typeof register === 'function';
+export default function PersonalData({ viewMode, register, errors }) {
+
   const cursorNotAllowed = viewMode && 'cursor-not-allowed opacity-50';
   
-  if (isForm) {
    return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">
         <div>
@@ -44,7 +43,7 @@ export default function PersonalData({ viewMode, employee = {}, register, errors
 
         <div>
           <LabelFieldForm field="Edad" simbol="*"/>
-             <input readOnly={true} {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input bg-gray-700 ${cursorNotAllowed}`} disabled/>
+             <input readOnly={true} {...register('age')} className={`w-full px-3 py-2 rounded-lg filter-input cursor-not-allowed ${cursorNotAllowed}`} disabled/>
           {errors?.age && <p className="text-red-400 text-xs mt-1">{errors.age.message}</p>}
         </div>
         
@@ -143,54 +142,6 @@ export default function PersonalData({ viewMode, employee = {}, register, errors
         </div>
       </div>
     );
-  }
-   return ( "Por eliminar");
-    {/*<div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-4 rounded border-[#ffffff21] border">
-        <div>
-          <label className="font-semibold">Lugar de Nacimiento: </label>
-            {employee.placeOfBirth}
-        </div>
-
-        <div>
-          <label className="font-semibold">Nacionalidad: </label>
-            {employee.nationality}
-        </div>
-
-        <div>
-          <label className="font-semibold">Cédula: </label>
-            {employee.ci}
-        </div>
-
-        <div>
-          <label className="font-semibold">Edad: </label>
-            {employee.age}
-        </div>
-
-        <div>
-          <label className="font-semibold">Estado Civil: </label>
-          {employee.maritalStatus}
-        </div>
-        <div>
-          <label className="font-semibold">Tipo de Sangre: </label>
-          {employee.bloodType}
-        </div>
-        <div>
-          <label className="font-semibold">Teléfono Móvil: </label>
-          {employee.mobilePhone}
-        </div>
-        <div>
-          <label className="font-semibold">Teléfono Habitación: </label>
-          {employee.homePhone}
-        </div>
-        <div className="md:col-span-2">
-          <label className="font-semibold">Correo Electrónico: </label>
-            {employee.email}
-        </div>
-        <div className="md:col-span-2">
-          <label className="font-semibold">Dirección: </label>
-          {employee.address}
-        </div>
-      </div>*/}
    
    
 }

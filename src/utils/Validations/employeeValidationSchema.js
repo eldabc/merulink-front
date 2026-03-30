@@ -65,7 +65,7 @@ export const employeeValidationSchema = yup.object().shape({
   sex: yup.string().required('Sexo es requerido'),
  
   maritalStatus: yup.string(),
-  bloodType: yup.string(),
+  bloodType: yup.string().nullable(),
   
   email: yup.string().email('Email inválido').required('Email es requerido'),
   
