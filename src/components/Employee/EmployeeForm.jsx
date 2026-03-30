@@ -3,7 +3,6 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
-import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
@@ -29,6 +28,11 @@ import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create' }) {
   
+  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
+  
+  const { id } = useParams();
+  const employee = employeeData.find(e => e.id === Number(id));
+
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: yupResolver(employeeValidationSchema),
   });
@@ -52,13 +56,9 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const [positions, setPositions] = useState([]);
   const [availableDepartments, setAvailableDepartments] = useState([]);
-  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
   const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
-
-  const { id } = useParams();
-  const employee = employeeData.find(e => e.id === Number(id));
   
   const selectedSex = watch('sex');
   const watchedBirthDate = watch('birthdate');
@@ -138,7 +138,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, [selectedDepartmentId, lockerAssigns]);
 
   useEffect(() => {
-    if (selectedSubDepartmentId) {
+    if (selectedSubDepartmentId && selectedDepartmentData.length > 0) {
 
       const positionsBySubDepartment = selectedDepartmentData.positions.filter(
           pos => pos.subDepartment?.id === Number(selectedSubDepartmentId)
@@ -151,20 +151,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const onSubmit = async (data) => {
     // console.log("submit", data);
     let success = false;
-    
-    // const departmentData = availableDepartments.find(item => item.id === Number(data.department));
-    // const subDepartmentData = subDepartments.find(item => item.id === Number(data.subDepartment));
-    // const assignData = empLockerAssign.find(item => item?.locker.id === Number(data.lockerAssingId));
-    // console.log("assignData", assignData)
-    // console.log("assignData.id", assignData.id)
-    console.log("empLockerAssign", empLockerAssign)
-    const submissionData = { 
-                            id: employee?.id ?? null,
-                            ...data, 
-                            // departmentName: departmentData?.departmentName, 
-                            // subDepartmentName: subDepartmentData?.subDepartmentName ?? 'No Aplica',
-                            // assignId: assignData.id
-                           };
+    const submissionData = { id: employee?.id ?? null, ...data, };
 
     console.log('Data submit:', submissionData);
 
