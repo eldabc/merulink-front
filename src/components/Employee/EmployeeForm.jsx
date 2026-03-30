@@ -52,7 +52,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const [positions, setPositions] = useState([]);
   const [availableDepartments, setAvailableDepartments] = useState([]);
-  const { departments, globalLoading, loadDepartments } = useGlobalData();
   const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
@@ -323,7 +322,7 @@ export default function EmployeeForm({ mode = 'create' }) {
               />;
     }
   };
-  // console.log("fieldsA", employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence);
+  // console.log("EMPLOYEES", employee);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>

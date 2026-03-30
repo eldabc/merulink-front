@@ -1,4 +1,4 @@
-export const mapEmployeeToBackend = (formData, assignDataId) => ({
+export const mapEmployeeToBackend = (formData) => ({
   id: formData.id ? formData.id : Date.now(),
   ci: formData.ci,
   num_employee: formData.numEmployee,
@@ -11,7 +11,7 @@ export const mapEmployeeToBackend = (formData, assignDataId) => ({
   nationality: formData.nationality,
   sex: formData.sex,
   marital_status: formData.maritalStatus,
-  blood_type: formData.bloodType,
+  blood_type: formData.bloodType ?? '',
   email: formData.email,
   mobile_phone: formData.mobilePhone ? `${formData.mobilePhoneCode}-${formData.mobilePhone}` : null,
   home_phone: formData?.homePhone ? `${formData.homePhoneCode}-${formData.homePhone}` : null,
@@ -35,5 +35,5 @@ export const mapEmployeeToBackend = (formData, assignDataId) => ({
     phone: contact.phone,
     address: contact.address,
   })),
-  assign_id: formData?.lockerAssingId
+  assign_id: formData?.lockerAssingId ?? null
 });

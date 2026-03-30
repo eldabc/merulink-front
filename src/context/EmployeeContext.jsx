@@ -4,7 +4,6 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { useNotification } from "../context/NotificationContext"; 
 import { useGlobalData } from './GlobalDataContext';
 
-// import { lockerAssigns } from '../utils/StaticData/locker-assign-utils.js';
 import {mapEmployeeToBackend} from '../utils/mappers/employeeMapper';
 const EmployeeContext = createContext();
 
@@ -82,9 +81,7 @@ export const EmployeeProvider = ({ children }) => {
   // Armado JSON
   const formattedEmployees = (formData) => {
 
-    console.log("formData Context", formData);
     const mappedData = mapEmployeeToBackend(formData);
-    console.log("mappedData", mappedData);
     return mappedData;
   }
 
@@ -92,12 +89,11 @@ export const EmployeeProvider = ({ children }) => {
   const createEmployee = async (formData) => {
     try {
 
-      const newEmployee = formattedEmployees(formData);
+      const newEmployee = mapEmployeeToBackend(formData);
       console.log("Creado", newEmployee);
       
       const response = await axios.post(`${ENV.API_BACK_URL}employees`, newEmployee);
       const newEmpResponse = response.data.data;
-      console.log("newEmpResponse", newEmpResponse);
       setEmployeeData(prevData => {
         return [newEmpResponse, ...prevData]; 
       });
@@ -106,7 +102,6 @@ export const EmployeeProvider = ({ children }) => {
       
       return true;
     } catch (error) {
-      console.log("errores", error)
       showNotification('Error al crear el Empleado', error.response.data.message, 'error');
       return false;
     }
@@ -118,24 +113,26 @@ export const EmployeeProvider = ({ children }) => {
       const employeeId = formData.id;
 
       if (!employeeId) {
-        showNotification('Error: No se encontró el ID del Empleado', 'error');
+        showNotification('Error:', 'No se encontró el ID del Empleado', 'error');
         return false;
       }
 
-      const updatedEmployee = formattedEmployees(formData);
+      const updatedEmployee = mapEmployeeToBackend(formData);
       console.log("Actualizado:", updatedEmployee);
       
+      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employeeId}`, updatedEmployee);
+      const editEmpResponse = response.data.data;
+      
       setEmployeeData(prevData => {
-        return prevData.map(emp => 
-          emp.id === employeeId ? updatedEmployee : emp 
-        );
+        const filteredData = prevData.filter(employee => employee.id !== employeeId);
+        return [editEmpResponse, ...filteredData];
       });
 
-      showNotification(`Empleado ${updatedEmployee.firstName} ${updatedEmployee.lastName} actualizado con éxito`); 
+      showNotification(`Empleado ${editEmpResponse.firstName} ${editEmpResponse.lastName} actualizado con éxito`); 
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar:', error.message, 'error');
+      showNotification('Error al actualizar:', error.response.data.message, 'error');
       return false;
     }
   };
