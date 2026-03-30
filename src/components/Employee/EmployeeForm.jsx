@@ -19,9 +19,9 @@ import LockerAssign from "./tabs/LockerAssign";
 import TabButtonsManager from './tabs/TabButtonsManager';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
-import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
-import ErrorMessage from '../Shared/ErrorMessage';
+import HeaderEmployeeForm from './HeaderEmployeeForm';
+import ConfirmDialog from '../Shared/ConfirmDialog';
 import { User } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
@@ -59,6 +59,8 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
   const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const selectedSex = watch('sex');
   const watchedBirthDate = watch('birthdate');
@@ -67,6 +69,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const createMode = mode === 'create';
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
+  const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
 
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
@@ -129,21 +132,20 @@ export default function EmployeeForm({ mode = 'create' }) {
       const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
       
       if (selectedDepartment?.subDepartments?.length === 0) {
-        // console.log("no tiene sub", selectedDepartment)
         setPositions(selectedDepartment?.positions);
       }
       setSubDepartments(selectedDepartment?.subDepartments ?? []);
-      setSelectedDepartmentData(selectedDepartment ?? []);
+      setSelectedDepartmentData(selectedDepartment);
+
     }
   }, [selectedDepartmentId, lockerAssigns]);
 
   useEffect(() => {
-    if (selectedSubDepartmentId && selectedDepartmentData.length > 0) {
+    if (selectedSubDepartmentId && selectedDepartmentData?.positions) {
 
       const positionsBySubDepartment = selectedDepartmentData.positions.filter(
           pos => pos.subDepartment?.id === Number(selectedSubDepartmentId)
       );
-      // console.log("positionsBySubDepartment", positionsBySubDepartment)
       setPositions(positionsBySubDepartment);
     }
   }, [selectedSubDepartmentId])
@@ -309,6 +311,21 @@ export default function EmployeeForm({ mode = 'create' }) {
               />;
     }
   };
+
+  const handleChangeStatusClick = (employee) => {
+    setIsModalOpen(true);
+    setSelectedEmployee(employee);
+    console.log("employee", employee);
+  };
+
+  const handleConfirmChangeStatus = async () => {
+    if (!selectedEmployee) return;
+    console.log("handleConfirmChangeStatus");
+
+    await toggleEmployeeField(selectedEmployee, 'status');
+    setIsModalOpen(false);
+    setSelectedEmployee(null);
+  };
   // console.log("EMPLOYEES", employee);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -324,78 +341,33 @@ export default function EmployeeForm({ mode = 'create' }) {
 
           <div>
             <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} />
-                <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
-                  <div>
-                    <LabelFieldForm field="Primer Nombre" simbol="*" />
-                  </div>
-                  <div>
-                    <input
-                      readOnly={viewMode}
-                      {...register('firstName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {errors?.firstName && <ErrorMessage msg={errors.firstName.message} />}  
-                  </div>
-
-                  <div>
-                    <LabelFieldForm field="Segundo Nombre" />
-                  </div>
-                  <div>
-                    <input
-                      readOnly={viewMode}
-                      {...register('secondName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {errors?.secondName && <ErrorMessage msg={errors.secondName.message} />}
-                  </div>
-
-                  <div>
-                    <LabelFieldForm field="Primer Apellido" simbol="*" />
-                  </div>
-                  <div>
-                    <input
-                      readOnly={viewMode}
-                      {...register('lastName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {errors?.lastName && <ErrorMessage msg={errors.lastName.message} />}
-                  </div>
-
-                  <div>
-                    <LabelFieldForm field="Segundo Apellido" />
-                  </div>
-                  <div>
-                    <input
-                      readOnly={viewMode}
-                      {...register('secondLastName')}
-                      className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {errors?.secondLastName && <ErrorMessage msg={errors.secondLastName.message} />}
-                  </div>
-                  <div>
-                    <LabelFieldForm field="No. Empleado" simbol="*" />
-                  </div>
-                  <div>
-                    <input
-                      disabled={true}
-                      {...register('numEmployee')}
-                      className={`w-20 px-2 py-1 text-sm rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
-                    />
-                    {errors?.numEmployee && <ErrorMessage msg={errors.numEmployee.message} />}
-                  </div>
-                </div>  
+            <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
+
           {(editMode || viewMode) && (
+            <>
             <div>
               <label className="font-semibold">Estatus: </label>
                 <span className={`status-tag ${getStatusColor(employee?.status)}`}  
                   onClick={(e) => {
-                  e.stopPropagation();
-                  toggleEmployeeField(employee.id, "status");
-                }}>
+                    e.stopPropagation();
+                    handleChangeStatusClick(employee);
+                  }}>
                   {getStatusName(employee?.status)}
                 </span>
             </div>
+            <ConfirmDialog 
+              isOpen={isModalOpen}
+              onClose={() => {
+                setIsModalOpen(false);
+                setSelectedEmployee(null);
+              }}
+              onConfirm={handleConfirmChangeStatus}
+              title={`${statusChangeLabel} Empleado`}
+              warningMessage={true}
+              message={`¿Está seguro que desea ${statusChangeLabel} Empleado "${employee?.firstName} ${employee?.lastName}"?`}
+            />
+            </>
           )}
         </div>
       

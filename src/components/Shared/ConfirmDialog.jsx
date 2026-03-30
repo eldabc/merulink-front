@@ -1,4 +1,6 @@
-export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, btnText }) {
+import WarningChangeStatusEmployee from '../Shared/WarningChangeStatusEmployee';
+
+export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, btnText, warningMessage }) {
   if (!isOpen) return null;
 
   return (
@@ -12,14 +14,16 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
         </div>
         
         <div className="text-gray-400 text-sm mb-6">
-          {message && (
-            <>
-            {message}
-            <div className="text-center bg-gray-600 rounded-2xl ">
+          {message}
+          {/* // || 'Esta acción no se puede deshacer. El evento será eliminado permanentemente.' */}
+
+          <div className="text-center bg-gray-600 rounded-2xl ">
+            {warningMessage ? (
+              <WarningChangeStatusEmployee />
+            ) : (
               <span className="block justify-center mt-2 text-[14px] text-red-500 text-shadow-amber-50 p-2">Esta acción no se puede deshacer.</span>
-            </div>
-          </>
-          ) || 'Esta acción no se puede deshacer. El evento será eliminado permanentemente.'}
+            )}
+          </div>
         </div>
 
         <div className="flex justify-end gap-3">
