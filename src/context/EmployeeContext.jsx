@@ -5,6 +5,8 @@ import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
 
 import {mapEmployeeToBackend} from '../utils/mappers/employeeMapper';
+import { fieldLabels } from '../utils/Employees/employee-utils';
+
 const EmployeeContext = createContext();
 
 export const useEmployees = () => {
@@ -26,7 +28,6 @@ export const EmployeeProvider = ({ children }) => {
       loadDepartments();
       const response = await axios.get(`${ENV.API_BACK_URL}employees`);
       setEmployeeData(response.data.data);
-      // console.log("data", response.data.data)
 
     } catch (err) {
       showNotification('Error al cargar datos', err.message, 'error');
@@ -36,59 +37,36 @@ export const EmployeeProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log('UseEffect EmployeeContext');
     loadEmployees();
   }, [loadEmployees]);
 
   // Actualizar campos checkboxs sin entrar en modo edit
-  const toggleEmployeeField = (id, field) => { 
-    console.log("Checkbox", id, field);
-    if (!id || !field) return; 
-    
-    setEmployeeData(prev =>
-      prev.map(emp => {
-        if (emp.id !== id) {
-          return emp;
-        }
+  const toggleEmployeeField = async (employee, field) => { 
+    try {
+      console.log("Checkbox", employee, field);
+      if (!employee.id || !field) return; 
 
-        let updatedEmployee = { ...emp };
+      const readableField = fieldLabels[field] || field;
+      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, employee);
 
-        if (field === 'status') {
-            
-          // Aplicar el toggle
-          const newStatus = !emp.status;
-          updatedEmployee.status = newStatus;
-          
-          if (newStatus === false) {
-            updatedEmployee.useMeruLink = false;
-            updatedEmployee.userName = '';
-            updatedEmployee.userPass = '';
-            updatedEmployee.useLocker = false;
-            updatedEmployee.assign = null;
-            updatedEmployee.useHidCard = false;
-            updatedEmployee.useTransport = false;
-          }
-            
-        } else {
-          updatedEmployee[field] = !emp[field];
-        }
-        return updatedEmployee;
-      })
-    );
-    showNotification("Éxito", `${field.charAt(0).toUpperCase() + field.slice(1)} actualizado.`);    
+      setEmployeeData(prevData => {
+        const filteredData = prevData.filter(emp => emp.id !== employee.id);
+        return [response.data.data, ...filteredData];
+      });
+
+      showNotification("Éxito", `Campo ${readableField} actualizado.`);  
+
+     } catch (error) {
+      showNotification('Error al actualizar Empleado', error.response.data.message, 'error');
+      return false;
+    } 
   };
 
-  // Armado JSON
-  const formattedEmployees = (formData) => {
-
-    const mappedData = mapEmployeeToBackend(formData);
-    return mappedData;
-  }
 
   // *** Crear
   const createEmployee = async (formData) => {
     try {
-
+      // Armado JSON
       const newEmployee = mapEmployeeToBackend(formData);
       console.log("Creado", newEmployee);
       
@@ -148,7 +126,6 @@ export const EmployeeProvider = ({ children }) => {
 
     const getLockerAssigns = async () => {
     try {
-      // return lockerAssigns.filter(assign => !assign.employee);
       const response = await axios.get(`${ENV.API_BACK_URL}assigns?unassigned=true`);
       return response.data.data;
     } catch (error) {

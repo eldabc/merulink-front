@@ -8,3 +8,11 @@ export const newNumEmployee = (employeeData) => {
   );
   return String(maxNum + 1);
 }
+
+export const fieldLabels = {
+  "use_meru_link": 'Usa Merú Link',
+  "use_locker": 'Usa Locker',
+  "use_hid_card": 'Usa Tarjeta HID',
+  "use_transport": 'Usa transporte',
+  "status": 'Estatus de Empleado',
+};

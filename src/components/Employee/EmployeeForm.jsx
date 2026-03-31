@@ -356,17 +356,20 @@ export default function EmployeeForm({ mode = 'create' }) {
                   {getStatusName(employee?.status)}
                 </span>
             </div>
-            <ConfirmDialog 
-              isOpen={isModalOpen}
-              onClose={() => {
-                setIsModalOpen(false);
-                setSelectedEmployee(null);
-              }}
-              onConfirm={handleConfirmChangeStatus}
-              title={`${statusChangeLabel} Empleado`}
-              warningMessage={true}
-              message={`¿Está seguro que desea ${statusChangeLabel} Empleado "${employee?.firstName} ${employee?.lastName}"?`}
-            />
+
+              <ConfirmDialog 
+                isOpen={isModalOpen}
+                onClose={() => {
+                  setIsModalOpen(false);
+                  setSelectedEmployee(null);
+                }}
+                onConfirm={handleConfirmChangeStatus}
+                title={`${statusChangeLabel} Empleado`}
+                message={`¿Está seguro que desea ${statusChangeLabel} Empleado "${employee?.firstName} ${employee?.lastName}"?`}
+                btnText={`${statusChangeLabel} ahora`}
+                warningMessage={true}
+                toggleStatusChangeList={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
+              />
             </>
           )}
         </div>

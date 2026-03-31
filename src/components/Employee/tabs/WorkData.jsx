@@ -77,7 +77,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
               <input 
                disabled={!isEmployeeActive }// || viewMode
                 type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                onClick={() => !createMode && toggleEmployeeField(employee?.id, "useHidCard")} />
+                onClick={() => !createMode && toggleEmployeeField(employee, "use_hid_card")} />
             </label>
           </div>
 
@@ -87,7 +87,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
               <input 
                 disabled={!isEmployeeActive }//|| viewMode
                 type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                onClick={() => !createMode && toggleEmployeeField(employee?.id, "useTransport")} />
+                onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} />
             </label>
           </div>
         </div>
