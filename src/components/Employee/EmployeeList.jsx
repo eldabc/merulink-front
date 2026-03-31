@@ -18,12 +18,11 @@ export default function EmployeeList() {
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
-  const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const itemsPerPage = 10;
   
   // Leer del contexto (fuente única de verdad)
-  const { loadingEmployeeData, employeeData, setEmployeeData, createEmployee } = useEmployees();
+  const { loadingEmployeeData, employeeData } = useEmployees();
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {

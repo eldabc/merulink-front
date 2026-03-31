@@ -2,19 +2,19 @@ import WarningChangeStatusEmployee from '../Shared/WarningChangeStatusEmployee';
 
 export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, btnText, warningMessage, toggleStatusChangeList }) {
   if (!isOpen) return null;
-console.log("toggleStatusChangeList", toggleStatusChangeList)
+
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-[#2f3d44] border border-gray-800 p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 animate-in zoom-in duration-200">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-red-500/10 rounded-full">
-            <span className="text-red-500 text-xl">⚠️</span>
+            <span className="text-xl">⚠️</span>
           </div>
           <h3 className="text-lg font-bold text-white">{title || '¿Estás seguro?'}</h3>
         </div>
         
         <div className="text-gray-400 text-sm mb-6">
-          {message}
+          <p className='text-justify'>{message}</p>
           {/* // || 'Esta acción no se puede deshacer. El evento será eliminado permanentemente.' */}
 
           <div className="text-center bg-gray-600 rounded-2xl ">

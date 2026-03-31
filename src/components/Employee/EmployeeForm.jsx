@@ -315,14 +315,13 @@ export default function EmployeeForm({ mode = 'create' }) {
   const handleChangeStatusClick = (employee) => {
     setIsModalOpen(true);
     setSelectedEmployee(employee);
-    console.log("employee", employee);
   };
 
   const handleConfirmChangeStatus = async () => {
     if (!selectedEmployee) return;
-    console.log("handleConfirmChangeStatus");
 
     await toggleEmployeeField(selectedEmployee, 'status');
+
     setIsModalOpen(false);
     setSelectedEmployee(null);
   };

@@ -11,8 +11,8 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, c
 
   useEffect (() => {
     if(!useMeruLinkWatch) {
-      setValue('userName', '');
-      setValue('userPass', '');
+      // setValue('userName', '');
+      // setValue('userPass', '');
     }
   }, [useMeruLinkWatch]);
   
@@ -46,7 +46,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, c
                   </div>
                   <div className='flex flex-col md:flex-row md:items-center gap-2'>
                     <LabelFieldForm field="Contraseña" simbol="*" />
-                    <div className='md:ml-10 w-full md:flex-1'><PasswordInputEye register={register} errors={errors} viewMode={viewMode} useMeruLink={useMerulink} /></div>
+                    <div className='md:ml-10 w-full md:flex-1'>
+                      <PasswordInputEye register={register} errors={errors} viewMode={viewMode} useMeruLink={useMerulink} />
+                    </div>
                   </div>
                   <div className="flex items-start mt-3 gap-2">
                     <input
