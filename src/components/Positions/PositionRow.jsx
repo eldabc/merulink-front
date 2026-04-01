@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
+import SpanText from '../Shared/SpanText';
 
 export default function PositionRow({ position }) {
 
@@ -18,7 +19,7 @@ export default function PositionRow({ position }) {
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar, cargo tiene Empleados asociados' : 'Eliminar';
 
   const subDepartmentName = position.subDepartment?.name ?? (
-    <span className="italic text-gray-500">No Aplica</span>
+    <SpanText text="No Aplica" />
   );
 
   const handleSelectedPosition = (id) => {

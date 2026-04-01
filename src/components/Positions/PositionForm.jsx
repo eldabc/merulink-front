@@ -87,10 +87,10 @@ export default function PositionForm({ mode = 'create' }) {
         setFilteredSubDepartments(filtered?.subDepartments);
         
         // Sino hay Subdepartments genera código
-        if (filtered?.subDepartments.length === 0) {
+        // if (filtered?.subDepartments.length === 0) {
           const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments, position?.id);
           setValue('code', newCode);
-        } 
+        // } 
 
       } else {
         setFilteredSubDepartments([]);
@@ -102,7 +102,8 @@ export default function PositionForm({ mode = 'create' }) {
 
   // Código por Sub-departamento
   useEffect(() => {
-    if (selectedSubDepartmentId && !viewMode) {
+    if ( !viewMode) { //selectedSubDepartmentId &&
+      console.log('selectedSubDepartmentId changed:', selectedSubDepartmentId);
       const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments, position?.id);
       setValue('code', newCode);
     }
@@ -165,7 +166,7 @@ export default function PositionForm({ mode = 'create' }) {
                     {...register('subDepartmentId')}
                     className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
                   >
-                    <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                    <option className='bg-[#3c4042]' value="0">Seleccionar...</option>
                     {filteredSubDepartments?.map(subDep => (
                       <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
                         {subDep.name}

@@ -132,9 +132,9 @@ export default function EmployeeForm({ mode = 'create' }) {
     if(selectedDepartmentId) {  
       const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
       
-      if (selectedDepartment?.subDepartments?.length === 0) {
+      // if (selectedDepartment?.subDepartments?.length === 0) {
         setPositions(selectedDepartment?.positions);
-      }
+      // }
       setSubDepartments(selectedDepartment?.subDepartments ?? []);
       setSelectedDepartmentData(selectedDepartment);
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import ConfirmDialog  from '../Shared/ConfirmDialog';
+import SpanText from '../Shared/SpanText';
 
 export default function EmployeeRow({ emp }) {
 
@@ -17,6 +18,10 @@ export default function EmployeeRow({ emp }) {
       state: { data: emp } 
     }); 
   };
+
+  const subDepartmentName = emp?.subDepartment?.name ?? (
+    <SpanText text="No Aplica" />
+  );
 
   const handleChangeStatusClick = (employee) => {
     const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
@@ -44,7 +49,7 @@ export default function EmployeeRow({ emp }) {
       <td className="px-4 py-3 text-white-700">{emp.firstName}</td>
       <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
       <td className="px-4 py-3 text-white-700">{emp.department.departmentName}</td>
-      <td className="px-4 py-3 text-white-700">{emp.subDepartment.name}</td>
+      <td className="px-4 py-3 text-white-700">{subDepartmentName}</td>
       <td className="px-4 py-3 text-white-700">{emp.position.name}</td>
       <td className="px-4 py-3">
         <span 
