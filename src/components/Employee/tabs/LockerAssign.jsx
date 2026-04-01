@@ -4,6 +4,7 @@ import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 import PadlockPatternSteps from "../../Shared/PadlockPatternSteps";
 import ResetInstructions from '../../Shared/ResetInstructions.jsx';
+import ErrorMessage  from '../../Shared/ErrorMessage';
 
 function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, setValue, isEmployeeActive, watch, disabledClasses }) {
 
@@ -100,6 +101,7 @@ function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, se
                     <option className='bg-[#3c4042]' value="">Seleccionar Locker...</option>
                     {renderLockerAssigns()}
                   </select>
+                  {errors.lockerAssingId && <ErrorMessage msg={errors.lockerAssingId.message} /> }
                 </div>
                 <LabelFieldForm field="Serial candado" simbol="*" />
                 <input disabled={true}  

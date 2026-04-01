@@ -126,6 +126,18 @@ export const employeeValidationSchema = yup.object().shape({
   useMeruLink: yup.boolean(),
   useHidCard: yup.boolean(),
   useLocker: yup.boolean(),
+  lockerAssingId: yup
+    .string()
+    .nullable()
+    .optional()
+    .when('useLocker', {
+      is: true,
+      then: (schema) => 
+        schema
+          .required('Debe seleccionar Locker.'),
+      otherwise: (schema) => 
+        schema.notRequired().nullable() 
+    }),
   useTransport: yup.boolean(),
   
   // Validación de contactos

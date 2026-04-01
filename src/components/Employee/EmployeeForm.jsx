@@ -184,7 +184,8 @@ export default function EmployeeForm({ mode = 'create' }) {
       ],
       work: [ 'joinDate', 'department', 'subDepartment', 'position'],
       meruLink: ['userName', 'userPass' ],
-      contact: [ 'contacts' ]
+      contact: [ 'contacts' ],
+      lockerAssign: ['lockerAssingId' ],
     };
 
     // Helper to check if errors object has any key for given list
@@ -357,39 +358,40 @@ export default function EmployeeForm({ mode = 'create' }) {
             <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-3 text-center md:text-left" />
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
+          <div>
+            {(editMode || viewMode) && (
+              <>
+              
+                <label className="font-semibold">Estatus: </label>
+                  {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
+                    <span className="text-xs text-gray-500 italic">Cargando...</span>
+                  ) : (
+                    <span className={`status-tag ${getStatusColor(employee?.status)}`}  
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleChangeStatusClick(employee);
+                      }}>
+                      {getStatusName(employee?.status)}
+                    </span>
+                  )}
+            
 
-          {(editMode || viewMode) && (
-            <>
-            <div>
-              <label className="font-semibold">Estatus: </label>
-                {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
-                  <span className="text-xs text-gray-500 italic">Cargando...</span>
-                ) : (
-                  <span className={`status-tag ${getStatusColor(employee?.status)}`}  
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleChangeStatusClick(employee);
-                    }}>
-                    {getStatusName(employee?.status)}
-                  </span>
-                )}
-            </div>
-
-              <ConfirmDialog 
-                isOpen={isModalOpen}
-                onClose={() => {
-                  setIsModalOpen(false);
-                  setSelectedEmployee(null);
-                }}
-                onConfirm={handleConfirmChangeStatus}
-                title={`${statusChangeLabel} Empleado`}
-                message={`¿Está seguro que desea ${statusChangeLabel} Empleado "${employee?.firstName} ${employee?.lastName}"?`}
-                btnText={`${statusChangeLabel} ahora`}
-                warningMessage={true}
-                toggleStatusChangeList={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
-              />
-            </>
-          )}
+                <ConfirmDialog 
+                  isOpen={isModalOpen}
+                  onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedEmployee(null);
+                  }}
+                  onConfirm={handleConfirmChangeStatus}
+                  title={`${statusChangeLabel} Empleado`}
+                  message={`¿Está seguro que desea ${statusChangeLabel} Empleado "${employee?.firstName} ${employee?.lastName}"?`}
+                  btnText={`${statusChangeLabel} ahora`}
+                  warningMessage={true}
+                  toggleStatusChangeList={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
+                />
+              </>
+            )}
+          </div>
         </div>
       
         <TabButtonsManager 
