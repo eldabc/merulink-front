@@ -29,7 +29,7 @@ import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create' }) {
   
-  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData } = useEmployees();
+  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingFieldChange } = useEmployees();
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
@@ -43,12 +43,12 @@ export default function EmployeeForm({ mode = 'create' }) {
     name: 'contacts',
   });
 
-  const [tempFlags, setTempFlags] = useState({
-    useMeruLink: false,
-    useHidCard: false,
-    useLocker: false,
-    useTransport: false
-  });
+  // const [tempFlags, setTempFlags] = useState({
+  //   useMeruLink: false,
+  //   useHidCard: false,
+  //   useLocker: false,
+  //   useTransport: false
+  // });
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
@@ -121,7 +121,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   useEffect(() => {
     reset( employeeReset() );
-  }, [empLockerAssign]);
+  }, [empLockerAssign, employeeData]);
 
   useEffect (() => {
     
@@ -347,14 +347,14 @@ export default function EmployeeForm({ mode = 'create' }) {
       </div>
 
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
-        <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
+        <div className="md:justify-center flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className="w-full md:w-auto shrink-0 flex justify-center md:justify-start mb-2 md:mb-0">
             <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center md:ml-2.5">
               <User className="w-20 h-20 text-white" />
             </div>
           </div>
-          <div>
-            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-3" />
+          <div className='w-full md:w-auto justify-center md:justify-start'>
+            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-3 text-center md:text-left" />
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
 
@@ -362,13 +362,17 @@ export default function EmployeeForm({ mode = 'create' }) {
             <>
             <div>
               <label className="font-semibold">Estatus: </label>
-                <span className={`status-tag ${getStatusColor(employee?.status)}`}  
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleChangeStatusClick(employee);
-                  }}>
-                  {getStatusName(employee?.status)}
-                </span>
+                {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
+                  <span className="text-xs text-gray-500 italic">Cargando...</span>
+                ) : (
+                  <span className={`status-tag ${getStatusColor(employee?.status)}`}  
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleChangeStatusClick(employee);
+                    }}>
+                    {getStatusName(employee?.status)}
+                  </span>
+                )}
             </div>
 
               <ConfirmDialog 
@@ -393,7 +397,7 @@ export default function EmployeeForm({ mode = 'create' }) {
             setActiveTab={setActiveTab} 
             employee={employee}
             errors={errors}
-            tempFlags={tempFlags}
+            // tempFlags={tempFlags}
         />
 
         <div className="mt-6">
