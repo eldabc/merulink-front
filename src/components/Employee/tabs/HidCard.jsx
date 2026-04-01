@@ -1,79 +1,57 @@
-import { useEffect } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
-import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
+
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
 
- 
-export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
+function HidCard({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
+    
+    const { loadingFieldChange, toggleEmployeeField } = useEmployees();
+    const useHidCardWatch = false; //watch('useHidCard');
 
-  const { loadingFieldChange, toggleEmployeeField } = useEmployees();
-  const useMeruLinkWatch = watch('useMeruLink');
-  // const useMerulink = employee?.useMeruLink ? employee?.useMeruLink : false;
-
-  useEffect (() => {
-    if(!useMeruLinkWatch) {
-      // setValue('userName', '');
-      // setValue('userPass', '');
-    }
-  }, [useMeruLinkWatch]);
-  
-    return (
-      <>
+  return (
+    <>
         <div className="flex items-center gap-4 mb-4 pl-4">
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-            <span className="text-sm">¿Usa MeruLink?</span>
-              {loadingFieldChange.loading && loadingFieldChange.field === 'use_meru_link' ? (
+            <span className="text-sm">¿Usa HID Card?</span>
+              {loadingFieldChange.loading && loadingFieldChange.field === 'use_hid_card' ? (
                 <span className="text-xs text-gray-500 italic">Cargando...</span>
               ) : (
                 <input 
-                  disabled={!isEmployeeActive}// || viewMode
-                  type="checkbox"
-                  {...register('useMeruLink')}
-                  className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`}
-                  onClick={() => !createMode && toggleEmployeeField(employee, "use_meru_link")}
+                  disabled={!isEmployeeActive}
+                  type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
+                  onClick={() => !createMode && toggleEmployeeField(employee, "use_hid_card")} 
                 />
               )}
           </label>
         </div>
+        
         <div className="border border-[#ffffff21] p-5 mt-6">
-          {useMeruLinkWatch && (
+        
+        {/* Sección dejada para futura funcionalidad de HID Card */}
+          {useHidCardWatch && (
             <>
               <div className="col-span-full mx-auto w-full max-w-lg rounded-xl p-6 md:p-4">
                 <div className='bg-[#ffffff21] rounded-xl p-6 md:p-2"'>
                   <div className='flex flex-col md:flex-row md:items-center mb-4 gap-2'>
-                    <LabelFieldForm field="Nombre Usuario" simbol="*" />
+                    {/* <LabelFieldForm field="Nombre Usuario" simbol="*" /> */}
                     <div className='w-full md:w-auto md:flex-1'>
-                        <input 
-                          readOnly={viewMode}
-                          {...register('userName')} className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
-                        />
-                      {errors.userName && <ErrorMessage msg={errors.userName.message} />}
+                        
                     </div>
                   </div>
                   <div className='flex flex-col md:flex-row md:items-center gap-2'>
-                    <LabelFieldForm field="Contraseña" simbol="*" />
+                    {/* <LabelFieldForm field="Contraseña" simbol="*" /> */}
                     <div className='md:ml-10 w-full md:flex-1'>
-                      <PasswordInputEye register={register} errors={errors} viewMode={viewMode} />
+                      
                     </div>
                   </div>
                   <div className="flex items-start mt-3 gap-2">
-                    <input
-                      disabled={viewMode}
-                      type="checkbox"
-                      {...register('changePassNextLogin')}
-                      className={`w-4 mt-1 ${disabledClasses}`}
-                    />
-                    
-                    <label className="text-sm text-gray-300">
-                      Cambia la contraseña al próximo inicio.
-                    </label>
+
                   </div>
                 </div>
               </div>
          
               <div className='w-full mt-2.5'>
-                <h2 className='text-center p-2.5 text-xl font-bold'>Meru Link permisos {employee?.firstName} {employee?.lastName}</h2>
+                <h2 className='text-center p-2.5 text-xl font-bold'>HID Card permisos {employee?.firstName} {employee?.lastName}</h2>
                 <div>
                   <table className="min-w-full border-collapse text-sm sm:text-base">
                     <thead>
@@ -99,5 +77,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
           )}
         </div>
       </>
-    );
-};
+  );
+}
+
+export default HidCard;

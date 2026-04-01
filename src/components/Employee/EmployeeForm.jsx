@@ -15,6 +15,7 @@ import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
 import ContactData from "./tabs/ContactData";
 import MeruLinkData from "./tabs/meruLinkData";
+import HidCard from "./tabs/HidCard";
 import LockerAssign from "./tabs/LockerAssign";
 import TabButtonsManager from './tabs/TabButtonsManager';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -265,7 +266,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'personal':
-        return <PersonalData viewMode={viewMode} register={register} errors={errors} employee={employee} disabledClasses={disabledClasses} />;
+        return <PersonalData viewMode={viewMode} register={register} errors={errors} disabledClasses={disabledClasses} />;
       case 'work':
         return <WorkData 
                   createMode={createMode}
@@ -282,7 +283,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   positions={positions}
                 />;
       case 'contact':
-        return <ContactData viewMode={viewMode} register={register} errors={errors} employee={employee} fields={fields} append={append} remove={remove} />;
+        return <ContactData viewMode={viewMode} register={register} errors={errors} fields={fields} append={append} remove={remove} />;
       case 'meruLink':
         return <MeruLinkData 
                   createMode={createMode} 
@@ -291,8 +292,19 @@ export default function EmployeeForm({ mode = 'create' }) {
                   disabledClasses={disabledClasses} 
                   register={register} 
                   errors={errors} 
-                  employee={employee} 
-                  tempFlags={tempFlags} 
+                  employee={employee}  
+                  watch={watch}
+                  setValue={setValue}
+                />;
+      case 'hidCard':
+        return <HidCard 
+                  createMode={createMode} 
+                  viewMode={viewMode} 
+                  isEmployeeActive={isEmployeeActive} 
+                  disabledClasses={disabledClasses} 
+                  register={register} 
+                  errors={errors} 
+                  employee={employee}  
                   watch={watch}
                   setValue={setValue}
                 />;
@@ -307,7 +319,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                 isEmployeeActive={isEmployeeActive}
                 watch={watch}
                 disabledClasses={disabledClasses}
-                unlockSequence={employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence}
+                // unlockSequence={employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence}
               />;
     }
   };
@@ -342,7 +354,7 @@ export default function EmployeeForm({ mode = 'create' }) {
             </div>
           </div>
           <div>
-            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-0" />
+            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-3" />
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
 

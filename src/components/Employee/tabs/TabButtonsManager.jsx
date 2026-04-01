@@ -1,11 +1,12 @@
 import React from 'react';
 import { tabs } from '../../../utils/tabs-utils';
 
-export default function TabButtonsManager({ activeTab, setActiveTab, employee, errors, tempFlags }) {
+export default function TabButtonsManager({ activeTab, setActiveTab, errors }) {
     return (
         <div className="flex flex-col md:flex-row gap-4 mt-6 border-b border-gray-700">
           {tabs.map((tab) => {
-            // determine if this tab currently has errors from formState.errors
+
+            // Determine if this tab currently has errors from formState.errors
             const tabError = (() => {
               if (!errors) return false;
               const personalKeys = ['numEmployee','birthdate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
@@ -18,9 +19,6 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
               return false;
             })();
 
-            // const useMeruLinkEnabled = employee?.useMeruLink ?? tempFlags.useMeruLink;
-            // const isTabDisabled = tab.id === 'meruLink' && !useMeruLinkEnabled;
-
             return (
               <div key={tab.id} className="flex flex-col items-center sm:items-center"> 
                 <button
@@ -30,15 +28,14 @@ export default function TabButtonsManager({ activeTab, setActiveTab, employee, e
                     ${activeTab === tab.id
                       ? "border-blue-500 text-[#9fd8ff]"
                       : "border-transparent text-gray-400 hover:text-gray-200"}
-                    
-                  `} // ${isTabDisabled ? 'opacity-50 cursor-not-allowed' : ''} 
-                  // disabled={isTabDisabled}
+                  `}
                 >
                   {tab.label}
                   {tabError && ( <p className="px-2 py-1 rounded-full text-xs font-semibold bg-red-255 text-red-400 hover:text-red-800">Tienes campos erróneos en esta pestaña</p> )}
                 </button>
               </div>
-            );      
+            );
+
           })}
         </div>
     );

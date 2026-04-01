@@ -5,7 +5,7 @@ import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 import PadlockPatternSteps from "../../Shared/PadlockPatternSteps";
 import ResetInstructions from '../../Shared/ResetInstructions.jsx';
 
-function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, setValue, isEmployeeActive, watch, disabledClasses, unlockSequence }) {
+function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, setValue, isEmployeeActive, watch, disabledClasses }) {
 
   const previousSex = useRef();
   const useLockerWatch = watch('useLocker');
