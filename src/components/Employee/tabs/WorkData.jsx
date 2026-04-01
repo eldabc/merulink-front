@@ -6,7 +6,7 @@ import ErrorMessage from '../../Shared/ErrorMessage';
 
 export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
   
-  const { toggleEmployeeField } = useEmployees();
+  const { loadingFieldChange, toggleEmployeeField } = useEmployees();
 
      return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border div-border">
@@ -74,20 +74,28 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa HID Card?</span>
-              <input 
-               disabled={!isEmployeeActive }// || viewMode
-                type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                onClick={() => !createMode && toggleEmployeeField(employee, "use_hid_card")} />
+                {loadingFieldChange.loading && loadingFieldChange.field === 'use_hid_card' ? (
+                  <span className="text-xs text-gray-500 italic">Cargando...</span>
+                ) : (
+                  <input 
+                disabled={!isEmployeeActive }// || viewMode
+                  type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
+                  onClick={() => !createMode && toggleEmployeeField(employee, "use_hid_card")} />
+                )}
             </label>
           </div>
 
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
               <span className="text-sm">¿Usa Transporte?</span>
-              <input 
-                disabled={!isEmployeeActive }//|| viewMode
-                type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} />
+                {loadingFieldChange.loading && loadingFieldChange.field === 'use_transport' ? (
+                  <span className="text-xs text-gray-500 italic">Cargando...</span>
+                ) : (
+                  <input 
+                  disabled={!isEmployeeActive }//|| viewMode
+                  type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
+                  onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} />
+                )}
             </label>
           </div>
         </div>

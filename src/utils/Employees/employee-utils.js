@@ -10,9 +10,9 @@ export const newNumEmployee = (employeeData) => {
 }
 
 export const fieldLabels = {
-  "use_meru_link": 'Usa Merú Link',
-  "use_locker": 'Usa Locker',
-  "use_hid_card": 'Usa Tarjeta HID',
-  "use_transport": 'Usa transporte',
+  "use_meru_link": 'Uso de Merú Link',
+  "use_locker": 'Uso de Locker',
+  "use_hid_card": 'Uso de Tarjeta HID',
+  "use_transport": 'Uso de transporte',
   "status": 'Estatus de Empleado',
 };

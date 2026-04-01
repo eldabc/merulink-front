@@ -20,6 +20,7 @@ export const EmployeeProvider = ({ children }) => {
   const { showNotification } = useNotification();
   const { departments, loadDepartments } = useGlobalData();
   const [loadingEmployeeData, setLoadingEmployeeData] = useState(false);
+  const [loadingFieldChange, setLoadingFieldChange] = useState({ loading: false, field: null });
 
   const loadEmployees = useCallback(async () => {
       setLoadingEmployeeData(true);
@@ -42,6 +43,7 @@ export const EmployeeProvider = ({ children }) => {
 
   // Actualizar campos checkboxs sin entrar en modo edit
   const toggleEmployeeField = async (employee, field) => { 
+    setLoadingFieldChange({ loading: true, field: field });
     try {
       console.log("Checkbox", employee, field);
       if (!employee.id || !field) return; 
@@ -54,12 +56,14 @@ export const EmployeeProvider = ({ children }) => {
         return [response.data.data, ...filteredData];
       });
 
-      showNotification("Éxito", `Campo ${readableField} actualizado.`);  
+      showNotification("Éxito", `${readableField} actualizado.`);  
 
      } catch (error) {
       showNotification('Error al actualizar Empleado', error.response.data.message, 'error');
       return false;
-    } 
+    } finally {
+      setLoadingFieldChange({ loading: false, field: null });
+    }
   };
 
 
@@ -136,6 +140,7 @@ export const EmployeeProvider = ({ children }) => {
   
   const contextValue = {
     loadEmployees,
+    loadingFieldChange,
     loadingEmployeeData,
     setLoadingEmployeeData,
     employeeData,

@@ -1,9 +1,12 @@
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import ErrorMessage from '../Shared/ErrorMessage';
+import { useEmployees } from '../../context/EmployeeContext';
 
 function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
+  // const { loadingEmployeeData } = useEmployees();
+
   return (
-    <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full">
       <div>
         <LabelFieldForm field="Primer Nombre" simbol="*" />
       </div>

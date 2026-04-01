@@ -1,12 +1,14 @@
+import { useEffect } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
-import { useEffect } from 'react';
+import ErrorMessage from '../../Shared/ErrorMessage.jsx';
+
  
-export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, cursorNotAllowed, register, errors, employee, tempFlags, watch, setValue }) {
-  const { toggleEmployeeField } = useEmployees();
+export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, tempFlags, watch, setValue }) {
+
+  const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const useMeruLinkWatch = watch('useMeruLink');
-  const flags = createMode ? tempFlags : employee;
   const useMerulink = employee?.useMeruLink ? employee?.useMeruLink : false;
 
   useEffect (() => {
@@ -21,12 +23,17 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, c
         <div className="flex items-center gap-4 mb-4 pl-4">
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa MeruLink?</span>
-              <input 
-                disabled={!isEmployeeActive || viewMode}
-                type="checkbox"
-                {...register('useMeruLink')}
-                className={`w-4 h-4 rounded ${cursorNotAllowed}`}
-              />
+              {loadingFieldChange.loading && loadingFieldChange.field === 'use_meru_link' ? (
+                <span className="text-xs text-gray-500 italic">Cargando...</span>
+              ) : (
+                <input 
+                  disabled={!isEmployeeActive}// || viewMode
+                  type="checkbox"
+                  {...register('useMeruLink')}
+                  className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`}
+                  onClick={() => !createMode && toggleEmployeeField(employee, "use_meru_link")}
+                />
+              )}
           </label>
         </div>
         <div className="border border-[#ffffff21] p-5 mt-6">
@@ -39,9 +46,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, c
                     <div className='w-full md:w-auto md:flex-1'>
                         <input 
                           readOnly={viewMode }//|| !useMerulink
-                          {...register('userName')} className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${cursorNotAllowed}`} 
+                          {...register('userName')} className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
                         />
-                      {errors.userName && <p className="text-red-400 text-xs mt-1 ml-5 ">{errors.userName.message}</p>}
+                      {errors.userName && <ErrorMessage msg={errors.userName.message} />}
                     </div>
                   </div>
                   <div className='flex flex-col md:flex-row md:items-center gap-2'>
@@ -55,7 +62,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, c
                       disabled={viewMode}
                       type="checkbox"
                       {...register('changePassNextLogin')}
-                      className={`w-4 mt-1 ${cursorNotAllowed}`}
+                      className={`w-4 mt-1 ${disabledClasses}`}
                     />
                     
                     <label className="text-sm text-gray-300">

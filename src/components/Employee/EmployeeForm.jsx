@@ -265,7 +265,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'personal':
-        return <PersonalData viewMode={viewMode} register={register} errors={errors} employee={employee} />;
+        return <PersonalData viewMode={viewMode} register={register} errors={errors} employee={employee} disabledClasses={disabledClasses} />;
       case 'work':
         return <WorkData 
                   createMode={createMode}
@@ -288,7 +288,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   createMode={createMode} 
                   viewMode={viewMode} 
                   isEmployeeActive={isEmployeeActive} 
-                  cursorNotAllowed={disabledClasses} 
+                  disabledClasses={disabledClasses} 
                   register={register} 
                   errors={errors} 
                   employee={employee} 
@@ -329,17 +329,20 @@ export default function EmployeeForm({ mode = 'create' }) {
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     <form onSubmit={handleSubmit(onSubmit, onError)}>
+      
       <div className="aling-items-right">
         {(isEmployeeActive && viewMode) && <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} /> }{/*TODO: todas las rutas funcionen sin data  */}
       </div>
+
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
-          <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center ml-2.5">
-            <User className="w-20 h-20 text-white" />
+          <div className="w-full md:w-auto shrink-0 flex justify-center md:justify-start mb-2 md:mb-0">
+            <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center md:ml-2.5">
+              <User className="w-20 h-20 text-white" />
+            </div>
           </div>
-
           <div>
-            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} />
+            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-0" />
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
 
