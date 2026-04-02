@@ -1,12 +1,19 @@
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubDepartments } from '../../context/SubDepartmentContext';
-import { XMarkIcon } from '@heroicons/react/24/solid';
-import { getDepartmentNameById } from '../../utils/Departments/departments-utils'
+import { getDisabledClasses } from '../../utils/global-utils';  
+import ButtonDelete from '../Shared/ButtonDelete';
+import ConfirmDialog from '../Shared/ConfirmDialog';
 
 export default function SubDepartmentRow({ subDep }) {
+  
   const navigate = useNavigate();
-  const { toggleSubDepartmentStatus } = useSubDepartments(); 
+  const { deleteSubDepartment } = useSubDepartments(); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSubDep, setSelectedSubDep] = useState(null);
+  const blockBtn = subDep?.positions?.length > 0 ? true : false;
+  const disabledClasses = getDisabledClasses(blockBtn);
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar Sub-departamento, tiene Cargos asociados' : 'Eliminar';
 
   const handleSelectedSubDepartment = (id) => {
     navigate(`/empleados/sub-departamentos/ver/${id}`, { 
@@ -14,7 +21,21 @@ export default function SubDepartmentRow({ subDep }) {
     }); 
   };
 
+  const handleDeleteClick = (sub) => {
+    setSelectedSubDep(sub);
+    setIsModalOpen(true);
+  };
+  
+  const handleConfirmDelete = async () => {
+    if (!selectedSubDep) return;
+
+    await deleteSubDepartment(selectedSubDep);
+    setIsModalOpen(false);
+    setSelectedSubDep(null);
+  };
+
   return (
+    <>
     <tr
       key={subDep.id}
       onClick={() => handleSelectedSubDepartment(subDep.id)}
@@ -24,15 +45,28 @@ export default function SubDepartmentRow({ subDep }) {
       <td className="px-4 py-3 text-white-700">{subDep.name}</td>
       <td className="px-4 py-3 text-white-700">{subDep.department.departmentName}</td>
       <td className="px-4 py-3">
-        <button 
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSubDepartmentStatus(subDep.id);
-          }}
-          type="button" className={`tags-work-btn }`} title='Elimar Sub-Departamento'>
-         <XMarkIcon className='w-5 h-5 text-red-400' />
-        </button>
+        <ButtonDelete 
+          setIsModalOpen={() => handleDeleteClick(subDep)} 
+          title={deleteBtnTitle}
+          dinamicClasses={disabledClasses}
+          disabled={blockBtn} 
+        />
       </td>
     </tr>
+    <tr>
+      <td>
+        <ConfirmDialog 
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedSubDep(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Eliminar Sub-departamento"
+          message={`¿Está seguro que desea eliminar Sub-departamento "${selectedSubDep?.name}"?`}
+        />
+      </td>
+    </tr>
+    </>
   );
 }

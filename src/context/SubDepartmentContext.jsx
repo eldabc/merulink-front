@@ -40,7 +40,7 @@ export const SubDepartmentProvider = ({ children }) => {
 
 
   const formattedSubDepartment = (formData) => {
-    const departmentData =  getDepartmentNameById(formData.departmentId);
+    // const departmentData =  getDepartmentNameById(formData.departmentId);
     
     return {
       id: formData.id ? formData.id : Date.now(),
@@ -48,8 +48,8 @@ export const SubDepartmentProvider = ({ children }) => {
       name: formData.name,
       department: { 
         id: formData.departmentId, 
-        departmentCode: departmentData.code,
-        departmentName: departmentData.departmentName
+        // departmentCode: departmentData.code,
+        // departmentName: departmentData.departmentName
       },
       
     };
@@ -107,25 +107,27 @@ export const SubDepartmentProvider = ({ children }) => {
   };
 
   // *** Eliminar
-  const toggleSubDepartmentStatus = (id) => {       
-    setSubDepartmentData(prev =>
-      prev.map(subDep => {
-        if (subDep.id !== id) {
-          return subDep;
-        }
+  const deleteSubDepartment = async (subDepartment) => {
+  try {
+    const subDepartmentId = subDepartment.id
 
-        let updatedSubDepartment = { ...subDep };
+      if (!subDepartmentId) {
+        showNotification('Error:','No se encontró el ID del Subdepartamento', 'error');
+        return false;
+      }
+    await axios.delete(`${ENV.API_BACK_URL}subdepartments/${subDepartmentId}`);
 
-        // Aplicar el toggle
-        const newStatus = !subDep.status;
-        updatedSubDepartment.status = newStatus;
+    setSubDepartmentData(prevData => {
+      return prevData.filter(item => item.id !== subDepartmentId);
+    });
 
-        return updatedSubDepartment;
-      })
-    );
-    
-    showNotification("Éxito", `Sub-departamento eliminado.`); // Esto será diferente una vez se migre a API
-  };
+    showNotification(`Sub-Departamento ${subDepartment.name} eliminado con éxito`);
+    return true;
+  } catch (error) {
+    showNotification('Error al eliminar Sub-Departamento', error.response.data.message, 'error');
+    return false;
+  }
+};
   
   const contextValue = {
     loading,
@@ -133,7 +135,7 @@ export const SubDepartmentProvider = ({ children }) => {
     setSubDepartmentData, 
     createSubDepartment,
     updateSubDepartment,
-    toggleSubDepartmentStatus,
+    deleteSubDepartment
   };
 
   return (

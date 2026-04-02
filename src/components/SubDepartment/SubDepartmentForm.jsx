@@ -13,6 +13,7 @@ import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import ErrorMessage from '../Shared/ErrorMessage';
 import LabelFieldForm from '../Shared/LabelFieldForm';
+import RowTableResults from '../Shared/RowTableResults'; 
 import '../../Tables.css';
 
 export default function SubDepartmentForm({ mode = 'create' }) {
@@ -133,7 +134,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
                   <input
                     readOnly={true}
                     {...register('code')}
-                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed`}
+                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
                   />
                   {errors?.code && <ErrorMessage msg={errors.code.message} /> }  
                 </div>
@@ -145,19 +146,25 @@ export default function SubDepartmentForm({ mode = 'create' }) {
           <div className="mt-6">
             <div className="shadow md:w-2xl mx-auto mb-4">
 
-              <TitleHeader title="Departamento" dinamicClasses="mb-5" />
+              <TitleHeader title="Cargos" dinamicClasses="mb-5" />
               <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">
-                    <th className="px-4 py-3 text-left font-semibold">Código</th>
-                    <th className="px-4 py-3 text-left font-semibold">Nombre Departamento</th>
+                    <th className="px-4 py-3 text-center font-semibold">Código</th>
+                    <th className="px-4 py-3 text-center font-semibold">Nombre Cargo</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
-                    <td className="px-4 py-3 text-white-800 font-medium">{subDepartment?.department?.code}</td>
-                    <td className="px-4 py-3 text-white-700">{subDepartment?.department?.departmentName}</td>
-                  </tr>
+                  {subDepartment?.positions?.length === 0 ? (
+                    <RowTableResults colSpan={2} message="Sin Cargos asociados" />
+                  ) : (
+                    subDepartment?.positions?.map((subDep) => (
+                      <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                        <td className="px-4 py-3 text-center text-white-800 font-medium">{subDep?.code}</td>
+                        <td className="px-4 py-3 text-center text-white-700">{subDep?.name}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

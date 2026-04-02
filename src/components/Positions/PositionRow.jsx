@@ -71,7 +71,7 @@ export default function PositionRow({ position }) {
           }}
           onConfirm={handleConfirmDelete}
           title="Eliminar Cargo"
-          message={`¿Estás seguro de que deseas eliminar Cargo "${selectedPosition?.name}"?`}
+          message={`¿Está seguro que desea eliminar Cargo "${selectedPosition?.name}"?`}
         />
       </td>
     </tr>
