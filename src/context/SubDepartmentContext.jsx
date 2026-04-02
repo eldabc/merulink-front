@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getDepartmentNameById } from '../utils/Departments/departments-utils';
+// import { getDepartmentNameById } from '../utils/Departments/departments-utils';
+import { useGlobalData } from './GlobalDataContext';
 import { useNotification } from "../context/NotificationContext";
 
 const SubDepartmentContext = createContext();
@@ -17,13 +18,13 @@ export const SubDepartmentProvider = ({ children }) => {
   const [subDepartmentData, setSubDepartmentData] = useState([]);
   const [loading, setLoading] = useState(false);
   const { showNotification } = useNotification();
+  const { updateDepartmentInState } = useGlobalData();
   
   const loadSubDepartments = useCallback(async () => {
     setLoading(true);
     try {
 
       const response = await axios.get(`${ENV.API_BACK_URL}subdepartments`);
-      console.log("response.data.data", response.data.data);
       setSubDepartmentData(response.data.data);
 
     } catch (error) {
@@ -34,7 +35,6 @@ export const SubDepartmentProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log('UseEffect SubDepartmentContext');
     loadSubDepartments();
   }, [loadSubDepartments]);
 
@@ -66,7 +66,8 @@ export const SubDepartmentProvider = ({ children }) => {
       setSubDepartmentData(prevData => {
         return [response.data.data, ...prevData]; 
       });
-
+        console.log("response.data.dataSUB", response.data.data);
+        updateDepartmentInState(response.data.data);
       showNotification(`Sub-Departamento ${newSubDep.name} creado con éxito`);
       
       return true;
@@ -96,7 +97,8 @@ export const SubDepartmentProvider = ({ children }) => {
           const filteredData = prevData.filter(subDepartment => subDepartment.id !== subDepartmentId);
           return [response.data.data, ...filteredData];
         });
-
+        console.log("response.data.dataSUB", response.data.data);
+        updateDepartmentInState(response.data.data);
         showNotification(`Sub-Departamento ${updateSubDep.name} actualizado con éxito`); 
         return true;
 

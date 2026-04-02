@@ -33,7 +33,6 @@ export default function SubDepartmentForm({ mode = 'create' }) {
   const editMode = mode === 'edit';
   const subDepartment = subDepartmentData.find(e => e.id === Number(id));
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
-  console.log("subDepartmentData", subDepartmentData)
 
   // Al seleccionar departamento
   const handleDepartmentChange = (e) => {

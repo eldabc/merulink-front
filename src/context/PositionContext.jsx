@@ -2,6 +2,8 @@ import axios from 'axios';
 import { ENV } from '../config/env';
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
+import { generateCodeSubDep } from '../utils/global-utils';  
+
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const PositionContext = createContext();
@@ -23,7 +25,7 @@ export const PositionProvider = ({ children }) => {
     try {
 
       const response = await axios.get(`${ENV.API_BACK_URL}positions`);
-      console.log("response.data.data", response.data.data);
+      // console.log("response.data.data", response.data.data);
       setPositionData(response.data.data);
 
     } catch (error) {
@@ -38,25 +40,45 @@ export const PositionProvider = ({ children }) => {
   }, [loadPositions]);
 
   const formattedPosition = (formData) => {
-    const departmentData =  departments.find(d => String(d.id) === String(formData.departmentId));
-    const subDepartmentData = departmentData?.subDepartments?.find(
-        sub => String(sub.id) === String(formData.subDepartmentId)
-    );
+    // const departmentData =  departments.find(d => String(d.id) === String(formData.departmentId));
+    // const subDepartmentData = departmentData?.subDepartments?.find(
+    //     sub => String(sub.id) === String(formData.subDepartmentId)
+    // );
+      // const newCode = generateCodeSubDep(selectedDepartmentId, subDepartmentData);
 
-    return {
-      id: formData.id ? formData.id : Date.now(),
-      code: formData.code,
-      name: formData.name,
-      department: { 
-        id: departmentData.id, 
-        departmentName: departmentData.departmentName
-      },
-      subDepartment: { 
-        id: subDepartmentData?.id ?? null, 
-        name: subDepartmentData?.name
-      },
+      return {
+        id: formData.id ? formData.id : Date.now(),
+        code: formData.code,
+        name: formData.name,
+        department: { 
+          id: formData.departmentId, 
+        },
+        subDepartment: { 
+          id: formData.subDepartmentId ?? null,
+          newSubDepartmentName: formData.subDepartmentName || null,
+          newSubDepartmentCode: formData.newSubDepartmentCode || null
+        },
+        
+      };
+    // return {
+    //   id: formData.id ? formData.id : Date.now(),
+    //   code: formData.code,
+    //   name: formData.name,
+    //   department: { 
+    //     id: formData.departmentIdd
+    //   },
+    //   subDepartment: { 
+    //     id: formData.subDepartmentId, 
+    //     name: subDepartmentData?.name
+    //   },
       
-    };
+    //   // sub_department_id: formData.subDepartmentId ?? null, //subDepartmentData?.id ?? null, 
+    //   // sub_department_code: newCode ?? null, //subDepartmentData?.id ?? null, 
+    //     // name: subDepartmentData?.name
+    //   // },
+    //   // sub_department_name: formData.subDepartmentName || null,
+      
+    // };
   };
 
   // *** Crear
@@ -75,6 +97,8 @@ export const PositionProvider = ({ children }) => {
       
       return true;
     } catch (error) {
+      console.log("error", error);
+
       showNotification('Error al crear cargo', error.response.data.message, 'error');
       return false;
     }

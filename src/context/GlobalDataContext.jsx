@@ -24,8 +24,15 @@ export const GlobalDataProvider = ({ children }) => {
     }
   };
 
+  const updateDepartmentInState = (updatedDep) => {
+    console.log("updatedDep", updatedDep)
+    setDepartments(prevDeps => 
+      prevDeps.map(dep => dep.id === updatedDep.id ? updatedDep : dep)
+    );
+  };
+
   const contextValue = {
-    departments, subDepartments, globalLoading, loadDepartments
+    departments, subDepartments, globalLoading, loadDepartments, updateDepartmentInState
   };
 
   return (

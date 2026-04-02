@@ -19,6 +19,8 @@ export const positionValidationSchema = (hasSubDepartments) =>
       .string()
       .required('Debe seleccionar Departamento'),
 
+    subDepartmentId: yup.string(),
+    subDepartmentName: yup.string().optional(),
     // subDepartmentId: hasSubDepartments
     //   ? yup.string().required('Debe seleccionar Sub-departamento')
     //   : yup.string().notRequired(),

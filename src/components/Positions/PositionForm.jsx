@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
@@ -23,6 +23,8 @@ export default function PositionForm({ mode = 'create' }) {
   const { positionData, createPosition, updatePosition } = usePositions();
   const { departments, globalLoading, loadDepartments } = useGlobalData();
   const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
+  const [addSubDep, setAddSubDep] = useState(false);
+  const [newSubDepCode, setNewSubDepCode] = useState('');
 
   const schema = useMemo(() => {
     return positionValidationSchema(
@@ -54,9 +56,9 @@ export default function PositionForm({ mode = 'create' }) {
   const subDepartmentIdDisabled = filteredSubDepartments?.length === 0 && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {  
-    if (departments.length === 0) {
+    // if (departments.length === 0) { SE PUEDE Y SE DEBERÍA MEJORAR ACTUALIZANDO SIEMPRE EL STADO GLOBAL PARA NO VOLVER A CONSULTAR
       loadDepartments(); 
-    }
+    // }
   }, [mode]);
 
   useEffect(() => {    
@@ -74,6 +76,7 @@ export default function PositionForm({ mode = 'create' }) {
         name: position?.name ?? '',
         departmentId: position?.department?.id ?? '',
         subDepartmentId: position?.subDepartment?.id ?? 0,
+        subDepartmentName: '',
       });
     }
   }, [mode, position, reset]);
@@ -108,12 +111,16 @@ export default function PositionForm({ mode = 'create' }) {
 
   const onSubmit = async (data) => {
     let success = false;
-    
+    const dataChanges = { 
+       ...data, //...position,
+      newSubDepartmentCode: newSubDepCode
+     };
+
     if (editMode && position) {
-        const updatedData = { ...position, ...data };
-        success = await updatePosition(updatedData);
+        
+        success = await updatePosition(dataChanges);
     } else {
-        success = await createPosition(data);
+        success = await createPosition(dataChanges);
     }
 
     if (success) {
@@ -125,6 +132,22 @@ export default function PositionForm({ mode = 'create' }) {
   const onError = (formErrors) => {
     console.warn('PositionForm validation errors:', formErrors);
     if (!formErrors) return;
+  };
+
+  const handleAddSudDep = (isAdding) => {
+    setAddSubDep(isAdding);
+    if (isAdding) {
+      const selectedDep =  departments.find(sd => String(sd.id) === String(selectedDepartmentId));
+      const numNewSubDep = filteredSubDepartments?.length + 1;
+      const newSubDepPositionCode = `${selectedDepartmentId}${numNewSubDep}${selectedDep?.positions?.length}`;
+      const newSubDepCode = `${selectedDepartmentId}${numNewSubDep}`;
+      
+      setValue('code', newSubDepPositionCode);
+      setNewSubDepCode(newSubDepCode);
+    }else{
+      setValue('subDepartmentName', '');
+      setValue('code', '');
+    }
   };
   
   return (
@@ -156,20 +179,50 @@ export default function PositionForm({ mode = 'create' }) {
                 </div>
 
                   <LabelFieldForm field="Sub-departamento" simbol="*"/>
-                <div>
-                  <select 
-                    disabled={viewMode || filteredSubDepartments.length === 0}
-                    {...register('subDepartmentId')}
-                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
-                  >
-                    <option className='bg-[#3c4042]' value="0">Seleccionar...</option>
-                    {filteredSubDepartments?.map(subDep => (
-                      <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
-                        {subDep.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors?.subDepartmentId && <ErrorMessage msg={errors.subDepartmentId.message} />}  
+                <div>                 
+                  {!addSubDep ? (
+                    <>
+                      <select 
+                        disabled={viewMode || filteredSubDepartments.length === 0}
+                        {...register('subDepartmentId')}
+                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
+                      >
+                        <option className='bg-[#3c4042]' value="0">Seleccionar...</option>
+                        {filteredSubDepartments?.map(subDep => (
+                          <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
+                            {subDep.name}
+                          </option>
+                        ))}
+                      </select>
+                      {errors?.subDepartmentId && <ErrorMessage msg={errors.subDepartmentId.message} />}  
+                      
+                      <p 
+                        onClick={() => { handleAddSudDep(true); }}
+                        className="text-gray-400 hover:text-[#9fd8ff] cursor-pointer text-lg mt-1"
+                      >
+                        Agregar +
+                      </p>
+                    </>
+                  ) : (
+                    <div>
+                      <input
+                        readOnly={viewMode}
+                        {...register('subDepartmentName')}
+                        className={`w-full px-1 py-1 text-xl rounded-lg filter-input placeholder:text-gray-500 placeholder:italic placeholder:text-lg ${disabledClasses}`}
+                        placeholder='Nombre Subdepartamento'
+                        title='Ingrese Nombre de Subdepartamento a registrar'
+                      />
+                      {errors?.subDepartmentName && <ErrorMessage msg={errors.subDepartmentName.message} />} 
+                      
+                      <p 
+                        onClick={() => { handleAddSudDep(false); }}
+                        className="text-gray-400 hover:text-gray-300 cursor-pointer text-lg mt-1"
+                      >
+                        Cancelar x
+                      </p> 
+                    </div>
+                    
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
