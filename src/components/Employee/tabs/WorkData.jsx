@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
+import SpanText from '../../Shared/SpanText';
 
 export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
   
@@ -35,6 +36,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
         </div>
 
         <div>
+
           <LabelFieldForm field="Sub-Departamento" /> 
           {subDepartments?.length > 0  ? ( 
             <select 
@@ -42,19 +44,19 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
                 className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 
                   ${(!selectedDepartmentId || subDepartments.length === 0) && 'cursor-not-allowed'} ${disabledClasses}`}
             >
-              <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
+              <option className="bg-[#3c4042]" value="0"> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
               {subDepartments?.map((item) => ( 
                 <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.name} </option>
               ))}
             </select> 
           ) : (
-            <span className="text-gray-500 italic"> No Aplica </span>
+            <SpanText text="No Aplica" />
           )}
         </div>
 
         <div>
           <LabelFieldForm field="Cargo" simbol="*"/>
-          {positions.length > 0 ? (
+          {positions?.length > 0 ? (
             <select 
               disabled={viewMode } {...register('position')} 
               className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
@@ -65,26 +67,12 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
               ))}
             </select>  
           ) : (
-            <span className="text-gray-500 italic"> Sin cargos registrados </span>
+            <SpanText text="Sin cargos registrados" />
           )}
           {errors.position && <ErrorMessage msg={errors.position.message} />}
         </div>
 
         <div className='flex flex-row'>
-          {/* <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-              <span className="text-sm">¿Usa HID Card?</span>
-                {loadingFieldChange.loading && loadingFieldChange.field === 'use_hid_card' ? (
-                  <span className="text-xs text-gray-500 italic">Cargando...</span>
-                ) : (
-                  <input 
-                    disabled={!isEmployeeActive }// || viewMode
-                    type="checkbox" {...register('useHidCard')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                    onClick={() => !createMode && toggleEmployeeField(employee, "use_hid_card")} 
-                  />
-                )}
-            </label>
-          </div> */}
 
           <div className="flex items-center gap-4 pl-4">
             <label className="flex items-center gap-2 text-gray-300 cursor-pointer">

@@ -43,13 +43,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     name: 'contacts',
   });
 
-  // const [tempFlags, setTempFlags] = useState({
-  //   useMeruLink: false,
-  //   useHidCard: false,
-  //   useLocker: false,
-  //   useTransport: false
-  // });
-
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
   
@@ -85,7 +78,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   }, [employeeData, loadingEmployeeData]);
   
-  // calcular edad cuando cambie birthdate
+  // calcular edad al cambiar birthdate
   useEffect(() => {
     calculateAge(watchedBirthDate, setValue);
   }, [watchedBirthDate, setValue]);
@@ -125,16 +118,19 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   useEffect (() => {
     
-    setValue('subDepartment', '');
+    setValue('subDepartment', 0);
     setValue('position', '');
     setPositions([]);
 
     if(selectedDepartmentId) {  
       const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
       
-      // if (selectedDepartment?.subDepartments?.length === 0) {
-        setPositions(selectedDepartment?.positions);
-      // }
+      // Cargos por Departamento
+      const positionsByDepartment = selectedDepartment?.positions.filter(
+          pos => pos.subDepartment === null
+      );
+
+      setPositions(positionsByDepartment);
       setSubDepartments(selectedDepartment?.subDepartments ?? []);
       setSelectedDepartmentData(selectedDepartment);
 
@@ -142,13 +138,19 @@ export default function EmployeeForm({ mode = 'create' }) {
   }, [selectedDepartmentId, lockerAssigns]);
 
   useEffect(() => {
-    if (selectedSubDepartmentId && selectedDepartmentData?.positions) {
+    if (!selectedDepartmentData?.positions) return;
 
-      const positionsBySubDepartment = selectedDepartmentData.positions.filter(
-          pos => pos.subDepartment?.id === Number(selectedSubDepartmentId)
-      );
-      setPositions(positionsBySubDepartment);
-    }
+    const positionsBySubDepartment = selectedDepartmentData.positions.filter(pos => {
+      // Si hay un SubDepartamento seleccionado
+      if (Number(selectedSubDepartmentId) > 0) {
+        return pos.subDepartment?.id === Number(selectedSubDepartmentId);
+      }
+      
+      // Si no hay selección busca los que no tienen subdepartamento
+      return pos.subDepartment === null;
+    });
+
+    setPositions(positionsBySubDepartment);
   }, [selectedSubDepartmentId])
 
   const onSubmit = async (data) => {
@@ -242,7 +244,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         address: employee?.address ?? '',
         joinDate: joinDate ?? null,
         department: employee?.department.id ?? '',
-        subDepartment: employee?.subDepartment.id ?? '',
+        subDepartment: employee?.subDepartment.id ?? 0,
         position: employee?.position.id ?? '',
         userName: employee?.userName ?? '',
         userPass: employee?.userPass ?? '',

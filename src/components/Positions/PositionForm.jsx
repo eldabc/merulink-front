@@ -36,7 +36,7 @@ export default function PositionForm({ mode = 'create' }) {
       code: '',
       name: '',
       departmentId: '',
-      subDepartmentId: ''
+      subDepartmentId: 0
     }
   });
 
@@ -73,7 +73,7 @@ export default function PositionForm({ mode = 'create' }) {
         code: position?.code ?? '',
         name: position?.name ?? '',
         departmentId: position?.department?.id ?? '',
-        subDepartmentId: position?.subDepartment?.id ?? '',
+        subDepartmentId: position?.subDepartment?.id ?? 0,
       });
     }
   }, [mode, position, reset]);
@@ -86,12 +86,9 @@ export default function PositionForm({ mode = 'create' }) {
         const filtered = departments.find(sd => String(sd.id) === String(selectedDepartmentId));
         setFilteredSubDepartments(filtered?.subDepartments);
         
-        // Sino hay Subdepartments genera código
-        // if (filtered?.subDepartments.length === 0) {
+        // Genera código
           const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments, position?.id);
           setValue('code', newCode);
-        // } 
-
       } else {
         setFilteredSubDepartments([]);
         setValue('code', '');
@@ -102,8 +99,7 @@ export default function PositionForm({ mode = 'create' }) {
 
   // Código por Sub-departamento
   useEffect(() => {
-    if ( !viewMode) { //selectedSubDepartmentId &&
-      console.log('selectedSubDepartmentId changed:', selectedSubDepartmentId);
+    if (!viewMode && selectedSubDepartmentId) {
       const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments, position?.id);
       setValue('code', newCode);
     }
