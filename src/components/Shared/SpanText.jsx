@@ -1,6 +1,6 @@
-function SpanText({ text }) {
+function SpanText({ text, dinamicClasses }) {
   return (
-    <span className="italic text-gray-500">{text}</span>
+    <span className={`italic text-gray-500 ${dinamicClasses}`}>{text}</span>
   );
 }
 

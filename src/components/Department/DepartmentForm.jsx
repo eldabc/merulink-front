@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
+
+import { maxNum } from '../../utils/Departments/departments-utils';
 import { departmentValidationSchema } from '../../utils/Validations/departmentValidationSchema';
 import { useDepartments } from '../../context/DepartmentContext';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -37,14 +39,7 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) {
       });
     } else if (mode === 'create') {
 
-      // generar número de departamento automáticamente
-      const maxNum = Math.max( 0,
-        ...departmentData.map(d => {
-          const num = parseInt(d.code) || 0;
-          return num;
-        })
-      );
-      const newNumDepartment = String(maxNum + 1);
+      const newNumDepartment = String(maxNum(departmentData) + 1);
       reset({
         code: newNumDepartment,
         departmentName: '',

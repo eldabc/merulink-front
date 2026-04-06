@@ -2,6 +2,7 @@ import axios from 'axios';
 import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNotification } from "../context/NotificationContext";
+import { useGlobalData } from "../context/GlobalDataContext";
 
 const DepartmentContext = createContext();
 
@@ -17,6 +18,7 @@ export const DepartmentProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { showNotification } = useNotification();
+  const { addDepartmentGlobalState, updateDepartmentGlobalState, setDepartments } = useGlobalData();
 
   const loadDepartments = useCallback(async () => {
     setLoading(true);
@@ -24,6 +26,7 @@ export const DepartmentProvider = ({ children }) => {
 
       const response = await axios.get(`${ENV.API_BACK_URL}departments`);
       setDepartmentData(response.data.data);
+      setDepartments(response.data.data); // Global State
 
     } catch (error) {
       showNotification('Error al cargar departments', error.message, 'error');
@@ -33,7 +36,6 @@ export const DepartmentProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    console.log('UseEffect DepartmentContext');
     loadDepartments();
   }, [loadDepartments]);
 
@@ -59,6 +61,8 @@ export const DepartmentProvider = ({ children }) => {
       console.log("response.data.data", response.data.data);
 
       setDepartmentData(prevData => [response.data.data, ...prevData]);
+      addDepartmentGlobalState(response.data.data);
+
       showNotification(`Department ${newDepartment.code} creado con éxito`);
       
       return true;
@@ -87,6 +91,8 @@ export const DepartmentProvider = ({ children }) => {
         const filteredData = prevData.filter(department => department.id !== departmentId);
         return [response.data.data, ...filteredData];
       });
+
+      updateDepartmentGlobalState(response.data.data);
 
       showNotification(`Department ${formData.code} actualizado con éxito`); 
       return true;

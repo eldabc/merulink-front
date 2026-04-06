@@ -1,4 +1,5 @@
 
+// Genera código de cargo basado en el departamento y sub-departamento seleccionados
 export const newCodePosition = (selectedDepartmentId, selectedSubDepartmentId = 0, positionData, departments, currentPosition ) => {
 
   const filteredPositionsByDept = positionData.filter(pos => {

@@ -7,13 +7,15 @@ import { positionValidationSchema  } from '../../utils/Validations/positionValid
 import { usePositions } from '../../context/PositionContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { newCodePosition } from '../../utils/Positions/positions-utils'
+import { newCodePosition } from '../../utils/Positions/positions-utils';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import ErrorMessage from '../Shared/ErrorMessage';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import RowTableResults from '../Shared/RowTableResults';
+import SpanText from '../Shared/SpanText';
+
 import '../../Tables.css';
 
 export default function PositionForm({ mode = 'create' }) {
@@ -56,20 +58,21 @@ export default function PositionForm({ mode = 'create' }) {
   const subDepartmentIdDisabled = filteredSubDepartments?.length === 0 && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {  
-    // if (departments.length === 0) { SE PUEDE Y SE DEBERÍA MEJORAR ACTUALIZANDO SIEMPRE EL STADO GLOBAL PARA NO VOLVER A CONSULTAR
+    if (departments.length === 0) {
       loadDepartments(); 
-    // }
+    }
   }, [mode]);
 
   useEffect(() => {    
     if (departments.length > 0 && position?.department?.id) {
-      // Cargar subdepartamentos filtrados si ya cargó departamentos
+      // Cargar subdepartamentos si ya cargó departamentos y se tiene un departamento asignado al cargo
       const filtered = departments?.find(sd => String(sd.id) === String(position?.department?.id));
       setFilteredSubDepartments(filtered?.subDepartments);
     }
   }, [departments]);
 
   useEffect(() => {
+
     if (position) {
       reset({
         code: position?.code ?? '',
@@ -90,8 +93,8 @@ export default function PositionForm({ mode = 'create' }) {
         setFilteredSubDepartments(filtered?.subDepartments);
         
         // Genera código
-          const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments, position?.id);
-          setValue('code', newCode);
+        const newCode = newCodePosition(selectedDepartmentId, 0, positionData, departments, position?.id);
+        setValue('code', newCode);
       } else {
         setFilteredSubDepartments([]);
         setValue('code', '');
@@ -100,9 +103,11 @@ export default function PositionForm({ mode = 'create' }) {
     
   }, [selectedDepartmentId, positionData]);
 
-  // Código por Sub-departamento
+  
   useEffect(() => {
-    if (!viewMode && selectedSubDepartmentId) {
+    
+    // Si se seleccionó Sub-departamento
+    if (!viewMode && selectedSubDepartmentId && selectedSubDepartmentId !== "0") {
       const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments, position?.id);
       setValue('code', newCode);
     }
@@ -112,15 +117,15 @@ export default function PositionForm({ mode = 'create' }) {
   const onSubmit = async (data) => {
     let success = false;
     const dataChanges = { 
-       ...data, //...position,
+      ...data, 
+      id: position?.id,
       newSubDepartmentCode: newSubDepCode
      };
 
-    if (editMode && position) {
-        
-        success = await updatePosition(dataChanges);
+    if (editMode && position) { 
+      success = await updatePosition(dataChanges);
     } else {
-        success = await createPosition(dataChanges);
+      success = await createPosition(dataChanges);
     }
 
     if (success) {
@@ -136,20 +141,24 @@ export default function PositionForm({ mode = 'create' }) {
 
   const handleAddSudDep = (isAdding) => {
     setAddSubDep(isAdding);
+    
+    setValue('subDepartmentName', '');
+    setValue('code', '');
+
     if (isAdding) {
       const selectedDep =  departments.find(sd => String(sd.id) === String(selectedDepartmentId));
       const numNewSubDep = filteredSubDepartments?.length + 1;
       const newSubDepPositionCode = `${selectedDepartmentId}${numNewSubDep}${selectedDep?.positions?.length}`;
-      const newSubDepCode = `${selectedDepartmentId}${numNewSubDep}`;
       
       setValue('code', newSubDepPositionCode);
-      setNewSubDepCode(newSubDepCode);
-    }else{
-      setValue('subDepartmentName', '');
-      setValue('code', '');
+      
+      const newSubDepartmentCode = `${selectedDepartmentId}${numNewSubDep}`;
+      // console.log("Código nuevo subdep:", newSubDepartmentCode);
+      setNewSubDepCode(newSubDepartmentCode);
     }
+    
   };
-  
+
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
@@ -182,26 +191,33 @@ export default function PositionForm({ mode = 'create' }) {
                 <div>                 
                   {!addSubDep ? (
                     <>
-                      <select 
-                        disabled={viewMode || filteredSubDepartments.length === 0}
-                        {...register('subDepartmentId')}
-                        className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
-                      >
-                        <option className='bg-[#3c4042]' value="0">Seleccionar...</option>
-                        {filteredSubDepartments?.map(subDep => (
-                          <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
-                            {subDep.name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors?.subDepartmentId && <ErrorMessage msg={errors.subDepartmentId.message} />}  
-                      
-                      <p 
-                        onClick={() => { handleAddSudDep(true); }}
-                        className="text-gray-400 hover:text-[#9fd8ff] cursor-pointer text-lg mt-1"
-                      >
-                        Agregar +
-                      </p>
+                      {!position?.subDepartment && viewMode ? (
+                        <SpanText text="No Aplica" dinamicClasses="text-lg inline-block mt-2 px-2" />
+                      ) : (
+                          <>
+                          <select 
+                            disabled={viewMode || filteredSubDepartments.length === 0}
+                            {...register('subDepartmentId')}
+                            className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
+                          >
+                            <option className='bg-[#3c4042]' value="0">Seleccionar...</option>
+                            {filteredSubDepartments?.map(subDep => (
+                              <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
+                                {subDep.name}
+                              </option>
+                            ))}
+                          </select>
+                          {errors?.subDepartmentId && <ErrorMessage msg={errors.subDepartmentId.message} />}  
+                          
+                          <button 
+                            disabled={!selectedDepartmentId}
+                            onClick={() => { handleAddSudDep(true); }}
+                            className={`text-gray-400 cursor-pointer text-lg mt-1 skip-style-btn ${selectedDepartmentId && 'hover:text-[#9fd8ff]'}`}
+                          >
+                            Agregar +
+                          </button>
+                          </>
+                      )}
                     </>
                   ) : (
                     <div>
@@ -214,14 +230,13 @@ export default function PositionForm({ mode = 'create' }) {
                       />
                       {errors?.subDepartmentName && <ErrorMessage msg={errors.subDepartmentName.message} />} 
                       
-                      <p 
+                      <p
                         onClick={() => { handleAddSudDep(false); }}
                         className="text-gray-400 hover:text-gray-300 cursor-pointer text-lg mt-1"
                       >
                         Cancelar x
                       </p> 
                     </div>
-                    
                   )}
                 </div>
               </div>

@@ -3,7 +3,8 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getDisabledClasses, generateCodeSubDep } from '../../utils/global-utils';  
+import { getDisabledClasses } from '../../utils/global-utils';  
+import { generateCodeSubDep } from '../../utils/SubDepartments/subDeparments-utils';  
 import { subDepartmentValidationSchema } from '../../utils/Validations/subDepartmentValidationSchema';
 import { useSubDepartments } from '../../context/SubDepartmentContext';
 import { useGlobalData } from '../../context/GlobalDataContext';

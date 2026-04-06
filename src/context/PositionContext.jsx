@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
-import { generateCodeSubDep } from '../utils/global-utils';  
 
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { mapPositionToBackend } from '../utils/mappers/positionMapper';
 
 const PositionContext = createContext();
 
@@ -18,7 +18,7 @@ export const PositionProvider = ({ children }) => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [positionData, setPositionData] = useState([]);
-  const { departments } = useGlobalData();
+  const { departments, addPositionGlobalState } = useGlobalData();
 
   const loadPositions = useCallback(async () => {
     setLoading(true);
@@ -40,58 +40,26 @@ export const PositionProvider = ({ children }) => {
   }, [loadPositions]);
 
   const formattedPosition = (formData) => {
-    // const departmentData =  departments.find(d => String(d.id) === String(formData.departmentId));
-    // const subDepartmentData = departmentData?.subDepartments?.find(
-    //     sub => String(sub.id) === String(formData.subDepartmentId)
-    // );
-      // const newCode = generateCodeSubDep(selectedDepartmentId, subDepartmentData);
-
-      return {
-        id: formData.id ? formData.id : Date.now(),
-        code: formData.code,
-        name: formData.name,
-        department: { 
-          id: formData.departmentId, 
-        },
-        subDepartment: { 
-          id: formData.subDepartmentId ?? null,
-          newSubDepartmentName: formData.subDepartmentName || null,
-          newSubDepartmentCode: formData.newSubDepartmentCode || null
-        },
-        
-      };
-    // return {
-    //   id: formData.id ? formData.id : Date.now(),
-    //   code: formData.code,
-    //   name: formData.name,
-    //   department: { 
-    //     id: formData.departmentIdd
-    //   },
-    //   subDepartment: { 
-    //     id: formData.subDepartmentId, 
-    //     name: subDepartmentData?.name
-    //   },
-      
-    //   // sub_department_id: formData.subDepartmentId ?? null, //subDepartmentData?.id ?? null, 
-    //   // sub_department_code: newCode ?? null, //subDepartmentData?.id ?? null, 
-    //     // name: subDepartmentData?.name
-    //   // },
-    //   // sub_department_name: formData.subDepartmentName || null,
-      
-    // };
+    return mapPositionToBackend(formData);
   };
 
   // *** Crear
   const createPosition = async (formData) => {
 
     try {
-      const newPosition = formattedPosition(formData);
+      const newPosition = mapPositionToBackend(formData); //formattedPosition(formData);
       console.log("Creado", newPosition);
       const response = await axios.post(`${ENV.API_BACK_URL}positions`, newPosition);
+      console.log("response.data.data,", response.data.data,);
 
       setPositionData(prevData => {
         return [response.data.data, ...prevData]; 
       });
+
+      const globalData = updateGlobalStage(response.data.data);
+      console.log("globalData", globalData);
+
+      addPositionGlobalState(globalData);
 
       showNotification(`Cargo ${newPosition.name} creado con éxito`);
       
@@ -110,11 +78,11 @@ export const PositionProvider = ({ children }) => {
       const positionId = formData.id;
 
       if (!positionId) {
-        showNotification('No se encontró ID de cargo', error.response.data.message, 'error');
+        showNotification('Error:', 'No se encontró ID de cargo', 'error');
         return false;
       }
 
-      const updatedPosition = formattedPosition(formData);
+      const updatedPosition = mapPositionToBackend(formData); //formattedPosition(formData);
       console.log("Actualizado:", updatedPosition);
       
       const response = await axios.put(`${ENV.API_BACK_URL}positions/${positionId}`, updatedPosition);
@@ -128,6 +96,8 @@ export const PositionProvider = ({ children }) => {
       return true;
 
     } catch (error) {
+      console.log("error:", error);
+
       showNotification('Error al actualizar:', error.response.data.message, 'error');
       return false;
     }
@@ -148,6 +118,21 @@ export const PositionProvider = ({ children }) => {
       showNotification('Error al eliminar Cargo', error.response.data.message, 'error');
       return false;
     }
+  };
+
+  const updateGlobalStage = (positionData) => {
+    return {
+      position: {
+        id: positionData.id,
+        code: positionData.code,
+        name: positionData.name,
+        department: { ...positionData.department },
+        employees: [ 
+          ...positionData.employees
+        ],
+        subDepartment: { ...positionData.subDepartment }
+      }
+    };
   };
   
   const contextValue = {
