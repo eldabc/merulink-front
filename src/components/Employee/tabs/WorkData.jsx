@@ -8,6 +8,7 @@ import SpanText from '../../Shared/SpanText';
 export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
   
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
+  const showNotApply = subDepartments?.length === 0 || (viewMode && !employee?.subDepartment?.id);
 
      return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border div-border">
@@ -38,20 +39,30 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
         <div>
 
           <LabelFieldForm field="Sub-Departamento" /> 
-          {subDepartments?.length > 0  ? ( 
-            <select 
-                disabled={viewMode || !selectedDepartmentId || subDepartments.length === 0} {...register('subDepartment')} 
-                className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 
-                  ${(!selectedDepartmentId || subDepartments.length === 0) && 'cursor-not-allowed'} ${disabledClasses}`}
-            >
-              <option className="bg-[#3c4042]" value="0"> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
-              {subDepartments?.map((item) => ( 
-                <option key={item.id} value={item.id} className='bg-[#3c4042]'> {item.name} </option>
-              ))}
-            </select> 
-          ) : (
-            <SpanText text="No Aplica" />
-          )}
+          <div>
+            {showNotApply ? (
+              <SpanText text="No Aplica" dinamicClasses="inline-block mt-2 px-2" />
+            ) : (
+              <>
+                <select 
+                  disabled={viewMode || !selectedDepartmentId} 
+                  {...register('subDepartment')}
+                  className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 
+                    ${!selectedDepartmentId ? 'cursor-not-allowed' : ''} ${disabledClasses}`}
+                >
+                  <option className="bg-[#3c4042]" value="0">
+                    {loadingData ? "Cargando..." : "Seleccionar..."}
+                  </option>
+                  {subDepartments?.map((item) => ( 
+                    <option key={item.id} value={item.id} className='bg-[#3c4042]'>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+                {errors?.subDepartment && <ErrorMessage msg={errors.subDepartment.message} />}
+              </>
+            )}
+          </div>
         </div>
 
         <div>
@@ -81,9 +92,10 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
                   <span className="text-xs text-gray-500 italic">Cargando...</span>
                 ) : (
                   <input 
-                  disabled={!isEmployeeActive }//|| viewMode
-                  type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                  onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} />
+                    disabled={!isEmployeeActive }//|| viewMode
+                    type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
+                    onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} 
+                  />
                 )}
             </label>
           </div>

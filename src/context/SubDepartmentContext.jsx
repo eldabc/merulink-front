@@ -136,7 +136,9 @@ export const SubDepartmentProvider = ({ children }) => {
 
   const updateGlobalStage = (newSubDepartment) => {
     return {
-      departmentId: newSubDepartment.department.id,
+      department:{
+        id: newSubDepartment.department.id
+      },
       subDepartment: {
         id: newSubDepartment.id,
         code: newSubDepartment.code,

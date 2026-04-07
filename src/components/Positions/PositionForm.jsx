@@ -27,7 +27,7 @@ export default function PositionForm({ mode = 'create' }) {
   const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
   const [addSubDep, setAddSubDep] = useState(false);
   const [newSubDepCode, setNewSubDepCode] = useState('');
-
+  // console.log("departments en Form", departments)
   const schema = useMemo(() => {
     return positionValidationSchema(
       filteredSubDepartments.length > 0
@@ -167,7 +167,7 @@ export default function PositionForm({ mode = 'create' }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Cargo' ):( 'Datos del Cargo')} dinamicClasses="mb-5" />
+              <TitleHeader title={editMode ? ( 'Editar Cargo' ):( 'Datos del Cargo')} dinamicClasses="!mb-5" />
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
 
@@ -180,8 +180,8 @@ export default function PositionForm({ mode = 'create' }) {
 
                       <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
 
-                      {departments.map(dep => (
-                        <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
+                      {departments.map((dep, index) => (
+                        <option key={`departmentId-${dep.id}-${index}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
                       ))}
                   </select>
                   {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} />}  
@@ -201,8 +201,8 @@ export default function PositionForm({ mode = 'create' }) {
                             className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses} ${subDepartmentIdDisabled}`}
                           >
                             <option className='bg-[#3c4042]' value="0">Seleccionar...</option>
-                            {filteredSubDepartments?.map(subDep => (
-                              <option key={`subDepartmentId-${subDep.id}`} className='bg-[#3c4042]' value={subDep.id}>
+                            {filteredSubDepartments?.map((subDep, index) => (
+                              <option key={`subDepartmentId-${subDep.id}-${index}`} className='bg-[#3c4042]' value={subDep.id}>
                                 {subDep.name}
                               </option>
                             ))}
@@ -210,7 +210,7 @@ export default function PositionForm({ mode = 'create' }) {
                           {errors?.subDepartmentId && <ErrorMessage msg={errors.subDepartmentId.message} />}  
                           
                           <button 
-                            disabled={!selectedDepartmentId}
+                            disabled={!selectedDepartmentId || viewMode}
                             onClick={() => { handleAddSudDep(true); }}
                             className={`text-gray-400 cursor-pointer text-lg mt-1 skip-style-btn ${selectedDepartmentId && 'hover:text-[#9fd8ff]'}`}
                           >
@@ -268,7 +268,7 @@ export default function PositionForm({ mode = 'create' }) {
             <div className="mt-6">
               <div className="shadow md:w-2xl mx-auto mb-4">
 
-                <TitleHeader title="Empleados en este Cargo" dinamicClasses="mb-5" />
+                <TitleHeader title="Empleados en este Cargo" dinamicClasses="!mb-3" />
                 <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                   <thead>
                     <tr className="tr-thead-table">
@@ -281,7 +281,7 @@ export default function PositionForm({ mode = 'create' }) {
                       <RowTableResults colSpan={2} message="Sin empleados asociados" />
                     ) : (
                       position?.employees.map((emp) => (
-                        <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                        <tr key={emp.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
                           <td className="px-4 py-3 text-white-800 font-medium">{emp?.firstName} {emp?.lastName}</td>
                           <td className="px-4 py-3 text-white-700">{emp?.department?.departmentName}</td>
                         </tr>

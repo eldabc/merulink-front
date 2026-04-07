@@ -1,5 +1,4 @@
-export const mapPositionToBackend = (formData) => { 
-  const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
+export const mapPositionToBackend = (formData, isAddingSubDepartment) => { 
   return {
     id: formData.id ? formData.id : Date.now(),
     code: formData.code,

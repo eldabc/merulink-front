@@ -159,7 +159,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
                     <RowTableResults colSpan={2} message="Sin Cargos asociados" />
                   ) : (
                     subDepartment?.positions?.map((subDep) => (
-                      <tr className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                      <tr key={subDep.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
                         <td className="px-4 py-3 text-center text-white-800 font-medium">{subDep?.code}</td>
                         <td className="px-4 py-3 text-center text-white-700">{subDep?.name}</td>
                       </tr>

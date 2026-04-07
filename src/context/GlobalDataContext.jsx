@@ -25,11 +25,14 @@ export const GlobalDataProvider = ({ children }) => {
   };
 
   // *** Setters para mantener el estado global actualizado
+
+  // Departamento ***
   const addDepartmentGlobalState = (addDep) => {
     console.log("addDep", addDep)
     setDepartments(prevData => [addDep, ...prevData]);
   };
 
+  // Departamento ***
   const updateDepartmentGlobalState = (updatedDep) => {
     setDepartments(prevData => {
       const filteredData = prevData.filter(department => department.id !== updatedDep.id);
@@ -37,12 +40,13 @@ export const GlobalDataProvider = ({ children }) => {
     });
   };
 
+  
+  // Sub-Departamento ***
   const addSubDepartmentGlobalState = (addSubDep) => {
-    // console.log("addSubDep", addSubDep)
     setDepartments(prevDepartments => {
       return prevDepartments.map(dep => {
         // Buscar departamento dueño del nuevo subdepartamento
-        if (Number(dep.id) === Number(addSubDep.departmentId)) {
+        if (Number(dep.id) === Number(addSubDep.department.id)) {
           return {
             ...dep,
             subDepartments: [...dep.subDepartments, addSubDep.subDepartment]
@@ -53,11 +57,12 @@ export const GlobalDataProvider = ({ children }) => {
     });
   };
 
+  // Sub-Departamento ***
   const updateSubDepartmentGlobalState = (updatedSubDep) => {
     setDepartments(prevDepartments => {
       return prevDepartments.map(dep => {
         // Validar ID del departamento
-        if (Number(dep.id) === Number(updatedSubDep.departmentId)) {
+        if (Number(dep.id) === Number(updatedSubDep.department.id)) {
           
           return {
             ...dep,
@@ -76,17 +81,50 @@ export const GlobalDataProvider = ({ children }) => {
     });
   };
 
-  const addPositionGlobalState = (addPosition) => {
+
+  // Cargo ***
+  const addPositionGlobalState = (addPosition, isAddingSubDepartment) => {
+
+    if (isAddingSubDepartment) {
+      addSubDepartmentGlobalState(addPosition);
+    }
 
     setDepartments(prevDepartments => {
       return prevDepartments.map(dep => {
         // Buscar departamento dueño del nuevo cargo
-        if (Number(dep.id) === Number(addPosition.departmentId)) {
+        if (Number(dep.id) === Number(addPosition?.department.id)) {
           return {
             ...dep,
-            positions: [...dep.positions, addPosition.position]
+            positions: [...dep.positions, addPosition]
           };
         }      
+        return dep;
+      });
+    });
+  };
+
+  
+  // Cargo ***
+  const updatePositionGlobalState = (updatedPosition, isAddingSubDepartment) => {
+
+    if (isAddingSubDepartment) addSubDepartmentGlobalState(updatedPosition);
+
+    setDepartments(prevDepartments => {
+      return prevDepartments.map(dep => {
+        // Validar ID del departamento
+        if (Number(dep.id) === Number(updatedPosition.department.id)) {        
+          return {
+            ...dep,
+            positions: dep.positions.map(pos => {
+         
+              const targetId = updatedPosition?.id;
+              if (Number(pos.id) === Number(targetId)) {
+                return updatedPosition;
+              }
+              return pos;
+            })
+          };
+        }
         return dep;
       });
     });
@@ -102,7 +140,8 @@ export const GlobalDataProvider = ({ children }) => {
     updateDepartmentGlobalState,
     addSubDepartmentGlobalState, 
     updateSubDepartmentGlobalState,
-    addPositionGlobalState
+    addPositionGlobalState,
+    updatePositionGlobalState
   };
 
   return (
