@@ -12,7 +12,7 @@ import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
 
-export default function EventForm({ mode = 'create' }) { //, onBack
+export default function EventForm({ mode = 'create' }) {
   
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
@@ -40,8 +40,8 @@ export default function EventForm({ mode = 'create' }) { //, onBack
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
   const isGoogleCategory = selectedCategory === 'google-calendar'
-  const isMeruBirthdays = selectedCategory === 'meru-birthdays'
-  const eventWithoutLocation = selectedCategory === 've-holidays' || isMeruBirthdays || isGoogleCategory || selectedCategory === 'executive-mod';
+  // const isMeruBirthdays = selectedCategory === 'meru-birthdays'
+  // const eventWithoutLocation = selectedCategory === 've-holidays' || isMeruBirthdays || isGoogleCategory || selectedCategory === 'executive-mod';
  
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {

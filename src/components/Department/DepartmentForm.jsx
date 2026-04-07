@@ -13,9 +13,9 @@ import ErrorMessage from '../Shared/ErrorMessage';
 import TitleHeader from '../Shared/TitleHeader';
 import '../../Tables.css';
 
-export default function DepartmentForm({ mode = 'create', onUpdate }) {
+export default function DepartmentForm({ mode = 'create' }) {
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
   const { departmentData, createDepartment, updateDepartment } = useDepartments();
   
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
@@ -31,13 +31,13 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) {
   const disabledClasses = viewMode && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {
-    if (department && mode === 'edit' || viewMode) {
+    if (department && editMode || viewMode) {
  
       reset({
         code: department?.code ?? '',
         departmentName: department?.departmentName ?? '',
       });
-    } else if (mode === 'create') {
+    } else if (createMode) {
 
       const newNumDepartment = String(maxNum(departmentData) + 1);
       reset({
@@ -71,15 +71,15 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) {
     if (!formErrors) return;
   };
   
-  const handleEditSave = async (formData) => {
-    // Llamar al backend para actualizar aquí (PUT)
-    if (onUpdate) onUpdate(formData);
-    setIsEditing(false);
-  };
+  // const handleEditSave = async (formData) => {
+  //   // Llamar al backend para actualizar aquí (PUT)
+  //   if (onUpdate) onUpdate(formData);
+  //   setIsEditing(false);
+  // };
 
-  if (isEditing) {
-    return <DepartmentForm mode="edit" department={department} onBack={() => setIsEditing(false)} onSave={handleEditSave} />;
-  }
+  // if (isEditing) {
+  //   return <DepartmentForm mode="edit" department={department} onBack={() => setIsEditing(false)} onSave={handleEditSave} />;
+  // }
 
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -89,7 +89,7 @@ export default function DepartmentForm({ mode = 'create', onUpdate }) {
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className='mx-auto mt-6'>
-              <TitleHeader title={mode === 'edit' ? ( 'Editar Departamento' ):( 'Datos del Departamento')} />
+              <TitleHeader title={editMode ? ( 'Editar Departamento' ):( 'Datos del Departamento')} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full m-6 text-xs">
                 
                 <LabelFieldForm field="Nombre Departamento" simbol="*" dinamicClasses="text-xl"/>

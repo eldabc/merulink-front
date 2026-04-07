@@ -107,7 +107,7 @@ export const EventProvider = ({ showNotification, children }) => {
       const combinedEvents = [...INITIAL_EVENTS, ...googleHolidays];
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
-      showNotification('Error al cargar datos', err.message);
+      showNotification('Error al cargar datos:', err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -151,7 +151,7 @@ export const EventProvider = ({ showNotification, children }) => {
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el evento', 'error');
+      showNotification('Error al crear el evento', error, 'error');
       return false;
     }
   };
