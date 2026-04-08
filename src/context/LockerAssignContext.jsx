@@ -52,7 +52,7 @@ export const LockerAssignProvider = ({ children }) => {
         setAssignments(assignsData.data.data);
         
       } catch (error) {
-        showNotification('Error obteniendo los datos', error.message, 'error');
+        showNotification('Error obteniendo los datos', error.response.data.message, 'error');
       } finally {
         setLoading(false);
       }
@@ -160,7 +160,7 @@ export const LockerAssignProvider = ({ children }) => {
       return responseLockers.data.data;
       
     } catch (error) {
-      showNotification('Error al obtener Lockers', error.message, 'error');
+      showNotification('Error al obtener Lockers', error.response.data.message, 'error');
       return false;
     }
   }
@@ -174,7 +174,7 @@ export const LockerAssignProvider = ({ children }) => {
       }
         return response.data.data;     
     } catch (error) {
-      showNotification('Error al obtener Padlocks', error.message, 'error');
+      showNotification('Error al obtener Padlocks', error.response.data.message, 'error');
       return false;
     }
   }
@@ -184,7 +184,7 @@ export const LockerAssignProvider = ({ children }) => {
         const response = await axios.get(`${ENV.API_BACK_URL}departments`);
         return response.data.data;       
       } catch (error) {
-        showNotification('Error al obtener Departamentos', error.message, 'error');
+        showNotification('Error al obtener Departamentos', error.response.data.message, 'error');
         return [];
       }
     }
@@ -209,7 +209,7 @@ export const LockerAssignProvider = ({ children }) => {
         return [...response.data.data];
 
       } catch (error) {
-        showNotification('Error al obtener Empleados por Categoría', error.message, 'error');
+        showNotification('Error al obtener Empleados por Categoría', error.response.data.message, 'error');
         return false;
       }
   }

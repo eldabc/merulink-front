@@ -175,7 +175,7 @@ export default function Calendar() {
             </div>
             <div className='relative'>
               <button title='Gestionar Eventos' 
-                onClick={() => { navigate('/eventos'); }}
+                onClick={() => { navigate('/eventos/eventos-meru'); }}
                 className='flex items-center bg-gray-600 p-1.5 rounded-xl hover:text-[#9fd8ff] transition-colors'
               >
                 <Cog6ToothIcon className="size-6 text-gray-300" />

@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../../context/EventContext';
+
 import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
+
 import ButtonDelete from '../Shared/ButtonDelete';
 import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
 import ConfirmDialog from '../Shared/ConfirmDialog';
-import { useNavigate } from 'react-router-dom';
 
 export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} ) {
+
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -25,6 +28,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
       state: { data: event } 
     }); 
   };
+
   return (
     <>
       <tr
@@ -38,13 +42,13 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
         {isMeruBirthday ? (
           <td className="px-4 py-3 text-white-700">{event.extendedProps.departmentName}</td>
         ) : ( 
-        <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
+          <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
         )}
 
         {!eventWithoutLocation && (
-          <td className="px-4 py-3 text-white-700">{event.extendedProps.locationName}</td>
+          <td className="px-4 py-3 text-white-700">{event.extendedProps.location.label}</td>
         )}
-        <td className="px-4 py-3 text-white-700">{event.extendedProps.label}</td>
+        <td className="px-4 py-3 text-white-700">{event.extendedProps.category.label}</td>
         <td className="px-4 py-3">
           {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
             <ButtonDelete setIsModalOpen={setIsModalOpen} id={event.id} />
@@ -59,7 +63,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
             onClose={() => setIsModalOpen(false)}
             onConfirm={() => handleDeleteEvent(event.id)}
             title="Eliminar Evento"
-            message={`¿Estás seguro de que deseas eliminar "${event.title}"?`}
+            message={`¿Está seguro de que desea eliminar "${event.title}"?`}
           />
         </td>
       </tr>

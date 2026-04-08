@@ -9,7 +9,7 @@ export default function EventsPage() {
     <>
       <main className="flex-1 rounded p-4 min-h-[60vh]">
         <Routes>
-          <Route path="/" element={<EventsList categoryKeys={["meru-events"]} />} />
+          <Route path="/eventos-meru" element={<EventsList categoryKeys={["meru-events"]} />} />
           <Route path="noche-bodas-cena-alturas" element={<EventsList categoryKeys={["wedding-nights", "dinner-heights"]} />} />
           <Route path="festivos-venezolanos-calendario-google" element={<EventsList categoryKeys={["ve-holidays", "google-calendar"]} />} />
           {/* <Route path="calendario-google" element={<EventsList categoryKeys={["google-calendar"]} />} /> */}

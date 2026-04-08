@@ -27,7 +27,7 @@ export const LockerRoomProvider = ({ children }) => {
       setLockerData(response.data.data);
 
     } catch (error) {
-      showNotification('Error al cargar lockers', error.message, 'error');
+      showNotification('Error al cargar lockers', error.response.data.message, 'error');
     } finally {
       setLoading(false);
     }

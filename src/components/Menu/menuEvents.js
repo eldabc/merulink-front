@@ -1,6 +1,6 @@
 export const menuEvents = {
   Events: {
-    _meta: { label: 'Eventos Merú', path: '/eventos' },
+    _meta: { label: 'Eventos Merú', path: '/eventos/eventos-meru' },
   },
   EventWeddingAndDinnerHeights: {
     _meta: { label: 'Noches Bodas / Cena en Alturas', path: '/eventos/noche-bodas-cena-alturas' },

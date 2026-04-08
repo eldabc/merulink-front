@@ -1,24 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useEvents } from "../../context/EventContext";
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEvents } from "../../context/EventContext";
+
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
+
+import EventRow from './EventRow';
 import Pagination from '../Pagination';
 import TitleHeader from '../Shared/TitleHeader';
-
 import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
-import EventRow from './EventRow';
 import BankingMondaysList from './BankingMondays/BankingMondaysList.jsx';
 import FilterByFields from '../Filters/FilterByFields.jsx';
 import ButtonHistory from '../Shared/ButtonHistory.jsx';
+import SpanText from '../Shared/SpanText.jsx';
+
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
-  return <EventListContent categoryKeys={categoryKeys} />;
-}
-
-function EventListContent({ categoryKeys }) {
   
   const navigate = useNavigate();
   const { eventData } = useEvents();
@@ -34,7 +33,7 @@ function EventListContent({ categoryKeys }) {
   const isBankingMondays = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
-
+  
   useEffect(() => {
     setSearchValue('');
     setSearchDateValue('');
@@ -42,42 +41,44 @@ function EventListContent({ categoryKeys }) {
     setShowHistory(false);
   }, [categoryKeys]);
 
- // Filtrar para mostrar eventos en la categoría
-const { items, allBankingEvents } = useMemo(() => {
-  if (!categoryKeys || categoryKeys.length === 0) return { items: [], allBankingEvents: [] };
+  // Filtrar eventos por categoría
+  const { items, allBankingEvents } = useMemo(() => {
+    if (!categoryKeys || categoryKeys.length === 0) return { items: [], allBankingEvents: [] };
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const result = eventData.reduce((acc, ev) => {
-    const category = ev.extendedProps?.category;
-    const matchesCategory = categoryKeys.includes(category);
+    const result = eventData.reduce((acc, ev) => {
 
-    if (matchesCategory) {
-      
-      // Extraer TODOS los banking-mondays (sin filtro de fecha)
-      if (category === 'banking-mondays') {
-        acc.allBankingEvents.push({ ...ev });
+      const categoryKey = ev.extendedProps?.category.key;
+      const matchesCategoryKey = categoryKeys.includes(categoryKey);
+
+      if (matchesCategoryKey) {
+        
+        // Extraer TODOS los banking-mondays (sin filtro de fecha)
+        if (categoryKey === 'banking-mondays') {
+          acc.allBankingEvents.push({ ...ev });
+        }
+
+        // Extraer TODOS los google-calendar (sin filtro de fecha)
+        const isGoogle = categoryKey === 'google-calendar' || categoryKey === 've-holidays';
+        const isFutureOrToday = new Date(ev.start) >= today;
+
+        if (showHistory || isGoogle || isFutureOrToday) {
+          acc.items.push({ ...ev });
+        }
       }
 
-      // Extraer TODOS los google-calendar (sin filtro de fecha)
-      const isGoogle = category === 'google-calendar' || category === 've-holidays';
-      const isFutureOrToday = new Date(ev.start) >= today;
+      return acc;
+    }, { items: [], allBankingEvents: [] });
 
-      if (showHistory || isGoogle || isFutureOrToday) {
-        acc.items.push({ ...ev });
-      }
-    }
+    // Ordenar
+    result.items.sort((a, b) => new Date(a.start) - new Date(b.start));
+    result.allBankingEvents;
 
-    return acc;
-  }, { items: [], allBankingEvents: [] });
+    return result;
+  }, [eventData, categoryKeys, showHistory]);
 
-  // Ordenar
-  result.items.sort((a, b) => new Date(a.start) - new Date(b.start));
-  result.allBankingEvents;
-
-  return result;
-}, [eventData, categoryKeys, showHistory]);
 
   // Filtrado y detección de búsqueda
   const { dataToDisplay, isSearching } = useMemo(() => {
@@ -105,12 +106,13 @@ const { items, allBankingEvents } = useMemo(() => {
       isSearching: searching
     };
   }, [items, searchValue, searchDateValue]);
+  
 
+  const searchTextFragmentAvise = isSearching && ` para la búsqueda ${searchValue}`;
+  
   const hasBankingRegisters = isBankingMondays && eventData.some( 
-    ev => ev.extendedProps?.category === 'banking-mondays'
+    ev => ev.extendedProps?.category.key === 'banking-mondays'
   ) ? true : false;
-
-  const searchTextFragmentAvise = isSearching ? " para la búsqueda" : '';
 
   // Cálculos de paginación
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
@@ -141,10 +143,12 @@ const { items, allBankingEvents } = useMemo(() => {
       {!holidaysEvents && <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} /> }
 
       {dataToDisplay.length === 0 || paginatedEvents.length === 0 ? (
-        <div className="p-4 text-gray-500 italic">{`No se encontraron coincidencias en esta categoría${searchTextFragmentAvise}.`}</div>
+        <SpanText text={`No se encontraron coincidencias en esta categoría${searchTextFragmentAvise}.`} />
       ) : (
         <>
           {hasBankingRegisters ? (
+
+            // Listado Eventos Bancarios
             <BankingMondaysList 
               stringCategory={stringCategory} 
               navigate={navigate} 
@@ -152,21 +156,27 @@ const { items, allBankingEvents } = useMemo(() => {
               allBankingEvents={allBankingEvents} 
             />
           ) : (
+
+            // Los demás Eventos
             <div className="rounded-lg shadow">
               <table className="min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">
                     <th className="px-4 py-3 text-left font-semibold">Nombre</th>
                     <th className="px-4 py-3 text-left font-semibold">Fecha</th>
+
                     {isMeruBirthday ? (
                       <th className="px-4 py-3 text-left font-semibold">Departamento</th>
                     ) : (
                       <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
                     )}
+
                     {!eventWithoutLocation && (
                       <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
                     )}
+
                     <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
+                    
                     {!isMeruBirthday && <th className="px-4 py-3 text-left font-semibold">Acciones</th> }
                   </tr>
                 </thead>

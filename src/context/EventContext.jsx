@@ -1,10 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
+import axios from 'axios';
+import { ENV } from '../config/env';
+
 import { useLocationsHook } from '../hooks/useLocations';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
+
 import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
-import { INITIAL_EVENTS, fixedEvents } from '../utils/StaticData/event-utils';
+import { fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
-import { ENV } from '../config/env';
 
 const EventContext = createContext();
 
@@ -77,8 +80,11 @@ export const EventProvider = ({ showNotification, children }) => {
             start: event.start.date ? event.start.date + 'T00:00:00' : event.start.dateTime,
             allDay: !!event.start.date,
             extendedProps: {
-              category: 'google-calendar',
-              label: 'Calendario Google',
+              category: {
+                key: 'google-calendar',
+                label: 'Calendario Google',
+                color: 'g-calendar-ve-holidays'
+            },
               description: event.description || 'Feriado oficial de Venezuela',
               externalDate: true,
               repeatEvent: true, 
@@ -102,12 +108,18 @@ export const EventProvider = ({ showNotification, children }) => {
     setLoading(true);
     try {
       // Cargar Google y Local al mismo tiempo
-      const googleHolidays = await fetchGoogleEvents(year);
+      const [googleHolidays, eventResults] = await Promise.all([
+          fetchGoogleEvents(year),
+          axios.get(`${ENV.API_BACK_URL}events`),
+        ]);
 
-      const combinedEvents = [...INITIAL_EVENTS, ...googleHolidays];
+      // console.log("Google Events:", googleHolidays);
+      // console.log("eventResults:", eventResults.data.data);
+
+      const combinedEvents = [...eventResults.data.data, ...googleHolidays];
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
-      showNotification('Error al cargar datos:', err.message, 'error');
+      showNotification('Error al cargar datos:', error.response.data.message, 'error');
     } finally {
       setLoading(false);
     }
