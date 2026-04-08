@@ -1,11 +1,13 @@
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useEvents } from '../../context/EventContext';
+
 import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
-import { useEvents } from '../../context/EventContext';
-import { useEffect, useState } from 'react';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
+
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
@@ -228,16 +230,15 @@ export default function EventForm({ mode = 'create' }) {
             </div>
             <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
               {selectedCategory && (
-                <div className='border border-[#ffffff21]
-                                md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                                md:[&>*:nth-child(2n)]:pl-4 p-7'
-                >
+                <div className='div-border'>
+
                   <TabButtonsManager 
                       activeTab={activeTab} 
                       setActiveTab={setActiveTab} 
                       event={event}
                       mode={mode}
                   />
+
                   <div className="mt-6">     
                     {activeTab === 'formEvent' && (
                       <EventFormContent
@@ -257,11 +258,13 @@ export default function EventForm({ mode = 'create' }) {
                     )}
                     {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}
                   </div>
+                  
                 </div>
               )}
             </div>
+
             <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} /> 
-            {/* onBack={onBack} */}
+            
           </form>
         </div>
       </div>

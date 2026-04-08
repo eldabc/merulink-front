@@ -8,6 +8,7 @@ import { formatDateToEvent } from './../utils/date-utils';
 import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
+import { GoogleCalendarService } from '../services/googleCalendarService';
 
 const EventContext = createContext();
 
@@ -32,84 +33,13 @@ export const EventProvider = ({ showNotification, children }) => {
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
-  const API_KEY = ENV.API_KEY;
-
-  const getTemplatesOnly = useCallback(async (selectedCategory) => {
-    setLoadingTemplates(true);
-    try {
-      // API const response = await fetch('/api/templates');
-      const onlyTemplates = eventData.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
-      
-      setTemplates(onlyTemplates);
-    } catch (error) {
-      console.error("Error cargando plantillas:", error);
-    } finally {
-      setLoadingTemplates(false);
-    }
-  }, [eventData]);
-
-  // Traer datos de Google manualmente
-  const fetchGoogleEvents = async (year) => {
-    const calendarId = 'es.ve#holiday@group.v.calendar.google.com';
-    const timeMin = `${year}-01-01T00:00:00Z`;
-    const timeMax = `${year}-12-31T23:59:59Z`;
-
-
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`+
-                `&timeMin=${timeMin}` +
-                `&timeMax=${timeMax}` +
-                `&singleEvents=true` + // Divide eventos recurrentes en instancias individuales
-                `&orderBy=startTime`;
-    
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data.items) {
-        return data.items.map(event => {
-          // Extrae el formato MM-DD
-          const dateStr = event.start.date || event.start.dateTime;
-          const monthDay = dateStr.substring(5, 10); 
-
-          // Verifica si MM-DD está en eventos fijos
-          const isFixed = fixedEvents.includes(monthDay);
-
-          return {
-            id: event.id,
-            title: event.summary,
-            start: event.start.date ? event.start.date + 'T00:00:00' : event.start.dateTime,
-            allDay: !!event.start.date,
-            extendedProps: {
-              category: {
-                key: 'google-calendar',
-                label: 'Calendario Google',
-                color: 'g-calendar-ve-holidays'
-            },
-              description: event.description || 'Feriado oficial de Venezuela',
-              externalDate: true,
-              repeatEvent: true, 
-              repeatInterval: isFixed ? 'Anual' : 'Rotativo',
-              isFixed: isFixed,
-              createdBy: 'Calendario Google'
-            },
-            display: 'block',
-            className: 'g-calendar-ve-holidays'
-          };
-        });
-      }
-      return [];
-    } catch (err) {
-      console.error("Error cargando Google Calendar:", err);
-      return [];
-    }
-  };
 
   const loadEvents = useCallback(async (year = new Date().getFullYear()) => {
     setLoading(true);
     try {
       // Cargar Google y Local al mismo tiempo
       const [googleHolidays, eventResults] = await Promise.all([
-          fetchGoogleEvents(year),
+          GoogleCalendarService.fetchHolidays(year, fixedEvents),
           axios.get(`${ENV.API_BACK_URL}events`),
         ]);
 
@@ -142,6 +72,21 @@ export const EventProvider = ({ showNotification, children }) => {
       showNotification('Error al recargar eventos: ' + error);
     }
   };
+
+
+  const getTemplatesOnly = useCallback(async (selectedCategory) => {
+    setLoadingTemplates(true);
+    try {
+      // API const response = await fetch('/api/templates');
+      const onlyTemplates = eventData.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
+      
+      setTemplates(onlyTemplates);
+    } catch (error) {
+      console.error("Error cargando plantillas:", error);
+    } finally {
+      setLoadingTemplates(false);
+    }
+  }, [eventData]);
 
 
   // *** Crear
