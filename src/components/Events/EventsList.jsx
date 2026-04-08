@@ -14,13 +14,14 @@ import BankingMondaysList from './BankingMondays/BankingMondaysList.jsx';
 import FilterByFields from '../Filters/FilterByFields.jsx';
 import ButtonHistory from '../Shared/ButtonHistory.jsx';
 import SpanText from '../Shared/SpanText.jsx';
+import RowTableLoading from '../Shared/RowTableLoading.jsx';
 
 import '../../Tables.css';
 
 export default function EventsList({ categoryKeys }) {
   
   const navigate = useNavigate();
-  const { eventData } = useEvents();
+  const { loading, eventData } = useEvents();
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
@@ -142,7 +143,7 @@ export default function EventsList({ categoryKeys }) {
       
       {!holidaysEvents && <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} /> }
 
-      {dataToDisplay.length === 0 || paginatedEvents.length === 0 ? (
+      {(dataToDisplay.length === 0 || paginatedEvents.length === 0) && !loading ? (
         <SpanText text={`No se encontraron coincidencias en esta categoría${searchTextFragmentAvise}.`} />
       ) : (
         <>
@@ -181,14 +182,19 @@ export default function EventsList({ categoryKeys }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedEvents.map((item) => (
-                    <EventRow 
-                      key={item.id} 
-                      event={item} 
-                      isMeruBirthday={isMeruBirthday} 
-                      eventWithoutLocation={eventWithoutLocation} 
-                    />
-                  ))}
+                  {loading ? (
+                    <RowTableLoading colSpan={6} />
+                  ) : (
+                     paginatedEvents.map((item) => (
+                      <EventRow 
+                        key={item.id} 
+                        event={item} 
+                        isMeruBirthday={isMeruBirthday} 
+                        eventWithoutLocation={eventWithoutLocation} 
+                      />
+                    ))
+                  )}
+                 
                 </tbody>
               </table>
             </div>

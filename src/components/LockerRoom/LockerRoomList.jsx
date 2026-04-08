@@ -92,14 +92,12 @@ function LockerRoomList() {
               {loading ? (
                 <RowTableLoading />
               ) : (
-                <>
-                  {paginatedData.map((locker) => (
-                    <LockerRoomRow 
-                      key={locker.id}
-                      locker={locker} 
-                    />
-                  ))}
-                </>
+                paginatedData.map((locker) => (
+                  <LockerRoomRow 
+                    key={locker.id}
+                    locker={locker} 
+                  />
+                ))
               )}   
             </tbody>
           </table>
