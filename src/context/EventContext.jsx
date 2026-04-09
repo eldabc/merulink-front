@@ -33,32 +33,51 @@ export const EventProvider = ({ showNotification, children }) => {
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
+  const [googleEvents, setGoogleEvents] = useState('');
 
-  const loadEvents = useCallback(async (year = new Date().getFullYear()) => {
+  const loadEvents = useCallback(async (categoryKeys = '', googleHolidays = []) => {
     setLoading(true);
     try {
+      console.log("Cargando eventos para categorías:", categoryKeys);
       // Cargar Google y Local al mismo tiempo
-      const [googleHolidays, eventResults] = await Promise.all([
-          GoogleCalendarService.fetchHolidays(year, fixedEvents),
-          axios.get(`${ENV.API_BACK_URL}events`),
+      const [eventResults] = await Promise.all([
+          axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}`),
         ]);
 
-      // console.log("Google Events:", googleHolidays);
-      // console.log("eventResults:", eventResults.data.data);
+      console.log("Google Events:", googleHolidays);
+      console.log("eventResults:", eventResults.data.data);
 
       const combinedEvents = [...eventResults.data.data, ...googleHolidays];
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
-      showNotification('Error al cargar datos:', error.response.data.message, 'error');
+      console.log("error", err)
+      // showNotification('Error al cargar datos:', err.response.data.message, 'error');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    console.log('UseEffect EventContext');
-    loadEvents();
-  }, [loadEvents]);
+    const initLoad = async () => {
+      try {  
+        
+        const year = new Date().getFullYear();
+        
+        const holidays = await GoogleCalendarService.fetchHolidays(
+          year, 
+          fixedEvents
+        );
+        setGoogleEvents(holidays);
+        await loadEvents('', holidays); 
+        
+      } catch (error) {
+        console.error("Error en la carga inicial:", error);
+      }
+    };
+
+    initLoad();
+  }, []);
+
 
   // *** Para recargar datos manualmente
   const refetchEvents = async (year) => {
@@ -334,6 +353,7 @@ export const EventProvider = ({ showNotification, children }) => {
     setEventData,
     loading,
     error,
+    loadEvents,
     refetchEvents,
     createEvent,
     createEditBankingEvents,

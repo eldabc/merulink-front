@@ -21,7 +21,7 @@ import '../../Tables.css';
 export default function EventsList({ categoryKeys }) {
   
   const navigate = useNavigate();
-  const { loading, eventData } = useEvents();
+  const { loading, eventData, loadEvents } = useEvents();
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
@@ -36,49 +36,52 @@ export default function EventsList({ categoryKeys }) {
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
   
   useEffect(() => {
+    console.log("Cargando eventos para categorías:", categoryKeys);
     setSearchValue('');
     setSearchDateValue('');
     setCurrentPage(1);
     setShowHistory(false);
+    
+    loadEvents(categoryKeys);
   }, [categoryKeys]);
 
   // Filtrar eventos por categoría
-  const { items, allBankingEvents } = useMemo(() => {
-    if (!categoryKeys || categoryKeys.length === 0) return { items: [], allBankingEvents: [] };
+  // const { items, allBankingEvents } = useMemo(() => {
+  //   if (!categoryKeys || categoryKeys.length === 0) return { items: [], allBankingEvents: [] };
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
 
-    const result = eventData.reduce((acc, ev) => {
+  //   const result = eventData.reduce((acc, ev) => {
 
-      const categoryKey = ev.extendedProps?.category.key;
-      const matchesCategoryKey = categoryKeys.includes(categoryKey);
+  //     const categoryKey = ev.extendedProps?.category.key;
+  //     const matchesCategoryKey = categoryKeys.includes(categoryKey);
 
-      if (matchesCategoryKey) {
+  //     if (matchesCategoryKey) {
         
-        // Extraer TODOS los banking-mondays (sin filtro de fecha)
-        if (categoryKey === 'banking-mondays') {
-          acc.allBankingEvents.push({ ...ev });
-        }
+  //       // Extraer TODOS los banking-mondays (sin filtro de fecha)
+  //       if (categoryKey === 'banking-mondays') {
+  //         acc.allBankingEvents.push({ ...ev });
+  //       }
 
-        // Extraer TODOS los google-calendar (sin filtro de fecha)
-        const isGoogle = categoryKey === 'google-calendar' || categoryKey === 've-holidays';
-        const isFutureOrToday = new Date(ev.start) >= today;
+  //       // Extraer TODOS los google-calendar (sin filtro de fecha)
+  //       const isGoogle = categoryKey === 'google-calendar' || categoryKey === 've-holidays';
+  //       const isFutureOrToday = new Date(ev.start) >= today;
 
-        if (showHistory || isGoogle || isFutureOrToday) {
-          acc.items.push({ ...ev });
-        }
-      }
+  //       if (showHistory || isGoogle || isFutureOrToday) {
+  //         acc.items.push({ ...ev });
+  //       }
+  //     }
 
-      return acc;
-    }, { items: [], allBankingEvents: [] });
+  //     return acc;
+  //   }, { items: [], allBankingEvents: [] });
 
-    // Ordenar
-    result.items.sort((a, b) => new Date(a.start) - new Date(b.start));
-    result.allBankingEvents;
+  //   // Ordenar
+  //   result.items.sort((a, b) => new Date(a.start) - new Date(b.start));
+  //   result.allBankingEvents;
 
-    return result;
-  }, [eventData, categoryKeys, showHistory]);
+  //   return result;
+  // }, [eventData, categoryKeys, showHistory]);
 
 
   // Filtrado y detección de búsqueda
@@ -87,7 +90,7 @@ export default function EventsList({ categoryKeys }) {
     const hasSearchDate = searchDateValue && searchDateValue !== '';
     const searching = hasSearchText || hasSearchDate;
 
-    let filtered = items;
+    let filtered = eventData; //items
 
     // Filtrar por texto
     if (hasSearchText) {
@@ -106,7 +109,7 @@ export default function EventsList({ categoryKeys }) {
       dataToDisplay: filtered,
       isSearching: searching
     };
-  }, [items, searchValue, searchDateValue]);
+  }, [eventData, searchValue, searchDateValue]); //items
   
 
   const searchTextFragmentAvise = isSearching && ` para la búsqueda ${searchValue}`;
@@ -154,7 +157,7 @@ export default function EventsList({ categoryKeys }) {
               stringCategory={stringCategory} 
               navigate={navigate} 
               events={paginatedEvents} 
-              allBankingEvents={allBankingEvents} 
+              allBankingEvents={eventData} //allBankingEvents
             />
           ) : (
 
@@ -208,7 +211,7 @@ export default function EventsList({ categoryKeys }) {
         itemsPerPage={itemsPerPage}
         dataToDisplay={dataToDisplay}
         hasSearched={isSearching}
-        data={items}
+        data={eventData}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
         totalPages={totalPages}

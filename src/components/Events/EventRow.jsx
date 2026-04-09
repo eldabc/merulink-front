@@ -40,15 +40,15 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
         <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event.start)}</td>
         
         {isMeruBirthday ? (
-          <td className="px-4 py-3 text-white-700">{event.extendedProps.departmentName}</td>
+          <td className="px-4 py-3 text-white-700">{event.extendedProps?.departmentName}</td>
         ) : ( 
           <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
         )}
 
         {!eventWithoutLocation && (
-          <td className="px-4 py-3 text-white-700">{event.extendedProps.location.label}</td>
+          <td className="px-4 py-3 text-white-700">{event.extendedProps?.location?.label}</td>
         )}
-        <td className="px-4 py-3 text-white-700">{event.extendedProps.category.label}</td>
+        <td className="px-4 py-3 text-white-700">{event.extendedProps?.category.label}</td>
         <td className="px-4 py-3">
           {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
             <ButtonDelete setIsModalOpen={setIsModalOpen} id={event.id} />
