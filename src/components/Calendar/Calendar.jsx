@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useEvents } from "../../context/EventContext";
 import { useNavigate } from 'react-router-dom';
 
@@ -7,17 +7,21 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import esLocale from '@fullcalendar/core/locales/es';
+
 import { capitalizeDateString } from '../../utils/date-utils';
 import { filterEventsByDate } from '../../utils/calendar-utils';
 import { getTodayNormalized } from '../../utils/date-utils';
+import { categoryLegend } from '../../utils/Events/events-utils';
+
 import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { categoryLegend } from '../../utils/Events/events-utils';
-import esLocale from '@fullcalendar/core/locales/es';
+
 import '../../Calendar.css';
 
 export default function Calendar() {
+
   const [weekendsVisible, setWeekendsVisible] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
@@ -59,11 +63,13 @@ export default function Calendar() {
 
   //  Filtrado dinámico según categorías activas
   const filteredEvents = useMemo(() => {
-    return eventData.filter(ev =>
-      activeCategories[ev.extendedProps?.category]
-    );
+    return eventData.filter(ev => activeCategories[ev.extendedProps?.category.key])
+                    .map(ev => ({
+                        ...ev,
+                        // Darle el stilo personalizado según categoría
+                        className: ev.extendedProps.category.color || '' 
+                    }));
   }, [eventData, activeCategories]);
-
   // Filtrar eventos del día seleccionado
   const eventsOfSelectedDay = useMemo(() => {
     return filterEventsByDate(filteredEvents, selectedDate);
@@ -102,6 +108,7 @@ export default function Calendar() {
     if (clickInfo.event.url) clickInfo.jsEvent.preventDefault();
     
     const eventDate = new Date(clickInfo.event.start);
+
     eventDate.setHours(0, 0, 0, 0);
     setSelectedDate(eventDate);
     setSelectedEvent(clickInfo.event);
@@ -195,7 +202,7 @@ export default function Calendar() {
             weekends={weekendsVisible}
             eventSources={eventSources}
             dayCellClassNames={handleDayCellClassNames}
-            eventContent={(arg) => <EventContent eventInfo={arg} />}
+            eventContent={(arg) => <EventContent eventInfo={arg} />} // Personalización de eventos (No se esta usando)
             eventClick={handleEventClick}
             dateClick={handleDateClick}
             locale={esLocale}
