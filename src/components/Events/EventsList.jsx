@@ -42,8 +42,18 @@ export default function EventsList({ categoryKeys }) {
     setCurrentPage(1);
     setShowHistory(false);
     
+      console.log("showHistory 111", showHistory);
     loadEvents(categoryKeys);
+
   }, [categoryKeys]);
+
+  useEffect(() => {
+    if (showHistory){
+      loadEvents(categoryKeys, showHistory);
+    } else {
+      loadEvents(categoryKeys);
+    }
+  }, [showHistory]);
 
   // Filtrar eventos por categoría
   // const { items, allBankingEvents } = useMemo(() => {

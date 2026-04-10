@@ -35,9 +35,10 @@ export const EventProvider = ({ showNotification, children }) => {
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
 
-  const loadEvents = useCallback(async (categoryKeys = ['all']) => {
+  const loadEvents = useCallback(async (categoryKeys = ['all'], history) => {
     setLoading(true);
     try {
+      console.log("history:", history);
 
       let currentGoogleEvents = googleEvents;
       
@@ -53,13 +54,12 @@ export const EventProvider = ({ showNotification, children }) => {
       const hasGoogle = categoryKeys.includes("google-calendar"); 
       
       // Cargar Eventos en BD
-      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}`);
+      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}`);
 
       const combinedEvents = (requestAll || hasGoogle) 
         ? filterGoogleDuplicates([...eventResults.data.data, ...currentGoogleEvents]) 
         : eventResults.data.data;
   
-      // console.log("combinedEvents:", combinedEvents);
       // console.log("eventResults:", eventResults.data.data);
 
       setEventData(filterGoogleDuplicates(combinedEvents));
