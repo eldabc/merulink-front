@@ -36,13 +36,13 @@ export default function EventsList({ categoryKeys }) {
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
   
   useEffect(() => {
-    console.log("Cargando eventos para categorías:", categoryKeys);
+
     setSearchValue('');
     setSearchDateValue('');
     setCurrentPage(1);
     setShowHistory(false);
     
-    loadEvents(categoryKeys); // lograr que filtre si se pide y también mande todo por encima de la fecha actual y todo por debajo de la fecha actual según el caso.
+    loadEvents(categoryKeys);
   }, [categoryKeys]);
 
   // Filtrar eventos por categoría

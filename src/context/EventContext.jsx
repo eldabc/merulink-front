@@ -35,27 +35,32 @@ export const EventProvider = ({ showNotification, children }) => {
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
 
-  const loadEvents = useCallback(async (categoryKeys = '') => {
+  const loadEvents = useCallback(async (categoryKeys = ['all']) => {
     setLoading(true);
     try {
-      
-      console.log("Cargando eventos para categorías:", categoryKeys);
-      const requestAll = categoryKeys[0] === 'all' && true;
-      // Cargar Google y Local al mismo tiempo
-      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}`);
 
-      const hasGoogle = categoryKeys.includes("google-calendar"); 
-      let combinedEvents = '';
-  
-      if (hasGoogle || requestAll) {
-          console.log("hasGoogle:", googleEvents);
-          combinedEvents = [...eventResults.data.data, ...googleEvents];
-      }else {
-          combinedEvents = eventResults.data.data;
+      let currentGoogleEvents = googleEvents;
+      
+      // Eventos Google una vez
+      if (googleEvents === '') {
+        const holidays = await GoogleCalendarService.fetchHolidays(new Date().getFullYear(), fixedEvents);
+        console.log("Eventos Google", holidays);
+        setGoogleEvents(holidays);
+        currentGoogleEvents = holidays;
       }
 
-      console.log("combinedEvents:", combinedEvents);
-      console.log("eventResults:", eventResults.data.data);
+      const requestAll = categoryKeys[0] === 'all' && true;
+      const hasGoogle = categoryKeys.includes("google-calendar"); 
+      
+      // Cargar Eventos en BD
+      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}`);
+
+      const combinedEvents = (requestAll || hasGoogle) 
+        ? filterGoogleDuplicates([...eventResults.data.data, ...currentGoogleEvents]) 
+        : eventResults.data.data;
+  
+      // console.log("combinedEvents:", combinedEvents);
+      // console.log("eventResults:", eventResults.data.data);
 
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
@@ -64,24 +69,25 @@ export const EventProvider = ({ showNotification, children }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [googleEvents]);
 
-  useEffect(() => {
-    const initLoad = async () => {
-      try {  
+  // useEffect(() => {
+  //   const initLoad = async () => {
+  //     try {  
         
-        const year = new Date().getFullYear();
-        const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
-        setGoogleEvents(holidays);
-        // await loadEvents('', holidays); 
+  //       const year = new Date().getFullYear();
+  //       const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
+  //       console.log("holiudayes", holidays)
+  //       setGoogleEvents(holidays);
+  //       // await loadEvents('', holidays); 
         
-      } catch (error) {
-        console.error("Error en la carga inicial:", error);
-      }
-    };
+  //     } catch (error) {
+  //       console.error("Error en la carga inicial:", error);
+  //     }
+  //   };
 
-    initLoad();
-  }, []);
+  //   initLoad();
+  // }, []);
 
 
   // *** Para recargar datos manualmente

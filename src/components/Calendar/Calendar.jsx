@@ -37,7 +37,7 @@ export default function Calendar() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {      
-    loadEvents(["all"]); //lograr que calendar pueda pedir todos los eventos de ese año y si cambia de año he haga la petición
+    loadEvents();
   }, []);
 
   const handleDatesSet = (dateInfo) => {
