@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from "../../context/EventContext";
 
@@ -34,26 +34,48 @@ export default function EventsList({ categoryKeys }) {
   const isBankingMondays = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
-  
-  useEffect(() => {
-
-    setSearchValue('');
-    setSearchDateValue('');
-    setCurrentPage(1);
-    setShowHistory(false);
-    
-      console.log("showHistory 111", showHistory);
-    loadEvents(categoryKeys);
-
-  }, [categoryKeys]);
+  const prevCategoryKeys = useRef();
 
   useEffect(() => {
-    if (showHistory){
-      loadEvents(categoryKeys, showHistory);
+    const categoryChanged = prevCategoryKeys.current !== categoryKeys;
+
+    if (categoryChanged) {
+      console.log("Cambio category 1", showHistory);
+      setSearchValue('');
+      setSearchDateValue('');
+      setCurrentPage(1);
+      setShowHistory(false);
+
+      loadEvents(categoryKeys, false);
     } else {
-      loadEvents(categoryKeys);
+      // Mostrar/Ocultar historial de eventos
+       console.log("showHistory 2", showHistory);
+      loadEvents(categoryKeys, showHistory);
     }
-  }, [showHistory]);
+
+    prevCategoryKeys.current = categoryKeys;
+
+  }, [categoryKeys, showHistory]);
+
+  // useEffect(() => {
+
+  //   setSearchValue('');
+  //   setSearchDateValue('');
+  //   setCurrentPage(1);
+  //   setShowHistory(false);
+    
+  //     console.log("showHistory 111", showHistory);
+  //   loadEvents(categoryKeys);
+
+  // }, [categoryKeys]);
+
+  // useEffect(() => {
+  //   if (showHistory){
+  //     loadEvents(categoryKeys, showHistory);
+  //   } else {
+  //     loadEvents(categoryKeys);
+  //   }
+  // }, [showHistory]);
 
   // Filtrar eventos por categoría
   // const { items, allBankingEvents } = useMemo(() => {
