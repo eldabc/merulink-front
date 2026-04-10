@@ -35,9 +35,11 @@ export default function EventsList({ categoryKeys }) {
   const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
   const prevCategoryKeys = useRef();
+  const prevShowHistory = useRef();
 
   useEffect(() => {
     const categoryChanged = prevCategoryKeys.current !== categoryKeys;
+    const ShowHistoryChanged = prevShowHistory.current !== showHistory;
 
     if (categoryChanged) {
       console.log("Cambio category 1", showHistory);
@@ -49,10 +51,11 @@ export default function EventsList({ categoryKeys }) {
       loadEvents(categoryKeys, false);
     } else {
       // Mostrar/Ocultar historial de eventos
+      if (ShowHistoryChanged){
        console.log("showHistory 2", showHistory);
-      loadEvents(categoryKeys, showHistory);
+      loadEvents(categoryKeys, showHistory);}
     }
-
+prevShowHistory.current = showHistory;
     prevCategoryKeys.current = categoryKeys;
 
   }, [categoryKeys, showHistory]);
