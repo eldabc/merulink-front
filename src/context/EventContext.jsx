@@ -35,22 +35,31 @@ export const EventProvider = ({ showNotification, children }) => {
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
 
-  const loadEvents = useCallback(async (categoryKeys = '', googleHolidays = []) => {
+  const loadEvents = useCallback(async (categoryKeys = '') => {
     setLoading(true);
     try {
+      
       console.log("Cargando eventos para categorías:", categoryKeys);
+      const requestAll = categoryKeys[0] === 'all' && true;
       // Cargar Google y Local al mismo tiempo
-      const [eventResults] = await Promise.all([
-          axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}`),
-        ]);
+      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}`);
 
-      console.log("Google Events:", googleHolidays);
+      const hasGoogle = categoryKeys.includes("google-calendar"); 
+      let combinedEvents = '';
+  
+      if (hasGoogle || requestAll) {
+          console.log("hasGoogle:", googleEvents);
+          combinedEvents = [...eventResults.data.data, ...googleEvents];
+      }else {
+          combinedEvents = eventResults.data.data;
+      }
+
+      console.log("combinedEvents:", combinedEvents);
       console.log("eventResults:", eventResults.data.data);
 
-      const combinedEvents = [...eventResults.data.data, ...googleHolidays];
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
-      console.log("error", err)
+      console.log("error", err);
       // showNotification('Error al cargar datos:', err.response.data.message, 'error');
     } finally {
       setLoading(false);
@@ -62,13 +71,9 @@ export const EventProvider = ({ showNotification, children }) => {
       try {  
         
         const year = new Date().getFullYear();
-        
-        const holidays = await GoogleCalendarService.fetchHolidays(
-          year, 
-          fixedEvents
-        );
+        const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
         setGoogleEvents(holidays);
-        await loadEvents('', holidays); 
+        // await loadEvents('', holidays); 
         
       } catch (error) {
         console.error("Error en la carga inicial:", error);

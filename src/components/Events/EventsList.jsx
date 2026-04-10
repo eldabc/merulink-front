@@ -172,7 +172,10 @@ export default function EventsList({ categoryKeys }) {
                           <th className="px-4 py-3 text-left font-semibold">Fecha</th>
 
                           {isMeruBirthday ? (
-                            <th className="px-4 py-3 text-left font-semibold">Departamento</th>
+                            <>
+                              <th className="px-4 py-3 text-left font-semibold">Departamento</th>
+                              <th className="px-4 py-3 text-left font-semibold">Cumplirá</th>
+                            </>
                           ) : (
                             <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
                           )}

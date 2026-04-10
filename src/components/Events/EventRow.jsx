@@ -40,7 +40,10 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
         <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event.start)}</td>
         
         {isMeruBirthday ? (
-          <td className="px-4 py-3 text-white-700">{event.extendedProps?.departmentName}</td>
+          <>
+            <td className="px-4 py-3 text-white-700">{event.extendedProps?.department?.name}</td>
+            <td className="px-4 py-3 text-white-700">{event.extendedProps?.nextAge} Años</td>
+          </>
         ) : ( 
           <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
         )}

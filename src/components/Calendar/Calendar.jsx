@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useEvents } from "../../context/EventContext";
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ export default function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
   const [currentTitle, setCurrentTitle] = useState('');
-  const { eventData, refetchEvents, specialDays } = useEvents();
+  const { eventData, loadEvents, refetchEvents, specialDays } = useEvents();
   const calendarRef = useRef(null);
   const navigate = useNavigate();
 
@@ -35,6 +35,10 @@ export default function Calendar() {
   const handleNext = () => calendarRef.current.getApi().next(); 
 
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {      
+    loadEvents(["all"]); //lograr que calendar pueda pedir todos los eventos de ese año y si cambia de año he haga la petición
+  }, []);
 
   const handleDatesSet = (dateInfo) => {
     const yearInView = dateInfo.view.currentStart.getFullYear();
@@ -70,10 +74,13 @@ export default function Calendar() {
                         className: ev.extendedProps.category.color || '' 
                     }));
   }, [eventData, activeCategories]);
+
+
   // Filtrar eventos del día seleccionado
   const eventsOfSelectedDay = useMemo(() => {
     return filterEventsByDate(filteredEvents, selectedDate);
   }, [filteredEvents, selectedDate]);
+
   
   // Formatear la fecha seleccionada para mostrar en sidebar
   const formattedSelectedDate = useMemo(() => {
@@ -95,6 +102,7 @@ export default function Calendar() {
     
     return capitalizeDateString(formatted);
   }, [selectedDate]);
+
 
   // Handlers
   function toggleSelectedEvent(eventInfo) {
