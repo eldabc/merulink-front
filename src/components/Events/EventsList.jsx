@@ -42,7 +42,7 @@ export default function EventsList({ categoryKeys }) {
     setCurrentPage(1);
     setShowHistory(false);
     
-    loadEvents(categoryKeys);
+    loadEvents(categoryKeys); // lograr que filtre si se pide y también mande todo por encima de la fecha actual y todo por debajo de la fecha actual según el caso.
   }, [categoryKeys]);
 
   // Filtrar eventos por categoría
@@ -164,41 +164,45 @@ export default function EventsList({ categoryKeys }) {
             // Los demás Eventos
             <div className="rounded-lg shadow">
               <table className="min-w-full border-collapse text-sm sm:text-base">
-                <thead>
-                  <tr className="tr-thead-table">
-                    <th className="px-4 py-3 text-left font-semibold">Nombre</th>
-                    <th className="px-4 py-3 text-left font-semibold">Fecha</th>
+                {!loading ? (
+                  <>
+                    <thead>
+                        <tr className="tr-thead-table">
+                          <th className="px-4 py-3 text-left font-semibold">Nombre</th>
+                          <th className="px-4 py-3 text-left font-semibold">Fecha</th>
 
-                    {isMeruBirthday ? (
-                      <th className="px-4 py-3 text-left font-semibold">Departamento</th>
-                    ) : (
-                      <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
-                    )}
+                          {isMeruBirthday ? (
+                            <th className="px-4 py-3 text-left font-semibold">Departamento</th>
+                          ) : (
+                            <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
+                          )}
 
-                    {!eventWithoutLocation && (
-                      <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
-                    )}
+                          {!eventWithoutLocation && (
+                            <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
+                          )}
 
-                    <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
-                    
-                    {!isMeruBirthday && <th className="px-4 py-3 text-left font-semibold">Acciones</th> }
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <RowTableLoading colSpan={6} />
+                          <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
+                          
+                          {!isMeruBirthday && <th className="px-4 py-3 text-left font-semibold">Acciones</th> }
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {paginatedEvents.map((item) => (
+                            <EventRow 
+                              key={item.id} 
+                              event={item} 
+                              isMeruBirthday={isMeruBirthday} 
+                              eventWithoutLocation={eventWithoutLocation} 
+                            />
+                          ))}
+                      
+                      </tbody>
+                    </>
                   ) : (
-                     paginatedEvents.map((item) => (
-                      <EventRow 
-                        key={item.id} 
-                        event={item} 
-                        isMeruBirthday={isMeruBirthday} 
-                        eventWithoutLocation={eventWithoutLocation} 
-                      />
-                    ))
+                    <tbody>
+                      <RowTableLoading colSpan={6} />
+                    </tbody>
                   )}
-                 
-                </tbody>
               </table>
             </div>
           )}
