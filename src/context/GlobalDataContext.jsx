@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getDepartments, getSubDepartments } from '../services/masterDataService';
+import { getDepartments, getEventCategories } from '../services/masterDataService';
+import { useNotification } from "../context/NotificationContext"; 
 
 const GlobalDataContext = createContext();
 
@@ -7,6 +8,7 @@ export const GlobalDataProvider = ({ children }) => {
   const [departments, setDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
+  // const { showNotification } = useNotification();
 
   const loadDepartments = async () => {
     setGlobalLoading(true);
@@ -130,6 +132,21 @@ export const GlobalDataProvider = ({ children }) => {
     });
   };
 
+  const loadEventCategories = async () => {
+    setGlobalLoading(true);
+    try {
+      
+      const res = await getEventCategories();
+      console.log("respose", res);
+      return res;
+    } catch (error) {
+      console.error("Error cargando maestros:", error);
+      // showNotification('Error al cargar Categorías de Eventos', err.message, 'error');
+    } finally {
+      setGlobalLoading(false);
+    }
+  };
+
   const contextValue = {
     departments, 
     setDepartments,
@@ -141,7 +158,8 @@ export const GlobalDataProvider = ({ children }) => {
     addSubDepartmentGlobalState, 
     updateSubDepartmentGlobalState,
     addPositionGlobalState,
-    updatePositionGlobalState
+    updatePositionGlobalState,
+    loadEventCategories
   };
 
   return (

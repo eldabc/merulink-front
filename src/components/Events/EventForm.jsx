@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useEvents } from '../../context/EventContext';
+import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 
 import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
@@ -11,6 +12,7 @@ import { getDisabledClasses } from '../../utils/global-utils';
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
+import OptionSelect from '../Shared/OptionSelect.jsx';
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
@@ -27,6 +29,7 @@ export default function EventForm({ mode = 'create' }) {
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
   const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, templateName, setTemplateName, setSelectedCategory } = useEvents();
+  const { globalLoading, loadEventCategories } = useGlobalData();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,8 +46,12 @@ export default function EventForm({ mode = 'create' }) {
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
   const isGoogleCategory = selectedCategory === 'google-calendar'
-   const disabledClasses = getDisabledClasses(viewMode);
+  const disabledClasses = getDisabledClasses(viewMode, globalLoading);
  
+  useEffect(() => {
+    loadEventCategories();
+  }, []); 
+
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {
     if (typeof selectedCategory !== 'undefined') {
@@ -218,10 +225,10 @@ export default function EventForm({ mode = 'create' }) {
                 ) : (
                   <select 
                     {...register('category' , { onChange: handleEventChange })}
-                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                      ${disabledClasses}`}
+                    disabled={globalLoading}
+                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
                   >
-                    <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                    <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
                     {renderCategoryEvents()}
                   </select>
                 )}

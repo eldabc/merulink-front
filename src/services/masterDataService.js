@@ -6,7 +6,7 @@ export const getDepartments = async () => {
   return await response.data.data;
 };
 
-export const getSubDepartments = async () => {
-  const response = await axios.get(`${ENV.API_BACK_URL}subdepartments`);
+export const getEventCategories = async () => {
+  const response = await axios.get(`${ENV.API_BACK_URL}eventCategories`);
   return await response.data.data;
 };
