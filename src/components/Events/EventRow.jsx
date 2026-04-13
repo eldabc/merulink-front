@@ -52,12 +52,11 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
           <td className="px-4 py-3 text-white-700">{event.extendedProps?.location?.label}</td>
         )}
         <td className="px-4 py-3 text-white-700">{event.extendedProps?.category.label}</td>
-        <td className="px-4 py-3">
-          {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
+        {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
+          <td className="px-4 py-3">
             <ButtonDelete setIsModalOpen={setIsModalOpen} id={event.id} />
-          )}
+        </td>)}
             {event.extendedProps?.isTemplate && <ButtonIsTemplate/> }
-        </td>
       </tr>
       <tr>
         <td>

@@ -37,7 +37,7 @@ export default function EventsList({ categoryKeys }) {
   const prevCategoryKeys = useRef();
   const prevShowHistory = useRef();
 
-  useEffect(() => {
+  useEffect(() => { // Se puede optimizar
     const categoryChanged = prevCategoryKeys.current !== categoryKeys;
     const ShowHistoryChanged = prevShowHistory.current !== showHistory;
 
@@ -52,10 +52,10 @@ export default function EventsList({ categoryKeys }) {
     } else {
       // Mostrar/Ocultar historial de eventos
       if (ShowHistoryChanged){
-       console.log("showHistory 2", showHistory);
-      loadEvents(categoryKeys, showHistory);}
-    }
-prevShowHistory.current = showHistory;
+        console.log("showHistory 2", showHistory);
+        loadEvents(categoryKeys, showHistory);}
+      }
+    prevShowHistory.current = showHistory;
     prevCategoryKeys.current = categoryKeys;
 
   }, [categoryKeys, showHistory]);
@@ -79,45 +79,6 @@ prevShowHistory.current = showHistory;
   //     loadEvents(categoryKeys);
   //   }
   // }, [showHistory]);
-
-  // Filtrar eventos por categoría
-  // const { items, allBankingEvents } = useMemo(() => {
-  //   if (!categoryKeys || categoryKeys.length === 0) return { items: [], allBankingEvents: [] };
-
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0);
-
-  //   const result = eventData.reduce((acc, ev) => {
-
-  //     const categoryKey = ev.extendedProps?.category.key;
-  //     const matchesCategoryKey = categoryKeys.includes(categoryKey);
-
-  //     if (matchesCategoryKey) {
-        
-  //       // Extraer TODOS los banking-mondays (sin filtro de fecha)
-  //       if (categoryKey === 'banking-mondays') {
-  //         acc.allBankingEvents.push({ ...ev });
-  //       }
-
-  //       // Extraer TODOS los google-calendar (sin filtro de fecha)
-  //       const isGoogle = categoryKey === 'google-calendar' || categoryKey === 've-holidays';
-  //       const isFutureOrToday = new Date(ev.start) >= today;
-
-  //       if (showHistory || isGoogle || isFutureOrToday) {
-  //         acc.items.push({ ...ev });
-  //       }
-  //     }
-
-  //     return acc;
-  //   }, { items: [], allBankingEvents: [] });
-
-  //   // Ordenar
-  //   result.items.sort((a, b) => new Date(a.start) - new Date(b.start));
-  //   result.allBankingEvents;
-
-  //   return result;
-  // }, [eventData, categoryKeys, showHistory]);
-
 
   // Filtrado y detección de búsqueda
   const { dataToDisplay, isSearching } = useMemo(() => {

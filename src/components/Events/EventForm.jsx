@@ -7,6 +7,7 @@ import { useEvents } from '../../context/EventContext';
 import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
+import { getDisabledClasses } from '../../utils/global-utils';  
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
@@ -42,8 +43,7 @@ export default function EventForm({ mode = 'create' }) {
   const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
   const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
   const isGoogleCategory = selectedCategory === 'google-calendar'
-  // const isMeruBirthdays = selectedCategory === 'meru-birthdays'
-  // const eventWithoutLocation = selectedCategory === 've-holidays' || isMeruBirthdays || isGoogleCategory || selectedCategory === 'executive-mod';
+   const disabledClasses = getDisabledClasses(viewMode);
  
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function EventForm({ mode = 'create' }) {
         endDate: divideDateTimeEnd?.date ?? null,
         endTime: divideDateTimeEnd?.time ?? null,
         status: event?.extendedProps?.status ?? '',
-        locationId: event?.extendedProps?.locationId ?? '',
+        locationId: event?.extendedProps?.location.id ?? '',
         repeatEvent: event?.extendedProps?.repeatEvent ?? false,
         repeatInterval: event?.extendedProps?.repeatInterval ?? '',
         createAlert: event?.extendedProps?.createAlert ?? false,
@@ -99,7 +99,7 @@ export default function EventForm({ mode = 'create' }) {
   useEffect(() => {
     if (event && (editMode || viewMode)) {
         
-      const categoryTypeExtracted = event?.extendedProps?.category;
+      const categoryTypeExtracted = event?.extendedProps?.category.key;
       let createdBy = event.extendedProps?.createdBy;
 
       if (isGoogleCategory) createdBy = 'Sistema';
@@ -205,21 +205,21 @@ export default function EventForm({ mode = 'create' }) {
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
-            <div className="titles-table">
+            <div className="titles-table ml-5">
             <div className="justify-center w-64">
               <div className='mt-5'>
-                <h2 className="block text-2xl font-bold text-center"> Tipo de Evento: *</h2>
+                <h3 className="text-xl font-bold mb-4 text-white"> Tipo de Evento: *</h3>
               </div>
               <div className='mt-5'>
                 {viewMode || editMode ? (
-                  <div className="text-xl w-full px-3 py-2 rounded-lg bg-[#2f3d44] text-center text-gray-300">
+                  <div className="text-xl w-full px-3 py-3 rounded-lg bg-[#2f3d44] text-center text-gray-300">
                     {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
                   </div>
                 ) : (
                   <select 
                     {...register('category' , { onChange: handleEventChange })}
                     className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                      ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                      ${disabledClasses}`}
                   >
                     <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                     {renderCategoryEvents()}
