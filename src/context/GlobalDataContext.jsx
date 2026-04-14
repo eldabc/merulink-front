@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getDepartments, getEventCategories } from '../services/masterDataService';
+import { getDepartments, getEventCategories, getEventLocations } from '../services/masterDataService';
 import { useNotification } from "../context/NotificationContext"; 
 
 const GlobalDataContext = createContext();
@@ -7,6 +7,8 @@ const GlobalDataContext = createContext();
 export const GlobalDataProvider = ({ children }) => {
   const [departments, setDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
+  const [categoryEvents, setCategoryEvents] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
   // const { showNotification } = useNotification();
 
@@ -137,11 +139,24 @@ export const GlobalDataProvider = ({ children }) => {
     try {
       
       const res = await getEventCategories();
-      console.log("respose", res);
-      return res;
+      console.log("GetEventCategory", res);
+      setCategoryEvents(res);
     } catch (error) {
-      console.error("Error cargando maestros:", error);
-      // showNotification('Error al cargar Categorías de Eventos', err.message, 'error');
+      console.error("Error cargando Categorías de eventos:", error);
+    } finally {
+      setGlobalLoading(false);
+    }
+  };
+
+  const getLocations = async () => {
+    setGlobalLoading(true);
+    try {
+      
+      const res = await getEventLocations();
+      console.log("getEventLocations", res);
+      setLocations(res);
+    } catch (error) {
+      console.error("Error cargando Localizaciones:", error);
     } finally {
       setGlobalLoading(false);
     }
@@ -159,7 +174,10 @@ export const GlobalDataProvider = ({ children }) => {
     updateSubDepartmentGlobalState,
     addPositionGlobalState,
     updatePositionGlobalState,
-    loadEventCategories
+    loadEventCategories,
+    categoryEvents,
+    getLocations,
+    locations
   };
 
   return (

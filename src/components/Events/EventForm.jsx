@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useEvents } from '../../context/EventContext';
 import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 
-import { categoryEvents } from '../../utils/StaticData/typeEvent-utils';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { getDisabledClasses } from '../../utils/global-utils';  
@@ -28,8 +27,16 @@ export default function EventForm({ mode = 'create' }) {
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
-  const { createEvent, updateEvent, handleGoogleEvents, isTemplate, setIsTemplate, templateName, setTemplateName, setSelectedCategory } = useEvents();
-  const { globalLoading, loadEventCategories } = useGlobalData();
+  const { 
+    createEvent, 
+    updateEvent, 
+    handleGoogleEvents, 
+    isTemplate, 
+    config,
+    setIsTemplate, templateName, setTemplateName, setSelectedCategory 
+  } = useEvents();
+
+  const { globalLoading, loadEventCategories, categoryEvents } = useGlobalData();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,7 +56,9 @@ export default function EventForm({ mode = 'create' }) {
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
  
   useEffect(() => {
-    loadEventCategories();
+    if(categoryEvents.length === 0){
+      loadEventCategories();
+    }
   }, []); 
 
   // Actualizar contexto cuando cambia el valor en form
@@ -240,10 +249,10 @@ export default function EventForm({ mode = 'create' }) {
                 <div className='div-border'>
 
                   <TabButtonsManager 
-                      activeTab={activeTab} 
-                      setActiveTab={setActiveTab} 
-                      event={event}
-                      mode={mode}
+                    activeTab={activeTab} 
+                    setActiveTab={setActiveTab} 
+                    event={event}
+                    mode={mode}
                   />
 
                   <div className="mt-6">     
@@ -253,6 +262,7 @@ export default function EventForm({ mode = 'create' }) {
                         errors={errors}
                         viewMode={viewMode}
                         editMode={editMode}
+                        config={config}
                         meruEventsFlag={meruEventsFlag}
                         eventOneDayWithEndTime={eventOneDayWithEndTime}
                         isRepeatEvent={isRepeatEvent}
@@ -261,6 +271,8 @@ export default function EventForm({ mode = 'create' }) {
                         guestNextDate={guestNextDate}
                         handleNextTime={handleNextTime}
                         setValue={setValue}
+                        disabledClasses={disabledClasses}
+                        globalLoading={globalLoading}
                       />
                     )}
                     {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}

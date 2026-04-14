@@ -10,3 +10,8 @@ export const getEventCategories = async () => {
   const response = await axios.get(`${ENV.API_BACK_URL}eventCategories`);
   return await response.data.data;
 };
+
+export const getEventLocations = async () => {
+  const response = await axios.get(`${ENV.API_BACK_URL}locations`);
+  return await response.data.data;
+};

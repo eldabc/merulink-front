@@ -1,14 +1,16 @@
-import ErrorMessage from '../Shared/ErrorMessage.jsx';
-import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx'
-import { locations } from '../../utils/StaticData/location-utils';
-import { useEvents } from '../../context/EventContext';
 import { useEffect } from 'react';
+import { useGlobalData } from '../../context/GlobalDataContext.jsx';
+
+import ErrorMessage from '../Shared/ErrorMessage.jsx';
+import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
+import LabelFieldForm from '../Shared/LabelFieldForm';
 
 export default function EventFormContent({ 
   register, 
   errors,  
   viewMode, 
   editMode,
+  config,
   meruEventsFlag,
   eventOneDayWithEndTime,
   isRepeatEvent,
@@ -16,10 +18,12 @@ export default function EventFormContent({
   createdBy,
   guestNextDate,
   handleNextTime,
-  setValue
+  setValue,
+  disabledClasses,
+  globalLoading
 }) {
 
-  const { config } = useEvents();
+  const { getLocations, locations } = useGlobalData();
   const yearlyEvent = config?.isYearly;
 
   useEffect(() => {
@@ -30,8 +34,15 @@ export default function EventFormContent({
 
       setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
       setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
-    }    
-  }, [config, setValue]);
+    }
+    
+  }, [config]);
+
+  useEffect(() => {   
+    if (config.hasLocation && locations.length === 0) {
+      getLocations();
+    }
+  }, [config?.hasLocation]);
 
   return (
     <>
@@ -44,15 +55,10 @@ export default function EventFormContent({
         errors={errors}
         setValue={setValue}
       />
-      <div className='border border-[#ffffff21]
-                      md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                      md:[&>*:nth-child(2n)]:pl-4 p-7'
-      >
+      <div className='div-border'>
         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
-          <div className="md:w-32 md:text-right">
-            <label className="block text-lg font-medium text-gray-300 mt-1">Nombre: *</label>
-          </div>
 
+          <LabelFieldForm field="Nombre" simbol="*" />
           <div className="w-full max-w-2xl">
             <input 
               readOnly={viewMode}
@@ -64,14 +70,9 @@ export default function EventFormContent({
           </div>
         </div>
 
-        <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full
-                        border border-[#ffffff21]
-                        md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                        md:[&>*:nth-child(2n)]:pl-4 p-7"
-        >                    
-          <div>
-            <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha {meruEventsFlag && !eventOneDayWithEndTime && 'Inicio'}: *</label>
-          </div>
+        <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full div-border">                    
+
+          <LabelFieldForm field={`Fecha ${(meruEventsFlag && !eventOneDayWithEndTime) ? 'Inicio' : ''}`} simbol="*" />
           <div>
             <input 
               readOnly={viewMode} 
@@ -81,9 +82,7 @@ export default function EventFormContent({
 
           {config?.hasEndDate && ( 
             <>
-              <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1"> Fecha Fin: *</label>
-              </div>
+              <LabelFieldForm field="Fecha Fin" simbol="*" />
               <div>
                 <input 
                   readOnly={viewMode}
@@ -95,13 +94,14 @@ export default function EventFormContent({
 
           {config?.hasStartTime && (
             <>
-              <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Inicio: *</label>
-              </div>
+              <LabelFieldForm field="Hora Inicio" simbol="*" />
               <div>
                 <input 
                   readOnly={viewMode}
-                  {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                  {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} 
+                  type='time' 
+                  className="w-full px-3 py-2 rounded-lg filter-input"  
+                />
                 {errors?.startTime && <ErrorMessage msg={errors.startTime.message} /> }
               </div>
             </>
@@ -109,13 +109,11 @@ export default function EventFormContent({
 
           {config?.hasEndTime && (
             <>
-              <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1"> Hora Fin: *</label>
-              </div>
+              <LabelFieldForm field="Hora Fin" simbol="*" />
               <div>
                 <input 
                   readOnly={viewMode}
-                  {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                  {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input" />
                 {errors?.endTime && <ErrorMessage msg={errors.endTime.message} /> }
               </div> 
             </>
@@ -123,9 +121,7 @@ export default function EventFormContent({
 
           {config?.hasStatus && (
             <>
-              <div>
-                <label className="block text-xl font-medium text-gray-300 mt-1"> Estado: *</label>
-              </div>
+              <LabelFieldForm field="Estado" simbol="*" />
               <div className='items-center gap-2'>
                 <select 
                   disabled= {viewMode}
@@ -143,16 +139,14 @@ export default function EventFormContent({
 
           {config?.hasLocation && (
             <>
-            <div>
-              <label className="block text-xl font-medium text-gray-300 mt-1"> Ubicación: *</label>
-            </div>
+            <LabelFieldForm field="Ubicación" simbol="*" />
             <div>
               <select 
                 disabled= {viewMode}
                 {...register('locationId')}
-                className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                  ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
-                <option className='bg-[#3c4042]' value="">Seleccionar...</option>
+                className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}>
+                  
+                    <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
                   {locations.map(location => (
                     <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
                   ))}
@@ -164,9 +158,7 @@ export default function EventFormContent({
 
           {config?.hasRepeatEvent && (
             <>
-            <div>
-              <label className="block text-xl font-medium text-gray-300 mt-1"> Se repite: </label>
-            </div>
+            <LabelFieldForm field="Se repite" />
             <div className='flex flex-row items-center gap-2'>
               <input 
                 disabled={viewMode || yearlyEvent}
@@ -194,9 +186,7 @@ export default function EventFormContent({
         
           {config?.hasCreateAlert  && (
             <>
-            <div>
-              <label className="block text-xl font-medium text-gray-300 mt-1"> Crear Alerta: </label>
-            </div>
+            <LabelFieldForm field="Crear Alerta" />
             <div className='flex flex-row items-center gap-2'>
               <input 
                 disabled={viewMode} 
@@ -208,9 +198,7 @@ export default function EventFormContent({
 
           {config?.hasColorinDay  && (
             <>
-            <div>
-              <label className="block text-xl font-medium text-gray-300 mt-1"> Resaltar Día: </label>
-            </div>
+            <LabelFieldForm field="Resaltar Día" />
             <div className='flex flex-row items-center gap-2'>
               <input 
                 disabled={viewMode}
@@ -221,15 +209,12 @@ export default function EventFormContent({
           )}
         </div>
         
-        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 border border-[#ffffff21]
-                        md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                        md:[&>*:nth-child(2n)]:pl-4 p-7'
-        >
+        <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
           {config?.hasDescription  && (
             <>
-            <div className="md:w-32 md:text-right">
-              <label className="block text-lg font-medium text-gray-300 mt-1">Descripción: </label>
-            </div>
+            {/* <div className="md:w-32 md:text-right"> */}
+              <LabelFieldForm field="Descripción" />
+            {/* </div> */}
             <div className="w-full max-w-2xl">
               <textarea
                 readOnly={viewMode}
@@ -244,9 +229,7 @@ export default function EventFormContent({
 
           {config?.hasComments && (
             <>
-            <div className="md:w-32 md:text-right">
-              <label className="block text-lg font-medium text-gray-300 mt-1">Comentarios: </label>
-            </div>
+            <LabelFieldForm field="Comentarios" />
             <div className="w-full max-w-2xl">
               <textarea
                 readOnly={viewMode}
