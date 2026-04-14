@@ -99,7 +99,7 @@ export default function EventForm({ mode = 'create' }) {
         endDate: divideDateTimeEnd?.date ?? null,
         endTime: divideDateTimeEnd?.time ?? null,
         status: event?.extendedProps?.status ?? '',
-        locationId: event?.extendedProps?.location.id ?? '',
+        locationId: event?.extendedProps?.location?.id ?? '',
         repeatEvent: event?.extendedProps?.repeatEvent ?? false,
         repeatInterval: event?.extendedProps?.repeatInterval ?? '',
         createAlert: event?.extendedProps?.createAlert ?? false,

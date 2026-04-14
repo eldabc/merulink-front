@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { useNotification } from "../context/NotificationContext"; 
 import { useGlobalData } from './GlobalDataContext';
 
-import {mapEmployeeToBackend} from '../utils/mappers/employeeMapper';
+import { mapEmployeeToBackend } from '../utils/mappers/employeeMapper';
 import { fieldLabels } from '../utils/Employees/employee-utils';
 
 const EmployeeContext = createContext();

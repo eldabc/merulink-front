@@ -2,12 +2,15 @@ import axios from 'axios';
 import { ENV } from '../config/env';
 
 import { useLocationsHook } from '../hooks/useLocations';
+import { useGlobalData } from '../context/GlobalDataContext.jsx';
+
 import { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 
-import { formatDateToEvent } from './../utils/date-utils';
-import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
+// import { formatDateToEvent } from './../utils/date-utils';
+// import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
+import { mapEventToBackend } from '../utils/mappers/eventMapper';
 import { GoogleCalendarService } from '../services/googleCalendarService';
 
 const EventContext = createContext();
@@ -34,6 +37,8 @@ export const EventProvider = ({ showNotification, children }) => {
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
+  const { categoryEvents } = useGlobalData();
+
 
   const loadEvents = useCallback(async (categoryKeys = ['all'], history) => {
     setLoading(true);
@@ -71,24 +76,6 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   }, [googleEvents]);
 
-  // useEffect(() => {
-  //   const initLoad = async () => {
-  //     try {  
-        
-  //       const year = new Date().getFullYear();
-  //       const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
-  //       console.log("holiudayes", holidays)
-  //       setGoogleEvents(holidays);
-  //       // await loadEvents('', holidays); 
-        
-  //     } catch (error) {
-  //       console.error("Error en la carga inicial:", error);
-  //     }
-  //   };
-
-  //   initLoad();
-  // }, []);
-
 
   // *** Para recargar datos manualmente
   const refetchEvents = async (year) => {
@@ -123,22 +110,26 @@ export const EventProvider = ({ showNotification, children }) => {
   const createEvent = async (formData) => {
     try {
       
-      const newEvent = formattedEvents(formData);
+      // const newEvent = formattedEvents(formData);
+      const newEvent = mapEventToBackend(formData, categoryEvents);
       console.log("Creado", newEvent);
 
-      // const response = await api.post('/subdepartments', newEvent); 
-      // const createdRecord = await response.json(); 
+      const response = await axios.post(`${ENV.API_BACK_URL}events`, newEvent);
+      const newEventResponse = response.data.data;
+      // setEventData(prevData => {
+      //   return [newEventResponse, ...prevData]; 
+      // });
 
       setEventData(prevData => {
-        const newEventList = [newEvent, ...prevData];
+        const newEventList = [newEventResponse, ...prevData];
         if (formData.category === 'google-calendar') return filterGoogleDuplicates(newEventList);
         return newEventList;
       });
-      showNotification(`Evento ${newEvent.title} creado con éxito`);
+      showNotification(`Evento ${newEventResponse.title} creado con éxito`);
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el evento', error, 'error');
+      showNotification('Error al crear el evento', error.response.data.message, 'error');
       return false;
     }
   };
@@ -179,62 +170,6 @@ export const EventProvider = ({ showNotification, children }) => {
       return true;
     });
   };
-
-  // Encontrar Eventos Fijos
-  const findFixedEvents = (formData) => {
-    const formDate = new Date(formData.startDate).toISOString().split("T")[0]
-    const dayMonth = formDate.substring(5, 10); // Extrae "MM-DD"
-      
-    return fixedEvents.includes(dayMonth);
-  }
-
-  // Armado JSON Events
-  const formattedEvents = (formData) => {
-
-   let isFixed = false;
-   
-   const typeEvent = categoryEvents.find(te => te.key === formData.category);
-   const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-   
-   let allDay = false;
-   let labelCategory = typeEvent.label;
-
-   if (formData.category === 'meru-birthdays' || formData.category === 'google-calendar' || formData.category === 'executive-mod' 
-       || formData.category === 'banking-mondays' || formData.category === 've-holidays'
-      ) { allDay = true; }
-
-   if (formData.category === 'google-calendar') {
-    isFixed = findFixedEvents(formData); 
-    labelCategory = 'Festivo Almacenamiento Local'
-   }
-
-    return {
-      id: Date.now(), // ID temporal
-      title: formData.eventName,
-      start: formatDateToEvent(formData.startDate, formData.startTime),
-      end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
-      allDay: allDay,
-      extendedProps: {
-        category: formData.category,
-        label: labelCategory,
-        status: formData.status,
-        locationId: formData.locationId,
-        locationName: getEventLocationById ? getEventLocationById.label : '',
-        repeatEvent: formData.repeatEvent,
-        repeatInterval: formData.repeatInterval,
-        createAlert: formData.createAlert,
-        coloringDay: formData.coloringDay,
-        description: formData.description,
-        comments: formData.comments,
-        isFixed: isFixed,
-        createdBy: formData.createdBy,
-        isTemplate: formData.isTemplate,
-        templateName: formData.templateName,
-      },
-      className: formData.category
-      
-    };
-  }
 
   // *** Crear/Editar Lunes Bancarios
   const createEditBankingEvents = async (eventsArray, year, mode) => {

@@ -1,4 +1,5 @@
 import { categoryEvents } from './../StaticData/typeEvent-utils';
+import { fixedEvents } from '../StaticData/event-utils';
 
 // Categorías para la leyenda
 export const categoryLegend = [
@@ -24,3 +25,11 @@ export const stringCategoryEvents = (keys) => {
   // Unir resultados
   return labels.join(' / ');
 };
+
+// Encontrar Eventos Fijos
+export const findFixedEvents = (formData) => {
+  const formDate = new Date(formData.startDate).toISOString().split("T")[0]
+  const dayMonth = formDate.substring(5, 10); // Extrae "MM-DD"
+    
+  return fixedEvents.includes(dayMonth);
+}
