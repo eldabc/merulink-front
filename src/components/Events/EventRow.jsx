@@ -23,8 +23,8 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
     deleteEvent(id);
   }
 
-  const selectedEvent = () => {
-    navigate("/eventos/ver", { 
+  const selectedEvent = (id) => {
+    navigate(`/eventos/ver/${id}`, { 
       state: { data: event } 
     }); 
   };

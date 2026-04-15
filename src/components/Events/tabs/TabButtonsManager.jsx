@@ -2,7 +2,7 @@ import { tabsEvents } from '../../../utils/tabs-utils';
 
 function TabButtonsManager({ activeTab, setActiveTab, event, mode }) { //, errors, tempFlags
     return (
-        <div className="flex flex-col md:flex-row gap-4 border-b border-gray-700">
+        <div className="flex flex-col md:flex-row gap-4 border-b border-[#ffffff21]">
           {tabsEvents
             .filter(() => {
               if ((mode === 'create')) return true;

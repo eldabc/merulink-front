@@ -26,24 +26,20 @@ export const mapEventToBackend = (formData) => {
       end: formData.endDate ? formatDateToEvent(formData.endDate, formData.endTime) : null,
       all_day: allDay,
       extended_props: {
-        // category: formData.category,
-        category_key: formData.category,
-        special_label: labelCategory,
         status: formData.status,
-        location_id: formData.locationId,
-        // location_name: getEventLocationById ? getEventLocationById.label : '',
         repeat_event: formData.repeatEvent,
         repeat_interval: formData.repeatInterval,
         create_alert: formData.createAlert,
         coloring_day: formData.coloringDay,
-        description: formData.description,
-        comments: formData.comments,
+        description: formData.description ?? '',
+        comments: formData.comments ?? '',
         is_fixed: isFixed,
-        created_by: formData.createdBy,
-        // is_template: formData.isTemplate,
-        template_name: formData.isTemplate ? formData.templateName : '',
+        created_by: formData.createdBy, // debería ser id de usuario
       },
-      
+      category_key: formData.category, // aqui no se tiene id pues se usa el key en back se busca id
+      special_label: labelCategory, // ver como manejar este label spacial en google-events que se extrajeron
+      location_id: formData.locationId,
+      template_name: formData.isTemplate ? formData.templateName : '', // va para tabla aparte
       
     };
   }

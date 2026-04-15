@@ -5,10 +5,7 @@ function LockerFormContent({ register, errors, selectedCategory, viewMode, editM
   return (
     <>
       <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Locker' ):( 'Datos Locker')}</h3>
-      <div className='border border-[#ffffff21]
-                      md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21]
-                      md:[&>*:nth-child(2n)]:pl-4 p-7'
-      >
+      <div className='div-border'>
         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
           
           <LabelFieldForm field="Código" simbol="*" />

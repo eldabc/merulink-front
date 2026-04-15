@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 
+import { getDisabledClasses } from '../../utils/global-utils';  
+
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
@@ -25,7 +27,8 @@ export default function EventFormContent({
 
   const { getLocations, locations } = useGlobalData();
   const yearlyEvent = config?.isYearly;
-
+  const repeatEventDisabledClasses = getDisabledClasses(yearlyEvent, !isRepeatEvent);
+  
   useEffect(() => {
     const yearlyEventValue = config?.isYearly;
     if (yearlyEventValue) {
@@ -64,7 +67,7 @@ export default function EventFormContent({
               readOnly={viewMode}
               {...register('eventName')} 
               type='text' 
-              className={`w-full px-3 py-2 rounded-lg filter-input border`} 
+              className={`w-full px-3 py-2 rounded-lg filter-input border ${disabledClasses}`} 
             />
             {errors?.eventName && <ErrorMessage msg={errors.eventName.message} /> }  
           </div>
@@ -75,8 +78,10 @@ export default function EventFormContent({
           <LabelFieldForm field={`Fecha ${(meruEventsFlag && !eventOneDayWithEndTime) ? 'Inicio' : ''}`} simbol="*" />
           <div>
             <input 
-              readOnly={viewMode} 
-              {...register('startDate', {onChange: (e) => guestNextDate(e) })} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+              readOnly={viewMode} type='date'
+              {...register('startDate', {onChange: (e) => guestNextDate(e) })}
+              className={`w-full px-3 py-2 rounded-lg filter-input  ${disabledClasses}`} 
+            />
             {errors?.startDate && <ErrorMessage msg={errors.startDate.message} /> }  
           </div>
 
@@ -85,8 +90,10 @@ export default function EventFormContent({
               <LabelFieldForm field="Fecha Fin" simbol="*" />
               <div>
                 <input 
-                  readOnly={viewMode}
-                  {...register('endDate')} type='date' className="w-full px-3 py-2 rounded-lg filter-input"  />
+                  readOnly={viewMode} type='date'
+                  {...register('endDate')}
+                  className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}  
+                />
                 {errors?.endDate && <ErrorMessage msg={errors.endDate.message} />}  
               </div> 
             </>
@@ -97,10 +104,9 @@ export default function EventFormContent({
               <LabelFieldForm field="Hora Inicio" simbol="*" />
               <div>
                 <input 
-                  readOnly={viewMode}
+                  readOnly={viewMode} type='time'
                   {...register('startTime', { onChange: (e) => { handleNextTime(e)} })} 
-                  type='time' 
-                  className="w-full px-3 py-2 rounded-lg filter-input"  
+                  className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                 />
                 {errors?.startTime && <ErrorMessage msg={errors.startTime.message} /> }
               </div>
@@ -112,8 +118,10 @@ export default function EventFormContent({
               <LabelFieldForm field="Hora Fin" simbol="*" />
               <div>
                 <input 
-                  readOnly={viewMode}
-                  {...register('endTime')} type='time' className="w-full px-3 py-2 rounded-lg filter-input" />
+                  readOnly={viewMode} type='time'
+                  {...register('endTime')} 
+                  className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+                />
                 {errors?.endTime && <ErrorMessage msg={errors.endTime.message} /> }
               </div> 
             </>
@@ -126,8 +134,8 @@ export default function EventFormContent({
                 <select 
                   disabled= {viewMode}
                   {...register('status')}
-                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                    ${viewMode ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}>
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
+                >
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                   <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
                   <option className='bg-[#3c4042]' value='Confirmado'>Confirmado</option>
@@ -144,9 +152,9 @@ export default function EventFormContent({
               <select 
                 disabled= {viewMode}
                 {...register('locationId')}
-                className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}>
-                  
-                    <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
+                className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
+              >    
+                  <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
                   {locations.map(location => (
                     <option key={`location-${location.id}`} className='bg-[#3c4042]' value={location.id}>{location.label}</option>
                   ))}
@@ -162,13 +170,13 @@ export default function EventFormContent({
             <div className='flex flex-row items-center gap-2'>
               <input 
                 disabled={viewMode || yearlyEvent}
-                {...register('repeatEvent')}  type='checkbox' className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                {...register('repeatEvent')}  type='checkbox' className={`w-6 h-6 rounded filter-input text-gray-300 ${disabledClasses} `}  
+              />
               <div>
                 <select 
                   disabled= {viewMode || !isRepeatEvent || yearlyEvent}
                   {...register('repeatInterval')}
-                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300
-                  ${viewMode || !isRepeatEvent ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : ''}`}
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses} ${repeatEventDisabledClasses}`}
                 >
                     <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                     <option className='bg-[#3c4042]' value='Anual'>Anual</option>
@@ -189,8 +197,9 @@ export default function EventFormContent({
             <LabelFieldForm field="Crear Alerta" />
             <div className='flex flex-row items-center gap-2'>
               <input 
-                disabled={viewMode} 
-                type='checkbox' {...register('createAlert')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                disabled={viewMode}  type='checkbox'  
+                {...register('createAlert')} className={`w-6 h-6 rounded filter-input text-gray-300 ${disabledClasses}`}
+              />
               {errors?.createAlert && <ErrorMessage msg={errors.createAlert.message} /> }  
             </div>
             </>
@@ -201,8 +210,9 @@ export default function EventFormContent({
             <LabelFieldForm field="Resaltar Día" />
             <div className='flex flex-row items-center gap-2'>
               <input 
-                disabled={viewMode}
-                type='checkbox' {...register('coloringDay')} className="w-6 h-6  rounded filter-input text-gray-300 "  />
+                disabled={viewMode}  type='checkbox'
+                {...register('coloringDay')} className={`w-6 h-6 rounded filter-input text-gray-300 ${disabledClasses}`}
+              />
               {errors?.coloringDay && <ErrorMessage msg={errors.coloringDay.message} /> }  
             </div>
             </>
@@ -212,15 +222,13 @@ export default function EventFormContent({
         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
           {config?.hasDescription  && (
             <>
-            {/* <div className="md:w-32 md:text-right"> */}
-              <LabelFieldForm field="Descripción" />
-            {/* </div> */}
+            <LabelFieldForm field="Descripción" />
             <div className="w-full max-w-2xl">
               <textarea
                 readOnly={viewMode}
                 {...register('description')}
                 placeholder="Ingrese detalles adicionales..."
-                className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none`}
+                className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${disabledClasses}`}
               />
               {errors?.description && <ErrorMessage msg={errors.description.message} /> }  
             </div>
@@ -235,7 +243,7 @@ export default function EventFormContent({
                 readOnly={viewMode}
                 {...register('comments')}
                 placeholder="Ingrese comentarios, cambios, observaciones..."
-                className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none`}
+                className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${disabledClasses}`}
               />
               {errors?.comments && <ErrorMessage msg={errors.comments.message} /> }  
             </div>

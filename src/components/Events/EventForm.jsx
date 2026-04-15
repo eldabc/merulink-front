@@ -244,43 +244,42 @@ export default function EventForm({ mode = 'create' }) {
               </div>
             </div>
             </div>
-            <div className="border-t border-b border-[#ffffff21] py-6 mb-4">
-              {selectedCategory && (
-                <div className='div-border'>
 
-                  <TabButtonsManager 
-                    activeTab={activeTab} 
-                    setActiveTab={setActiveTab} 
-                    event={event}
-                    mode={mode}
-                  />
+            {selectedCategory && (
+              <div className='div-border'>
 
-                  <div className="mt-6">     
-                    {activeTab === 'formEvent' && (
-                      <EventFormContent
-                        register={register}
-                        errors={errors}
-                        viewMode={viewMode}
-                        editMode={editMode}
-                        config={config}
-                        meruEventsFlag={meruEventsFlag}
-                        eventOneDayWithEndTime={eventOneDayWithEndTime}
-                        isRepeatEvent={isRepeatEvent}
-                        isGoogleCategory={isGoogleCategory}
-                        createdBy={createdBy}
-                        guestNextDate={guestNextDate}
-                        handleNextTime={handleNextTime}
-                        setValue={setValue}
-                        disabledClasses={disabledClasses}
-                        globalLoading={globalLoading}
-                      />
-                    )}
-                    {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}
-                  </div>
-                  
+                <TabButtonsManager 
+                  activeTab={activeTab} 
+                  setActiveTab={setActiveTab} 
+                  event={event}
+                  mode={mode}
+                />
+
+                <div className="mt-6">     
+                  {activeTab === 'formEvent' && (
+                    <EventFormContent
+                      register={register}
+                      errors={errors}
+                      viewMode={viewMode}
+                      editMode={editMode}
+                      config={config}
+                      meruEventsFlag={meruEventsFlag}
+                      eventOneDayWithEndTime={eventOneDayWithEndTime}
+                      isRepeatEvent={isRepeatEvent}
+                      isGoogleCategory={isGoogleCategory}
+                      createdBy={createdBy}
+                      guestNextDate={guestNextDate}
+                      handleNextTime={handleNextTime}
+                      setValue={setValue}
+                      disabledClasses={disabledClasses}
+                      globalLoading={globalLoading}
+                    />
+                  )}
+                  {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}
                 </div>
-              )}
-            </div>
+                
+              </div>
+            )}
 
             <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} /> 
             
