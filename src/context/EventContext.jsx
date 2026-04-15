@@ -94,10 +94,10 @@ export const EventProvider = ({ showNotification, children }) => {
   const getTemplatesOnly = useCallback(async (selectedCategory) => {
     setLoadingTemplates(true);
     try {
-      // API const response = await fetch('/api/templates');
-      const onlyTemplates = eventData.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
+      const onlyTemplates = await axios.get(`${ENV.API_BACK_URL}eventTemplates?selectedCategory=${selectedCategory}`);
+      // const onlyTemplates = eventData.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
       
-      setTemplates(onlyTemplates);
+      setTemplates(onlyTemplates.data.data);
     } catch (error) {
       console.error("Error cargando plantillas:", error);
     } finally {

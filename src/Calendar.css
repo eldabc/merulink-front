@@ -104,10 +104,9 @@ b { /* used for event dates/times */
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
-.fc-toolbar-title {
-    /* Forzar la primera letra de cada palabra a ser mayúscula */
+/* .fc-toolbar-title {
     text-transform: capitalize; 
-}
+} */
 
 
 .calendario-contenedor .fc {

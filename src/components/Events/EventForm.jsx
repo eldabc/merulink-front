@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useEvents } from '../../context/EventContext';
 import { useGlobalData } from '../../context/GlobalDataContext.jsx';
@@ -28,6 +28,7 @@ export default function EventForm({ mode = 'create' }) {
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
   const { 
+    eventData,
     createEvent, 
     updateEvent, 
     handleGoogleEvents, 
@@ -40,7 +41,8 @@ export default function EventForm({ mode = 'create' }) {
   
   const navigate = useNavigate();
   const location = useLocation();
-  const event = location.state?.data;
+  const { id } = useParams();
+  const event = eventData.find(e => e.id === Number(id));
   const disabled = event?.extendedProps?.status === 'Finalizado' ? true : false;
 
   const createMode =  mode === 'create';
@@ -217,7 +219,7 @@ export default function EventForm({ mode = 'create' }) {
 
     return (
       <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
-        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url="/eventos/editar" data={event} disabled={disabled} /> }
+        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 

@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useEvents } from '../../../context/EventContext';
-import ButtonDelete from '../../Shared/ButtonDelete';
-import ConfirmDialog  from '../../Shared/ConfirmDialog';
+
 import { divideDateTime } from '../../../utils/date-utils';
 
+import ButtonDelete from '../../Shared/ButtonDelete';
+import ConfirmDialog  from '../../Shared/ConfirmDialog';
+
 function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
+
   const { templates, getTemplatesOnly, loadingTemplates, updateEvent, isTemplate } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -51,8 +54,8 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
         templates.map(temp => (
           <div onClick={() => applyTemplate(temp)} key={temp.id} className="bg-[#2f3d44] hover:bg-[#404f57] p-4 rounded-lg flex justify-between items-center border border-gray-600">
             <div>
-              <h4 className="text-white font-bold">{temp.extendedProps?.templateName}</h4>
-              <p className="text-sm text-gray-400">{temp.extendedProps?.label}</p>
+              <h4 className="text-white font-bold capitalize-string">{temp.name}</h4>
+              <p className="text-sm text-gray-400">{temp?.event?.extendedProps?.category?.label}</p>
             </div>
             <button 
               type="button"
@@ -66,7 +69,7 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
           </div>
         ))
       ) : (
-        <p className="text-gray-400 text-center">No hay plantillas guardadas.</p>
+        <p className="text-gray-400 text-center">{loadingTemplates ? 'Cargando Templates...' : 'No hay plantillas guardadas.'}</p>
       )}
       
       <ConfirmDialog 
