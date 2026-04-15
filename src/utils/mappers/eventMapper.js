@@ -4,15 +4,11 @@ import { findFixedEvents } from '../Events/events-utils';
 export const mapEventToBackend = (formData) => {
 
    let isFixed = false;
-   
-//    const typeEvent = categoryEvents.find(te => te.key === formData.category);
-//    const getEventLocationById = formData.locationId ? getLocationById(formData.locationId) : null;
-   
-   let allDay = false;
    let labelCategory = '';
-   if (formData.category === 'meru-birthdays' || formData.category === 'google-calendar' || formData.category === 'executive-mod' 
+
+   const allDay = (formData.category === 'meru-birthdays' || formData.category === 'google-calendar' || formData.category === 'executive-mod' 
        || formData.category === 'banking-mondays' || formData.category === 've-holidays'
-      ) { allDay = true; }
+      ) ? true : false;
 
    if (formData.category === 'google-calendar') {
     isFixed = findFixedEvents(formData); 

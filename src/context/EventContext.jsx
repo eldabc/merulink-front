@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
 
-import { useLocationsHook } from '../hooks/useLocations';
+// import { useLocationsHook } from '../hooks/useLocations';
 import { useGlobalData } from '../context/GlobalDataContext.jsx';
-
 import { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 
-// import { formatDateToEvent } from './../utils/date-utils';
-// import { categoryEvents } from '../utils/StaticData/typeEvent-utils';
 import { fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
 import { mapEventToBackend } from '../utils/mappers/eventMapper';
@@ -15,7 +12,7 @@ import { GoogleCalendarService } from '../services/googleCalendarService';
 
 const EventContext = createContext();
 
-const { getLocationById } = useLocationsHook();
+// const { getLocationById } = useLocationsHook();
 
 // hook personalizado para usar el contexto
 export const useEvents = () => {
@@ -24,11 +21,8 @@ export const useEvents = () => {
 
 // Provider con la lógica y el estado
 export const EventProvider = ({ showNotification, children }) => {
-  const [selectedCategory, setSelectedCategory] = useState('');
 
-  //Configuración basada en la categoría seleccionada
-  const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
-    
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,7 +32,9 @@ export const EventProvider = ({ showNotification, children }) => {
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
   const { categoryEvents } = useGlobalData();
-
+  
+  //Configuración basada en la categoría seleccionada
+  const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
 
   const loadEvents = useCallback(async (categoryKeys = ['all'], history) => {
     setLoading(true);
@@ -69,8 +65,7 @@ export const EventProvider = ({ showNotification, children }) => {
 
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
-      console.log("error", err);
-      // showNotification('Error al cargar datos:', err.response.data.message, 'error');
+      showNotification('Error al cargar datos:', err, 'error'); //.response.data.message
     } finally {
       setLoading(false);
     }
@@ -91,21 +86,6 @@ export const EventProvider = ({ showNotification, children }) => {
   };
 
 
-  const getTemplatesOnly = useCallback(async (selectedCategory) => {
-    setLoadingTemplates(true);
-    try {
-      const onlyTemplates = await axios.get(`${ENV.API_BACK_URL}eventTemplates?selectedCategory=${selectedCategory}`);
-      // const onlyTemplates = eventData.filter(ev => ev.extendedProps?.isTemplate === true && ev.extendedProps.category === selectedCategory);
-      
-      setTemplates(onlyTemplates.data.data);
-    } catch (error) {
-      console.error("Error cargando plantillas:", error);
-    } finally {
-      setLoadingTemplates(false);
-    }
-  }, [eventData]);
-
-
   // *** Crear
   const createEvent = async (formData) => {
     try {
@@ -116,9 +96,6 @@ export const EventProvider = ({ showNotification, children }) => {
 
       const response = await axios.post(`${ENV.API_BACK_URL}events`, newEvent);
       const newEventResponse = response.data.data;
-      // setEventData(prevData => {
-      //   return [newEventResponse, ...prevData]; 
-      // });
 
       setEventData(prevData => {
         const newEventList = [newEventResponse, ...prevData];
@@ -133,6 +110,74 @@ export const EventProvider = ({ showNotification, children }) => {
       return false;
     }
   };
+
+
+    // *** Actualizar
+  const updateEvent = async (formData, messagge) => {
+    try {
+      const eventId = formData.id;
+      if (!messagge) messagge = "Evento actualizado";
+
+      if (!eventId) {
+        showNotification('Error: No se encontró el ID del evento', 'error');
+        return false;
+      }
+
+      const updatedEvent = formattedEvents(formData);
+      console.log("Actualizado:", updatedEvent);
+      
+      // Llamada a la API/Backend (onUpdate)
+      // await api.put(`/events/${eventId}`, updatedEvent); 
+      
+      setEventData(prevData => {
+        return prevData.map(event => 
+          event.id === eventId ? updatedEvent : event 
+        );
+      });
+
+      showNotification(`${messagge} con éxito`); 
+      return true;
+
+    } catch (error) {
+      console.error('Error al actualizar evento:', error);
+      showNotification('Error al actualizar: ' + error.message, 'error');
+      return false;
+    }
+  };
+
+  // *** Eliminar
+  const deleteEvent = async (id) => {
+    try {
+      // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
+      // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
+
+      setEventData(prevData => {
+        return prevData.filter(ev => ev.id !== id);
+      });
+
+      showNotification(`Evento eliminado con éxito`);
+      return true;
+    } catch (error) {
+      showNotification('Error al eliminar el calendario', 'error');
+      return false;
+    }
+  };
+
+
+  const getTemplatesOnly = useCallback(async (selectedCategory) => {
+    setLoadingTemplates(true);
+    try {
+
+      const onlyTemplates = await axios.get(`${ENV.API_BACK_URL}eventTemplates?selectedCategory=${selectedCategory}`);
+      setTemplates(onlyTemplates.data.data);
+
+    } catch (error) {
+      console.error("Error cargando plantillas:", error.response.data.message, 'error');
+    } finally {
+      setLoadingTemplates(false);
+    }
+  }, [eventData]);
+
 
   //*** Mapeo Banking array
   const formattedBankingEvents = (eventsArray, year) => {
@@ -233,56 +278,6 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   };
 
-  // *** Actualizar
-  const updateEvent = async (formData, messagge) => {
-    try {
-      const eventId = formData.id;
-      if (!messagge) messagge = "Evento actualizado";
-
-      if (!eventId) {
-        showNotification('Error: No se encontró el ID del evento', 'error');
-        return false;
-      }
-
-      const updatedEvent = formattedEvents(formData);
-      console.log("Actualizado:", updatedEvent);
-      
-      // Llamada a la API/Backend (onUpdate)
-      // await api.put(`/events/${eventId}`, updatedEvent); 
-      
-      setEventData(prevData => {
-        return prevData.map(event => 
-          event.id === eventId ? updatedEvent : event 
-        );
-      });
-
-      showNotification(`${messagge} con éxito`); 
-      return true;
-
-    } catch (error) {
-      console.error('Error al actualizar evento:', error);
-      showNotification('Error al actualizar: ' + error.message, 'error');
-      return false;
-    }
-  };
-
-  // *** Eliminar
-  const deleteEvent = async (id) => {
-    try {
-      // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
-      // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
-
-      setEventData(prevData => {
-        return prevData.filter(ev => ev.id !== id);
-      });
-
-      showNotification(`Evento eliminado con éxito`);
-      return true;
-    } catch (error) {
-      showNotification('Error al eliminar el calendario', 'error');
-      return false;
-    }
-  };
 
   const specialDays = useMemo(() => {
   return eventData
