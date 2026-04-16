@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../../context/EventContext';
 
-import { normalizeDateToString } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
+import { divideDateTime, normalizeDateToString, formatTimeTo12H } from '../../utils/date-utils'; //, getNextHour
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
@@ -14,6 +14,9 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const divideDateTimeStart = divideDateTime(event?.start);
+
 
   const renderDescriptionComments = () => {
     return event.extendedProps?.description ? truncateText(event.extendedProps?.description, 50) : truncateText(event.extendedProps?.comments, 50);
@@ -37,7 +40,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
       >
         <td className="px-4 py-3 text-white-800 font-medium">{event.title}</td>
-        <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event.start)}</td>
+        <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event?.start)}</td>
         
         {isMeruBirthday ? (
           <>
@@ -45,7 +48,10 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
             <td className="px-4 py-3 text-white-700">{event.extendedProps?.nextAge} Años</td>
           </>
         ) : ( 
-          <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
+          <>
+            <td className="px-4 py-3 text-white-800 font-medium ">{formatTimeTo12H(divideDateTimeStart?.time)}</td>
+            <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
+          </>
         )}
 
         {!eventWithoutLocation && (

@@ -34,51 +34,37 @@ export default function EventsList({ categoryKeys }) {
   const isBankingMondays = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
   const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
+  
   const prevCategoryKeys = useRef();
   const prevShowHistory = useRef();
+  const categoryChanged = prevCategoryKeys.current !== JSON.stringify(categoryKeys);
+  const ShowHistoryChanged = prevShowHistory.current !== showHistory;
 
-  useEffect(() => { // Se puede optimizar
-    const categoryChanged = prevCategoryKeys.current !== categoryKeys;
-    const ShowHistoryChanged = prevShowHistory.current !== showHistory;
+  useEffect(() => {
 
-    if (categoryChanged) {
-      console.log("Cambio category 1", showHistory);
-      setSearchValue('');
-      setSearchDateValue('');
-      setCurrentPage(1);
-      setShowHistory(false);
+    setSearchValue('');
+    setSearchDateValue('');
+    setCurrentPage(1);
+    setShowHistory(false);   
+    prevShowHistory.current = false;
 
-      loadEvents(categoryKeys, false);
-    } else {
-      // Mostrar/Ocultar historial de eventos
-      if (ShowHistoryChanged){
-        console.log("showHistory 2", showHistory);
-        loadEvents(categoryKeys, showHistory);}
-      }
-    prevShowHistory.current = showHistory;
-    prevCategoryKeys.current = categoryKeys;
+    console.log("CategoryKeys 111", categoryKeys);
 
-  }, [categoryKeys, showHistory]);
+    loadEvents(categoryKeys, false);
+    prevCategoryKeys.current = JSON.stringify(categoryKeys);
 
-  // useEffect(() => {
+  }, [JSON.stringify(categoryKeys)]);
 
-  //   setSearchValue('');
-  //   setSearchDateValue('');
-  //   setCurrentPage(1);
-  //   setShowHistory(false);
+  useEffect(() => {
+    if (!categoryChanged && ShowHistoryChanged) {
+      console.log("showHistory 222", showHistory);
+      loadEvents(categoryKeys, showHistory);
+    }
     
-  //     console.log("showHistory 111", showHistory);
-  //   loadEvents(categoryKeys);
-
-  // }, [categoryKeys]);
-
-  // useEffect(() => {
-  //   if (showHistory){
-  //     loadEvents(categoryKeys, showHistory);
-  //   } else {
-  //     loadEvents(categoryKeys);
-  //   }
-  // }, [showHistory]);
+    console.log("showHistory 333", showHistory);
+    prevShowHistory.current = showHistory;
+  }, [showHistory]);
+  
 
   // Filtrado y detección de búsqueda
   const { dataToDisplay, isSearching } = useMemo(() => {
@@ -166,6 +152,7 @@ export default function EventsList({ categoryKeys }) {
                         <tr className="tr-thead-table">
                           <th className="px-4 py-3 text-left font-semibold">Nombre</th>
                           <th className="px-4 py-3 text-left font-semibold">Fecha</th>
+                          
 
                           {isMeruBirthday ? (
                             <>
@@ -173,7 +160,10 @@ export default function EventsList({ categoryKeys }) {
                               <th className="px-4 py-3 text-left font-semibold">Cumplirá</th>
                             </>
                           ) : (
-                            <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
+                            <>
+                              <th className="px-4 py-3 text-left font-semibold">Hora</th>
+                              <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
+                            </>
                           )}
 
                           {!eventWithoutLocation && (

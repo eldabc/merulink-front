@@ -103,3 +103,20 @@ export function normalizeDateDDMMYYY (date) {
 
   return `${day}-${month}-${year}`;
 };
+
+// Devolver hora en formato AM/PM
+export function formatTimeTo12H(timeString) {
+  if (!timeString) return '';
+
+  // Soporta formatos "HH:mm:ss" o "HH:mm"
+  let [hours, minutes] = timeString.split(':').map(Number);
+  
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+  hours = hours % 12;
+  hours = hours ? hours : 12; // El número 0 debe ser 12
+  
+  const strMinutes = minutes.toString().padStart(2, '0');
+  
+  return `${hours}:${strMinutes} ${ampm}`;
+}

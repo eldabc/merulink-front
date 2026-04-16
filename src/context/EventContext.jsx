@@ -61,7 +61,7 @@ export const EventProvider = ({ showNotification, children }) => {
         ? filterGoogleDuplicates([...eventResults.data.data, ...currentGoogleEvents]) 
         : eventResults.data.data;
   
-      // console.log("eventResults:", eventResults.data.data);
+      console.log("eventResults:", eventResults.data.data);
 
       setEventData(filterGoogleDuplicates(combinedEvents));
     } catch (err) {
@@ -70,6 +70,13 @@ export const EventProvider = ({ showNotification, children }) => {
       setLoading(false);
     }
   }, [googleEvents]);
+
+  //  useEffect(() => {
+  //   console.log('UseEffect EventContext');
+  //   loadEvents();
+  //   console.log('UseEffect 2');
+
+  // }, [loadEvents]); //
 
 
   // *** Para recargar datos manualmente
@@ -119,7 +126,7 @@ export const EventProvider = ({ showNotification, children }) => {
       if (!messagge) messagge = "Evento actualizado";
 
       if (!eventId) {
-        showNotification('Error: No se encontró el ID del evento', 'error');
+        showNotification('Error:', 'No se encontró el ID del evento', 'error');
         return false;
       }
 
@@ -139,8 +146,7 @@ export const EventProvider = ({ showNotification, children }) => {
       return true;
 
     } catch (error) {
-      console.error('Error al actualizar evento:', error);
-      showNotification('Error al actualizar: ' + error.message, 'error');
+      showNotification('Error al actualizar: ', error, 'error'); //.response.data.message
       return false;
     }
   };
