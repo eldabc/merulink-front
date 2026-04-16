@@ -5,6 +5,7 @@ import { useEvents } from "../../context/EventContext";
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
+import { EVENT_CATEGORIES } from '../../utils/eventConfig.js';
 
 import EventRow from './EventRow';
 import Pagination from '../Pagination';
@@ -26,25 +27,21 @@ export default function EventsList({ categoryKeys }) {
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
   const [showHistory, setShowHistory] = useState(false);
+  
+  const prevCategoryKeys = useRef();
+  const prevShowHistory = useRef();
+  const isFirstRender = useRef(true);
+  const categoryChanged = prevCategoryKeys.current !== JSON.stringify(categoryKeys);
+  const ShowHistoryChanged = prevShowHistory.current !== showHistory;
 
   const itemsPerPage = 10;
   const SEARCH_FIELDS = ['title', 'start'];
   const stringCategory = stringCategoryEvents(categoryKeys);
-  const isMeruBirthday = categoryKeys[0] === 'meru-birthdays';
-  const isBankingMondays = categoryKeys[0] === 'banking-mondays' ? '/lunes-bancarios' : '';
-  const holidaysEvents = categoryKeys[0] === 've-holidays' || categoryKeys[0] === 'google-calendar'
-  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === 'meru-birthdays' || categoryKeys[0] === 'executive-mod';
-  
-  const prevCategoryKeys = useRef();
-  const prevShowHistory = useRef();
-  const categoryChanged = prevCategoryKeys.current !== JSON.stringify(categoryKeys);
-  const ShowHistoryChanged = prevShowHistory.current !== showHistory;
-
-  const isFirstRender = useRef(true);
-  // const location = useLocation();
-  // const incomingCategoryKeys = location.state?.categoryKeys;
-
-  // const effectiveCategoryKeys = incomingCategoryKeys ? incomingCategoryKeys : categoryKeys;
+  const isMeruBirthday = categoryKeys[0] === EVENT_CATEGORIES.M_BIRTHDAYS.key; //'meru-birthdays'
+  const isBankingMondays = categoryKeys[0] === EVENT_CATEGORIES.B_MONDAYS.key ? `/${EVENT_CATEGORIES.B_MONDAYS.path}` : ''; //'banking-mondays' ? '/lunes-bancarios'
+  const holidaysEvents = categoryKeys[0] === EVENT_CATEGORIES.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CATEGORIES.G_CALENDAR.key; // 've-holidays' 'google-calendar'
+  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CATEGORIES.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CATEGORIES.E_MOD.key; //'meru-birthdays' 'executive-mod'
+    
 
   useEffect(() => {
     console.log("CategoryKeys", categoryKeys)
@@ -56,7 +53,7 @@ export default function EventsList({ categoryKeys }) {
     const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
     console.log("matchLoadedCategory", matchLoadedCategory)
 
-    if (matchLoadedCategory && !showHistory) { 
+    if (matchLoadedCategory && !ShowHistoryChanged) { 
       // Si categoría no cambió no se llama backend
       return;
     }
