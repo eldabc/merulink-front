@@ -116,3 +116,44 @@ export const DEFAULT_CONFIG = {
   hasComments: true,
   isYearly: false
 };
+
+export const EVENT_CATEGORIES = {
+  M_EVENTS: {
+    key: "meru-events",
+    path: "eventos-meru",
+  },
+  W_NIGHTS: {
+    key: "wedding-nights",
+    path: "noche-bodas-cena-alturas",
+  },
+  D_HEIGHTS: {
+    key: "dinner-heights",
+    path: "noche-bodas-cena-alturas"
+  },
+  VE_HOLIDAYS: {
+    key: "ve-holidays",
+    path: "festivos-venezolanos-calendario-google",
+  },
+  G_CALENDAR: {
+    key: "google-calendar",
+    path: "festivos-venezolanos-calendario-google",
+  },
+  M_BIRTHDAYS: {
+    key: "meru-birthdays",
+    path: "cumpleaños-merú",
+  },
+  E_MOD: {
+    key: "executive-mod",
+    path: "ejecutivo-mod",
+  },
+  B_MONDAYS: {
+    key: "banking-mondays",
+    path: "lunes-bancarios",
+  },
+};
+
+// Utilidad para obtener el path rápido en el navigate
+export const getPathByCategory = (key) => {
+  const category = Object.values(EVENT_CATEGORIES).find(c => c.key === key);
+  return category ? category.path : "eventos-meru";
+};

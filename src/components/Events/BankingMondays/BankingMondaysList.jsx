@@ -41,7 +41,7 @@ function BankingMondaysList({events, allBankingEvents}) {
                 >
                   <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>
                   <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(item.start)}</td>
-                  <td className="px-4 py-3 text-white-700">{item.extendedProps.label}</td>
+                  <td className="px-4 py-3 text-white-700">{item.extendedProps.category.label}</td>
                 </tr>
               ))}
             </tbody>

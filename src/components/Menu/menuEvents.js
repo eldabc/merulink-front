@@ -12,7 +12,7 @@ export const menuEvents = {
     _meta: { label: 'Cumpleaños Merú', path: '/eventos/cumpleaños-merú' },
   },
    ExecutiveMod: {
-    _meta: { label: 'Ejecutivos MOD', path: '/eventos/executive-mod' },
+    _meta: { label: 'Ejecutivos MOD', path: '/eventos/ejecutivo-mod' },
   },
    BankingMondays: {
     _meta: { label: 'Lunes Bancarios', path: '/eventos/lunes-bancarios' },

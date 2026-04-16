@@ -31,10 +31,10 @@ export const EventProvider = ({ showNotification, children }) => {
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
+  const [initialLoadCategory, setInitialLoadCategory] = useState(null);
   const { categoryEvents } = useGlobalData();
-  
-  //Configuración basada en la categoría seleccionada
   const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
+  
 
   const loadEvents = useCallback(async (categoryKeys = ['all'], history) => {
     setLoading(true);
@@ -62,21 +62,15 @@ export const EventProvider = ({ showNotification, children }) => {
         : eventResults.data.data;
   
       console.log("eventResults:", eventResults.data.data);
-
+      setInitialLoadCategory(JSON.stringify(categoryKeys));
       setEventData(filterGoogleDuplicates(combinedEvents));
+      
     } catch (err) {
       showNotification('Error al cargar datos:', err, 'error'); //.response.data.message
     } finally {
       setLoading(false);
     }
   }, [googleEvents]);
-
-  //  useEffect(() => {
-  //   console.log('UseEffect EventContext');
-  //   loadEvents();
-  //   console.log('UseEffect 2');
-
-  // }, [loadEvents]); //
 
 
   // *** Para recargar datos manualmente
@@ -97,22 +91,31 @@ export const EventProvider = ({ showNotification, children }) => {
   const createEvent = async (formData) => {
     try {
       
-      // const newEvent = formattedEvents(formData);
       const newEvent = mapEventToBackend(formData, categoryEvents);
       console.log("Creado", newEvent);
 
       const response = await axios.post(`${ENV.API_BACK_URL}events`, newEvent);
       const newEventResponse = response.data.data;
+      const categoryEvent = newEventResponse.extendedProps.category.key;
 
-      setEventData(prevData => {
-        const newEventList = [newEventResponse, ...prevData];
-        if (formData.category === 'google-calendar') return filterGoogleDuplicates(newEventList);
-        return newEventList;
-      });
+      console.log("newEvent categoryEvent", categoryEvent)
+      console.log("initialLoadCategory", initialLoadCategory)
+
+      // Si la categoría no cambió solo seteamos
+      if (initialLoadCategory.includes(categoryEvent)) {
+        console.log("Mismo cateogykey");
+        setEventData(prevData => {
+          const newEventList = [newEventResponse, ...prevData];
+          if (formData.category === 'google-calendar') return filterGoogleDuplicates(newEventList);
+          return newEventList;
+        });
+      }
+      
       showNotification(`Evento ${newEventResponse.title} creado con éxito`);
       
       return true;
     } catch (error) {
+      console.log("error", error)
       showNotification('Error al crear el evento', error.response.data.message, 'error');
       return false;
     }
@@ -318,6 +321,7 @@ export const EventProvider = ({ showNotification, children }) => {
     selectedCategory,
     setSelectedCategory, // Para actualizarla desde el select
     config,
+    initialLoadCategory
   };
 
   return (

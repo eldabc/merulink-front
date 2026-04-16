@@ -8,6 +8,7 @@ import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { getDisabledClasses } from '../../utils/global-utils';  
+import { getPathByCategory } from '../../utils/eventConfig.js';
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
@@ -156,8 +157,14 @@ export default function EventForm({ mode = 'create' }) {
       }
 
       if (success) {
-        if (createMode) navigate(-1);
-        else navigate(-2);
+        const targetPath = getPathByCategory(selectedCategory);
+        // if (createMode) {
+        navigate(`/eventos/${targetPath}`);
+        //   , { 
+        //     state: { fromSuccess: true, justChanged: true } 
+        //   }
+        // }
+        // else navigate(-2);
       }
     };
 

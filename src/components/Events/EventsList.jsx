@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEvents } from "../../context/EventContext";
 
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
@@ -21,7 +21,7 @@ import '../../Tables.css';
 export default function EventsList({ categoryKeys }) {
   
   const navigate = useNavigate();
-  const { loading, eventData, loadEvents } = useEvents();
+  const { loading, eventData, loadEvents, initialLoadCategory } = useEvents();
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
@@ -40,31 +40,54 @@ export default function EventsList({ categoryKeys }) {
   const categoryChanged = prevCategoryKeys.current !== JSON.stringify(categoryKeys);
   const ShowHistoryChanged = prevShowHistory.current !== showHistory;
 
-  useEffect(() => {
+  const isFirstRender = useRef(true);
+  // const location = useLocation();
+  // const incomingCategoryKeys = location.state?.categoryKeys;
 
-    setSearchValue('');
-    setSearchDateValue('');
-    setCurrentPage(1);
-    setShowHistory(false);   
-    prevShowHistory.current = false;
-
-    console.log("CategoryKeys 111", categoryKeys);
-
-    loadEvents(categoryKeys, false);
-    prevCategoryKeys.current = JSON.stringify(categoryKeys);
-
-  }, [JSON.stringify(categoryKeys)]);
+  // const effectiveCategoryKeys = incomingCategoryKeys ? incomingCategoryKeys : categoryKeys;
 
   useEffect(() => {
-    if (!categoryChanged && ShowHistoryChanged) {
-      console.log("showHistory 222", showHistory);
-      loadEvents(categoryKeys, showHistory);
+    console.log("CategoryKeys", categoryKeys)
+    console.log("InitialLoadCategory", initialLoadCategory)
+    // Maneja cambio de categoría o primer render
+    const keysString = JSON.stringify(categoryKeys);
+    const loaded = JSON.parse(initialLoadCategory);
+
+    const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
+    console.log("matchLoadedCategory", matchLoadedCategory)
+
+    if (matchLoadedCategory && !showHistory) { 
+      // Si categoría no cambió no se llama backend
+      return;
     }
     
-    console.log("showHistory 333", showHistory);
-    prevShowHistory.current = showHistory;
-  }, [showHistory]);
-  
+    // Si cambió o es primer render
+    if (isFirstRender.current || prevCategoryKeys.current !== keysString) {
+      console.log("Carga por Categoría o Montaje (111)", categoryKeys);
+      
+      setSearchValue('');
+      setSearchDateValue('');
+      setCurrentPage(1);
+      setShowHistory(false);
+      
+      loadEvents(categoryKeys, false);
+      
+      prevCategoryKeys.current = keysString;
+      prevShowHistory.current = false;
+      isFirstRender.current = false;
+
+      return;
+    }
+
+    // Traer History
+    if (prevShowHistory.current !== showHistory) {
+      console.log("Carga History (222)", showHistory);
+      loadEvents(categoryKeys, showHistory);
+      prevShowHistory.current = showHistory;
+    }
+
+  }, [JSON.stringify(categoryKeys), showHistory, loadEvents]);
+
 
   // Filtrado y detección de búsqueda
   const { dataToDisplay, isSearching } = useMemo(() => {
