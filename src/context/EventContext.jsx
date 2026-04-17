@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
 
-// import { useLocationsHook } from '../hooks/useLocations';
 import { useGlobalData } from '../context/GlobalDataContext.jsx';
 import { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 
@@ -11,8 +10,6 @@ import { mapEventToBackend } from '../utils/mappers/eventMapper';
 import { GoogleCalendarService } from '../services/googleCalendarService';
 
 const EventContext = createContext();
-
-// const { getLocationById } = useLocationsHook();
 
 // hook personalizado para usar el contexto
 export const useEvents = () => {
@@ -39,7 +36,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const loadEvents = useCallback(async (categoryKeys = ['all'], history) => {
     setLoading(true);
     try {
-      console.log("history:", history);
+      console.log("History?", history);
 
       let currentGoogleEvents = googleEvents;
       
@@ -61,12 +58,12 @@ export const EventProvider = ({ showNotification, children }) => {
         ? filterGoogleDuplicates([...eventResults.data.data, ...currentGoogleEvents]) 
         : eventResults.data.data;
   
-      console.log("eventResults:", eventResults.data.data);
+      console.log("EventResults:", eventResults.data.data);
       setInitialLoadCategory(JSON.stringify(categoryKeys));
       setEventData(filterGoogleDuplicates(combinedEvents));
       
     } catch (err) {
-      showNotification('Error al cargar datos:', err, 'error'); //.response.data.message
+      showNotification('Error al cargar datos:', err.response.data.message, 'error'); //
     } finally {
       setLoading(false);
     }
@@ -77,7 +74,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const refetchEvents = async (year) => {
     
     try {
-
+    console.log("Refreh", year);
      await loadEvents(year);
 
     } catch (err) {
@@ -98,12 +95,8 @@ export const EventProvider = ({ showNotification, children }) => {
       const newEventResponse = response.data.data;
       const categoryEvent = newEventResponse.extendedProps.category.key;
 
-      console.log("newEvent categoryEvent", categoryEvent)
-      console.log("initialLoadCategory", initialLoadCategory)
-
       // Si la categoría no cambió solo seteamos
       if (initialLoadCategory.includes(categoryEvent)) {
-        console.log("Mismo cateogykey");
         setEventData(prevData => {
           const newEventList = [newEventResponse, ...prevData];
           if (formData.category === 'google-calendar') return filterGoogleDuplicates(newEventList);
@@ -115,7 +108,7 @@ export const EventProvider = ({ showNotification, children }) => {
       
       return true;
     } catch (error) {
-      console.log("error", error)
+      // console.log("error", error)
       showNotification('Error al crear el evento', error.response.data.message, 'error');
       return false;
     }
@@ -133,11 +126,11 @@ export const EventProvider = ({ showNotification, children }) => {
         return false;
       }
 
-      const updatedEvent = formattedEvents(formData);
+      const updatedEvent = mapEventToBackend(formData, categoryEvents);
       console.log("Actualizado:", updatedEvent);
       
-      // Llamada a la API/Backend (onUpdate)
-      // await api.put(`/events/${eventId}`, updatedEvent); 
+      const response = await axios.put(`${ENV.API_BACK_URL}events/${eventId}`, updatedEvent);
+      const editEventResponse = response.data.data; 
       
       setEventData(prevData => {
         return prevData.map(event => 
@@ -145,11 +138,12 @@ export const EventProvider = ({ showNotification, children }) => {
         );
       });
 
-      showNotification(`${messagge} con éxito`); 
+      showNotification(`${editEventResponse.title} ${messagge} con éxito`); 
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar: ', error, 'error'); //.response.data.message
+      // console.log("eror",error)
+      showNotification('Error al actualizar: ', error.response.data.message, 'error');
       return false;
     }
   };
@@ -169,6 +163,22 @@ export const EventProvider = ({ showNotification, children }) => {
     } catch (error) {
       showNotification('Error al eliminar el calendario', 'error');
       return false;
+    }
+  };
+
+
+  const loadEventById = async (id) => {
+    setLoading(true);
+    try {
+
+      const event = await axios.get(`${ENV.API_BACK_URL}events/${id}`);
+      return event.data.data;
+
+    } catch (error) {
+      console.log("error", error)
+      console.error("Error al cargar evento:", error.response.data.message, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -321,7 +331,8 @@ export const EventProvider = ({ showNotification, children }) => {
     selectedCategory,
     setSelectedCategory, // Para actualizarla desde el select
     config,
-    initialLoadCategory
+    initialLoadCategory,
+    loadEventById
   };
 
   return (

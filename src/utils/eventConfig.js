@@ -107,13 +107,13 @@ export const DEFAULT_CONFIG = {
   hasEndDate: true,
   hasStartTime: true,
   hasEndTime: true,
-  hasStatus: true,
-  hasLocation: true,
-  hasRepeatEvent: true,
-  hasCreateAlert: true,
-  hasColorinDay: true,
+  hasStatus: false,
+  hasLocation: false,
+  hasRepeatEvent: false,
+  hasCreateAlert: false,
+  hasColorinDay: false,
   hasDescription: true,
-  hasComments: true,
+  hasComments: false,
   isYearly: false
 };
 

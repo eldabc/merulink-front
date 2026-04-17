@@ -19,7 +19,10 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
 
 
   const renderDescriptionComments = () => {
-    return event.extendedProps?.description ? truncateText(event.extendedProps?.description, 50) : truncateText(event.extendedProps?.comments, 50);
+    const description = event.extendedProps?.description ? event.extendedProps?.description : '';
+    const comments = event.extendedProps?.comments ? event.extendedProps?.comments : '';
+
+    return event.extendedProps?.description ? truncateText(description, 50) : truncateText(comments, 50);
   }
 
   const handleDeleteEvent = (id) => {

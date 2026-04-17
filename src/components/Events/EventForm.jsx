@@ -9,10 +9,12 @@ import { eventValidationSchema } from '../../utils/Validations/eventValidationSc
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { getPathByCategory } from '../../utils/eventConfig.js';
+// import { checkEventWithoutLocation } from '../../utils/Events/events-utils.js'
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
 import OptionSelect from '../Shared/OptionSelect.jsx';
+import SpanText from '../Shared/SpanText.jsx';
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
@@ -28,22 +30,24 @@ export default function EventForm({ mode = 'create' }) {
   const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
-  const { 
+  const [event, setEvent] = useState(null);
+
+  const {
+    loading,
     eventData,
     createEvent, 
     updateEvent, 
     handleGoogleEvents, 
     isTemplate, 
     config,
-    setIsTemplate, templateName, setTemplateName, setSelectedCategory 
+    setIsTemplate, templateName, setTemplateName, setSelectedCategory, loadEventById 
   } = useEvents();
 
-  const { globalLoading, loadEventCategories, categoryEvents } = useGlobalData();
+  const { globalLoading, loadEventCategories, categoryEvents, getLocations, locations  } = useGlobalData();
   
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
-  const event = eventData.find(e => e.id === Number(id));
   const disabled = event?.extendedProps?.status === 'Finalizado' ? true : false;
 
   const createMode =  mode === 'create';
@@ -63,6 +67,24 @@ export default function EventForm({ mode = 'create' }) {
       loadEventCategories();
     }
   }, []); 
+
+  useEffect(() => { 
+    if (config.hasLocation && locations.length === 0) {
+      getLocations();
+    }
+  }, [config?.hasLocation]);
+
+  useEffect(() => {
+    if (id) {
+      const fetchEvent = async () => {
+        const data = await loadEventById(id); 
+        console.log("data", data)
+        setEvent(data);
+      };
+     
+      fetchEvent();
+    }
+  }, [id]);
 
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {
@@ -139,119 +161,123 @@ export default function EventForm({ mode = 'create' }) {
     }
   }, [event, mode, reset, setTemplateName, setIsTemplate]);
 
-    const onSubmit = async (data) => {
-      let success = false;
-      data = { 
-        ...data, 
-        createdBy: createdBy, 
-        isTemplate: isTemplate,
-        templateName: templateName
-      }
-
-      if (isGoogleCategory) {
-        success = await  handleGoogleEvents(updatedData(data,event));
-      } else if (editMode && event) {
-        success = await updateEvent(updatedData(data,event));
-      } else {
-        success = await createEvent(data);
-      }
-
-      if (success) {
-        const targetPath = getPathByCategory(selectedCategory);
-        // if (createMode) {
-        navigate(`/eventos/${targetPath}`);
-        //   , { 
-        //     state: { fromSuccess: true, justChanged: true } 
-        //   }
-        // }
-        // else navigate(-2);
-      }
-    };
-
-    const onError = (formErrors) => {
-      console.warn('Form validation errors:', formErrors);
-      if (!formErrors) return;
-    };
-
-    const renderCategoryEvents = () => {
-      const excludedKeys = ["meru-birthdays", "google-calendar"];
-      return categoryEvents
-              .filter(typeEvent => !excludedKeys.includes(typeEvent.key))
-              .map(typeEvent => (
-                <option key={`category-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
-            ));
+  const onSubmit = async (data) => {
+    let success = false;
+    data = { 
+      ...data, 
+      createdBy: createdBy, 
+      isTemplate: isTemplate,
+      templateName: templateName
     }
 
-    const guestNextDate = (e) => {
-      const dateString = e.target.value;
-      if (!dateString ) return;
-      
-      const date = new Date(dateString);
-      
-      if (selectedCategory === 'wedding-nights') {
-        date.setDate(date.getDate() + 1);
-      }
-      const nextDateFormatted = date.toISOString().split('T')[0];
-      
-      setValue('endDate', nextDateFormatted, { 
-        shouldValidate: true,
-        shouldDirty: true
+    if (isGoogleCategory) {
+      success = await  handleGoogleEvents(updatedData(data,event));
+    } else if (editMode && event) {
+      success = await updateEvent(updatedData(data,event));
+    } else {
+      success = await createEvent(data);
+    }
+
+    if (success) {
+      const targetPath = getPathByCategory(selectedCategory);
+      // if (createMode) {
+      navigate(`/eventos/${targetPath}`, { 
+        state: { justChanged: true } //fromSuccess: true, 
       });
-    };
-
-    const handleNextTime = (e) => {
-      if (selectedCategory === 'dinner-heights') {
-        const nextHour = getNextHour(e.target.value);
-        setValue('endTime', nextHour, { shouldValidate: true });
-      }
+      // else navigate(-2);
     }
+  };
 
-    const applyTemplate = (templateData) => {
-      const data = { 
-                    ...templateData, 
-                    start: null, 
-                    end: null, 
-                    extendedProps: { 
-                      ...templateData.extendedProps, 
-                      isTemplate: false,
-                      templateName: ''
-                    } 
-                  }
-      const eventFormated = eventReset(selectedCategory, data);
-        reset(eventFormated);
-      
-      // Volver a pestaña del formulario
-      setActiveTab('formEvent');
-    };
+  const onError = (formErrors) => {
+    console.warn('Form validation errors:', formErrors);
+    if (!formErrors) return;
+  };
 
-    return (
-      <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+  const renderCategoryEvents = () => {
+    const excludedKeys = ["meru-birthdays", "google-calendar"];
+    return categoryEvents
+            .filter(typeEvent => !excludedKeys.includes(typeEvent.key))
+            .map(typeEvent => (
+              <option key={`category-${typeEvent.id}`} className='bg-[#3c4042]' value={typeEvent.key}>{typeEvent.label}</option>
+          ));
+  }
+
+  const guestNextDate = (e) => {
+    const dateString = e.target.value;
+    if (!dateString ) return;
+    
+    const date = new Date(dateString);
+    
+    if (selectedCategory === 'wedding-nights') {
+      date.setDate(date.getDate() + 1);
+    }
+    const nextDateFormatted = date.toISOString().split('T')[0];
+    
+    setValue('endDate', nextDateFormatted, { 
+      shouldValidate: true,
+      shouldDirty: true
+    });
+  };
+
+  const handleNextTime = (e) => {
+    if (selectedCategory === 'dinner-heights') {
+      const nextHour = getNextHour(e.target.value);
+      setValue('endTime', nextHour, { shouldValidate: true });
+    }
+  }
+
+  const applyTemplate = (templateData) => {
+    const data = { 
+                  ...templateData, 
+                  start: null, 
+                  end: null, 
+                  extendedProps: { 
+                    ...templateData.extendedProps, 
+                    isTemplate: false,
+                    templateName: ''
+                  } 
+                }
+    const eventFormated = eventReset(selectedCategory, data);
+      reset(eventFormated);
+    
+    // Volver a pestaña del formulario
+    setActiveTab('formEvent');
+  };
+
+  return (
+    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+      {loading ? (
+        <div className='flex justify-center items-center mt-20'>
+          <SpanText text="Cargando Datos Evento..." dinamicClasses="justify-center" />
+        </div>
+      ) : (
+        <>
         {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
             <div className="titles-table ml-5">
-            <div className="justify-center w-64">
-              <div className='mt-5'>
-                <h3 className="text-xl font-bold mb-4 text-white"> Tipo de Evento: *</h3>
+              <div className="justify-center w-64">
+                <div className='mt-5'>
+                  <h3 className="text-xl font-bold mb-4 text-white"> Tipo de Evento: *</h3>
+                </div>
+                <div className='mt-5'>
+                  {viewMode || editMode ? (
+                    <div className="text-xl w-full px-3 py-3 rounded-lg bg-[#2f3d44] text-center text-gray-300">
+                      {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
+                    </div>
+                  ) : (
+                    <select 
+                      {...register('category' , { onChange: handleEventChange })}
+                      disabled={globalLoading}
+                      className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
+                    >
+                      <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
+                      {renderCategoryEvents()}
+                    </select>
+                  )}
+                </div>
               </div>
-              <div className='mt-5'>
-                {viewMode || editMode ? (
-                  <div className="text-xl w-full px-3 py-3 rounded-lg bg-[#2f3d44] text-center text-gray-300">
-                    {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
-                  </div>
-                ) : (
-                  <select 
-                    {...register('category' , { onChange: handleEventChange })}
-                    disabled={globalLoading}
-                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
-                  >
-                    <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
-                    {renderCategoryEvents()}
-                  </select>
-                )}
-              </div>
-            </div>
             </div>
 
             {selectedCategory && (
@@ -282,6 +308,7 @@ export default function EventForm({ mode = 'create' }) {
                       setValue={setValue}
                       disabledClasses={disabledClasses}
                       globalLoading={globalLoading}
+                      locations={locations}
                     />
                   )}
                   {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}
@@ -294,6 +321,9 @@ export default function EventForm({ mode = 'create' }) {
             
           </form>
         </div>
-      </div>
-    );
+        </>
+      )}
+      
+    </div>
+  );
 }

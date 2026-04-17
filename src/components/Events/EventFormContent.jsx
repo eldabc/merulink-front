@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useGlobalData } from '../../context/GlobalDataContext.jsx';
+// import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 
@@ -22,10 +22,10 @@ export default function EventFormContent({
   handleNextTime,
   setValue,
   disabledClasses,
-  globalLoading
+  globalLoading,
+  locations
 }) {
 
-  const { getLocations, locations } = useGlobalData();
   const yearlyEvent = config?.isYearly;
   const repeatEventDisabledClasses = getDisabledClasses(yearlyEvent, !isRepeatEvent);
   
@@ -41,11 +41,6 @@ export default function EventFormContent({
     
   }, [config]);
 
-  useEffect(() => {   
-    if (config.hasLocation && locations.length === 0) {
-      getLocations();
-    }
-  }, [config?.hasLocation]);
 
   return (
     <>

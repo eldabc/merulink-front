@@ -22,6 +22,7 @@ import '../../Tables.css';
 export default function EventsList({ categoryKeys }) {
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { loading, eventData, loadEvents, initialLoadCategory } = useEvents();
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
@@ -44,23 +45,22 @@ export default function EventsList({ categoryKeys }) {
     
 
   useEffect(() => {
-    console.log("CategoryKeys", categoryKeys)
-    console.log("InitialLoadCategory", initialLoadCategory)
+
     // Maneja cambio de categoría o primer render
     const keysString = JSON.stringify(categoryKeys);
     const loaded = JSON.parse(initialLoadCategory);
+    const justChanged = location.state?.justChanged;
 
     const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
-    console.log("matchLoadedCategory", matchLoadedCategory)
 
-    if (matchLoadedCategory && !ShowHistoryChanged) { 
+    if (matchLoadedCategory && justChanged) { 
       // Si categoría no cambió no se llama backend
       return;
     }
     
     // Si cambió o es primer render
     if (isFirstRender.current || prevCategoryKeys.current !== keysString) {
-      console.log("Carga por Categoría o Montaje (111)", categoryKeys);
+      console.log("Carga por Categoría o Montaje", categoryKeys);
       
       setSearchValue('');
       setSearchDateValue('');
@@ -78,7 +78,7 @@ export default function EventsList({ categoryKeys }) {
 
     // Traer History
     if (prevShowHistory.current !== showHistory) {
-      console.log("Carga History (222)", showHistory);
+      console.log("Carga History", showHistory);
       loadEvents(categoryKeys, showHistory);
       prevShowHistory.current = showHistory;
     }

@@ -5,6 +5,7 @@ import { useNotification } from "../context/NotificationContext";
 const GlobalDataContext = createContext();
 
 export const GlobalDataProvider = ({ children }) => {
+  
   const [departments, setDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
   const [categoryEvents, setCategoryEvents] = useState([]);
