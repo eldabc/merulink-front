@@ -266,7 +266,7 @@ b { /* used for event dates/times */
     position: relative;
 }
 /* Events Colors */
-.meru-events{
+/* .meru-events{
     background-color: #668CD9;
     border-color: #5d80c5;
 }
@@ -274,7 +274,7 @@ b { /* used for event dates/times */
   background-color: #603F99;
   border-color: #593a8f;
 }
-.di-heights-wedding-nights /*, .wedding-nights, .dinner-heights */
+.di-heights-wedding-nights
 {
   background-color: #7EC225;
   border-color: #77b823;
@@ -283,7 +283,7 @@ b { /* used for event dates/times */
   background-color: #E0C240;
   border-color: #cfb43a;
 }
-.g-calendar-ve-holidays /*, .google-calendar, .ve-holidays*/
+.g-calendar-ve-holidays
 {
   background-color: #AD2D2D;
   border-color: #962626;
@@ -292,7 +292,7 @@ b { /* used for event dates/times */
 .banking-mondays{
   background-color: #e67e22;
   border-color: #c66c1e;
-}
+} */
 .fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
     margin-left: 15px;
 }

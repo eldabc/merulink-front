@@ -30,6 +30,7 @@ export default function EventForm({ mode = 'create' }) {
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
   const [event, setEvent] = useState(null);
+  const [templateInfo, setTemplateInfo] = useState([]);
 
   const {
     loading,
@@ -146,13 +147,14 @@ export default function EventForm({ mode = 'create' }) {
   useEffect(() => {
         // console.log("locations", locations);
         // console.log("locations.length", locations.length);
-        // console.log("event", event);
+        // console.log("event?.extendedProps?.templateInfo", event?.extendedProps?.templateInfo);
 
     // if (locations && locations.length > 0 && event) {
       if (event && (editMode || viewMode)) {
 
         let createdBy = event.extendedProps?.createdBy;
         if (isGoogleCategory) createdBy = 'Sistema';
+        setTemplateInfo(event?.extendedProps?.templateInfo);
 
         setCreatedBy(createdBy);      
         reset( eventReset('', event) );
@@ -263,8 +265,9 @@ export default function EventForm({ mode = 'create' }) {
                 </div>
                 <div className='mt-5'>
                   {viewMode || editMode ? (
-                    <div className="text-xl w-full px-3 py-3 rounded-lg bg-[#2f3d44] text-center text-gray-300">
-                      {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'}
+                    <div className={`text-xl w-full px-2 py-2 rounded-lg ${event?.extendedProps?.category?.color ?? 'bg-[#2f3d44]'} text-center text-white-600 border border-gray-300 hover:border-[#9fd8ff]`}>
+                      {event?.extendedProps?.category?.label || 'Sin tipo'}
+                      {/* {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'} */}
                     </div>
                   ) : (
                     <select 
@@ -309,6 +312,7 @@ export default function EventForm({ mode = 'create' }) {
                       disabledClasses={disabledClasses}
                       globalLoading={globalLoading}
                       locations={locations}
+                      templateInfo={templateInfo}
                     />
                   )}
                   {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}

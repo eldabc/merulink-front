@@ -6,6 +6,7 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
+import TitleHeader from '../Shared/TitleHeader';
 
 export default function EventFormContent({ 
   register, 
@@ -23,7 +24,8 @@ export default function EventFormContent({
   setValue,
   disabledClasses,
   globalLoading,
-  locations
+  locations,
+  templateInfo
 }) {
 
   const yearlyEvent = config?.isYearly;
@@ -44,7 +46,9 @@ export default function EventFormContent({
 
   return (
     <>
-      <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3>
+      <TitleHeader title={editMode ? ( 'Editar Evento' ):( 'Datos Evento')} /> 
+      {/* // dinamicClasses="mb-6 md:mb-3 text-center md:text-left"  */}
+      {/* <h3 className="text-2xl font-bold mb-4 text-white">{editMode ? ( 'Editar Evento' ):( 'Datos Evento')}</h3> */}
       <InfoToggleSeccion
         createdBy={createdBy}
         showTemplateToggle={!isGoogleCategory}
@@ -52,6 +56,7 @@ export default function EventFormContent({
         register={register}
         errors={errors}
         setValue={setValue}
+        templateInfo={templateInfo}
       />
       <div className='div-border'>
         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4'>
