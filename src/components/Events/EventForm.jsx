@@ -8,7 +8,7 @@ import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 import { eventValidationSchema } from '../../utils/Validations/eventValidationSchema';
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { getDisabledClasses } from '../../utils/global-utils';  
-import { getPathByCategory } from '../../utils/eventConfig.js';
+import { getPathByCategory, EVENT_CAT } from '../../utils/eventConfig.js';
 // import { checkEventWithoutLocation } from '../../utils/Events/events-utils.js'
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
@@ -27,7 +27,6 @@ export default function EventForm({ mode = 'create' }) {
       reValidateMode: 'onChange'
   });
   
-  const [categoryType, setcategoryType] = useState('');
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
   const [event, setEvent] = useState(null);
@@ -57,9 +56,9 @@ export default function EventForm({ mode = 'create' }) {
   const selectedCategory = watch('category');
   const isRepeatEvent = watch('repeatEvent');
 
-  const meruEventsFlag = selectedCategory === 'meru-events' || selectedCategory === 'wedding-nights' || selectedCategory === 'dinner-heights';
-  const eventOneDayWithEndTime = selectedCategory === 'dinner-heights';
-  const isGoogleCategory = selectedCategory === 'google-calendar'
+  const meruEventsFlag = selectedCategory === EVENT_CAT.M_BIRTHDAYS.key || selectedCategory === EVENT_CAT.W_NIGHTS.key || selectedCategory === EVENT_CAT.D_HEIGHTS.key; //'meru-events' 'wedding-nights' 'dinner-heights'
+  const eventOneDayWithEndTime = selectedCategory === EVENT_CAT.D_HEIGHTS.key; //'dinner-heights';
+  const isGoogleCategory = selectedCategory === EVENT_CAT.G_CALENDAR.key; //'google-calendar'
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
  
   useEffect(() => {
@@ -72,17 +71,24 @@ export default function EventForm({ mode = 'create' }) {
     if (config.hasLocation && locations.length === 0) {
       getLocations();
     }
-  }, [config?.hasLocation]);
+  }, [config?.hasLocation, event]);
 
   useEffect(() => {
     if (id) {
-      const fetchEvent = async () => {
-        const data = await loadEventById(id); 
-        console.log("data", data)
+      const isCompoundId = isNaN(id); 
+
+      if (isCompoundId) {
+        const data = eventData.find(e => e.id === id);
+        // console.log("eventData:", data);
         setEvent(data);
-      };
-     
-      fetchEvent();
+      } else {
+        const fetchEvent = async () => {
+          const data = await loadEventById(id); 
+          setEvent(data);
+        };
+        
+          fetchEvent();
+      }     
     }
   }, [id]);
 
@@ -131,35 +137,31 @@ export default function EventForm({ mode = 'create' }) {
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
-        category: category,
+        category: event?.extendedProps?.category.key, //category
         isTemplate: isTemplateValue,
         templateName: templateNameValue
       }
   }
 
   useEffect(() => {
-    if (event && (editMode || viewMode)) {
-        
-      const categoryTypeExtracted = event?.extendedProps?.category.key;
-      let createdBy = event.extendedProps?.createdBy;
+        // console.log("locations", locations);
+        // console.log("locations.length", locations.length);
+        // console.log("event", event);
 
-      if (isGoogleCategory) createdBy = 'Sistema';
+    // if (locations && locations.length > 0 && event) {
+      if (event && (editMode || viewMode)) {
 
-      setCreatedBy(createdBy);      
-      reset(
-        eventReset(categoryTypeExtracted, event)
-      );
+        let createdBy = event.extendedProps?.createdBy;
+        if (isGoogleCategory) createdBy = 'Sistema';
 
-      setcategoryType(categoryTypeExtracted);
+        setCreatedBy(createdBy);      
+        reset( eventReset('', event) );
 
-    } else if (createMode) {
-      reset(
-        eventReset('', null)
-      );
-
-      setcategoryType('');
-    }
-  }, [event, mode, reset, setTemplateName, setIsTemplate]);
+      } else if (createMode) {
+        reset( eventReset('', null) );
+      }
+    // }
+  }, [event, mode, reset, setTemplateName, setIsTemplate, locations]);
 
   const onSubmit = async (data) => {
     let success = false;
@@ -180,11 +182,9 @@ export default function EventForm({ mode = 'create' }) {
 
     if (success) {
       const targetPath = getPathByCategory(selectedCategory);
-      // if (createMode) {
       navigate(`/eventos/${targetPath}`, { 
-        state: { justChanged: true } //fromSuccess: true, 
+        state: { justChanged: true }
       });
-      // else navigate(-2);
     }
   };
 
@@ -194,7 +194,7 @@ export default function EventForm({ mode = 'create' }) {
   };
 
   const renderCategoryEvents = () => {
-    const excludedKeys = ["meru-birthdays", "google-calendar"];
+    const excludedKeys = [EVENT_CAT.M_BIRTHDAYS.key, EVENT_CAT.G_CALENDAR.key]; //"meru-birthdays", "google-calendar"
     return categoryEvents
             .filter(typeEvent => !excludedKeys.includes(typeEvent.key))
             .map(typeEvent => (
@@ -208,7 +208,7 @@ export default function EventForm({ mode = 'create' }) {
     
     const date = new Date(dateString);
     
-    if (selectedCategory === 'wedding-nights') {
+    if (selectedCategory === EVENT_CAT.W_NIGHTS.key) { //'wedding-nights'
       date.setDate(date.getDate() + 1);
     }
     const nextDateFormatted = date.toISOString().split('T')[0];
@@ -220,7 +220,7 @@ export default function EventForm({ mode = 'create' }) {
   };
 
   const handleNextTime = (e) => {
-    if (selectedCategory === 'dinner-heights') {
+    if (selectedCategory === EVENT_CAT.D_HEIGHTS.key) {//'dinner-heights'
       const nextHour = getNextHour(e.target.value);
       setValue('endTime', nextHour, { shouldValidate: true });
     }
@@ -252,7 +252,7 @@ export default function EventForm({ mode = 'create' }) {
         </div>
       ) : (
         <>
-        {(viewMode && categoryType !== 'meru-birthdays') && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
+        {(viewMode && selectedCategory !== EVENT_CAT.M_BIRTHDAYS.key) && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
         
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 

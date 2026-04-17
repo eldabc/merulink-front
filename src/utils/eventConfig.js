@@ -117,7 +117,7 @@ export const DEFAULT_CONFIG = {
   isYearly: false
 };
 
-export const EVENT_CATEGORIES = {
+export const EVENT_CAT = {
   M_EVENTS: {
     key: "meru-events",
     path: "eventos-meru",
@@ -154,6 +154,6 @@ export const EVENT_CATEGORIES = {
 
 // Utilidad para obtener el path rápido en el navigate
 export const getPathByCategory = (key) => {
-  const category = Object.values(EVENT_CATEGORIES).find(c => c.key === key);
+  const category = Object.values(EVENT_CAT).find(c => c.key === key);
   return category ? category.path : "eventos-meru";
 };

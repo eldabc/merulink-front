@@ -5,7 +5,7 @@ import { useEvents } from "../../context/EventContext";
 import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
-import { EVENT_CATEGORIES } from '../../utils/eventConfig.js';
+import { EVENT_CAT } from '../../utils/eventConfig.js';
 
 import EventRow from './EventRow';
 import Pagination from '../Pagination';
@@ -38,10 +38,10 @@ export default function EventsList({ categoryKeys }) {
   const itemsPerPage = 10;
   const SEARCH_FIELDS = ['title', 'start'];
   const stringCategory = stringCategoryEvents(categoryKeys);
-  const isMeruBirthday = categoryKeys[0] === EVENT_CATEGORIES.M_BIRTHDAYS.key; //'meru-birthdays'
-  const isBankingMondays = categoryKeys[0] === EVENT_CATEGORIES.B_MONDAYS.key ? `/${EVENT_CATEGORIES.B_MONDAYS.path}` : ''; //'banking-mondays' ? '/lunes-bancarios'
-  const holidaysEvents = categoryKeys[0] === EVENT_CATEGORIES.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CATEGORIES.G_CALENDAR.key; // 've-holidays' 'google-calendar'
-  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CATEGORIES.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CATEGORIES.E_MOD.key; //'meru-birthdays' 'executive-mod'
+  const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key; //'meru-birthdays'
+  const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : ''; //'banking-mondays' ? '/lunes-bancarios'
+  const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key; // 've-holidays' 'google-calendar'
+  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key; //'meru-birthdays' 'executive-mod'
     
 
   useEffect(() => {
