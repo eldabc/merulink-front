@@ -118,6 +118,7 @@ export default function EventForm({ mode = 'create' }) {
   }
 
   const eventReset = (category, event) => {
+
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
     const isTemplateValue = event?.extendedProps?.isTemplate ?? false;
@@ -125,6 +126,11 @@ export default function EventForm({ mode = 'create' }) {
 
     setIsTemplate(isTemplateValue);
     setTemplateName(templateNameValue);
+
+    const yearlyEventValue = config?.isYearly;
+    const defaultRepitedEvent = yearlyEventValue ? true : event?.extendedProps?.repeatEvent ?? false;
+    const defaultRepitedInterval = yearlyEventValue ? 'Anual' : event?.extendedProps?.repeatInterval ?? '';
+
     return {
         eventName: event?.title ?? '',
         startDate: divideDateTimeStart?.date ?? null,
@@ -133,47 +139,38 @@ export default function EventForm({ mode = 'create' }) {
         endTime: divideDateTimeEnd?.time ?? null,
         status: event?.extendedProps?.status ?? '',
         locationId: event?.extendedProps?.location?.id ?? '',
-        repeatEvent: event?.extendedProps?.repeatEvent ?? false,
-        repeatInterval: event?.extendedProps?.repeatInterval ?? '',
+        repeatEvent: defaultRepitedEvent,
+        repeatInterval: defaultRepitedInterval,
         createAlert: event?.extendedProps?.createAlert ?? false,
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
-        category: event?.extendedProps?.category.key, //category
+        category: event?.extendedProps?.category?.key, //category
         isTemplate: isTemplateValue,
         templateName: templateNameValue
       }
   }
 
   useEffect(() => {
-        // console.log("locations", locations);
-        // console.log("locations.length", locations.length);
-        // console.log("event?.extendedProps?.templateInfo", event?.extendedProps?.templateInfo);
 
-    // if (locations && locations.length > 0 && event) {
       if (event && (editMode || viewMode)) {
+  
+        if (isGoogleCategory) setCreatedBy('Sistema');
 
-        let createdBy = event.extendedProps?.createdBy;
-        if (isGoogleCategory) createdBy = 'Sistema';
         setTemplateInfo(event?.extendedProps?.templateInfo);
-
-        setCreatedBy(createdBy);      
         reset( eventReset('', event) );
 
       } else if (createMode) {
+        setCreatedBy('Sistema'); // Cuando tengamos autenticación, aquí se asignaría el usuario actual
         reset( eventReset('', null) );
       }
-    // }
+
   }, [event, mode, reset, setTemplateName, setIsTemplate, locations]);
 
   const onSubmit = async (data) => {
+
     let success = false;
-    data = { 
-      ...data, 
-      createdBy: createdBy, 
-      isTemplate: isTemplate,
-      templateName: templateName
-    }
+    data = { ...data, createdBy, isTemplate, templateName };
 
     if (isGoogleCategory) {
       success = await  handleGoogleEvents(updatedData(data,event));
@@ -197,7 +194,7 @@ export default function EventForm({ mode = 'create' }) {
   };
 
   const renderCategoryEvents = () => {
-    const excludedKeys = [EVENT_CAT.M_BIRTHDAYS.key, EVENT_CAT.G_CALENDAR.key]; //"meru-birthdays", "google-calendar"
+    const excludedKeys = [EVENT_CAT.M_BIRTHDAYS.key, EVENT_CAT.G_CALENDAR.key];
     return categoryEvents
             .filter(typeEvent => !excludedKeys.includes(typeEvent.key))
             .map(typeEvent => (
@@ -211,7 +208,7 @@ export default function EventForm({ mode = 'create' }) {
     
     const date = new Date(dateString);
     
-    if (selectedCategory === EVENT_CAT.W_NIGHTS.key) { //'wedding-nights'
+    if (selectedCategory === EVENT_CAT.W_NIGHTS.key) {
       date.setDate(date.getDate() + 1);
     }
     const nextDateFormatted = date.toISOString().split('T')[0];
@@ -223,7 +220,7 @@ export default function EventForm({ mode = 'create' }) {
   };
 
   const handleNextTime = (e) => {
-    if (selectedCategory === EVENT_CAT.D_HEIGHTS.key) {//'dinner-heights'
+    if (selectedCategory === EVENT_CAT.D_HEIGHTS.key) {
       const nextHour = getNextHour(e.target.value);
       setValue('endTime', nextHour, { shouldValidate: true });
     }

@@ -38,7 +38,8 @@ export default function EventsList({ categoryKeys }) {
   const itemsPerPage = 10;
   const SEARCH_FIELDS = ['title', 'start'];
   const stringCategory = stringCategoryEvents(categoryKeys);
-  const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key; //'meru-birthdays'
+  const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key;
+  const isEventWithStatus = categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
   const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : ''; //'banking-mondays' ? '/lunes-bancarios'
   const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key; // 've-holidays' 'google-calendar'
   const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key; //'meru-birthdays' 'executive-mod'
@@ -191,6 +192,9 @@ export default function EventsList({ categoryKeys }) {
                           )}
 
                           <th className="px-4 py-3 text-left font-semibold">Tipo Evento</th>
+
+                          {isEventWithStatus && <th className="px-4 py-3 text-left font-semibold">Estatus</th> }
+                          
                           
                           {!isMeruBirthday && <th className="px-4 py-3 text-left font-semibold">Acciones</th> }
                         </tr>
@@ -201,7 +205,8 @@ export default function EventsList({ categoryKeys }) {
                               key={item.id} 
                               event={item} 
                               isMeruBirthday={isMeruBirthday} 
-                              eventWithoutLocation={eventWithoutLocation} 
+                              eventWithoutLocation={eventWithoutLocation}
+                              isEventWithStatus={isEventWithStatus}
                             />
                           ))}
                       

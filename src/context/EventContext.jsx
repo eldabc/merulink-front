@@ -79,7 +79,7 @@ export const EventProvider = ({ showNotification, children }) => {
 
     } catch (err) {
       setError(err.message);
-      showNotification('Error al recargar eventos: ' + error);
+      showNotification('Error al recargar eventos: ', error, 'error');
     }
   };
 
@@ -149,19 +149,25 @@ export const EventProvider = ({ showNotification, children }) => {
   };
 
   // *** Eliminar
-  const deleteEvent = async (id) => {
+  const deleteEvent = async (event) => {
     try {
-      // const response = await fetch(`https://miapi.com/events/${id}`, { method: 'DELETE' });
-      // if (!response.ok) throw new Error('No se pudo eliminar en el servidor');
+      const eventId = event.id;
+
+      if (!eventId) {
+        showNotification('Error:', 'No se encontró el ID del evento', 'error');
+        return false;
+      }
+      
+      await axios.delete(`${ENV.API_BACK_URL}events/${eventId}`);
 
       setEventData(prevData => {
-        return prevData.filter(ev => ev.id !== id);
+        return prevData.filter(ev => ev.id !== eventId);
       });
 
       showNotification(`Evento eliminado con éxito`);
       return true;
     } catch (error) {
-      showNotification('Error al eliminar el calendario', 'error');
+      showNotification('Error al eliminar el calendario', error.response.data.message, 'error');
       return false;
     }
   };

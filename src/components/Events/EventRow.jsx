@@ -9,14 +9,17 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 
-export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} ) {
+export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, isEventWithStatus} ) {
 
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const divideDateTimeStart = divideDateTime(event?.start);
-
+  const isNotConfirmedEvent = event?.extendedProps?.status && event?.extendedProps?.status !== 'Confirmado';
+  const isNotExternalEvent = !event.extendedProps?.externalDate;
+  const blockBtn = isNotConfirmedEvent ? false : true;
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar evento con Estatus Confirmado' : 'Eliminar';
 
   const renderDescriptionComments = () => {
     const description = event.extendedProps?.description ? event.extendedProps?.description : '';
@@ -25,13 +28,13 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
     return event.extendedProps?.description ? truncateText(description, 50) : truncateText(comments, 50);
   }
 
-  const handleDeleteEvent = (id) => {
-    deleteEvent(id);
+  const handleDeleteEvent = (event) => {
+    deleteEvent(event);
   }
 
   const selectedEvent = (id) => {
     navigate(`/eventos/ver/${id}`, { 
-      state: { data: event } 
+      // state: { data: event } 
     }); 
   };
 
@@ -61,18 +64,28 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation} 
           <td className="px-4 py-3 text-white-700">{event.extendedProps?.location?.label}</td>
         )}
         <td className="px-4 py-3 text-white-700">{event.extendedProps?.category.label}</td>
-        {(!isMeruBirthday && !event.extendedProps?.externalDate) && (
+        
+        {isEventWithStatus && <td className="px-4 py-3 text-white-700">{event.extendedProps?.status}</td> }
+
+        {(!isMeruBirthday && isNotExternalEvent || isNotConfirmedEvent ) && (
           <td className="px-4 py-3">
-            <ButtonDelete setIsModalOpen={setIsModalOpen} id={event.id} />
-        </td>)}
-            {event.extendedProps?.isTemplate && <ButtonIsTemplate/> }
+              <ButtonDelete 
+                setIsModalOpen={setIsModalOpen}
+                title={deleteBtnTitle}
+                dinamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
+                disabled={blockBtn} 
+                id={event.id} />
+          </td>
+        )}
+
+        {event.extendedProps?.isTemplate && <ButtonIsTemplate/> }
       </tr>
       <tr>
         <td>
           <ConfirmDialog 
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            onConfirm={() => handleDeleteEvent(event.id)}
+            onConfirm={() => handleDeleteEvent(event)}
             title="Eliminar Evento"
             message={`¿Está seguro de que desea eliminar "${event.title}"?`}
           />

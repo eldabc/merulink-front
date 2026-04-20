@@ -31,17 +31,18 @@ export default function EventFormContent({
   const yearlyEvent = config?.isYearly;
   const repeatEventDisabledClasses = getDisabledClasses(yearlyEvent, !isRepeatEvent);
   
-  useEffect(() => {
-    const yearlyEventValue = config?.isYearly;
-    if (yearlyEventValue) {
-      const defaultRepitedEvent = yearlyEventValue ? true : false;
-      const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+  // useEffect(() => {
+    // console.log("EFFECT")
+    // const yearlyEventValue = config?.isYearly;
+    // if (yearlyEventValue) {
+    //   const defaultRepitedEvent = yearlyEventValue ? true : false;
+    //   const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
 
-      setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
-      setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
-    }
+    //   setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
+    //   setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+    // }
     
-  }, [config]);
+  // }, [config]);
 
 
   return (
