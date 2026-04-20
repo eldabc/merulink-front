@@ -59,8 +59,8 @@ export default function EventForm({ mode = 'create' }) {
   const isRepeatEvent = watch('repeatEvent');
 
   const meruEventsFlag = selectedCategory === EVENT_CAT.M_BIRTHDAYS.key || selectedCategory === EVENT_CAT.W_NIGHTS.key || selectedCategory === EVENT_CAT.D_HEIGHTS.key; //'meru-events' 'wedding-nights' 'dinner-heights'
-  const eventOneDayWithEndTime = selectedCategory === EVENT_CAT.D_HEIGHTS.key; //'dinner-heights';
-  const isGoogleCategory = selectedCategory === EVENT_CAT.G_CALENDAR.key; //'google-calendar'
+  const eventOneDayWithEndTime = selectedCategory === EVENT_CAT.D_HEIGHTS.key;
+  const isGoogleCategory = selectedCategory === EVENT_CAT.G_CALENDAR.key;
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
  
   useEffect(() => {
@@ -81,11 +81,11 @@ export default function EventForm({ mode = 'create' }) {
 
       if (isCompoundId) {
         const data = eventData.find(e => e.id === id);
-        // console.log("eventData:", data);
         setEvent(data);
       } else {
         const fetchEvent = async () => {
           const data = await loadEventById(id); 
+          // console.log("eventData:", data);
           setEvent(data);
         };
         
@@ -155,7 +155,8 @@ export default function EventForm({ mode = 'create' }) {
 
       if (event && (editMode || viewMode)) {
   
-        if (isGoogleCategory) setCreatedBy('Sistema');
+        // if (isGoogleCategory) setCreatedBy('Sistema');
+        if (event?.extendedProps?.createdBy) setCreatedBy(event?.extendedProps?.createdBy);
 
         setTemplateInfo(event?.extendedProps?.templateInfo);
         reset( eventReset('', event) );
@@ -227,12 +228,11 @@ export default function EventForm({ mode = 'create' }) {
   }
 
   const applyTemplate = (templateData) => {
+    // console.log("templateData", templateData?.event)
     const data = { 
-                  ...templateData, 
-                  start: null, 
-                  end: null, 
+                  ...templateData?.event, 
                   extendedProps: { 
-                    ...templateData.extendedProps, 
+                    ...templateData?.event.extendedProps, 
                     isTemplate: false,
                     templateName: ''
                   } 
@@ -315,7 +315,11 @@ export default function EventForm({ mode = 'create' }) {
                       templateInfo={templateInfo}
                     />
                   )}
-                  {activeTab === 'eventTemplates' && ( <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> )}
+                  
+                  {activeTab === 'eventTemplates' && ( 
+                    <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> 
+                  )}
+
                 </div>
                 
               </div>

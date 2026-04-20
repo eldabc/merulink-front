@@ -35,6 +35,7 @@ export const mapEventToBackend = (formData) => {
       category_key: formData.category, // aqui no se tiene id pues se usa el key en back se busca id
       special_label: labelCategory, // ver como manejar este label spacial en google-events que se extrajeron
       location_id: formData.locationId,
+      is_template: formData.isTemplate,
       template_name: formData.isTemplate ? formData.templateName : '', // va para tabla aparte
       
     };
