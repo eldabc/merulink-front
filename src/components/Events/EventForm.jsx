@@ -18,6 +18,7 @@ import SpanText from '../Shared/SpanText.jsx';
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
+import '../../Calendar.css';
 
 export default function EventForm({ mode = 'create' }) {
   
@@ -265,9 +266,11 @@ export default function EventForm({ mode = 'create' }) {
                 </div>
                 <div className='mt-5'>
                   {viewMode || editMode ? (
-                    <div className={`text-xl w-full px-2 py-2 rounded-lg ${event?.extendedProps?.category?.color ?? 'bg-[#2f3d44]'} text-center text-white-600 border border-gray-300 hover:border-[#9fd8ff]`}>
-                      {event?.extendedProps?.category?.label || 'Sin tipo'}
-                      {/* {categoryEvents.find(t => t.key === selectedCategory)?.label || 'Sin tipo'} */}
+                    <div className={`text-xl w-full px-2 py-2 rounded-lg ${event?.extendedProps?.category?.color ?? 'bg-[#56a2c8]'} 
+                                     text-center text-white-600 border border-gray-300 hover:!border-[#9fd8ff] transition-all duration-600 ease-in-out
+                                     hover:shadow-lg hover:-translate-y-1`}
+                    >
+                     {event?.extendedProps?.category?.label || 'Sin tipo'}
                     </div>
                   ) : (
                     <select 

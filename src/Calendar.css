@@ -265,34 +265,37 @@ b { /* used for event dates/times */
     z-index: 10;
     position: relative;
 }
+
 /* Events Colors */
-/* .meru-events{
+.meru-events{
     background-color: #668CD9;
-    border-color: #5d80c5;
+    border-color: #bebebe;
 }
 .meru-birthdays {
   background-color: #603F99;
-  border-color: #593a8f;
+  border-color: #bebebe;
 }
-.di-heights-wedding-nights
+.di-heights-wedding-nights /*, .wedding-nights, .dinner-heights */
 {
   background-color: #7EC225;
-  border-color: #77b823;
+  border-color: #bebebe;
 }
 .executive-mod {
   background-color: #E0C240;
-  border-color: #cfb43a;
+  border-color: #bebebe;
 }
-.g-calendar-ve-holidays
+.g-calendar-ve-holidays /*, .google-calendar, .ve-holidays*/
 {
   background-color: #AD2D2D;
-  border-color: #962626;
+  border-color: #bebebe;
 }
 
 .banking-mondays{
   background-color: #e67e22;
-  border-color: #c66c1e;
-} */
+  border-color: #bebebe;
+}
+/* FIN Events Colors */
+
 .fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
     margin-left: 15px;
 }

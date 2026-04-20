@@ -264,33 +264,3 @@ footer {
     /* Forzar la primera letra de cada palabra a ser mayúscula */
     text-transform: capitalize; 
 }
-
-/* Events Colors */
-.meru-events{
-    background-color: #668CD9;
-    border-color: #bebebe;
-}
-.meru-birthdays {
-  background-color: #603F99;
-  border-color: #bebebe;
-}
-.di-heights-wedding-nights /*, .wedding-nights, .dinner-heights */
-{
-  background-color: #7EC225;
-  border-color: #bebebe;
-}
-.executive-mod {
-  background-color: #E0C240;
-  border-color: #bebebe;
-}
-.g-calendar-ve-holidays /*, .google-calendar, .ve-holidays*/
-{
-  background-color: #AD2D2D;
-  border-color: #bebebe;
-}
-
-.banking-mondays{
-  background-color: #e67e22;
-  border-color: #bebebe;
-}
-/* FIN Events Colors */

@@ -5,7 +5,7 @@ import ToggleCreateTemplate from './ToggleCreateTemplate';
 
 function InfoToggleSeccion({ createdBy, showTemplateToggle, readOnly, register, errors, setValue, templateInfo }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 mt-3">
       
       {showTemplateToggle && (
         templateInfo?.hasTemplate ? (   
