@@ -168,6 +168,21 @@ export default function EventForm({ mode = 'create' }) {
 
   }, [event, mode, reset, setTemplateName, setIsTemplate, locations]);
 
+  useEffect(() => {
+    const yearlyEventValue = config?.isYearly;
+    if (yearlyEventValue && selectedCategory) {
+      const defaultRepitedEvent = yearlyEventValue ? true : false;
+      const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+
+      setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
+      setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
+    } else {
+      setValue('repeatEvent', false, { shouldValidate: true });
+      setValue('repeatInterval', '', { shouldValidate: true });
+    }
+    
+  }, [selectedCategory, config]);
+
   const onSubmit = async (data) => {
 
     let success = false;
