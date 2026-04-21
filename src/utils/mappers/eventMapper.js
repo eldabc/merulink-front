@@ -2,6 +2,7 @@ import { formatDateToEvent } from '../date-utils';
 import { findFixedEvents } from '../Events/events-utils';
 
 export const mapEventToBackend = (formData) => {
+  console.log("Mapping event data for backend:", formData);
 
    let isFixed = false;
    let labelCategory = '';
@@ -9,6 +10,7 @@ export const mapEventToBackend = (formData) => {
    const allDay = (formData.category === 'meru-birthdays' || formData.category === 'google-calendar' || formData.category === 'executive-mod' 
        || formData.category === 'banking-mondays' || formData.category === 've-holidays'
       ) ? true : false;
+      
 
    if (formData.category === 'google-calendar') {
     isFixed = findFixedEvents(formData); 

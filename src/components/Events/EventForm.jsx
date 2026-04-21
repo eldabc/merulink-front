@@ -62,6 +62,7 @@ export default function EventForm({ mode = 'create' }) {
   const eventOneDayWithEndTime = selectedCategory === EVENT_CAT.D_HEIGHTS.key;
   const isGoogleCategory = selectedCategory === EVENT_CAT.G_CALENDAR.key;
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
+  console.log("isGoogleCategory", isGoogleCategory)
  
   useEffect(() => {
     if(categoryEvents.length === 0){
@@ -188,10 +189,10 @@ export default function EventForm({ mode = 'create' }) {
     let success = false;
     data = { ...data, createdBy, isTemplate, templateName };
 
-    if (isGoogleCategory) {
-      success = await  handleGoogleEvents(updatedData(data,event));
+    if (isGoogleCategory) { console.log("handleGoogleEvents", isGoogleCategory)
+      success = await  handleGoogleEvents(updatedData(data, event));
     } else if (editMode && event) {
-      success = await updateEvent(updatedData(data,event));
+      success = await updateEvent(updatedData(data, event));
     } else {
       success = await createEvent(data);
     }
