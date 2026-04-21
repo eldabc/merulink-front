@@ -134,7 +134,7 @@ export const EventProvider = ({ showNotification, children }) => {
       
       setEventData(prevData => {
         return prevData.map(event => 
-          event.id === eventId ? updatedEvent : event 
+          event.id === eventId ? editEventResponse : event 
         );
       });
 

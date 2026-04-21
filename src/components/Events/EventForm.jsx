@@ -154,7 +154,7 @@ export default function EventForm({ mode = 'create' }) {
   useEffect(() => {
 
       if (event && (editMode || viewMode)) {
-  
+
         // if (isGoogleCategory) setCreatedBy('Sistema');
         if (event?.extendedProps?.createdBy) setCreatedBy(event?.extendedProps?.createdBy);
 
@@ -233,7 +233,7 @@ export default function EventForm({ mode = 'create' }) {
                   ...templateData?.event, 
                   extendedProps: { 
                     ...templateData?.event.extendedProps, 
-                    isTemplate: false,
+                    // isTemplate: false,
                     templateName: ''
                   } 
                 }

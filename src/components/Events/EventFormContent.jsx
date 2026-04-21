@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-// import { useGlobalData } from '../../context/GlobalDataContext.jsx';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 
