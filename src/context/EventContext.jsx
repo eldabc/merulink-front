@@ -30,11 +30,13 @@ export const EventProvider = ({ showNotification, children }) => {
   const [googleEvents, setGoogleEvents] = useState('');
   const [eventResults, setEventResults] = useState('');
   const [initialLoadCategory, setInitialLoadCategory] = useState(null);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const { categoryEvents } = useGlobalData();
+
   const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
   
 
-  const loadEvents = useCallback(async (categoryKeys = ['all'], history) => {
+  const loadEvents = useCallback(async (categoryKeys = ['all'], history, year = currentYear) => {
     setLoading(true);
     try {
       console.log("History?", history);
@@ -49,8 +51,8 @@ export const EventProvider = ({ showNotification, children }) => {
       const eventResultsData = eventResults.data.data;
       
       // Eventos Google una vez
-      if (googleEvents === '') {
-        const holidays = await GoogleCalendarService.fetchHolidays(new Date().getFullYear(), fixedEvents);
+      if (googleEvents === '' || currentYear !== year) {
+        const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
         console.log("Eventos Google", holidays);
         currentGoogleEvents = holidays;
       }
@@ -80,12 +82,12 @@ export const EventProvider = ({ showNotification, children }) => {
   }, [googleEvents]);
 
 
-  // *** Para recargar datos manualmente
+  // *** Recargar datos manualmente
   const refetchEvents = async (year) => {
     
     try {
-    console.log("Refreh", year);
-     await loadEvents(year);
+      console.log("Refresh", year);
+      await loadEvents(['all'], null, year);
 
     } catch (err) {
       setError(err.message);
@@ -134,7 +136,7 @@ export const EventProvider = ({ showNotification, children }) => {
   };
 
 
-    // *** Actualizar
+  // *** Actualizar
   const updateEvent = async (formData, messagge) => {
     try {
       const eventId = formData.id;
@@ -318,7 +320,7 @@ export const EventProvider = ({ showNotification, children }) => {
 
 
   const specialDays = useMemo(() => {
-  return eventData
+    return eventData
       .filter(event => event.extendedProps?.coloringDay === true)
       .reduce((acc, event) => {
         const dateKey = event.start.split('T')[0];
