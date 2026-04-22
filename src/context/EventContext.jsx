@@ -28,6 +28,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
+  const [eventResults, setEventResults] = useState('');
   const [initialLoadCategory, setInitialLoadCategory] = useState(null);
   const { categoryEvents } = useGlobalData();
   const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
@@ -38,7 +39,14 @@ export const EventProvider = ({ showNotification, children }) => {
     try {
       console.log("History?", history);
 
+      let combinedEvents = [];
       let currentGoogleEvents = googleEvents;
+      const requestAll = categoryKeys[0] === 'all' && true;
+      const hasGoogle = categoryKeys.includes("google-calendar");
+      
+      // Carga Eventos de BD
+      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}`);
+      const eventResultsData = eventResults.data.data;
       
       // Eventos Google una vez
       if (googleEvents === '') {
@@ -47,29 +55,25 @@ export const EventProvider = ({ showNotification, children }) => {
         currentGoogleEvents = holidays;
       }
 
-      const requestAll = categoryKeys[0] === 'all' && true;
-      const hasGoogle = categoryKeys.includes("google-calendar"); 
-      
-      // Cargar Eventos en BD
-      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}`);
+      if (requestAll || hasGoogle) {
+        const filteredGoogleDuplicates = filterGoogleDuplicates(eventResultsData, currentGoogleEvents);
+        console.log("Filtrados Google", filteredGoogleDuplicates);
 
-      const filteredGoogleDuplicates = filterGoogleDuplicates(eventResults.data.data, currentGoogleEvents);
-      console.log("Filtrados", filteredGoogleDuplicates);
-
-      const combinedEvents = (requestAll || hasGoogle) 
-        ? [...eventResults.data.data, ...filteredGoogleDuplicates]
-        // ? filterGoogleDuplicates([...eventResults.data.data, ...currentGoogleEvents]) 
-        : eventResults.data.data;
+        combinedEvents = [...eventResultsData, ...filteredGoogleDuplicates];
+      } else {
+        combinedEvents = eventResultsData;
+      }
   
-      console.log("EventResults:", eventResults.data.data);
-      console.log("combinedEvents:", combinedEvents);
-      setInitialLoadCategory(JSON.stringify(categoryKeys));
+      // console.log("EventResults:", eventResultsData);
+      // console.log("combinedEvents:", combinedEvents);
+      
       setEventData(combinedEvents);
-      setGoogleEvents(filteredGoogleDuplicates);
+      setEventResults(eventResultsData);
+      setInitialLoadCategory(JSON.stringify(categoryKeys));
       
     } catch (err) {
-      console.log("error", err  )
-      showNotification('Error al cargar datos:', err.response.data.message, 'error'); //
+      console.log("error", err);
+      showNotification('Error al cargar datos:', err.response.data.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -100,25 +104,30 @@ export const EventProvider = ({ showNotification, children }) => {
       const response = await axios.post(`${ENV.API_BACK_URL}events`, newEvent);
       const newEventResponse = response.data.data;
       const categoryEvent = newEventResponse.extendedProps.category.key;
-      console.log("newEventResponse", newEventResponse)
+      // console.log("newEventResponse", newEventResponse)
 
       // Si la categoría no cambió solo seteamos
       if (initialLoadCategory.includes(categoryEvent)) {
-        setEventData(prevData => {
-          const newEventList = [newEventResponse, ...prevData];
-          if (formData.category === 'google-calendar') {
-            const filteredGoogleDuplicates = filterGoogleDuplicates(newEventList, googleEvents);
-            return [...newEventList, ...filteredGoogleDuplicates];
+         if (formData.category === 'google-calendar') {
+            const filteredGoogleDuplicates = filterGoogleDuplicates([newEventResponse], googleEvents);
+            // console.log("filteredGoogleDuplicates", filteredGoogleDuplicates)
+            setEventData([newEventResponse, ...eventResults, ...filteredGoogleDuplicates ]);
+
+          } else {
+            setEventData(prevData => {
+              const newEventList = [newEventResponse, ...prevData];
+              // console.log("newEventList", newEventList);
+              return newEventList;
+            });
           }
-          return newEventList;
-        });
+
       }
       
       showNotification(`Evento ${newEventResponse.title} creado con éxito`);
       
       return true;
     } catch (error) {
-      // console.log("error", error)
+      console.log("error", error)
       showNotification('Error al crear el evento', error.response.data.message, 'error');
       return false;
     }
@@ -174,7 +183,7 @@ export const EventProvider = ({ showNotification, children }) => {
         return prevData.filter(ev => ev.id !== eventId);
       });
 
-      showNotification(`Evento eliminado con éxito`);
+      showNotification(`Evento ${event.title} eliminado con éxito`);
       return true;
     } catch (error) {
       showNotification('Error al eliminar el calendario', error.response.data.message, 'error');
@@ -234,24 +243,23 @@ export const EventProvider = ({ showNotification, children }) => {
 
   }
 
-  const filterGoogleDuplicates = (registerEvents, currentGoogleEvents) => {
+  const filterGoogleDuplicates = (registeredEvents, currentGoogleEvents) => {
+
     // Identifica fechas de eventos Google que se han registrado
-    const registeredDates = registerEvents
-      // .filter(ev => ev.extendedProps?.category?.key === 'google-calendar' && !ev.extendedProps?.externalDate)
+    const registeredDates = registeredEvents
+      .filter(ev => ev.extendedProps?.category?.key === 'google-calendar')
       .map(ev => ev.start.split('T')[0]);
+      // console.log("registeredDates", registeredDates.length > 0);
 
-console.log("registeredDates", registeredDates);
-
-    return currentGoogleEvents.filter(ev => {
-      // if (ev.extendedProps?.category?.key === 'google-calendar' ) { 
-        //&& ev.extendedProps?.externalDate
+      const filteredGoogleEvents = currentGoogleEvents.filter(ev => {
         const dateKey = ev.start.split('T')[0];
-        // El evento pasa solo si su fecha NO está en la lista de registrados
-        return !registeredDates.includes(dateKey);
-      // }
+        return !registeredDates.includes(dateKey); // El evento pasa solo si su fecha NO está en la lista de registrados
+      });
+      
+      setGoogleEvents(filteredGoogleEvents);
+      // console.log("filteredGoogleEvents", filteredGoogleEvents);
+      return filteredGoogleEvents;
 
-      return true;
-    });
   };
 
   // *** Crear/Editar Lunes Bancarios
@@ -290,7 +298,8 @@ console.log("registeredDates", registeredDates);
   // Eventos de Google
   const handleGoogleEvents = async (formData) => {
     try {
-      console.log("GOOGLE", formData)
+      // console.log("GOOGLE", formData)
+      // El ID de google es string
       const isCompoundId = isNaN(formData?.id); 
 
       if (isCompoundId) {
@@ -300,25 +309,7 @@ console.log("registeredDates", registeredDates);
         await updateEvent(formData);
         return true;
       }
-      //   const formDate = new Date(formData.startDate).toISOString().split("T")[0]; 
-      //   const existsGoogleEvent = eventData.some(event => {
-        
-      //     const eventDate = new Date(event.start).toISOString().split("T")[0]; 
-            
-      //     if (formDate === eventDate) console.log("IGUALES", formDate, eventDate); 
-          
-      //     return eventDate === formDate && !event.extendedProps?.externalDate; // && event.extendedProps?.category?.key === 'google-calendar'
-      // });
 
-      // if (existsGoogleEvent) {
-      //   // console.log("editamos");
-      //   await updateEvent(formData);
-      //   return true;
-      // } else {
-      //   // console.log("registramos");
-      //   await createEvent(formData);
-      //   return true;
-      // }
     } catch (error) {
       showNotification('Error en evento:', error.message, 'error');
       return false;

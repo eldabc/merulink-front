@@ -16,10 +16,12 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
   const navigate = useNavigate();
 
   const divideDateTimeStart = divideDateTime(event?.start);
-  const isNotConfirmedEvent = event?.extendedProps?.status && event?.extendedProps?.status !== 'Confirmado';
+  const status = event?.extendedProps?.status ?? null;
+  const isNotConfirmedEvent = status !== 'Confirmado' && status !== null;
   const isNotExternalEvent = !event.extendedProps?.externalDate;
   const blockBtn = isNotConfirmedEvent ? false : true;
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar evento con Estatus Confirmado' : 'Eliminar';
+  const eventCategoryLabel = event?.extendedProps?.specialLabel ? event?.extendedProps?.specialLabel : event?.extendedProps?.category?.label;
 
   const renderDescriptionComments = () => {
     const description = event.extendedProps?.description ? event.extendedProps?.description : '';
@@ -33,9 +35,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
   }
 
   const selectedEvent = (id) => {
-    navigate(`/eventos/ver/${id}`, { 
-      // state: { data: event } 
-    }); 
+    navigate(`/eventos/ver/${id}`); 
   };
 
   return (
@@ -63,7 +63,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
         {!eventWithoutLocation && (
           <td className="px-4 py-3 text-white-700">{event.extendedProps?.location?.label}</td>
         )}
-        <td className="px-4 py-3 text-white-700">{event.extendedProps?.category.label}</td>
+        <td className="px-4 py-3 text-white-700">{eventCategoryLabel}</td>
         
         {isEventWithStatus && <td className="px-4 py-3 text-white-700">{event.extendedProps?.status}</td> }
 
