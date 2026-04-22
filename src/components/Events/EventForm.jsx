@@ -13,7 +13,6 @@ import { getPathByCategory, EVENT_CAT } from '../../utils/eventConfig.js';
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
-import OptionSelect from '../Shared/OptionSelect.jsx';
 import SpanText from '../Shared/SpanText.jsx';
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';

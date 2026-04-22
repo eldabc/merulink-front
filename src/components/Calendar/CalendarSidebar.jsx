@@ -90,7 +90,7 @@ export default function CalendarSidebar({
             {selectedEvent.extendedProps?.category && (
               <p>
                 <strong>Tipo de evento: </strong>
-                {selectedEvent.extendedProps.label}
+                {selectedEvent.extendedProps?.category.label}
               </p>
             )}
           </div>

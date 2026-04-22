@@ -41,8 +41,8 @@ export default function EventsList({ categoryKeys }) {
   const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key;
   const isEventWithStatus = categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
   const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : ''; //'banking-mondays' ? '/lunes-bancarios'
-  const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key; // 've-holidays' 'google-calendar'
-  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key; //'meru-birthdays' 'executive-mod'
+  const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key;
+  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key;
     
 
   useEffect(() => {
