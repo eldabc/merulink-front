@@ -1,14 +1,18 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEvents } from '../../../context/EventContext';
+
 import { generateMondays } from '../../../utils/date-utils';
+import { bankingSchema } from '../../../utils/Validations/bankingValidationSchema';
+import { getDisabledClasses } from '../../../utils/global-utils';  
+
 import TitleHeader from '../../Shared/TitleHeader';
 import FooterFormButtons from '../../Shared/FooterFormButtons';
-import { bankingSchema } from '../../../utils/Validations/bankingValidationSchema';
 import ErrorMessage from '../../Shared/ErrorMessage';
 import HeadFormButtons from '../../Shared/HeadFormButtons';
 
 export default function BankingMondaysForm({ mode = 'create', event = [], onBack, year }) {
+
   const navigate = useNavigate();
   const location = useLocation();
   const { createEditBankingEvents } = useEvents();
@@ -16,6 +20,7 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
 
   const eventsReceived = location.state?.data || [];
   const viewMode = mode === 'view';
+  const disabledClasses = viewMode && 'cursor-not-allowed';
 
   // Inicializamos los checks basados en los eventos existentes
   const [checkedDates, setCheckedDates] = useState(() => {
@@ -64,6 +69,7 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
   };
 
   const handleSave = async () => {
+    
     const dataToValidate = Array.from(checkedDates).map(dateStr => ({
       start: dateStr,
       title: document.getElementById(`input-${dateStr}`)?.value || ""
@@ -76,14 +82,20 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
 
       await createEditBankingEvents(dataToValidate, year, mode);
           
-      if (mode === 'create') navigate(-1);
-      else navigate(-2);
+      navigate(`/eventos/lunes-bancarios`, { 
+        state: { justChanged: true }
+      });
+      // if (mode === 'create') navigate(-1);
+      // else navigate(-2);
 
     } catch (err) {
       const errorsFound = {};
+
       if (!err.inner || err.inner.length === 0 || !err.inner.some(e => e.path.includes('['))) {
         errorsFound['global'] = err.message;
+
       } else {
+
         err.inner.forEach(error => {
           const match = error.path.match(/\[(\d+)\]/);
           if (match) {
@@ -129,11 +141,11 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
             <div key={dateStr} className="flex flex-col mb-2">
               <div className={`flex items-center gap-3 p-3 rounded-lg transition-all 
                 ${isChecked ? 'check-active border-l-4 border-gray-500' : 'bg-gray-800/40 border-l-4 border-transparent'}
-           `}
+                ${disabledClasses} `}
               >
                 <input 
                   type="checkbox" 
-                  className="w-5 h-5 accent-blue-500 cursor-pointer disabled:opacity-50"
+                  className={`w-5 h-5 accent-blue-500 disabled:opacity-50 ${disabledClasses}`}
                   checked={isChecked}
                   onChange={() => handleToggle(dateStr)}
                   disabled={viewMode}
@@ -151,7 +163,7 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
                   defaultValue={initialValue}
                   disabled={!isChecked || viewMode}
                   placeholder={isChecked ? "Título del feriado..." : "Deshabilitado"}
-                  className={`filter-input flex-1 bg-gray-950 border p-2 rounded text-sm outline-none transition-all disabled:opacity-40`}
+                  className={`filter-input flex-1 bg-gray-950 border p-2 rounded text-sm outline-none transition-all disabled:opacity-40 ${disabledClasses}`}
                 />
               </div>
               

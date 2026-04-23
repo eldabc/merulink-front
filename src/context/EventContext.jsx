@@ -7,6 +7,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo  }
 import { fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
 import { mapEventToBackend } from '../utils/mappers/eventMapper';
+import { mapBankingEventToBackend } from '../utils/mappers/bankingEventMapper';
 import { GoogleCalendarService } from '../services/googleCalendarService';
 
 const EventContext = createContext();
@@ -49,12 +50,13 @@ export const EventProvider = ({ showNotification, children }) => {
       // Carga Eventos de BD
       const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}`);
       const eventResultsData = eventResults.data.data;
-      
+
       // Eventos Google una vez
       if (googleEvents === '' || currentYear !== year) {
         const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
         console.log("Eventos Google", holidays);
         currentGoogleEvents = holidays;
+        setGoogleEvents(currentGoogleEvents);
       }
 
       if (requestAll || hasGoogle) {
@@ -225,26 +227,6 @@ export const EventProvider = ({ showNotification, children }) => {
   }, [eventData]);
 
 
-  //*** Mapeo Banking array
-  const formattedBankingEvents = (eventsArray, year) => {
-    
-    return eventsArray.map((event, index) => ({
-        id: Date.now() + index,
-        title: event.title,
-        start: event.start + 'T00:00:00',
-        end: null, 
-        allDay: true,
-        extendedProps: {
-          category: 'banking-mondays',
-          label: 'Lunes Bancarios',
-          status: '',
-          description: `Feriado Bancario - Año ${year}`,
-        },
-        className: 'banking-mondays'
-      }));
-
-  }
-
   const filterGoogleDuplicates = (registeredEvents, currentGoogleEvents) => {
 
     // Identifica fechas de eventos Google que se han registrado
@@ -270,24 +252,26 @@ export const EventProvider = ({ showNotification, children }) => {
 
       const editMode = mode === 'edit';
       const msg = editMode ? `actualizado` : `creado`;
-      const formattedEvents = formattedBankingEvents(eventsArray, year);
+      const eventsToSave = mapBankingEventToBackend(eventsArray, year);
+      console.log("eventsToSave", eventsToSave)
+      await axios.post(`${ENV.API_BACK_URL}events/batch-banking`, eventsToSave);
 
-      setEventData(prevData => {
+    //   setEventData(prevData => {
       
-        let oldData = [...prevData];
+    //     let oldData = [...prevData];
       
-        if (editMode) {
-          // Eliminamos eventos previos de lunes bancarios 
-          oldData = prevData.filter(ev => {
-            const isBanking = ev.extendedProps?.category === 'banking-mondays';
-            const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
+    //     if (editMode) {
+    //       // Eliminamos eventos previos de lunes bancarios 
+    //       oldData = prevData.filter(ev => {
+    //         const isBanking = ev.extendedProps?.category === 'banking-mondays';
+    //         const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
             
-            return !(isBanking && isSameYear);
-          });
-        }
+    //         return !(isBanking && isSameYear);
+    //       });
+    //     }
 
-        return [...formattedEvents, ...oldData];
-    });
+    //     return [...formattedEvents, ...oldData];
+    // });
       
       showNotification(`Calendario Bancario ${year} ${msg}`);
       return true;
@@ -300,7 +284,6 @@ export const EventProvider = ({ showNotification, children }) => {
   // Eventos de Google
   const handleGoogleEvents = async (formData) => {
     try {
-      // console.log("GOOGLE", formData)
       // El ID de google es string
       const isCompoundId = isNaN(formData?.id); 
 
