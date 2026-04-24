@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 
 import { normalizeDateToString } from "../../../utils/date-utils";
-import TitleHeader from "../../Shared/TitleHeader";
 
-function BankingMondaysList({events, allBankingEvents}) {
+import TitleHeader from "../../Shared/TitleHeader";
+import RowTableLoading from '../../Shared/RowTableLoading.jsx';
+
+function BankingMondaysList({ events, allBankingEvents, loading }) {
 
   const navigate = useNavigate();
 
   const selectedEvent = () => {
-    navigate("/eventos/lunes-bancarios/ver", { 
-      state: { data: allBankingEvents } 
-    }); 
+    navigate("/eventos/lunes-bancarios/ver"); 
   };
 
   return (
@@ -34,17 +34,21 @@ function BankingMondaysList({events, allBankingEvents}) {
               </tr>
             </thead>
             <tbody>
-              {events.map((item) => (
-                <tr
-                  key={item.id}
-                  onClick={() => selectedEvent()}
-                  className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
-                >
-                  <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>
-                  <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(item.start)}</td>
-                  <td className="px-4 py-3 text-white-700">{item.extendedProps.category.label}</td>
-                </tr>
-              ))}
+              {loading ? (
+                <RowTableLoading colSpan={6} />
+              ) : (
+                events.map((item) => (
+                  <tr
+                    key={item.id}
+                    onClick={() => selectedEvent()}
+                    className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
+                  >
+                    <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>
+                    <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(item.start)}</td>
+                    <td className="px-4 py-3 text-white-700">{item.extendedProps.category.label}</td>
+                  </tr>
+                ))
+             )}
             </tbody>
           </table>
         </div>

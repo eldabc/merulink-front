@@ -5,7 +5,7 @@ import { useGlobalData } from '../context/GlobalDataContext.jsx';
 import { createContext, useContext, useState, useEffect, useCallback, useMemo  } from 'react';
 
 import { fixedEvents } from '../utils/StaticData/event-utils';
-import { CATEGORY_CONFIGS, DEFAULT_CONFIG } from '../utils/eventConfig';
+import { CATEGORY_CONFIGS, DEFAULT_CONFIG, EVENT_CAT } from '../utils/eventConfig';
 import { mapEventToBackend } from '../utils/mappers/eventMapper';
 import { mapBankingEventToBackend } from '../utils/mappers/bankingEventMapper';
 import { GoogleCalendarService } from '../services/googleCalendarService';
@@ -37,7 +37,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
   
 
-  const loadEvents = useCallback(async (categoryKeys = ['all'], history, year = currentYear) => {
+  const loadEvents = useCallback(async (categoryKeys = ['all'], history, year = currentYear, anyDateInCategory = false) => {
     setLoading(true);
     try {
       console.log("History?", history);
@@ -48,7 +48,7 @@ export const EventProvider = ({ showNotification, children }) => {
       const hasGoogle = categoryKeys.includes("google-calendar");
       
       // Carga Eventos de BD
-      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}`);
+      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}&anyDateInCategory=${anyDateInCategory}`);
       const eventResultsData = eventResults.data.data;
 
       // Eventos Google una vez
@@ -254,29 +254,17 @@ export const EventProvider = ({ showNotification, children }) => {
       const msg = editMode ? `actualizado` : `creado`;
       const eventsToSave = mapBankingEventToBackend(eventsArray, year);
       console.log("eventsToSave", eventsToSave)
-      await axios.post(`${ENV.API_BACK_URL}events/batch-banking`, eventsToSave);
-
-    //   setEventData(prevData => {
+      const response =await axios.post(`${ENV.API_BACK_URL}events/batch-banking`, eventsToSave);
       
-    //     let oldData = [...prevData];
-      
-    //     if (editMode) {
-    //       // Eliminamos eventos previos de lunes bancarios 
-    //       oldData = prevData.filter(ev => {
-    //         const isBanking = ev.extendedProps?.category === 'banking-mondays';
-    //         const isSameYear = new Date(ev.start).getFullYear() === parseInt(year);
-            
-    //         return !(isBanking && isSameYear);
-    //       });
-    //     }
-
-    //     return [...formattedEvents, ...oldData];
-    // });
+      // Si la categoría no cambió solo seteamos
+      if (initialLoadCategory.includes(EVENT_CAT.B_MONDAYS.key)) {
+        setEventData(response.data.data)
+      }
       
       showNotification(`Calendario Bancario ${year} ${msg}`);
       return true;
     } catch (error) {
-      showNotification('Error al procesar el calendario bancario', error.message);
+      showNotification('Error al procesar el calendario bancario', error.message, 'error');
       return false;
     }
   };
@@ -303,6 +291,7 @@ export const EventProvider = ({ showNotification, children }) => {
 
 
   const specialDays = useMemo(() => {
+    // const events = eventData || [];
     return eventData
       .filter(event => event.extendedProps?.coloringDay === true)
       .reduce((acc, event) => {

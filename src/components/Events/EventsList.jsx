@@ -160,7 +160,8 @@ export default function EventsList({ categoryKeys }) {
               stringCategory={stringCategory} 
               navigate={navigate} 
               events={paginatedEvents} 
-              allBankingEvents={eventData} //allBankingEvents
+              allBankingEvents={eventData}
+              loading={loading}
             />
           ) : (
 
