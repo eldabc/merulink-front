@@ -46,16 +46,18 @@ export default function EventsList({ categoryKeys }) {
     
 
   useEffect(() => {
-
     // Maneja cambio de categoría o primer render
     const keysString = JSON.stringify(categoryKeys);
     const loaded = JSON.parse(initialLoadCategory);
     const justChanged = location.state?.justChanged;
 
     const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
-
-    if (matchLoadedCategory && justChanged) { 
-      // Si categoría no cambió no se llama backend
+console.log("showHistory", showHistory)
+      console.log("loaded", loaded)
+      console.log("categoryKeys", categoryKeys)
+    if (matchLoadedCategory) { 
+      
+      // Si categoría no cambió no se llama backend && justChanged
       return;
     }
     

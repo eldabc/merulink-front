@@ -96,19 +96,29 @@ export default function EventForm({ mode = 'create' }) {
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {
     if (typeof selectedCategory !== 'undefined') {
+      console.log("selectedCategory", selectedCategory)
       setSelectedCategory(selectedCategory);
     }
-  }, [selectedCategory]); 
-  
-  // Al seleccionar
-  const handleEventChange = (e) => {
-    const selectedEventId = e.target.value;
 
-    if (selectedEventId === 'banking-mondays') {
+    // const selectedEventId = e.target.value;
+
+    if (selectedCategory === 'banking-mondays') {
       setValue('category', '');
       return navigate('/eventos/lunes-bancarios/nuevo'); 
     }
     setValue('endDate', null, { shouldValidate: false });
+
+  }, [selectedCategory]); 
+  
+  // Al seleccionar
+  const handleEventChange = (e) => {
+    // const selectedEventId = e.target.value;
+
+    // if (selectedEventId === 'banking-mondays') {
+    //   setValue('category', '');
+    //   return navigate('/eventos/lunes-bancarios/nuevo'); 
+    // }
+    // setValue('endDate', null, { shouldValidate: false });
 
   };
 
