@@ -68,7 +68,7 @@ export default function EventsList({ categoryKeys }) {
       setCurrentPage(1);
       setShowHistory(false);
       
-      loadEvents(categoryKeys, false);
+      loadEvents({ categoryKeys: categoryKeys });
       
       prevCategoryKeys.current = keysString;
       prevShowHistory.current = false;
@@ -80,7 +80,7 @@ export default function EventsList({ categoryKeys }) {
     // Traer History
     if (prevShowHistory.current !== showHistory) {
       console.log("Carga History", showHistory);
-      loadEvents(categoryKeys, showHistory);
+      loadEvents({ categoryKeys: categoryKeys, history: showHistory});
       prevShowHistory.current = showHistory;
     }
 

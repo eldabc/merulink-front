@@ -37,7 +37,12 @@ export const EventProvider = ({ showNotification, children }) => {
   const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
   
 
-  const loadEvents = useCallback(async (categoryKeys = ['all'], history, year = currentYear, anyDateInCategory = false) => {
+  const loadEvents = useCallback(async ({ 
+    categoryKeys = ['all'], 
+    history = false, 
+    year = currentYear, 
+    anyDateInCategory = false 
+  } = {}) => {
     setLoading(true);
     try {
       console.log("History?", history);
@@ -89,7 +94,7 @@ export const EventProvider = ({ showNotification, children }) => {
     
     try {
       console.log("Refresh", year);
-      await loadEvents(['all'], null, year);
+      await loadEvents({ categoryKeys: ['all'], year: year});
 
     } catch (err) {
       setError(err.message);

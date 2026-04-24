@@ -27,7 +27,7 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
     const loadFormData = async () => {
       try {
 
-        await loadEvents([EVENT_CAT.B_MONDAYS.key], null,null, true);
+        await loadEvents({ categoryKeys: [EVENT_CAT.B_MONDAYS.key], anyDateInCategory: true});
 
       } catch (error) {
         console.error("Error cargando dependencias del formulario", error);
