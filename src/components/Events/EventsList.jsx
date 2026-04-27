@@ -52,12 +52,9 @@ export default function EventsList({ categoryKeys }) {
     const justChanged = location.state?.justChanged;
 
     const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
-console.log("showHistory", showHistory)
-      console.log("loaded", loaded)
-      console.log("categoryKeys", categoryKeys)
-    if (matchLoadedCategory) { 
-      
-      // Si categoría no cambió no se llama backend && justChanged
+
+    if (matchLoadedCategory && justChanged) { // Si categoría no cambió no se llama backend 
+      location.state.justChanged = false;    
       return;
     }
     
@@ -75,6 +72,10 @@ console.log("showHistory", showHistory)
       prevCategoryKeys.current = keysString;
       prevShowHistory.current = false;
       isFirstRender.current = false;
+      
+      if (location.state && location.state.justChanged) {
+        location.state.justChanged = false;
+      }
 
       return;
     }

@@ -262,9 +262,9 @@ export const EventProvider = ({ showNotification, children }) => {
       const response =await axios.post(`${ENV.API_BACK_URL}events/batch-banking`, eventsToSave);
       
       // Si la categoría no cambió solo seteamos
-      // if (initialLoadCategory.includes(EVENT_CAT.B_MONDAYS.key)) {
+      if (initialLoadCategory.includes(EVENT_CAT.B_MONDAYS.key)) {
         setEventData(response.data.data)
-      // }
+      }
       
       showNotification(`Calendario Bancario ${year} ${msg}`);
       return true;
