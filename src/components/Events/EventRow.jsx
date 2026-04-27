@@ -22,6 +22,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
   const blockBtn = isNotConfirmedEvent ? false : true;
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar evento con Estatus Confirmado' : 'Eliminar';
   const eventCategoryLabel = event?.extendedProps?.specialLabel ? event?.extendedProps?.specialLabel : event?.extendedProps?.category?.label;
+  const eventIsToday = event?.start.split('T')[0] === new Date().toISOString().split('T')[0];
 
   const renderDescriptionComments = () => {
     const description = event.extendedProps?.description ? event.extendedProps?.description : '';
@@ -43,7 +44,8 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
       <tr
         key={event.id}
         onClick={() => selectedEvent(event.id)}
-        className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
+        title={eventIsToday ? "¡Este evento es Hoy!" : ''}
+        className={`border-b tr-table hover:bg-blue-50 transition-colors duration-150 ${eventIsToday && '!border !border-red-500 hover:!border-3'}`}
       >
         <td className="px-4 py-3 text-white-800 font-medium">{event.title}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(event?.start)}</td>

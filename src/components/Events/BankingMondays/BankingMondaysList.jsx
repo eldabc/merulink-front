@@ -37,17 +37,21 @@ function BankingMondaysList({ events, allBankingEvents, loading }) {
               {loading ? (
                 <RowTableLoading colSpan={6} />
               ) : (
-                events.map((item) => (
-                  <tr
-                    key={item.id}
-                    onClick={() => selectedEvent()}
-                    className="border-b tr-table hover:bg-blue-50 transition-colors duration-150"
-                  >
-                    <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>
-                    <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(item.start)}</td>
-                    <td className="px-4 py-3 text-white-700">{item.extendedProps.category.label}</td>
-                  </tr>
-                ))
+                events.map((item) => {
+                  const eventIsToday = item?.start.split('T')[0] === new Date().toISOString().split('T')[0];
+                  return (
+                    <tr
+                      key={item.id}
+                      title={eventIsToday ? "¡Este evento es Hoy!" : ''}
+                      onClick={() => selectedEvent()}
+                      className={`border-b tr-table hover:bg-blue-50 transition-colors duration-150 ${eventIsToday && '!border !border-red-500 hover:!border-3 '}`}
+                    >
+                      <td className="px-4 py-3 text-white-800 font-medium">{item.title}</td>
+                      <td className="px-4 py-3 text-white-800 font-medium ">{normalizeDateToString(item.start)}</td>
+                      <td className="px-4 py-3 text-white-700">{item.extendedProps.category.label}</td>
+                    </tr>
+                  );
+                })
              )}
             </tbody>
           </table>
