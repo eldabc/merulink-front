@@ -8,7 +8,7 @@ import ConfirmDialog  from '../../Shared/ConfirmDialog';
 
 function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
 
-  const { templates, getTemplatesOnly, loadingTemplates, updateEvent, isTemplate } = useEvents();
+  const { templates, getTemplatesOnly, loadingTemplates, updateEvent, isTemplate, deleteEventTemplate } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
@@ -22,28 +22,11 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
   };
 
   const handleConfirmDelete = async () => {
+    console.log("selectedTemplate", selectedTemplate)
     if (!selectedTemplate) return;
-    
-    const messagge = "Plantilla eliminada";
-    const { extendedProps, ...restOfData } = selectedTemplate;
-    const divideDateTimeStart = divideDateTime(restOfData?.start);
-    const divideDateTimeEnd = divideDateTime(restOfData?.end);
-    
-    // Fusionamos todo en un nuevo objeto plano
-    const flattenedData = {
-      ...restOfData,
-      eventName: restOfData.title,
-      startDate: divideDateTimeStart.date, 
-      startTime: divideDateTimeStart.time, 
-      endDate: divideDateTimeEnd.date, 
-      endTime: divideDateTimeEnd.time, 
-      ...extendedProps,
-      createdBy: extendedProps.createdBy,
-      isTemplate: false,
-      templateName: ''
-    };
 
-    await updateEvent(flattenedData, messagge);
+    await deleteEventTemplate(selectedTemplate);
+    // await updateEvent(flattenedData, messagge);
     setIsModalOpen(false);
     setSelectedTemplate(null);
   };
@@ -80,7 +63,7 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
         }}
         onConfirm={handleConfirmDelete}
         title="Eliminar Plantilla"
-        message={`¿Estás seguro de que deseas eliminar "${selectedTemplate?.extendedProps?.templateName}"?`}
+        message={`¿Está seguro de que desea eliminar "${selectedTemplate?.name}"?`}
       />
     </div>
   );

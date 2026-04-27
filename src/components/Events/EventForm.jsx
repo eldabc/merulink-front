@@ -126,7 +126,8 @@ export default function EventForm({ mode = 'create' }) {
     return  { ...data, id: event.id }; 
   }
 
-  const eventReset = (category, event) => {
+  const eventReset = (event) => { // category, 
+    // console.log("templateData", event?.extendedProps?.isTemplate)
 
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
@@ -168,11 +169,11 @@ export default function EventForm({ mode = 'create' }) {
         if (event?.extendedProps?.createdBy) setCreatedBy(event?.extendedProps?.createdBy);
 
         setTemplateInfo(event?.extendedProps?.templateInfo);
-        reset( eventReset('', event) );
+        reset( eventReset(event) ); //'', 
 
       } else if (createMode) {
         setCreatedBy('Sistema'); // Cuando tengamos autenticación, aquí se asignaría el usuario actual
-        reset( eventReset('', null) );
+        reset( eventReset(null) ); //'', 
       }
 
   }, [event, mode, reset, setTemplateName, setIsTemplate, locations]);
@@ -252,17 +253,17 @@ export default function EventForm({ mode = 'create' }) {
   }
 
   const applyTemplate = (templateData) => {
-    // console.log("templateData", templateData?.event)
+    console.log("templateData", templateData)
     const data = { 
                   ...templateData?.event, 
                   extendedProps: { 
-                    ...templateData?.event.extendedProps, 
-                    // isTemplate: false,
+                    ...templateData?.event?.extendedProps, 
+                    isTemplate: false,
                     templateName: ''
                   } 
                 }
-    const eventFormated = eventReset(selectedCategory, data);
-      reset(eventFormated);
+    // const eventFormated = eventReset(data); // selectedCategory, 
+    reset(data);
     
     // Volver a pestaña del formulario
     setActiveTab('formEvent');
@@ -322,6 +323,7 @@ export default function EventForm({ mode = 'create' }) {
                     <EventFormContent
                       register={register}
                       errors={errors}
+                      isTemplate={event?.extendedProps?.isTemplate}
                       viewMode={viewMode}
                       editMode={editMode}
                       config={config}
@@ -337,6 +339,7 @@ export default function EventForm({ mode = 'create' }) {
                       globalLoading={globalLoading}
                       locations={locations}
                       templateInfo={templateInfo}
+                      watch={watch}
                     />
                   )}
                   

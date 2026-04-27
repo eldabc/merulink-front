@@ -6,10 +6,12 @@ import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
+import Toggle from '../Shared/Toggle.jsx';
 
 export default function EventFormContent({ 
   register, 
-  errors,  
+  errors, 
+  isTemplate, 
   viewMode, 
   editMode,
   config,
@@ -24,7 +26,8 @@ export default function EventFormContent({
   disabledClasses,
   globalLoading,
   locations,
-  templateInfo
+  templateInfo,
+  watch
 }) {
 
   const yearlyEvent = config?.isYearly;
@@ -35,6 +38,7 @@ export default function EventFormContent({
       <TitleHeader title={editMode ? ( 'Editar Evento' ):( 'Datos Evento')} /> 
 
       <InfoToggleSeccion
+        isRegisteredTemplate={isTemplate}
         createdBy={createdBy}
         showTemplateToggle={!isGoogleCategory}
         readOnly={viewMode}
@@ -116,7 +120,14 @@ export default function EventFormContent({
             <>
               <LabelFieldForm field="Estado" simbol="*" />
               <div className='items-center gap-2'>
-                <select 
+                <Toggle   
+                  readOnly={viewMode}
+                  register={register}
+                  errors={errors}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                {/* <select 
                   disabled= {viewMode}
                   {...register('status')}
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
@@ -124,7 +135,7 @@ export default function EventFormContent({
                   <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                   <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
                   <option className='bg-[#3c4042]' value='Confirmado'>Confirmado</option>
-                </select>
+                </select> */}
                 {errors?.status && <ErrorMessage msg={errors.status.message} /> }  
               </div>
             </> 

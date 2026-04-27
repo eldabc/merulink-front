@@ -274,6 +274,30 @@ export const EventProvider = ({ showNotification, children }) => {
     }
   };
 
+  const deleteEventTemplate = async (eventTemplate) => {
+    try {
+
+      const eventId = eventTemplate.id;
+      console.log("eventTemplate for delete", eventTemplate)
+      if (!eventId) {
+        showNotification('Error:', 'No se encontró el ID de la plantilla', 'error');
+        return false;
+      }
+
+      await axios.delete(`${ENV.API_BACK_URL}eventTemplates/${eventId}`);
+
+      setTemplates(prevData => {
+        return prevData.filter(ev => ev.id !== eventId);
+      });
+
+      showNotification(`Plantilla ${eventTemplate?.event?.title} eliminada con éxito`);
+      return true;
+
+    } catch (error) {
+      showNotification('Error al eliminar la plantilla', error.message, 'error');
+    }
+  };
+
   // Eventos de Google
   const handleGoogleEvents = async (formData) => {
     try {
@@ -315,6 +339,7 @@ export const EventProvider = ({ showNotification, children }) => {
     refetchEvents,
     createEvent,
     createEditBankingEvents,
+    deleteEventTemplate,
     handleGoogleEvents,
     updateEvent,
     deleteEvent,
