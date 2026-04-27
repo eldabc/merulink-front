@@ -23,7 +23,7 @@ export default function EventsList({ categoryKeys }) {
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { loading, eventData, loadEvents, initialLoadCategory } = useEvents();
+  const { loading, eventData, loadEvents, initialLoadCategory, config, setSelectedCategory } = useEvents();
   const [currentPage, setCurrentPage] = useState(1); 
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
@@ -40,17 +40,17 @@ export default function EventsList({ categoryKeys }) {
   const stringCategory = stringCategoryEvents(categoryKeys);
   const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key;
   const isEventWithStatus = categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
-  const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : ''; //'banking-mondays' ? '/lunes-bancarios'
+  const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : '';
   const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key;
-  const eventWithoutLocation = holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key;
-    
+  const eventWithoutLocation = config?.hasLocation; //holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key;
+  // console.log("config?.hasLocation", config?.hasLocation);
 
   useEffect(() => {
     // Maneja cambio de categoría o primer render
     const keysString = JSON.stringify(categoryKeys);
     const loaded = JSON.parse(initialLoadCategory);
     const justChanged = location.state?.justChanged;
-
+    
     const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
 
     if (matchLoadedCategory && justChanged) { // Si categoría no cambió no se llama backend 
@@ -72,11 +72,11 @@ export default function EventsList({ categoryKeys }) {
       prevCategoryKeys.current = keysString;
       prevShowHistory.current = false;
       isFirstRender.current = false;
-      
+
       if (location.state && location.state.justChanged) {
         location.state.justChanged = false;
       }
-
+      setSelectedCategory(categoryKeys[0]);
       return;
     }
 
@@ -96,7 +96,7 @@ export default function EventsList({ categoryKeys }) {
     const hasSearchDate = searchDateValue && searchDateValue !== '';
     const searching = hasSearchText || hasSearchDate;
 
-    let filtered = eventData; //items
+    let filtered = eventData;
 
     // Filtrar por texto
     if (hasSearchText) {
@@ -115,13 +115,13 @@ export default function EventsList({ categoryKeys }) {
       dataToDisplay: filtered,
       isSearching: searching
     };
-  }, [eventData, searchValue, searchDateValue]); //items
+  }, [eventData, searchValue, searchDateValue]);
   
 
   const searchTextFragmentAvise = isSearching && ` para la búsqueda ${searchValue}`;
   
   const hasBankingRegisters = isBankingMondays && eventData.some( 
-    ev => ev.extendedProps?.category.key === 'banking-mondays'
+    ev => ev.extendedProps?.category.key === EVENT_CAT.B_MONDAYS.key
   ) ? true : false;
 
   // Cálculos de paginación
@@ -191,7 +191,7 @@ export default function EventsList({ categoryKeys }) {
                             </>
                           )}
 
-                          {!eventWithoutLocation && (
+                          {eventWithoutLocation && (
                             <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
                           )}
 
