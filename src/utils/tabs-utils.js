@@ -10,4 +10,5 @@ export const tabs = [
 export const tabsEvents = [
     { id: "formEvent", label: "Nuevo Evento" },
     { id: "eventTemplates", label: "Usar Plantilla" },
+    { id: "clientContact", label: "Datos del Cliente" },
 ];

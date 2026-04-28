@@ -355,6 +355,7 @@ export const EventProvider = ({ showNotification, children }) => {
     setSelectedCategory, // Para actualizarla desde el select
     config,
     initialLoadCategory,
+    setInitialLoadCategory,
     loadEventById
   };
 
