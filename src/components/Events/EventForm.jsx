@@ -183,7 +183,7 @@ export default function EventForm({ mode = 'create' }) {
   }, [selectedCategory, config]);
 
   const onSubmit = async (data) => {
-console.log("HTML para Laravel:", data);
+
     let success = false;
     data = { ...data, createdBy, isTemplate, templateName };
 

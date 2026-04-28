@@ -242,12 +242,25 @@ export default function EventFormContent({
             <>
             <LabelFieldForm field="Comentarios" />
             <div className="w-full max-w-2xl">
-              <textarea
+              <Controller
+                name="comments"
+                control={control}
+                render={({ field }) => (
+                  <RichTextEditor 
+                    key={viewMode ? 'readonly' : 'editable'}
+                    readonly={viewMode}
+                    value={field.value} 
+                    onChange={field.onChange} 
+                    placeholder="Ingrese comentarios adicionales..."
+                  />
+                )}
+              />
+              {/* <textarea
                 readOnly={viewMode}
                 {...register('comments')}
                 placeholder="Ingrese comentarios, cambios, observaciones..."
                 className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${disabledClasses}`}
-              />
+              /> */}
               {errors?.comments && <ErrorMessage msg={errors.comments.message} /> }  
             </div>
             </>
