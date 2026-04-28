@@ -8,7 +8,7 @@ import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
 import Toggle from '../Shared/Toggle.jsx';
-import TiptapEditor from '../Shared/TiptapEditor';
+import RichTextEditor from '../Shared/RichTextEditor';
 
 export default function EventFormContent({ 
   register, 
@@ -218,9 +218,12 @@ export default function EventFormContent({
                 name="description"
                 control={control}
                 render={({ field }) => (
-                  <TiptapEditor 
+                  <RichTextEditor 
+                    key={viewMode ? 'readonly' : 'editable'}
+                    readonly={viewMode}
                     value={field.value} 
                     onChange={field.onChange} 
+                    placeholder="Ingrese detalles adicionales..."
                   />
                 )}
               />

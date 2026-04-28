@@ -25,7 +25,6 @@ export default function EventForm({ mode = 'create' }) {
       resolver: yupResolver(eventValidationSchema),
       mode: 'onChange',
       reValidateMode: 'onChange',
-      defaultValues: { description: '' }
   });
   
   const [createdBy, setCreatedBy] = useState('Sistema');
@@ -41,7 +40,7 @@ export default function EventForm({ mode = 'create' }) {
     handleGoogleEvents, 
     isTemplate, 
     config,
-    setIsTemplate, templateName, setTemplateName, setSelectedCategory, loadEventById 
+    setIsTemplate, templateName, setTemplateName, setSelectedCategory, loadEventById, initialLoadCategory, setInitialLoadCategory 
   } = useEvents();
 
   const { globalLoading, loadEventCategories, categoryEvents, getLocations, locations  } = useGlobalData();
@@ -96,29 +95,20 @@ export default function EventForm({ mode = 'create' }) {
 
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {
-    if (typeof selectedCategory !== 'undefined') {
+    if (selectedCategory) { //typeof selectedCategory !== 'undefined'
       // console.log("selectedCategory", selectedCategory)
+      if (!initialLoadCategory) setInitialLoadCategory(JSON.stringify([selectedCategory]));
       setSelectedCategory(selectedCategory);
     }
 
-    if (selectedCategory === 'banking-mondays') {
+    if (selectedCategory === EVENT_CAT.B_MONDAYS.key) {
       setValue('category', '');
       return navigate('/eventos/lunes-bancarios/nuevo'); 
     }
     setValue('endDate', null, { shouldValidate: false });
 
   }, [selectedCategory]); 
-  
-  // Al seleccionar
-  // const handleEventChange = (e) => {
-    // const selectedEventId = e.target.value;
 
-    // if (selectedEventId === 'banking-mondays') {
-    //   setValue('category', '');
-    //   return navigate('/eventos/lunes-bancarios/nuevo'); 
-    // }
-    // setValue('endDate', null, { shouldValidate: false });
-  // };
 
   const updatedData = (data, event) => { 
     return  { ...data, id: event.id }; 

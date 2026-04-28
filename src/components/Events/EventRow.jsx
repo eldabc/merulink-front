@@ -58,7 +58,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
         ) : ( 
           <>
             <td className="px-4 py-3 text-white-800 font-medium ">{formatTimeTo12H(divideDateTimeStart?.time)}</td>
-            <td className="px-4 py-3 text-white-700">{renderDescriptionComments()}</td>
+            <td className="px-4 py-3 text-white-700" dangerouslySetInnerHTML={{ __html: renderDescriptionComments() }}></td>
           </>
         )}
 
