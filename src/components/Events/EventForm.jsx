@@ -9,7 +9,7 @@ import { eventValidationSchema } from '../../utils/Validations/eventValidationSc
 import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { getPathByCategory, EVENT_CAT } from '../../utils/eventConfig.js';
-// import { checkEventWithoutLocation } from '../../utils/Events/events-utils.js'
+import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
@@ -96,11 +96,9 @@ export default function EventForm({ mode = 'create' }) {
   // Actualizar contexto cuando cambia el valor en form
   useEffect(() => {
     if (typeof selectedCategory !== 'undefined') {
-      console.log("selectedCategory", selectedCategory)
+      // console.log("selectedCategory", selectedCategory)
       setSelectedCategory(selectedCategory);
     }
-
-    // const selectedEventId = e.target.value;
 
     if (selectedCategory === 'banking-mondays') {
       setValue('category', '');
@@ -111,7 +109,7 @@ export default function EventForm({ mode = 'create' }) {
   }, [selectedCategory]); 
   
   // Al seleccionar
-  const handleEventChange = (e) => {
+  // const handleEventChange = (e) => {
     // const selectedEventId = e.target.value;
 
     // if (selectedEventId === 'banking-mondays') {
@@ -119,8 +117,7 @@ export default function EventForm({ mode = 'create' }) {
     //   return navigate('/eventos/lunes-bancarios/nuevo'); 
     // }
     // setValue('endDate', null, { shouldValidate: false });
-
-  };
+  // };
 
   const updatedData = (data, event) => { 
     return  { ...data, id: event.id }; 
@@ -140,6 +137,7 @@ export default function EventForm({ mode = 'create' }) {
     const yearlyEventValue = config?.isYearly;
     const defaultRepitedEvent = yearlyEventValue ? true : event?.extendedProps?.repeatEvent ?? false;
     const defaultRepitedInterval = yearlyEventValue ? 'Anual' : event?.extendedProps?.repeatInterval ?? '';
+    const status = config.hasStatus && createMode ? STATUS_EVENTS.tentative : event?.extendedProps?.status ?? '';
 
     return {
         eventName: event?.title ?? '',
@@ -147,7 +145,7 @@ export default function EventForm({ mode = 'create' }) {
         startTime: divideDateTimeStart?.time ?? null,
         endDate: divideDateTimeEnd?.date ?? null,
         endTime: divideDateTimeEnd?.time ?? null,
-        status: event?.extendedProps?.status ?? '',
+        status: status,
         locationId: event?.extendedProps?.location?.id ?? '',
         repeatEvent: defaultRepitedEvent,
         repeatInterval: defaultRepitedInterval,
@@ -296,7 +294,7 @@ export default function EventForm({ mode = 'create' }) {
                     </div>
                   ) : (
                     <select 
-                      {...register('category' , { onChange: handleEventChange })}
+                      {...register('category' )} //, { onChange: handleEventChange }
                       disabled={globalLoading}
                       className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
                     >

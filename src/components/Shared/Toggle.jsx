@@ -4,17 +4,15 @@ import { useEvents } from '../../context/EventContext';
 import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
 
 function Toggle({ readOnly, register, errors, setValue, watch }) {
-  // Vigilamos el valor actual del campo en el formulario
-  const currentStatus = watch("status");
-  
-  // Determinamos si el checkbox debe estar visualmente "on"
-  const isConfirmed = currentStatus === 'Confirmado';
 
+  const currentStatus = watch("status");
+  const isConfirmed = currentStatus === STATUS_EVENTS.confirmed; // Indica si el checkbox esta visualmente "on"
+  
   const handleToggle = () => {
     if (readOnly) return;
-    // Alternamos manualmente entre los dos valores del diccionario
-    const nextStatus = currentStatus === 'Confirmado' ? 'Tentativo' : 'Confirmado';
-    console.log("next", nextStatus)
+
+    // Alterna manualmente entre los dos valores del diccionario
+    const nextStatus = currentStatus === STATUS_EVENTS.confirmed ? STATUS_EVENTS.tentative : STATUS_EVENTS.confirmed;
     setValue("status", nextStatus, { shouldValidate: true, shouldDirty: true });
   };
 
@@ -41,7 +39,7 @@ function Toggle({ readOnly, register, errors, setValue, watch }) {
         {STATUS_EVENTS.confirmed}
       </span>
 
-      {/* Input oculto que mantiene el valor real para el formulario */}
+      {/* Mantiene el valor real para el formulario */}
       <input type="hidden" {...register("status")} />
     </div>
   );

@@ -1,8 +1,8 @@
 import * as yup from 'yup';
+import { STATUS_EVENTS } from '../StaticData/event-utils';
 
 // Validation schema for Position form
 export const eventValidationSchema = yup.object().shape({
-   
   category: yup
     .string()
     .required('Tipo de evento es requerido'),
@@ -106,7 +106,7 @@ export const eventValidationSchema = yup.object().shape({
       then: (schema) => schema.required('El estado es requerido'),
       otherwise: (schema) => schema.notRequired(),
     })
-   .oneOf(['Tentativo', 'Confirmado'], 'Estado inválido'),
+   .oneOf([STATUS_EVENTS.tentative, STATUS_EVENTS.confirmed], 'Estado inválido'),
     
   coloringDay: yup.boolean(),
 

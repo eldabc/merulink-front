@@ -127,15 +127,6 @@ export default function EventFormContent({
                   setValue={setValue}
                   watch={watch}
                 />
-                {/* <select 
-                  disabled= {viewMode}
-                  {...register('status')}
-                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
-                >
-                  <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                  <option className='bg-[#3c4042]' value='Tentativo'>Tentativo</option>
-                  <option className='bg-[#3c4042]' value='Confirmado'>Confirmado</option>
-                </select> */}
                 {errors?.status && <ErrorMessage msg={errors.status.message} /> }  
               </div>
             </> 
