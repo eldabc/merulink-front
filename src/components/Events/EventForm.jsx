@@ -21,10 +21,11 @@ import '../../Calendar.css';
 
 export default function EventForm({ mode = 'create' }) {
   
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm({
       resolver: yupResolver(eventValidationSchema),
       mode: 'onChange',
-      reValidateMode: 'onChange'
+      reValidateMode: 'onChange',
+      defaultValues: { description: '' }
   });
   
   const [createdBy, setCreatedBy] = useState('Sistema');
@@ -192,7 +193,7 @@ export default function EventForm({ mode = 'create' }) {
   }, [selectedCategory, config]);
 
   const onSubmit = async (data) => {
-
+console.log("HTML para Laravel:", data);
     let success = false;
     data = { ...data, createdBy, isTemplate, templateName };
 
@@ -320,6 +321,7 @@ export default function EventForm({ mode = 'create' }) {
                   {activeTab === 'formEvent' && (
                     <EventFormContent
                       register={register}
+                      control={control}
                       errors={errors}
                       isTemplate={event?.extendedProps?.isTemplate}
                       viewMode={viewMode}

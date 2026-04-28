@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Controller } from 'react-hook-form';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 
@@ -7,10 +8,12 @@ import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
 import Toggle from '../Shared/Toggle.jsx';
+import TiptapEditor from '../Shared/TiptapEditor';
 
 export default function EventFormContent({ 
   register, 
-  errors, 
+  control,
+  errors,
   isTemplate, 
   viewMode, 
   editMode,
@@ -211,12 +214,22 @@ export default function EventFormContent({
             <>
             <LabelFieldForm field="Descripción" />
             <div className="w-full max-w-2xl">
-              <textarea
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <TiptapEditor 
+                    value={field.value} 
+                    onChange={field.onChange} 
+                  />
+                )}
+              />
+              {/* <textarea
                 readOnly={viewMode}
                 {...register('description')}
                 placeholder="Ingrese detalles adicionales..."
                 className={`w-full h-24 md:h-32 p-3 rounded-lg filter-input outline-none transition-all resize-none ${disabledClasses}`}
-              />
+              /> */}
               {errors?.description && <ErrorMessage msg={errors.description.message} /> }  
             </div>
             </>
