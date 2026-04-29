@@ -17,6 +17,8 @@ import SpanText from '../Shared/SpanText.jsx';
 import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
+import ClientContactForm from '../Client/ClientContactForm.jsx';
+
 import '../../Calendar.css';
 
 export default function EventForm({ mode = 'create' }) {
@@ -258,6 +260,24 @@ export default function EventForm({ mode = 'create' }) {
     setActiveTab('formEvent');
   };
 
+  const getActivetab = (activeTab) => {
+    switch (activeTab) {
+      case 'eventTemplates':
+        return <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  />
+      case 'clientContact':
+        return ( 
+          <ClientContactForm 
+            register={register}
+            errors={errors}
+            viewMode={viewMode}
+            disabledClasses={disabledClasses}
+            setValue={setValue}
+            watch={watch}
+          />
+        );
+    }  
+  };
+
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
       {loading ? (
@@ -333,9 +353,11 @@ export default function EventForm({ mode = 'create' }) {
                     />
                   )}
                   
-                  {activeTab === 'eventTemplates' && ( 
+                  {/* {activeTab === 'eventTemplates' && ( 
                     <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> 
-                  )}
+                  )} */}
+
+                  {getActivetab(activeTab)}
 
                 </div>
                 

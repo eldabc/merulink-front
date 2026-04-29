@@ -9,7 +9,6 @@ import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
 import Toggle from '../Shared/Toggle.jsx';
 import RichTextEditor from '../Shared/RichTextEditor';
-import ClientContactForm from '../Client/ClientContactForm.jsx';
 
 export default function EventFormContent({ 
   register, 
@@ -210,18 +209,6 @@ export default function EventFormContent({
           )}
         </div>
         
-        {config?.hasClientContact && ( 
-          // <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full div-border">
-            <ClientContactForm 
-              register={register}
-              errors={errors}
-              viewMode={viewMode}
-              disabledClasses={disabledClasses}
-              setValue={setValue}
-              watch={watch}
-            />
-          // </div>
-        )}
         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
           {config?.hasDescription  && (
             <>
