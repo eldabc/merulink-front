@@ -1,9 +1,11 @@
-import { phoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
+import { phoneCodes, mobilePhoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from "../../Shared/ErrorMessage";
+import InputEmail from "../../Shared/InputEmail";
+import PhoneNumber from "../../Shared/PhoneNumber";
 
-export default function PersonalData({ viewMode, register, errors, disabledClasses }) {
-  
+export default function PersonalData({ viewMode, register, errors, disabledClasses, setValue }) {
+
    return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">
 
@@ -99,19 +101,14 @@ export default function PersonalData({ viewMode, register, errors, disabledClass
         <div>
           <LabelFieldForm field="Teléfono Móvil" simbol="*"/>
            <div className="flex flex-row">
-              <select 
-                disabled= {viewMode}
-                {...register('mobilePhoneCode')} 
-                className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}>
-                  <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                  <option className='bg-[#3c4042]' value="0414">0414</option>
-                  <option className='bg-[#3c4042]' value="0424">0424</option>
-                  <option className='bg-[#3c4042]' value="0416">0416</option>
-                  <option className='bg-[#3c4042]' value="0426">0426</option>
-                  <option className='bg-[#3c4042]' value="0412">0412</option>
-                  <option className='bg-[#3c4042]' value="0422">0422</option>
-              </select>
-              <input readOnly={viewMode} {...register('mobilePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
+              <PhoneNumber 
+                type="mobilePhone" 
+                disabled={viewMode} 
+                register={register} 
+                dinamicClasses={disabledClasses} 
+                arrayCodes={mobilePhoneCodes}
+                setValue={setValue}
+              />
           </div>
           {errors?.mobilePhone && <ErrorMessage msg={errors.mobilePhone.message} />}
         </div>
@@ -119,25 +116,21 @@ export default function PersonalData({ viewMode, register, errors, disabledClass
         <div>
           <LabelFieldForm field="Teléfono Habitación"/>
            <div className="flex flex-row">
-              <select 
-                disabled= {viewMode}
-                {...register('homePhoneCode')} 
-                className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
-              >
-                {phoneCodes.map(code => (
-                  <option key={`phoneHome-${code.id}`} className='bg-[#3c4042]' value={code.areaCode}>
-                    {code.areaCode}
-                  </option>
-                ))}
-              </select>
-              <input readOnly={viewMode} {...register('homePhone')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
+              <PhoneNumber 
+                type="homePhone" 
+                disabled={viewMode} 
+                register={register} 
+                dinamicClasses={disabledClasses} 
+                arrayCodes={phoneCodes}
+                setValue={setValue}
+              />
           </div>
           {errors?.homePhone && <ErrorMessage msg={errors.homePhone.message} />}
         </div>
 
         <div className="">
           <LabelFieldForm field="Correo Electrónico" simbol="*"/>
-             <input readOnly={viewMode} {...register('email')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
+            <InputEmail readOnly={viewMode} register={register} disabledClasses={disabledClasses} />
           {errors?.email && <ErrorMessage msg={errors.email.message} />}
         </div>
 

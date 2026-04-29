@@ -1,6 +1,7 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 function HeadFormButtons({ onBack, url = '', data = null, setIsEditing, disabled }) {
   const navigate = useNavigate();
 

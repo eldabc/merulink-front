@@ -1,3 +1,5 @@
+import { sanitizePhone } from "../global-utils";
+
 export const mapEmployeeToBackend = (formData) => ({
   id: formData.id ? formData.id : Date.now(),
   ci: formData.ci,
@@ -13,8 +15,8 @@ export const mapEmployeeToBackend = (formData) => ({
   marital_status: formData.maritalStatus,
   blood_type: formData.bloodType ?? '',
   email: formData.email,
-  mobile_phone: formData.mobilePhone ? `${formData.mobilePhoneCode}-${formData.mobilePhone}` : null,
-  home_phone: formData?.homePhone ? `${formData.homePhoneCode}-${formData.homePhone}` : null,
+  mobile_phone: formData.mobilePhone ? sanitizePhone(`${formData.mobilePhoneCode}-${formData.mobilePhone}`) : null,
+  home_phone: formData?.homePhone ? sanitizePhone(`${formData.homePhoneCode}-${formData.homePhone}`) : null,
   address: formData.address,
   join_date: formData.joinDate,
   department_id: formData.department,

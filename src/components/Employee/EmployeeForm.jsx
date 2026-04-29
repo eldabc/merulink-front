@@ -8,7 +8,7 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
-import { splitPhone } from '../../utils/StaticData/phoneCodes-utils';
+import { splitPhone } from '../../utils/global-utils';
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
 
 import PersonalData from "./tabs/PersonalData";
@@ -159,8 +159,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     let success = false;
     const submissionData = { id: employee?.id ?? null, ...data, };
 
-    console.log('Data submit:', submissionData);
-
     if (editMode && employee) {
       success = await updateEmployee(submissionData);
     } else {
@@ -218,7 +216,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   const employeeReset = () => {
     const fullMobilePhone = employee?.mobilePhone || '';
-    const { code: mobileCode, number: mobileNumber } = splitPhone(fullMobilePhone);
+    const { code: mobileCode, number: mobileNumber } = splitPhone(fullMobilePhone, true);
 
     const fullHomePhone = employee?.homePhone || '';
     const { code: homeCode, number: homeNumber } = splitPhone(fullHomePhone);
@@ -270,7 +268,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'personal':
-        return <PersonalData viewMode={viewMode} register={register} errors={errors} disabledClasses={disabledClasses} />;
+        return <PersonalData viewMode={viewMode} register={register} errors={errors} disabledClasses={disabledClasses} setValue={setValue} />;
       case 'work':
         return <WorkData 
                   createMode={createMode}
@@ -398,11 +396,11 @@ export default function EmployeeForm({ mode = 'create' }) {
         </div>
       
         <TabButtonsManager 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
-            employee={employee}
-            errors={errors}
-            // tempFlags={tempFlags}
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          employee={employee}
+          errors={errors}
+          // tempFlags={tempFlags}
         />
 
         <div className="mt-6">

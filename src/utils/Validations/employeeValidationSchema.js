@@ -74,9 +74,9 @@ export const employeeValidationSchema = yup.object().shape({
     .string()
     .nullable()
     .required('Teléfono móvil es requerido')
-    .matches(/^[0-9]{7}$/, 'Formato inválido. Debe ser 7 dígitos (ej: 1234567).')
-    .min(7, 'Debe contener 7 dígitos')
-    .max(7, 'Debe contener 7 dígitos'), 
+    .matches(/^[0-9]{3}-[0-9]{4}$/, 'Formato inválido. Debe ser 000-0000')
+    .min(8, 'Debe contener el formato completo (ej: 000-0000)')
+    .max(8, 'Debe contener el formato completo (ej: 000-0000)'),
 
   homePhoneCode: yup.string(),
   homePhone: yup
