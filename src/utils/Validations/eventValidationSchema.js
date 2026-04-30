@@ -126,24 +126,33 @@ export const eventValidationSchema = yup.object().shape({
   // Validación de event contacts
     contacts: yup.array().of(
       yup.object().shape({
-        id: yup.number(),
+        id: yup.number().optional(),
   
         firstName: yup
           .string()
-          .required('Nombre del contacto es requerido')
+          .optional()
           .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
           
         lastName: yup
           .string()
-          .required('Apellido del contacto es requerido')
+          .optional()
           .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
         
-        email: yup.string().email('Email inválido').required('Email es requerido'),
+        email: yup.string().email('Email inválido').optional(),
                 
         phone: yup
           .string()
-          .required('Teléfono es requerido')
-          .matches(/^[0-9-]+$/, 'Solo se permiten números.'),
+          .nullable()
+          .transform((curr, orig) => (orig === '' ? null : curr))
+          .when(['firstName', 'lastName'], {
+            is: (firstName, lastName) => firstName || lastName,
+            then: (schema) => schema
+              .required('Teléfono es requerido')
+              .matches(/^[0-9]{3}-[0-9]{4}$/, 'Formato inválido. Debe ser 000-0000')
+              .min(8, 'Debe contener el formato completo (ej: 000-0000)')
+              .max(8, 'Debe contener el formato completo (ej: 000-0000)'),
+            otherwise: (schema) => schema.optional(),
+          }),
           
       })
     ),
