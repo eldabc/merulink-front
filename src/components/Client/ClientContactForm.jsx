@@ -12,6 +12,7 @@ import InputEmail from "../Shared/InputEmail";
 import PhoneNumberEventContact from "../Shared/PhoneNumberEventContact";
 import InputGeneric from "../Shared/InputGeneric";
 import ButtonTrash from '../Shared/ButtonTrash';
+import ContactItem from './ContactItem';
 
 function ClientContactForm({ viewMode, disabledClasses }) { // register, errors, , setValue, watch 
 
@@ -20,73 +21,40 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "phones", 
+    name: "contacts", 
   });
 
   return (
-    <div className="w-full div-border"> 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">                    
-        <>
-        <LabelFieldForm field="Nombre" simbol="*" />
-          <InputGeneric readOnly={viewMode} name="firstName" register={register} dinamicClasses={disabledClasses} />
-        {errors?.firstName && <ErrorMessage msg={errors.firstName.message} />}  
-        
+    <div className="w-full">
+      <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
+        <LabelFieldForm field="Contactos" simbol="*" />
+        {!viewMode &&  fields.length < 3 && (
+          <button
+            type="button"
+            onClick={() => append({ firstName: "", lastName: "", email: "", phones: [{ code: mobilePhoneCodes[0]?.code ?? '', number: "" }] })}
+            className="mb-2 w-full ml-2 md:w-50! h-10! flex items-center justify-center text-sm transition-colors mr-2.5"
+            title="Añadir Contacto"
+          >
+            + Agregar Contacto
+          </button>
+        )}
+      </div>
 
-        <LabelFieldForm field="Apellido" simbol="*" />
-          <InputGeneric readOnly={viewMode} name="lastName" register={register} dinamicClasses={disabledClasses} />
-        {errors?.lastName && <ErrorMessage msg={errors.lastName.message} />}  
-
-        <LabelFieldForm field="Email" />
-        <div>
-          <InputEmail readOnly={viewMode} register={register} disabledClasses={disabledClasses} />
-          {errors?.email && <ErrorMessage msg={errors.email.message} /> }
-        </div>
-        
-        <div className="md:col-span-4">
-          <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
-            <LabelFieldForm field="Teléfono Móvil" simbol="*" />
-            {!viewMode && (
-              <button
-                type="button"
-                onClick={() => append({ code: mobilePhoneCodes[0]?.code ?? '', number: "" })}
-                className="mb-2 w-10! h-10! flex items-center justify-center text-sm transition-colors mr-2.5"
-                title="Añadir Número"
-              >
-                +
-              </button>
-            )}
-            
-          </div>
-
-          <div className="flex flex-col gap-3 pl-3 pr-3">
-            {fields.map((item, index) => (
-              <div key={item.id} className="flex items-start gap-2 animate-fade-in">
-                <div className="flex-grow">
-                  <PhoneNumberEventContact 
-                    codeNumberName={`phones.${index}.code`} 
-                    numberName={`phones.${index}.number`} 
-                    type="mobilePhone"
-                    disabled={viewMode} 
-                    register={register} 
-                    control={control}
-                    dinamicClasses={disabledClasses} 
-                    arrayCodes={mobilePhoneCodes} 
-                    setValue={setValue}
-                  />
-                  {errors?.phones?.[index]?.number && (
-                    <ErrorMessage msg={errors.phones[index].number.message} />
-                  )}
-                </div>
-
-                {!viewMode && fields.length > 1 && (
-                  <ButtonTrash disabled={viewMode} remove={remove} index={index} dinamicClasses={disabledClasses} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-        </>
-      </div>  
+      <div className="flex flex-col gap-3">
+        {fields.map((item, index) => (
+          <ContactItem
+            key={item.id}
+            index={index}
+            control={control}
+            register={register}
+            setValue={setValue}
+            errors={errors}
+            viewMode={viewMode}
+            disabledClasses={disabledClasses}
+            removeContact={remove}
+          />
+        ))}
+      </div>
     </div>
   );
 }
