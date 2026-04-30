@@ -1,18 +1,21 @@
 import PhoneInput from "./PhoneInput";
 import OptionSelect from "./OptionSelect";
 
-function PhoneNumber ({ type, disabled, register, dinamicClasses, arrayCodes, setValue }) {
+function PhoneNumber ({ type, number, codeNumber, disabled, register, dinamicClasses, arrayCodes, setValue }) {
+  const numberField = number ?? type;
+  const codeField = codeNumber ?? `${type}Code`;
+
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row gap-2">
       <select 
         disabled={disabled}
-        {...register(`${type}Code`)} 
+        {...register(codeField)} 
         className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${dinamicClasses}`}>
           {arrayCodes.map(code => (
-            <OptionSelect key={`${type}-${code.id}`} value={code.code} text={code.code} />
+            <OptionSelect key={`${codeField}-${code.id}`} value={code.code} text={code.code} />
           ))}
       </select>
-      <PhoneInput type={type} readOnly={disabled} register={register} dinamicClasses={dinamicClasses} setValue={setValue} />
+      <PhoneInput name={numberField} type={type} readOnly={disabled} register={register} dinamicClasses={dinamicClasses} setValue={setValue} />
     </div>
   );
 }

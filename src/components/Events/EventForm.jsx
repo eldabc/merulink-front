@@ -36,6 +36,9 @@ export default function EventForm({ mode = 'create' }) {
     resolver: yupResolver(eventValidationSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    defaultValues: {
+      phones: [{ code: '', number: '' }]
+    }
   });
 
   // Desestructuración de methods
@@ -169,7 +172,7 @@ export default function EventForm({ mode = 'create' }) {
         category: event?.extendedProps?.category?.key, //category
         isTemplate: isTemplateValue,
         templateName: templateNameValue,
-        phones: event?.extendedProps?.phones ?? [{ number: '' }]
+        phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }]
       }
   }
 

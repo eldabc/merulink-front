@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { formatPhone } from "../../utils/global-utils";
 
-const PhoneInput = ({ type = 'mobilePhone', readOnly, register, dinamicClasses, setValue }) => {
+const PhoneInput = ({ type = 'mobilePhone', name, readOnly, register, dinamicClasses, setValue }) => {
+
+  const fieldName = name ?? type;
 
   const handleChange = (e) => {
     const rawValue = e.target.value;
@@ -12,14 +14,14 @@ const PhoneInput = ({ type = 'mobilePhone', readOnly, register, dinamicClasses, 
     // Solo cambia si no excede el largo máximo
     const maxLength = type === 'mobilePhone' ? 8 : 7; // Incluyendo guiones
     if (formatted.length <= maxLength) {
-      setValue(type, formatted, { shouldValidate: true });
+      setValue(fieldName, formatted, { shouldValidate: true });
     }
   };
 
   return (
     <input
       readOnly={readOnly}
-      {...register(type)}
+      {...register(fieldName)}
       type="text"
       onChange={handleChange}
       placeholder={type === 'mobilePhone' ? '000-0000' : '0000000'}

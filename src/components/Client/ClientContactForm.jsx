@@ -48,7 +48,7 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
             {!viewMode && (
               <button
                 type="button"
-                onClick={() => append({ number: "" })}
+                onClick={() => append({ code: mobilePhoneCodes[0]?.code ?? '', number: "" })}
                 className="mb-2 w-10! h-10! flex items-center justify-center text-sm transition-colors mr-2.5"
                 title="Añadir Número"
               >
@@ -63,9 +63,9 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
               <div key={item.id} className="flex items-start gap-2 animate-fade-in">
                 <div className="flex-grow">
                   <PhoneNumber 
-                    // name es phones.index.number
-                    name={`phones.${index}.number`} 
-                    type="mobilePhone" 
+                    codeNumber={`phones.${index}.code`} 
+                    number={`phones.${index}.number`} 
+                    type="mobilePhone"
                     disabled={viewMode} 
                     register={register} 
                     dinamicClasses={disabledClasses} 
