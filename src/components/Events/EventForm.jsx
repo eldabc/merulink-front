@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useEvents } from '../../context/EventContext';
@@ -23,11 +23,31 @@ import '../../Calendar.css';
 
 export default function EventForm({ mode = 'create' }) {
   
-  const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm({
-      resolver: yupResolver(eventValidationSchema),
-      mode: 'onChange',
-      reValidateMode: 'onChange',
+  // const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm({
+  //     resolver: yupResolver(eventValidationSchema),
+  //     mode: 'onChange',
+  //     reValidateMode: 'onChange',
+  //     defaultValues: {
+  //       phones: [{ number: '' }]
+  //     }
+  // });
+
+  const methods = useForm({
+    resolver: yupResolver(eventValidationSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
+
+  // Desestructuración de methods
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    watch, 
+    setValue, 
+    control, 
+    formState: { errors, isSubmitting } 
+  } = methods;
   
   const [createdBy, setCreatedBy] = useState('Sistema');
   const [activeTab, setActiveTab] = useState('formEvent');
@@ -148,7 +168,8 @@ export default function EventForm({ mode = 'create' }) {
         comments: event?.extendedProps?.comments ?? '',
         category: event?.extendedProps?.category?.key, //category
         isTemplate: isTemplateValue,
-        templateName: templateNameValue
+        templateName: templateNameValue,
+        phones: event?.extendedProps?.phones ?? [{ number: '' }]
       }
   }
 
@@ -267,18 +288,19 @@ export default function EventForm({ mode = 'create' }) {
       case 'clientContact':
         return ( 
           <ClientContactForm 
-            register={register}
-            errors={errors}
+            // register={register}
+            // errors={errors}
             viewMode={viewMode}
             disabledClasses={disabledClasses}
-            setValue={setValue}
-            watch={watch}
+            // setValue={setValue}
+            // watch={watch}
           />
         );
     }  
   };
 
   return (
+    <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
       {loading ? (
         <div className='flex justify-center items-center mt-20'>
@@ -372,5 +394,6 @@ export default function EventForm({ mode = 'create' }) {
       )}
       
     </div>
+    </FormProvider>
   );
 }

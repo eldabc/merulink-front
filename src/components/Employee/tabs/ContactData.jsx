@@ -1,5 +1,6 @@
 import { getDisabledClasses } from '../../../utils/global-utils';  
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/solid'; // , TrashIcon
+import ButtonTrash from '../../Shared/ButtonTrash';
 
 export default function ContactData({ viewMode, register, errors, fields = [], append, remove }) {
 
@@ -109,14 +110,15 @@ export default function ContactData({ viewMode, register, errors, fields = [], a
                       )}
                     </td>
                     <td className="p-2 text-center">
-                      <button
+                      {/* <button
                         disabled={viewMode}
                         type="button"
                         onClick={() => remove(index)}
                         className={`inline-flex items-center justify-center p-1 rounded ${disabledClasses}`}
                       >
                         <TrashIcon className="w-4 h-4" />
-                      </button>
+                      </button> */}
+                      <ButtonTrash disabled={viewMode} remove={remove} index={index} dinamicClasses={disabledClasses} />
                     </td>
                   </tr>
                 ))}

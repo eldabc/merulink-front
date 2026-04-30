@@ -3,7 +3,7 @@ import { findFixedEvents } from '../Events/events-utils';
 import { EVENT_CAT } from '../eventConfig.js';
 
 export const mapEventToBackend = (formData) => {
-  console.log("Mapping event data for backend:", formData);
+  // console.log("Mapping event data for backend:", formData);
 
   const isFixed = findFixedEvents(formData); 
   const status = formData.status ? formData.status : 'Creado';
@@ -13,7 +13,7 @@ export const mapEventToBackend = (formData) => {
       || formData.category === EVENT_CAT.VE_HOLIDAYS.key
   ) ? true : false;
       
-  console.log("Fijo?", isFixed);
+  // console.log("Fijo?", isFixed);
 
     return {
       id: formData.id ? formData.id : Date.now(),
