@@ -17,8 +17,13 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
   });
 
   return (
-    <div className="w-full div-border mb-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+    <div className="w-full div-border mb-4 relative">
+      {!viewMode && (
+        <div className="absolute top-2 right-2 z-10">
+          <ButtonTrash disabled={viewMode} remove={removeContact} index={index} dinamicClasses={disabledClasses} />
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-7">
 
         <LabelFieldForm field="Nombre" simbol="*" />
             <InputGeneric readOnly={viewMode} name={`contacts.${index}.firstName`} register={register} dinamicClasses={disabledClasses} />
@@ -47,9 +52,7 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
                 +
               </button>
             )}
-            {!viewMode && (
-              <ButtonTrash disabled={viewMode} remove={removeContact} index={index} dinamicClasses={disabledClasses} />
-            )}
+            
           </div>
 
           <div className="flex flex-col gap-3 pl-3 pr-3">

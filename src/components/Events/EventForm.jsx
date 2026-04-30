@@ -37,7 +37,7 @@ export default function EventForm({ mode = 'create' }) {
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
-      phones: [{ code: '', number: '' }]
+      contacts: [{ firstName: '', lastName: '', email: '', phones: [{ code: '', number: '' }] }]
     }
   });
 
@@ -172,7 +172,8 @@ export default function EventForm({ mode = 'create' }) {
         category: event?.extendedProps?.category?.key, //category
         isTemplate: isTemplateValue,
         templateName: templateNameValue,
-        phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }]
+        phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }],
+        contacts: event?.extendedProps?.contacts ?? [{ firstName: '', lastName: '', email: '', phones: [{ code: '0414', number: '' }] }],
       }
   }
 

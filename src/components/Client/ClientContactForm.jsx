@@ -12,6 +12,7 @@ import InputEmail from "../Shared/InputEmail";
 import PhoneNumberEventContact from "../Shared/PhoneNumberEventContact";
 import InputGeneric from "../Shared/InputGeneric";
 import ButtonTrash from '../Shared/ButtonTrash';
+import ButtonAddContact from '../Shared/ButtonAddContact';
 import ContactItem from './ContactItem';
 
 function ClientContactForm({ viewMode, disabledClasses }) { // register, errors, , setValue, watch 
@@ -24,20 +25,28 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
     name: "contacts", 
   });
 
+  const addContacts = fields.length < 3 ? true : false;
+
+  const handleAddContact = () => {
+    if (addContacts) {
+      append({ firstName: "", lastName: "", email: "", phones: [{ code: mobilePhoneCodes[0]?.code ?? '', number: "" }] });
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
-        <LabelFieldForm field="Contactos" simbol="*" />
-        {!viewMode &&  fields.length < 3 && (
-          <button
+        <LabelFieldForm field="Contacto" />
+          <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={`${disabledClasses} mb-3`} />
+          {/* <button
             type="button"
-            onClick={() => append({ firstName: "", lastName: "", email: "", phones: [{ code: mobilePhoneCodes[0]?.code ?? '', number: "" }] })}
-            className="mb-2 w-full ml-2 md:w-50! h-10! flex items-center justify-center text-sm transition-colors mr-2.5"
+            onClick={() => handleAddContact() }
+            className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm! ml-3 mb-3
+              ${!addContacts && 'cursor-not-allowed opacity-50'} ${disabledClasses}`}
             title="Añadir Contacto"
           >
             + Agregar Contacto
-          </button>
-        )}
+          </button> */}
       </div>
 
       <div className="flex flex-col gap-3">

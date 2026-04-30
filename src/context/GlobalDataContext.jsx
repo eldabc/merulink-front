@@ -140,7 +140,7 @@ export const GlobalDataProvider = ({ children }) => {
     try {
       
       const res = await getEventCategories();
-      console.log("GetEventCategory", res);
+      // console.log("GetEventCategory", res);
       setCategoryEvents(res);
     } catch (error) {
       console.error("Error cargando Categorías de eventos:", error);
@@ -154,7 +154,7 @@ export const GlobalDataProvider = ({ children }) => {
     try {
       
       const res = await getEventLocations();
-      console.log("getEventLocations", res);
+      // console.log("getEventLocations", res);
       setLocations(res);
     } catch (error) {
       console.error("Error cargando Localizaciones:", error);

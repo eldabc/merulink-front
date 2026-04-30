@@ -1,5 +1,5 @@
 import { getDisabledClasses } from '../../../utils/global-utils';  
-import { PlusIcon } from '@heroicons/react/24/solid'; // , TrashIcon
+import ButtonAddContact from '../../Shared/ButtonAddContact';
 import ButtonTrash from '../../Shared/ButtonTrash';
 
 export default function ContactData({ viewMode, register, errors, fields = [], append, remove }) {
@@ -25,7 +25,8 @@ export default function ContactData({ viewMode, register, errors, fields = [], a
       <div className="p-4 rounded border border-[#ffffff21]">
         <div className="flex justify-between items-center mb-4">
           <p className="text-gray-300">Agregar datos de contacto de emergencia (Máximo 5)</p>
-          <button
+          <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={disabledClasses} />
+          {/* <button
             disabled={viewMode}
             type="button"
             onClick={handleAddContact}
@@ -33,7 +34,7 @@ export default function ContactData({ viewMode, register, errors, fields = [], a
           >
             <PlusIcon className="w-4 h-4" />
             Agregar Contacto
-          </button>
+          </button> */}
         </div>
 
         {fields.length === 0 ? (
