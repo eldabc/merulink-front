@@ -9,7 +9,7 @@ import Toggle from "../Shared/Toggle";
 import PhoneInput from "../Shared/PhoneInput";
 import OptionSelect from "../Shared/OptionSelect";
 import InputEmail from "../Shared/InputEmail";
-import PhoneNumber from "../Shared/PhoneNumber";
+import PhoneNumberEventContact from "../Shared/PhoneNumberEventContact";
 import InputGeneric from "../Shared/InputGeneric";
 import ButtonTrash from '../Shared/ButtonTrash';
 
@@ -62,12 +62,13 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
             {fields.map((item, index) => (
               <div key={item.id} className="flex items-start gap-2 animate-fade-in">
                 <div className="flex-grow">
-                  <PhoneNumber 
+                  <PhoneNumberEventContact 
                     codeNumberName={`phones.${index}.code`} 
                     numberName={`phones.${index}.number`} 
                     type="mobilePhone"
                     disabled={viewMode} 
                     register={register} 
+                    control={control}
                     dinamicClasses={disabledClasses} 
                     arrayCodes={mobilePhoneCodes} 
                     setValue={setValue}
