@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Controller } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 
@@ -30,7 +31,8 @@ export default function EventFormContent({
   globalLoading,
   locations,
   templateInfo,
-  watch
+  watch,
+  setActiveTab
 }) {
 
   const yearlyEvent = config?.isYearly;
@@ -65,7 +67,7 @@ export default function EventFormContent({
           </div>
         </div>
 
-        <div className="grid grid-cols-4 md:grid-cols-4 gap-3 w-full div-border">                    
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">                    
 
           <LabelFieldForm field={`Fecha ${(meruEventsFlag && !eventOneDayWithEndTime) ? 'Inicio' : ''}`} simbol="*" />
           <div>
@@ -130,6 +132,13 @@ export default function EventFormContent({
                   setValue={setValue}
                   watch={watch}
                 />
+
+                {config?.hasEventContact && (
+                  <Link onClick={() => setActiveTab('eventContact')} className="text-gray-300! text-xs hover:text-[#9fd8ff]! transition-colors duration-300">
+                    Agregar datos del cliente
+                  </Link>
+                )}
+                
                 {errors?.status && <ErrorMessage msg={errors.status.message} /> }  
               </div>
             </> 

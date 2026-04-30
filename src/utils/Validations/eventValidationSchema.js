@@ -1,7 +1,8 @@
 import * as yup from 'yup';
 import { STATUS_EVENTS } from '../StaticData/event-utils';
+import { EVENT_CAT } from '../eventConfig';
 
-// Validation schema for Position form
+// Validation schema for Events form
 export const eventValidationSchema = yup.object().shape({
   category: yup
     .string()
@@ -29,7 +30,7 @@ export const eventValidationSchema = yup.object().shape({
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('category', {
-    is: (val) => ['meru-events', 'wedding-nights', 'dinner-heights', 'executive-mod'].includes(val),
+    is: (val) => [EVENT_CAT.M_EVENTS.key, EVENT_CAT.W_NIGHTS.key, EVENT_CAT.D_HEIGHTS.key, EVENT_CAT.E_MOD.key].includes(val),
     then: (schema) => schema.required('La hora de inicio es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
   }),
@@ -39,7 +40,7 @@ export const eventValidationSchema = yup.object().shape({
     .transform((curr, orig) => (orig === '' ? null : curr))
     .min(yup.ref('startDate'), 'La fecha de fin no puede ser anterior a la de inicio')
     .when('category', {
-      is: (val) => ['meru-events', 'executive-mod'].includes(val),
+      is: (val) => [EVENT_CAT.M_EVENTS.key, EVENT_CAT.E_MOD.key].includes(val),
       then: (schema) => schema.required('La fecha de fin es obligatoria'),
       otherwise: (schema) => schema.notRequired(),
     }),
@@ -48,7 +49,7 @@ export const eventValidationSchema = yup.object().shape({
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
     .when('category', {
-      is: (val) => ['meru-events', 'wedding-nights', 'executive-mod'].includes(val),
+      is: (val) => [EVENT_CAT.M_EVENTS.key, EVENT_CAT.W_NIGHTS.key, EVENT_CAT.E_MOD.key].includes(val),
       then: (schema) => schema
         .required('La hora culminación es obligatoria')
         // Valida que la hora fin sea mayor a la de inicio 
@@ -69,7 +70,7 @@ export const eventValidationSchema = yup.object().shape({
   .nullable()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .when('category', {
-    is: (val) => val === 'meru-events' || val === 'wedding-nights' || val === 'dinner-heights',
+    is: (val) => val === EVENT_CAT.M_EVENTS.key || val === EVENT_CAT.W_NIGHTS.key || val === EVENT_CAT.D_HEIGHTS.key,
     then: (schema) => schema.required('La ubicación es obligatoria para este evento'),
     otherwise: (schema) => schema.notRequired(),
   }),
@@ -102,7 +103,7 @@ export const eventValidationSchema = yup.object().shape({
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
     .when('category', {
-      is: (val) => val === 'meru-events' || val === 'wedding-nights' || val === 'dinner-heights',
+      is: (val) => val === EVENT_CAT.M_EVENTS.key || val === EVENT_CAT.W_NIGHTS.key || val === EVENT_CAT.D_HEIGHTS.key,
       then: (schema) => schema.required('El estado es requerido'),
       otherwise: (schema) => schema.notRequired(),
     })
@@ -121,5 +122,30 @@ export const eventValidationSchema = yup.object().shape({
         .required('Debe ingresar el nombre de la plantilla'),
       otherwise: (schema) => schema.notRequired(),
     }),
+
+  // Validación de event contacts
+    contacts: yup.array().of(
+      yup.object().shape({
+        id: yup.number(),
+  
+        firstName: yup
+          .string()
+          .required('Nombre del contacto es requerido')
+          .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
+          
+        lastName: yup
+          .string()
+          .required('Apellido del contacto es requerido')
+          .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
+        
+        email: yup.string().email('Email inválido').required('Email es requerido'),
+                
+        phone: yup
+          .string()
+          .required('Teléfono es requerido')
+          .matches(/^[0-9-]+$/, 'Solo se permiten números.'),
+          
+      })
+    ),
   
 });

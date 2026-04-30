@@ -209,11 +209,11 @@ export default function EventForm({ mode = 'create' }) {
   }, [selectedCategory, config]);
 
   const onSubmit = async (data) => {
-
+    console.log("dataww", data);
     let success = false;
     data = { ...data, createdBy, isTemplate, templateName };
 
-    if (isGoogleCategory) { //console.log("handleGoogleEvents", isGoogleCategory)
+    if (isGoogleCategory) { 
       success = await  handleGoogleEvents(updatedData(data, event));
     } else if (editMode && event) {
       success = await updateEvent(updatedData(data, event));
@@ -288,7 +288,7 @@ export default function EventForm({ mode = 'create' }) {
     switch (activeTab) {
       case 'eventTemplates':
         return <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  />
-      case 'clientContact':
+      case 'eventContact':
         return ( 
           <ClientContactForm 
             // register={register}
@@ -375,6 +375,7 @@ export default function EventForm({ mode = 'create' }) {
                       locations={locations}
                       templateInfo={templateInfo}
                       watch={watch}
+                      setActiveTab={setActiveTab} 
                     />
                   )}
                   

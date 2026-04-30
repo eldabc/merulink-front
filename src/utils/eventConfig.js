@@ -12,7 +12,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: true,
     hasComments: true,
     isYearly: false,
-    hasClientContact: true,
+    hasEventContact: true,
   },
   'wedding-nights': {
     hasStartDate: true,
@@ -27,7 +27,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: true,
     hasComments: true,
     isYearly: false,
-    hasClientContact: true,
+    hasEventContact: true,
   },
   'dinner-heights': {
     hasStartDate: true,
@@ -42,7 +42,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: true,
     hasComments: true,
     isYearly: false,
-    hasClientContact: true,
+    hasEventContact: true,
   },
   've-holidays': {
     hasStartDate: true,
@@ -57,7 +57,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: true,
     hasComments: false,
     isYearly: true,
-    hasClientContact: false,
+    hasEventContact: false,
   },
   'google-calendar': {
     hasStartDate: true,
@@ -72,7 +72,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: true,
     hasComments: false,
     isYearly: true,
-    hasClientContact: false,
+    hasEventContact: false,
   },
   
   'meru-birthdays': {
@@ -88,7 +88,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: false,
     hasComments: false,
     isYearly: true,
-    hasClientContact: false,
+    hasEventContact: false,
   },
   
   'executive-mod': {
@@ -104,7 +104,7 @@ export const CATEGORY_CONFIGS = {
     hasDescription: true,
     hasComments: true,
     isYearly: false,
-    hasClientContact: false,
+    hasEventContact: false,
   }
 };
 
@@ -122,7 +122,7 @@ export const DEFAULT_CONFIG = {
   hasDescription: true,
   hasComments: false,
   isYearly: false,
-  hasClientContact: false,
+  hasEventContact: false,
 };
 
 export const EVENT_CAT = {
