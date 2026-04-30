@@ -63,8 +63,8 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
               <div key={item.id} className="flex items-start gap-2 animate-fade-in">
                 <div className="flex-grow">
                   <PhoneNumber 
-                    codeNumber={`phones.${index}.code`} 
-                    number={`phones.${index}.number`} 
+                    codeNumberName={`phones.${index}.code`} 
+                    numberName={`phones.${index}.number`} 
                     type="mobilePhone"
                     disabled={viewMode} 
                     register={register} 

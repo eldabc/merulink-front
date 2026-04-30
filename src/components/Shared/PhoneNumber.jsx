@@ -1,9 +1,10 @@
 import PhoneInput from "./PhoneInput";
 import OptionSelect from "./OptionSelect";
 
-function PhoneNumber ({ type, number, codeNumber, disabled, register, dinamicClasses, arrayCodes, setValue }) {
-  const numberField = number ?? type;
-  const codeField = codeNumber ?? `${type}Code`;
+function PhoneNumber ({ type, numberName, codeNumberName, disabled, register, dinamicClasses, arrayCodes, setValue }) {
+  
+  const codeField = codeNumberName ?? `${type}Code`;
+  const numberField = numberName ?? type;
 
   return (
     <div className="flex flex-row gap-2">
@@ -15,7 +16,7 @@ function PhoneNumber ({ type, number, codeNumber, disabled, register, dinamicCla
             <OptionSelect key={`${codeField}-${code.id}`} value={code.code} text={code.code} />
           ))}
       </select>
-      <PhoneInput name={numberField} type={type} readOnly={disabled} register={register} dinamicClasses={dinamicClasses} setValue={setValue} />
+      <PhoneInput dynamicNumberName={numberField} type={type} readOnly={disabled} register={register} dinamicClasses={dinamicClasses} setValue={setValue} />
     </div>
   );
 }

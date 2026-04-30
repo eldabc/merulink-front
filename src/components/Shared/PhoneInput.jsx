@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { formatPhone } from "../../utils/global-utils";
 
-const PhoneInput = ({ type = 'mobilePhone', name, readOnly, register, dinamicClasses, setValue }) => {
+const PhoneInput = ({ type = 'mobilePhone', dynamicNumberName, readOnly, register, dinamicClasses, setValue }) => {
 
-  const fieldName = name ?? type;
+  const fieldName = dynamicNumberName ?? type;
 
   const handleChange = (e) => {
     const rawValue = e.target.value;
