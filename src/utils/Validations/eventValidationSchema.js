@@ -141,20 +141,15 @@ export const eventValidationSchema = yup.object().shape({
         email: yup.string().ensure()
         .email('Email inválido')
         .notRequired(),
-                
-        phone: yup
-          .string()
-          .nullable()
-          .transform((curr, orig) => (orig === '' ? null : curr))
-          .when(['firstName', 'lastName'], {
-            is: (firstName, lastName) => firstName || lastName,
-            then: (schema) => schema
-              .required('Teléfono es requerido')
-              .matches(/^[0-9]{3}-[0-9]{4}$/, 'Formato inválido. Debe ser 000-0000')
-              .min(8, 'Debe contener el formato completo (ej: 000-0000)')
-              .max(8, 'Debe contener el formato completo (ej: 000-0000)'),
-            otherwise: (schema) => schema.optional(),
-          }),
+           
+        phones: yup.array()
+        .of(
+          yup.object().shape({
+            number: yup.string().required('El número es obligatorio'),
+            code: yup.string().required('El código de línea es obligatorio') //.optional()
+          })
+        )
+        .min(1, 'Debes agregar al menos un teléfono')
           
       })
     ),

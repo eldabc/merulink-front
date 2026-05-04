@@ -1,9 +1,10 @@
 import { formatDateToEvent } from '../date-utils';
 import { findFixedEvents } from '../Events/events-utils';
 import { EVENT_CAT } from '../eventConfig.js';
+import { sanitizePhone } from "../global-utils";
 
 export const mapEventToBackend = (formData) => {
-  // console.log("Mapping event data for backend:", formData);
+  // console.log("Mapping event data for backend:", formData.contacts);
 
   const isFixed = findFixedEvents(formData); 
   const status = formData.status ? formData.status : 'Creado';
@@ -12,8 +13,6 @@ export const mapEventToBackend = (formData) => {
       || formData.category === EVENT_CAT.E_MOD.key || formData.category === EVENT_CAT.B_MONDAYS.key 
       || formData.category === EVENT_CAT.VE_HOLIDAYS.key
   ) ? true : false;
-      
-  // console.log("Fijo?", isFixed);
 
     return {
       id: formData.id ? formData.id : Date.now(),
@@ -38,13 +37,28 @@ export const mapEventToBackend = (formData) => {
           external_id: formData.id, // En este caso este es el ID que viene de Google
           special_label: 'Festivo Almacenamiento Local',
         }),
+        
 
       },
-
+      
       category_key: formData.category, // front trabaja con el key, en back se busca id
       location_id: formData.locationId,
       is_template: formData.isTemplate,
       template_name: formData.isTemplate ? formData.templateName : '', // va para eventTemplate
+      
+      contacts: formData.contacts?.map(contact => ({
+        first_name: contact.firstName,
+        last_name: contact.lastName,
+        email: contact?.email ?? null,
+        phones: contact.phones?.map(p => {
+          // Unir code + number (ej: "0414" + "000-0000")
+          const fullPhone = `${p.code}${p.number}`;
+          
+          return {
+            phone_number: sanitizePhone(fullPhone),
+          };
+        }) || []
+      })) || []
       
     };
   }

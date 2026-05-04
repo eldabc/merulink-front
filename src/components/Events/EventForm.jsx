@@ -173,7 +173,7 @@ export default function EventForm({ mode = 'create' }) {
         isTemplate: isTemplateValue,
         templateName: templateNameValue,
         phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }],
-        contacts: event?.extendedProps?.contacts ?? [{ firstName: '', lastName: '', email: '', phones: [{ code: '0414', number: '' }] }],
+        contacts: event?.extendedProps?.contacts ?? [] //[{ firstName: '', lastName: '', email: '', phones: [{ code: '0414', number: '' }] }],
       }
   }
 
@@ -210,7 +210,7 @@ export default function EventForm({ mode = 'create' }) {
   }, [selectedCategory, config]);
 
   const onSubmit = async (data) => {
-    console.log("dataww", data);
+    console.log("OnSubmit", data);
     let success = false;
     data = { ...data, createdBy, isTemplate, templateName };
 
@@ -269,7 +269,7 @@ export default function EventForm({ mode = 'create' }) {
   }
 
   const applyTemplate = (templateData) => {
-    console.log("templateData", templateData)
+    // console.log("templateData", templateData);
     const data = { 
                   ...templateData?.event, 
                   extendedProps: { 
@@ -278,8 +278,8 @@ export default function EventForm({ mode = 'create' }) {
                     templateName: ''
                   } 
                 }
-    // const eventFormated = eventReset(data); // selectedCategory, 
-    reset(data);
+
+    reset(eventReset(data));
     
     // Volver a pestaña del formulario
     setActiveTab('formEvent');
@@ -380,10 +380,6 @@ export default function EventForm({ mode = 'create' }) {
                       setActiveTab={setActiveTab} 
                     />
                   )}
-                  
-                  {/* {activeTab === 'eventTemplates' && ( 
-                    <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  /> 
-                  )} */}
 
                   {getActivetab(activeTab)}
 
