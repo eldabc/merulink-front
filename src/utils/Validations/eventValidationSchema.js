@@ -130,15 +130,17 @@ export const eventValidationSchema = yup.object().shape({
   
         firstName: yup
           .string()
-          .optional()
-          .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
+          .required('Nombre del contacto es requerido')
+          .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras f.'),
           
         lastName: yup
           .string()
-          .optional()
+           .required('Apellido del contacto es requerido')
           .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras.'),
         
-        email: yup.string().email('Email inválido').optional(),
+        email: yup.string().ensure()
+        .email('Email inválido')
+        .notRequired(),
                 
         phone: yup
           .string()

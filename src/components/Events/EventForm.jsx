@@ -36,9 +36,9 @@ export default function EventForm({ mode = 'create' }) {
     resolver: yupResolver(eventValidationSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: {
-      contacts: [{ firstName: '', lastName: '', email: '', phones: [{ code: '', number: '' }] }]
-    }
+    // defaultValues: {
+    //   contacts: [{ firstName: '', lastName: '', email: '', phones: [{ code: '', number: '' }] }]
+    // }
   });
 
   // Desestructuración de methods
@@ -351,6 +351,7 @@ export default function EventForm({ mode = 'create' }) {
                   setActiveTab={setActiveTab} 
                   event={event}
                   mode={mode}
+                  errors={errors}
                 />
 
                 <div className="mt-6">     

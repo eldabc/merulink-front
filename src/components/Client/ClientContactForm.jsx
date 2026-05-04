@@ -38,15 +38,6 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
       <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
         <LabelFieldForm field="Contacto" />
           <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={`${disabledClasses} mb-3`} />
-          {/* <button
-            type="button"
-            onClick={() => handleAddContact() }
-            className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm! ml-3 mb-3
-              ${!addContacts && 'cursor-not-allowed opacity-50'} ${disabledClasses}`}
-            title="Añadir Contacto"
-          >
-            + Agregar Contacto
-          </button> */}
       </div>
 
       <div className="flex flex-col gap-3">

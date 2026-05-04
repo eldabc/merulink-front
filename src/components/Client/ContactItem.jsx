@@ -26,17 +26,16 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-7">
 
         <LabelFieldForm field="Nombre" simbol="*" />
-            <InputGeneric readOnly={viewMode} name={`contacts.${index}.firstName`} register={register} dinamicClasses={disabledClasses} />
-        {errors?.contacts?.[index]?.firstName && <ErrorMessage msg={errors.contacts[index].firstName.message} />}
-
+          <InputGeneric readOnly={viewMode} name={`contacts.${index}.firstName`} register={register} dinamicClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.firstName}/>
+          {/* {errors?.contacts?.[index]?.firstName && <ErrorMessage msg={errors.contacts[index].firstName.message} />} */}
         <LabelFieldForm field="Apellido" simbol="*" />
-            <InputGeneric readOnly={viewMode} name={`contacts.${index}.lastName`} register={register} dinamicClasses={disabledClasses} />
-        {errors?.contacts?.[index]?.lastName && <ErrorMessage msg={errors.contacts[index].lastName.message} />}
+            <InputGeneric readOnly={viewMode} name={`contacts.${index}.lastName`} register={register} dinamicClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.lastName} />
+        {/* {errors?.contacts?.[index]?.lastName && <ErrorMessage msg={errors.contacts[index].lastName.message} />} */}
 
         <LabelFieldForm field="Email" />
         <div>
-          <InputEmail readOnly={viewMode} name={`contacts.${index}.email`} register={register} disabledClasses={disabledClasses} />
-          {errors?.contacts?.[index]?.email && <ErrorMessage msg={errors.contacts[index].email.message} />}
+          <InputEmail readOnly={viewMode} name={`contacts.${index}.email`} register={register} disabledClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.email} />
+          {/* {errors?.contacts?.[index]?.email && <ErrorMessage msg={errors.contacts[index].email.message} />} */}
         </div>
 
         <div className="md:col-span-4">
