@@ -5,7 +5,7 @@ import { phoneCodes, mobilePhoneCodes } from "../../utils/StaticData/phoneCodes-
 
 import LabelFieldForm from "../Shared/LabelFieldForm";
 import ErrorMessage from "../Shared/ErrorMessage";
-import Toggle from "../Shared/Toggle";
+// import Toggle from "../Shared/ToggleStatus";
 import PhoneInput from "../Shared/PhoneInput";
 import OptionSelect from "../Shared/OptionSelect";
 import InputEmail from "../Shared/InputEmail";
@@ -35,7 +35,7 @@ function ClientContactForm({ viewMode, dynamicClasses }) {
 
   return (
     <div className="w-full">
-      <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
+      <div className="flex flex-row justify-between pt-3 pl-3 pr-3 rounded-t-xl mb-2 bg-field">
         <LabelFieldForm field="Contacto" />
           <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={`${dynamicClasses} mb-3`} />
       </div>

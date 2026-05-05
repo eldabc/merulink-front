@@ -108,6 +108,17 @@ export const eventValidationSchema = yup.object().shape({
       otherwise: (schema) => schema.notRequired(),
     })
    .oneOf([STATUS_EVENTS.tentative, STATUS_EVENTS.confirmed], 'Estado inválido'),
+
+    eventType: yup
+    .string()
+    .oneOf(["paid", "courtesy"], 'Tipo inválido')
+    .when("status", {
+      is: STATUS_EVENTS.confirmed,
+      then: (schema) =>
+        schema.required("Debe seleccionar el tipo de evento"),
+      otherwise: (schema) =>
+        schema.notRequired().nullable(),
+    }),
     
   coloringDay: yup.boolean(),
 

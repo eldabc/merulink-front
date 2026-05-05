@@ -8,7 +8,7 @@ import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
-import Toggle from '../Shared/Toggle.jsx';
+import ToggleStatus from '../Shared/ToggleStatus.jsx';
 import RichTextEditor from '../Shared/RichTextEditor';
 
 export default function EventFormContent({ 
@@ -124,13 +124,14 @@ export default function EventFormContent({
           {config?.hasStatus && (
             <>
               <LabelFieldForm field="Estado" simbol="*" />
-              <div className='items-center gap-2'>
-                <Toggle   
+              <div className='items-center gap-2 min-h-15'>
+                <ToggleStatus   
                   readOnly={viewMode}
                   register={register}
                   errors={errors}
                   setValue={setValue}
                   watch={watch}
+                  dynamicClasses={disabledClasses}
                 />
 
                 {config?.hasEventContact && (

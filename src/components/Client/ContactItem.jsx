@@ -37,7 +37,7 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
         </div>
 
         <div className="md:col-span-4">
-          <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
+          <div className="flex flex-row justify-between pt-3 pl-3 pr-3 rounded-t-xl mb-2 bg-field">
             <LabelFieldForm field="Teléfono Móvil" simbol="*" />
             {!viewMode && phoneFields.length < 2 && (
               <button

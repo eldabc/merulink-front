@@ -16,6 +16,10 @@
   .titles-table {
     @apply flex justify-between items-center mb-4;
   }
+
+  .bg-field {
+    @apply bg-[#2f3d44] hover:bg-[#ffffff21];
+  }
 }
 
 :root {

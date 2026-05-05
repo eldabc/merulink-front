@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useEvents } from '../../context/EventContext';
 
 import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
+import ButtonRadioEventType from './ButtonRadioEventType';
 
-function Toggle({ readOnly, register, errors, setValue, watch }) {
+function Toggle({ readOnly, register, errors, setValue, watch, dynamicClasses }) {
 
   const currentStatus = watch("status");
   const isConfirmed = currentStatus === STATUS_EVENTS.confirmed; // Indica si el checkbox esta visualmente "on"
@@ -17,6 +18,7 @@ function Toggle({ readOnly, register, errors, setValue, watch }) {
   };
 
   return (
+    <>
     <div className="flex items-center gap-3">
       <span className={`text-xs ${!isConfirmed ? 'text-amber-400 font-bold' : 'text-gray-500'}`}>
         {STATUS_EVENTS.tentative}
@@ -24,14 +26,13 @@ function Toggle({ readOnly, register, errors, setValue, watch }) {
 
       <div 
         onClick={handleToggle}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-          isConfirmed ? 'bg-green-600' : 'bg-gray-600'
-        } ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer duration-500 ease-in-out transition-colors 
+          ${ isConfirmed ? 'bg-green-600' : 'bg-gray-600' } 
+          ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            isConfirmed ? 'translate-x-6' : 'translate-x-1'
-          }`}
+          className={`inline-block h-4 w-4 transform rounded-full bg-white duration-500 ease-in-out transition-transform 
+            ${ isConfirmed ? 'translate-x-6' : 'translate-x-1' }`}
         />
       </div>
 
@@ -41,7 +42,13 @@ function Toggle({ readOnly, register, errors, setValue, watch }) {
 
       {/* Mantiene el valor real para el formulario */}
       <input type="hidden" {...register("status")} />
+
+
     </div>
+    <div className='mt-3 mb-3 '>
+      {isConfirmed && <ButtonRadioEventType disabled={readOnly} dynamicClasses={dynamicClasses} isConfirmed={isConfirmed} /> }
+    </div>
+    </>
   );
 }
 
