@@ -16,7 +16,7 @@ function ButtonRadioEventType({ name = "eventType", disabled = false, dynamicCla
           type="radio"
           value="paid"
           {...register(name)}
-          checked={selected === "paid"}
+          // checked={selected === "paid"}
           disabled={disabled}
         />
         Pagado
@@ -28,7 +28,7 @@ function ButtonRadioEventType({ name = "eventType", disabled = false, dynamicCla
           type="radio"
           value="courtesy"
           {...register(name)}
-          checked={selected === "courtesy"}
+          // checked={selected === "courtesy"}
           disabled={disabled}
         />
         Cortesía
