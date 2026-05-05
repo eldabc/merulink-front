@@ -4,7 +4,7 @@ import { useEvents } from '../../context/EventContext';
 import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
 import ButtonRadioEventType from './ButtonRadioEventType';
 
-function Toggle({ readOnly, register, errors, setValue, watch, dynamicClasses }) {
+function ToggleStatus({ readOnly, register, errors, setValue, watch, dynamicClasses }) {
 
   const currentStatus = watch("status");
   const isConfirmed = currentStatus === STATUS_EVENTS.confirmed; // Indica si el checkbox esta visualmente "on"
@@ -52,4 +52,4 @@ function Toggle({ readOnly, register, errors, setValue, watch, dynamicClasses })
   );
 }
 
-export default Toggle;
+export default ToggleStatus;

@@ -6,7 +6,7 @@ function ButtonRadioEventType({ name = "eventType", disabled = false, dynamicCla
   const { register, watch, formState: { errors } } = useFormContext();
 
   const selected = watch(name);
-  console.log("errors?.name", errors.name)
+  
   return (
     <>
     <div className="flex gap-4 w-full justify-center bg-field rounded-xl">

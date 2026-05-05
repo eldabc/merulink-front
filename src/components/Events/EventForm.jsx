@@ -129,7 +129,7 @@ export default function EventForm({ mode = 'create' }) {
   }
 
   const eventReset = (event) => { 
-    // console.log("EventData", event);
+    // console.log("EventData", event?.extendedProps?.eventType);
 
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
@@ -151,7 +151,7 @@ export default function EventForm({ mode = 'create' }) {
         endDate: divideDateTimeEnd?.date ?? null,
         endTime: divideDateTimeEnd?.time ?? null,
         status: status,
-        eventType: event?.extendedProps?.eventType ?? null,
+        eventType: event?.extendedProps?.eventType ? event?.extendedProps?.eventType : null,
         locationId: event?.extendedProps?.location?.id ?? '',
         repeatEvent: defaultRepitedEvent,
         repeatInterval: defaultRepitedInterval,

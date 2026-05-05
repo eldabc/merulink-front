@@ -1,10 +1,11 @@
+
 import { formatDateToEvent } from '../date-utils';
 import { findFixedEvents } from '../Events/events-utils';
 import { EVENT_CAT } from '../eventConfig.js';
 import { sanitizePhone } from "../global-utils";
 
 export const mapEventToBackend = (formData) => {
-  // console.log("Mapping event data for backend:", formData.contacts);
+  // console.log("Mapping event data for backend:", formData?.eventType);
 
   const isFixed = findFixedEvents(formData); 
   const status = formData.status ? formData.status : 'Creado';
@@ -23,6 +24,7 @@ export const mapEventToBackend = (formData) => {
 
       extended_props: {
         status: status,
+        event_type: formData?.eventType,
         repeat_event: formData.repeatEvent,
         repeat_interval: formData.repeatInterval,
         create_alert: formData.createAlert,
