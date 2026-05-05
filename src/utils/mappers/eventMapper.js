@@ -51,7 +51,7 @@ export const mapEventToBackend = (formData) => {
         last_name: contact.lastName,
         email: contact?.email ?? null,
         phones: contact.phones?.map(p => {
-          // Unir code + number (ej: "0414" + "000-0000")
+          // Unir code + number ("0414" + "000-0000")
           const fullPhone = `${p.code}${p.number}`;
           
           return {

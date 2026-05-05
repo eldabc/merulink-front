@@ -288,16 +288,22 @@ export default function EventForm({ mode = 'create' }) {
   const getActivetab = (activeTab) => {
     switch (activeTab) {
       case 'eventTemplates':
-        return <EventTemplates applyTemplate={applyTemplate} selectedCategory={selectedCategory} setActiveTab={setActiveTab}  />
+        return ( 
+          <EventTemplates 
+            disabled={viewMode} 
+            dynamicClasses={disabledClasses} 
+            applyTemplate={applyTemplate} 
+            selectedCategory={selectedCategory} 
+            setActiveTab={setActiveTab}  
+          />
+        );
+
       case 'eventContact':
         return ( 
           <ClientContactForm 
-            // register={register}
-            // errors={errors}
+            // este componente USA useFormContext
             viewMode={viewMode}
-            disabledClasses={disabledClasses}
-            // setValue={setValue}
-            // watch={watch}
+            dynamicClasses={disabledClasses}
           />
         );
     }  

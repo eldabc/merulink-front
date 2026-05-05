@@ -6,7 +6,7 @@ import { divideDateTime } from '../../../utils/date-utils';
 import ButtonDelete from '../../Shared/ButtonDelete';
 import ConfirmDialog  from '../../Shared/ConfirmDialog';
 
-function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
+function EventTemplates({disabled, dynamicClasses, applyTemplate, selectedCategory, setActiveTab}) {
 
   const { templates, getTemplatesOnly, loadingTemplates, updateEvent, isTemplate, deleteEventTemplate } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,11 +22,11 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
   };
 
   const handleConfirmDelete = async () => {
-    console.log("selectedTemplate", selectedTemplate)
+    // console.log("selectedTemplate", selectedTemplate);
     if (!selectedTemplate) return;
 
     await deleteEventTemplate(selectedTemplate);
-    // await updateEvent(flattenedData, messagge);
+    
     setIsModalOpen(false);
     setSelectedTemplate(null);
   };
@@ -40,14 +40,15 @@ function EventTemplates({applyTemplate, selectedCategory, setActiveTab}) {
               <h4 className="text-white font-bold capitalize-string">{temp.name}</h4>
               <p className="text-sm text-gray-400">{temp?.event?.extendedProps?.category?.label}</p>
             </div>
-            <button 
+            <button
+              disabled={disabled}
               type="button"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded shadow-md transition-all ml-auto mr-5"
+              className={`text-white px-3 py-1 rounded shadow-md transition-all ml-auto mr-5 ${dynamicClasses}`}
             >
               Usar Plantilla
             </button>
             <div onClick={(e) => e.stopPropagation()}>
-              <ButtonDelete setIsModalOpen={() => handleDeleteClick(temp)} />
+              <ButtonDelete setIsModalOpen={() => handleDeleteClick(temp)} disabled={disabled} dinamicClasses={dynamicClasses} />
             </div>
           </div>
         ))

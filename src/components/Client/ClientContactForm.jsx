@@ -15,7 +15,7 @@ import ButtonTrash from '../Shared/ButtonTrash';
 import ButtonAddContact from '../Shared/ButtonAddContact';
 import ContactItem from './ContactItem';
 
-function ClientContactForm({ viewMode, disabledClasses }) { // register, errors, , setValue, watch 
+function ClientContactForm({ viewMode, dynamicClasses }) {
 
   // Extrae del contexto global del formulario
   const { register, control, setValue, formState: { errors } } = useFormContext();
@@ -37,7 +37,7 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
     <div className="w-full">
       <div className="flex flex-row justify-between bg-[#2f3d44] pt-3 pl-3 pr-3 rounded-t-xl mb-2 hover:bg-[#ffffff21]">
         <LabelFieldForm field="Contacto" />
-          <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={`${disabledClasses} mb-3`} />
+          <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={`${dynamicClasses} mb-3`} />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -50,7 +50,7 @@ function ClientContactForm({ viewMode, disabledClasses }) { // register, errors,
             setValue={setValue}
             errors={errors}
             viewMode={viewMode}
-            disabledClasses={disabledClasses}
+            disabledClasses={dynamicClasses}
             removeContact={remove}
           />
         ))}

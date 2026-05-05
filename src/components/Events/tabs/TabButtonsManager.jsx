@@ -4,10 +4,10 @@ function TabButtonsManager({ activeTab, setActiveTab, event, mode, errors }) {
     return (
         <div className="flex flex-col md:flex-row gap-4 border-b border-[#ffffff21]">
           {tabsEvents
-            .filter(() => {
-              if ((mode === 'create')) return true;
-              return false;
-            })
+            // .filter(() => {
+            //   if ((mode === 'create')) return true;
+            //   return false;
+            // })
             .map((tab) => {
             // determine if this tab currently has errors from formState.errors
             const tabError = (() => {
@@ -30,7 +30,9 @@ function TabButtonsManager({ activeTab, setActiveTab, event, mode, errors }) {
                   `}
                 >
                   {tab.label}
-                  {tabError && ( <p className="px-2 py-1 rounded-full text-xs font-semibold bg-red-255 text-red-400 hover:text-red-800">Tienes campos erróneos en esta pestaña</p> )}
+                  {tabError && ( 
+                    <p className="px-2 py-1 rounded-full text-xs font-semibold bg-red-255 text-red-400 hover:text-red-800">Tienes campos erróneos en esta pestaña</p> 
+                  )}
                 </button>
               </div>
             );      
