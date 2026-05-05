@@ -35,7 +35,7 @@ function EventTemplates({disabled, dynamicClasses, applyTemplate, selectedCatego
     <div className="grid grid-cols-1 gap-4 p-4">
       {templates?.length > 0 ? (
         templates.map(temp => (
-          <div onClick={() => applyTemplate(temp)} key={temp.id} className="bg-[#2f3d44] hover:bg-[#404f57] p-4 rounded-lg flex justify-between items-center border border-gray-600">
+          <div onClick={() => !disabled && applyTemplate(temp)} key={temp.id} className="bg-[#2f3d44] hover:bg-[#404f57] p-4 rounded-lg flex justify-between items-center border border-gray-600">
             <div>
               <h4 className="text-white font-bold capitalize-string">{temp.name}</h4>
               <p className="text-sm text-gray-400">{temp?.event?.extendedProps?.category?.label}</p>

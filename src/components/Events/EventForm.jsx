@@ -10,6 +10,7 @@ import { divideDateTime, getNextHour } from '../../utils/date-utils';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { getPathByCategory, EVENT_CAT } from '../../utils/eventConfig.js';
 import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
+import { prepareContactsForForm } from '../../utils/contact-utils.js';
 
 import HeadFormButtons from '../Shared/HeadFormButtons.jsx';
 import FooterFormButtons from '../Shared/FooterFormButtons.jsx';
@@ -22,23 +23,11 @@ import ClientContactForm from '../Client/ClientContactForm.jsx';
 import '../../Calendar.css';
 
 export default function EventForm({ mode = 'create' }) {
-  
-  // const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm({
-  //     resolver: yupResolver(eventValidationSchema),
-  //     mode: 'onChange',
-  //     reValidateMode: 'onChange',
-  //     defaultValues: {
-  //       phones: [{ number: '' }]
-  //     }
-  // });
 
   const methods = useForm({
     resolver: yupResolver(eventValidationSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    // defaultValues: {
-    //   contacts: [{ firstName: '', lastName: '', email: '', phones: [{ code: '', number: '' }] }]
-    // }
   });
 
   // Desestructuración de methods
@@ -139,8 +128,8 @@ export default function EventForm({ mode = 'create' }) {
     return  { ...data, id: event.id }; 
   }
 
-  const eventReset = (event) => { // category, 
-    // console.log("templateData", event?.extendedProps?.isTemplate)
+  const eventReset = (event) => { 
+    console.log("EventData", event);
 
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
@@ -169,11 +158,11 @@ export default function EventForm({ mode = 'create' }) {
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
         comments: event?.extendedProps?.comments ?? '',
-        category: event?.extendedProps?.category?.key, //category
+        category: event?.extendedProps?.category?.key,
         isTemplate: isTemplateValue,
         templateName: templateNameValue,
-        phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }],
-        contacts: event?.extendedProps?.contacts ?? [] //[{ firstName: '', lastName: '', email: '', phones: [{ code: '0414', number: '' }] }],
+        // phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }],
+        contacts: event?.contacts ? prepareContactsForForm(event.contacts) : []
       }
   }
 
@@ -185,11 +174,11 @@ export default function EventForm({ mode = 'create' }) {
         if (event?.extendedProps?.createdBy) setCreatedBy(event?.extendedProps?.createdBy);
 
         setTemplateInfo(event?.extendedProps?.templateInfo);
-        reset( eventReset(event) ); //'', 
+        reset( eventReset(event) );
 
       } else if (createMode) {
         setCreatedBy('Sistema'); // Cuando tengamos autenticación, aquí se asignaría el usuario actual
-        reset( eventReset(null) ); //'', 
+        reset( eventReset(null) );
       }
 
   }, [event, mode, reset, setTemplateName, setIsTemplate, locations]);
