@@ -53,7 +53,13 @@ export const EventProvider = ({ showNotification, children }) => {
       const hasGoogle = categoryKeys.includes("google-calendar");
       
       // Carga Eventos de BD
-      const eventResults = await axios.get(`${ENV.API_BACK_URL}events?categoryKeys=${categoryKeys}&history=${history}&anyDateInCategory=${anyDateInCategory}`);
+      const eventResults = await axios.get(`
+                                            ${ENV.API_BACK_URL}events?
+                                            categoryKeys=${categoryKeys}
+                                            &history=${history}
+                                            &anyDateInCategory=${anyDateInCategory}
+                                            &year=${year}
+                                          `);
       const eventResultsData = eventResults.data.data;
 
       // Eventos Google una vez
