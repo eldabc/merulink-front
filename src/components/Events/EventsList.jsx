@@ -28,15 +28,18 @@ export default function EventsList({ categoryKeys }) {
   const [searchValue, setSearchValue] = useState('');
   const [searchDateValue, setSearchDateValue] = useState('');
   const [showHistory, setShowHistory] = useState(false);
+  const currentSystemYear = new Date().getFullYear();
+  const [historyYear, setHistoryYear] = useState(currentSystemYear);
   
   const prevCategoryKeys = useRef();
   const prevShowHistory = useRef();
+  const prevHistoryYear = useRef(currentSystemYear);
   const isFirstRender = useRef(true);
-  const categoryChanged = prevCategoryKeys.current !== JSON.stringify(categoryKeys);
-  const ShowHistoryChanged = prevShowHistory.current !== showHistory;
 
   const itemsPerPage = 10;
-  const SEARCH_FIELDS = ['title', 'start'];
+  const SEARCH_FIELDS = useMemo(() => ['title', 'start'], []);
+  const categoryKeysString = JSON.stringify(categoryKeys);
+  const locationState = location.state;
   const stringCategory = stringCategoryEvents(categoryKeys);
   const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key;
   const isEventWithStatus = categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
@@ -47,47 +50,59 @@ export default function EventsList({ categoryKeys }) {
 
   useEffect(() => {
     // Maneja cambio de categoría o primer render
-    const keysString = JSON.stringify(categoryKeys);
     const loaded = JSON.parse(initialLoadCategory);
-    const justChanged = location.state?.justChanged;
+    const justChanged = locationState?.justChanged;
     
     const matchLoadedCategory = loaded?.some(cat => categoryKeys?.includes(cat));
 
     if (matchLoadedCategory && justChanged) { // Si categoría no cambió no se llama backend 
-      location.state.justChanged = false;    
+      if (locationState) {
+        const nextState = { ...locationState, justChanged: false };
+        window.history.replaceState(nextState, document.title, window.location.href);
+      }
       return;
     }
     
     // Si cambió o es primer render
-    if (isFirstRender.current || prevCategoryKeys.current !== keysString) {
+    if (isFirstRender.current || prevCategoryKeys.current !== categoryKeysString) {
       console.log("Carga por Categoría o Montaje", categoryKeys);
       
-      setSearchValue('');
-      setSearchDateValue('');
-      setCurrentPage(1);
-      setShowHistory(false);
+      Promise.resolve().then(() => {
+        setSearchValue('');
+        setSearchDateValue('');
+        setCurrentPage(1);
+        setShowHistory(false);
+      });
       
       loadEvents({ categoryKeys: categoryKeys });
       
-      prevCategoryKeys.current = keysString;
+      prevCategoryKeys.current = categoryKeysString;
       prevShowHistory.current = false;
       isFirstRender.current = false;
 
-      if (location.state && location.state.justChanged) {
-        location.state.justChanged = false;
+      if (locationState && locationState.justChanged) {
+        const nextState = { ...locationState, justChanged: false };
+        window.history.replaceState(nextState, document.title, window.location.href);
       }
       setSelectedCategory(categoryKeys[0]);
       return;
     }
 
-    // Traer History
-    if (prevShowHistory.current !== showHistory) {
-      console.log("Carga History", showHistory);
-      loadEvents({ categoryKeys: categoryKeys, history: showHistory});
+    // Traer History o volver a carga normal
+    if (prevShowHistory.current !== showHistory || (showHistory && prevHistoryYear.current !== historyYear)) {
+      console.log("Carga History", showHistory, historyYear);
+
+      if (showHistory) {
+        loadEvents({ categoryKeys: categoryKeys, history: true, year: historyYear });
+      } else {
+        loadEvents({ categoryKeys: categoryKeys });
+      }
+
       prevShowHistory.current = showHistory;
+      prevHistoryYear.current = historyYear;
     }
 
-  }, [JSON.stringify(categoryKeys), showHistory, loadEvents]);
+  }, [categoryKeysString, categoryKeys, showHistory, historyYear, loadEvents, initialLoadCategory, locationState, setSelectedCategory]);
 
 
   // Filtrado y detección de búsqueda
@@ -115,7 +130,7 @@ export default function EventsList({ categoryKeys }) {
       dataToDisplay: filtered,
       isSearching: searching
     };
-  }, [eventData, searchValue, searchDateValue]);
+  }, [eventData, searchValue, searchDateValue, SEARCH_FIELDS]);
   
 
   const searchTextFragmentAvise = isSearching && ` para la búsqueda ${searchValue}`;
@@ -150,7 +165,51 @@ export default function EventsList({ categoryKeys }) {
         showFilterDate={true}
       />
       
-      {!holidaysEvents && <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} /> }
+      {/* {!holidaysEvents &&  */}
+      <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} /> 
+      {/* } */}
+
+      {showHistory && (
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <button
+            type="button"
+            onClick={() => {
+              setHistoryYear((prev) => Math.max(prev - 1, 1900));
+              setCurrentPage(1);
+            }}
+            className="px-3 py-2 rounded border border-slate-500 text-sm hover:bg-slate-700 transition"
+          >
+            Año anterior
+          </button>
+
+          <span className="text-sm font-semibold">Historial del año {historyYear}</span>
+
+          <button
+            type="button"
+            onClick={() => {
+              setHistoryYear((prev) => Math.min(prev + 1, currentSystemYear));
+              setCurrentPage(1);
+            }}
+            disabled={historyYear >= currentSystemYear}
+            className={`px-3 py-2 rounded border text-sm transition ${historyYear >= currentSystemYear ? 'border-slate-400 text-slate-400 cursor-not-allowed' : 'border-slate-500 hover:bg-slate-700'}`}
+          >
+            Año siguiente
+          </button>
+
+          {historyYear !== currentSystemYear && (
+            <button
+              type="button"
+              onClick={() => {
+                setHistoryYear(currentSystemYear);
+                setCurrentPage(1);
+              }}
+              className="px-3 py-2 rounded border border-slate-500 text-sm hover:bg-slate-700 transition"
+            >
+              Año actual
+            </button>
+          )}
+        </div>
+      )}
 
       {(dataToDisplay.length === 0 || paginatedEvents.length === 0) && !loading ? (
         <SpanText text={`No se encontraron coincidencias en esta categoría${searchTextFragmentAvise}.`} />

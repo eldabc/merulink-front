@@ -45,7 +45,6 @@ export const EventProvider = ({ showNotification, children }) => {
   } = {}) => {
     setLoading(true);
     try {
-      console.log("History?", history);
 
       let combinedEvents = [];
       let currentGoogleEvents = googleEvents;
@@ -61,9 +60,10 @@ export const EventProvider = ({ showNotification, children }) => {
                                             &year=${year}
                                           `);
       const eventResultsData = eventResults.data.data;
+      console.log("History?", history, currentYear, year);
 
       // Eventos Google una vez
-      if (googleEvents === '' || currentYear !== year) {
+      if (googleEvents === '' || currentYear !== year && !history) {
         const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
         console.log("Eventos Google", holidays);
         currentGoogleEvents = holidays;

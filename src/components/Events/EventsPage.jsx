@@ -13,13 +13,13 @@ export default function EventsPage() {
     <>
       <main className="flex-1 rounded p-4 min-h-[60vh]">
         <Routes>
-          <Route path={EVENT_CAT.M_EVENTS.path} element={<EventsList categoryKeys={[EVENT_CAT.M_EVENTS.key]} />} />
+          <Route path={EVENT_CAT.M_EVENTS.path} element={<EventsList categoryKeys={[EVENT_CAT.M_EVENTS.key]} year={year} />} />
           <Route 
             path={EVENT_CAT.W_NIGHTS.path} 
             element={<EventsList categoryKeys={[
               EVENT_CAT.W_NIGHTS.key, 
               EVENT_CAT.D_HEIGHTS.key
-            ]} />} 
+            ]} year={year} />} 
           />
           
           <Route 
@@ -27,12 +27,12 @@ export default function EventsPage() {
             element={<EventsList categoryKeys={[
               EVENT_CAT.VE_HOLIDAYS.key, 
               EVENT_CAT.G_CALENDAR.key
-            ]} />} 
+            ]} year={year} />} 
           />
 
-          <Route path={EVENT_CAT.M_BIRTHDAYS.path} element={<EventsList categoryKeys={[EVENT_CAT.M_BIRTHDAYS.key]} />} />
-          <Route path={EVENT_CAT.E_MOD.path} element={<EventsList categoryKeys={[EVENT_CAT.E_MOD.key]} />} />
-          <Route path={EVENT_CAT.B_MONDAYS.path} element={<EventsList categoryKeys={[EVENT_CAT.B_MONDAYS.key]} />} />
+          <Route path={EVENT_CAT.M_BIRTHDAYS.path} element={<EventsList categoryKeys={[EVENT_CAT.M_BIRTHDAYS.key]} year={year} />} />
+          <Route path={EVENT_CAT.E_MOD.path} element={<EventsList categoryKeys={[EVENT_CAT.E_MOD.key]} year={year} />} />
+          <Route path={EVENT_CAT.B_MONDAYS.path} element={<EventsList categoryKeys={[EVENT_CAT.B_MONDAYS.key]} year={year} />} />
 
           <Route path="ver/:id" element={<EventForm mode="view" />} />
           <Route path="nuevo" element={<EventForm />} />
