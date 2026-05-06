@@ -9,7 +9,7 @@ function InfoToggleSeccion({ createdBy, showTemplateToggle, readOnly, register, 
   const { isTemplate } = useEvents();
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 mt-3">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 mt-3">
       
       {showTemplateToggle && (
         <>

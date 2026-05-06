@@ -320,7 +320,7 @@ export default function EventForm({ mode = 'create' }) {
                 <div className='mt-5'>
                   {viewMode || editMode ? (
                     <div className={`text-xl w-full px-2 py-2 rounded-lg ${event?.extendedProps?.category?.color ?? 'bg-[#56a2c8]'} 
-                                     text-center text-white-600 border border-gray-300 hover:!border-[#9fd8ff] transition-all duration-600 ease-in-out
+                                     text-center text-white-600 border border-gray-300 hover:border-[#9fd8ff]! transition-all duration-600 ease-in-out
                                      hover:shadow-lg hover:-translate-y-1`}
                     >
                      {event?.extendedProps?.category?.label || 'Sin tipo'}
