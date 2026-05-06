@@ -15,6 +15,7 @@ function ToggleStatus({ readOnly, register, errors, setValue, watch, dynamicClas
     // Alterna manualmente entre los dos valores del diccionario
     const nextStatus = currentStatus === STATUS_EVENTS.confirmed ? STATUS_EVENTS.tentative : STATUS_EVENTS.confirmed;
     setValue("status", nextStatus, { shouldValidate: true, shouldDirty: true });
+    setValue("eventType", null, { shouldValidate: true, shouldDirty: true });
   };
 
   return (

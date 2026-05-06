@@ -92,7 +92,7 @@ export default function EventForm({ mode = 'create' }) {
     if (id) {
       const isCompoundId = isNaN(id); 
 
-      if (isCompoundId) {
+      if (isCompoundId) { // para ids que son calculados y vienen con id compuesto
         const data = eventData.find(e => e.id === id);
         setEvent(data);
       } else {
@@ -182,7 +182,7 @@ export default function EventForm({ mode = 'create' }) {
         reset( eventReset(null) );
       }
 
-  }, [event, mode, reset, setTemplateName, setIsTemplate, locations]);
+  }, [event, mode, reset, setTemplateName, setIsTemplate, locations, config]);
 
   useEffect(() => {
     const yearlyEventValue = config?.isYearly;
@@ -252,7 +252,7 @@ export default function EventForm({ mode = 'create' }) {
   };
 
   const handleNextTime = (e) => {
-    if (selectedCategory === EVENT_CAT.D_HEIGHTS.key) {
+    if (selectedCategory === EVENT_CAT.D_HEIGHTS.key || EVENT_CAT.M_EVENTS.key) {
       const nextHour = getNextHour(e.target.value);
       setValue('endTime', nextHour, { shouldValidate: true });
     }
@@ -348,6 +348,7 @@ export default function EventForm({ mode = 'create' }) {
                   event={event}
                   mode={mode}
                   errors={errors}
+                  hasEventContact={config?.hasEventContact}
                 />
 
                 <div className="mt-6">     
