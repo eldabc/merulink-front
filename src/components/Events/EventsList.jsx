@@ -16,6 +16,7 @@ import FilterByFields from '../Filters/FilterByFields.jsx';
 import ButtonHistory from '../Shared/ButtonHistory.jsx';
 import SpanText from '../Shared/SpanText.jsx';
 import RowTableLoading from '../Shared/RowTableLoading.jsx';
+import HistoryNavigation from '../Shared/HistoryNavigation.jsx';
 
 import '../../Tables.css';
 
@@ -170,45 +171,12 @@ export default function EventsList({ categoryKeys }) {
       {/* } */}
 
       {showHistory && (
-        <div className="flex flex-wrap items-center gap-3 mb-5">
-          <button
-            type="button"
-            onClick={() => {
-              setHistoryYear((prev) => Math.max(prev - 1, 1900));
-              setCurrentPage(1);
-            }}
-            className="px-3 py-2 rounded border border-slate-500 text-sm hover:bg-slate-700 transition"
-          >
-            Año anterior
-          </button>
-
-          <span className="text-sm font-semibold">Historial del año {historyYear}</span>
-
-          <button
-            type="button"
-            onClick={() => {
-              setHistoryYear((prev) => Math.min(prev + 1, currentSystemYear));
-              setCurrentPage(1);
-            }}
-            disabled={historyYear >= currentSystemYear}
-            className={`px-3 py-2 rounded border text-sm transition ${historyYear >= currentSystemYear ? 'border-slate-400 text-slate-400 cursor-not-allowed' : 'border-slate-500 hover:bg-slate-700'}`}
-          >
-            Año siguiente
-          </button>
-
-          {historyYear !== currentSystemYear && (
-            <button
-              type="button"
-              onClick={() => {
-                setHistoryYear(currentSystemYear);
-                setCurrentPage(1);
-              }}
-              className="px-3 py-2 rounded border border-slate-500 text-sm hover:bg-slate-700 transition"
-            >
-              Año actual
-            </button>
-          )}
-        </div>
+        <HistoryNavigation 
+          setHistoryYear={setHistoryYear} 
+          setCurrentPage={setCurrentPage} 
+          historyYear={historyYear} 
+          currentSystemYear={currentSystemYear} 
+        />
       )}
 
       {(dataToDisplay.length === 0 || paginatedEvents.length === 0) && !loading ? (
