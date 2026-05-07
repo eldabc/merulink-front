@@ -60,24 +60,24 @@ export const EventProvider = ({ showNotification, children }) => {
                                             &year=${year}
                                           `);
       const eventResultsData = eventResults.data.data;
-      console.log("History?", history, currentYear, year);
+      console.log("eventResultsData", eventResultsData);
 
       // Eventos Google una vez
-      if (googleEvents === '' || currentYear !== year && !history) {
-        const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
-        console.log("Eventos Google", holidays);
-        currentGoogleEvents = holidays;
-        setGoogleEvents(currentGoogleEvents);
-      }
+      // if (googleEvents === '' || currentYear !== year && !history) {
+      //   const holidays = await GoogleCalendarService.fetchHolidays(year, fixedEvents);
+      //   console.log("Eventos Google", holidays);
+      //   currentGoogleEvents = holidays;
+      //   setGoogleEvents(currentGoogleEvents);
+      // }
 
-      if (requestAll || hasGoogle) {
-        const filteredGoogleDuplicates = filterGoogleDuplicates(eventResultsData, currentGoogleEvents);
-        console.log("Filtrados Google", filteredGoogleDuplicates);
+      // if (requestAll || hasGoogle) {
+      //   const filteredGoogleDuplicates = filterGoogleDuplicates(eventResultsData, currentGoogleEvents);
+      //   console.log("Filtrados Google", filteredGoogleDuplicates);
 
-        combinedEvents = [...eventResultsData, ...filteredGoogleDuplicates];
-      } else {
+      //   combinedEvents = [...eventResultsData, ...filteredGoogleDuplicates];
+      // } else {
         combinedEvents = eventResultsData;
-      }
+      // }
   
       // console.log("EventResults:", eventResultsData);
       // console.log("combinedEvents:", combinedEvents);
@@ -122,20 +122,19 @@ export const EventProvider = ({ showNotification, children }) => {
       // console.log("newEventResponse", newEventResponse)
 
       // Si la categoría no cambió solo seteamos
-      if (initialLoadCategory.includes(categoryEvent)) {
-         if (formData.category === 'google-calendar') {
-            const filteredGoogleDuplicates = filterGoogleDuplicates([newEventResponse], googleEvents);
-            // console.log("filteredGoogleDuplicates", filteredGoogleDuplicates)
-            setEventData([newEventResponse, ...eventResults, ...filteredGoogleDuplicates ]);
+      if (initialLoadCategory.includes(categoryEvent) && formData.category !== 'google-calendar') {
+      //    if (formData.category === 'google-calendar') {
+      //       const filteredGoogleDuplicates = filterGoogleDuplicates([newEventResponse], googleEvents);
+      //       // console.log("filteredGoogleDuplicates", filteredGoogleDuplicates)
+      //       setEventData([newEventResponse, ...eventResults, ...filteredGoogleDuplicates ]);
 
-          } else {
+      //     } else {
             setEventData(prevData => {
               const newEventList = [newEventResponse, ...prevData];
               // console.log("newEventList", newEventList);
               return newEventList;
             });
-          }
-
+      //     }
       }
       
       showNotification(`Evento ${newEventResponse.title} creado con éxito`);

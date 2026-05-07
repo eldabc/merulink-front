@@ -43,10 +43,11 @@ export default function EventsList({ categoryKeys }) {
   const locationState = location.state;
   const stringCategory = stringCategoryEvents(categoryKeys);
   const isMeruBirthday = categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key;
-  const isEventWithStatus = categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
+  const isEventWithStatus = config?.hasStatus; //categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
   const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : '';
   const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key;
   const eventWithLocation = config?.hasLocation;
+  const isGoogleEvent = categoryKeys.includes(EVENT_CAT.G_CALENDAR.key);
   // console.log("config?.hasLocation", config?.hasLocation);
 
   useEffect(() => {
@@ -213,7 +214,7 @@ export default function EventsList({ categoryKeys }) {
                             </>
                           ) : (
                             <>
-                              <th className="px-4 py-3 text-left font-semibold">Hora</th>
+                              {!isGoogleEvent && <th className="px-4 py-3 text-left font-semibold">Hora</th> }
                               <th className="px-4 py-3 text-left font-semibold">Descripción/Comentarios</th>
                             </>
                           )}
@@ -238,6 +239,7 @@ export default function EventsList({ categoryKeys }) {
                               isMeruBirthday={isMeruBirthday} 
                               eventWithLocation={eventWithLocation}
                               isEventWithStatus={isEventWithStatus}
+                              isGoogleEvent={isGoogleEvent}
                             />
                           ))}
                       
