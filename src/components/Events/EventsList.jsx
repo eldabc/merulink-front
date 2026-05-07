@@ -46,7 +46,7 @@ export default function EventsList({ categoryKeys }) {
   const isEventWithStatus = categoryKeys[0] === EVENT_CAT.M_EVENTS.key || categoryKeys[0] === EVENT_CAT.D_HEIGHTS.key || categoryKeys[0] === EVENT_CAT.W_NIGHTS.key;
   const isBankingMondays = categoryKeys[0] === EVENT_CAT.B_MONDAYS.key ? `/${EVENT_CAT.B_MONDAYS.path}` : '';
   const holidaysEvents = categoryKeys[0] === EVENT_CAT.VE_HOLIDAYS.key || categoryKeys[0] === EVENT_CAT.G_CALENDAR.key;
-  const eventWithoutLocation = config?.hasLocation; //holidaysEvents || categoryKeys[0] === EVENT_CAT.M_BIRTHDAYS.key || categoryKeys[0] === EVENT_CAT.E_MOD.key;
+  const eventWithLocation = config?.hasLocation;
   // console.log("config?.hasLocation", config?.hasLocation);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function EventsList({ categoryKeys }) {
 
     if (matchLoadedCategory && justChanged) { // Si categoría no cambió no se llama backend 
       if (locationState) {
-        const nextState = { ...locationState, justChanged: false };
+        const nextState = { ...locationState, justChanged: false };  // Actualizando el flag que viene de form
         window.history.replaceState(nextState, document.title, window.location.href);
       }
       return;
@@ -82,7 +82,7 @@ export default function EventsList({ categoryKeys }) {
       isFirstRender.current = false;
 
       if (locationState && locationState.justChanged) {
-        const nextState = { ...locationState, justChanged: false };
+        const nextState = { ...locationState, justChanged: false }; // Actualizando el flag que viene de form
         window.history.replaceState(nextState, document.title, window.location.href);
       }
       setSelectedCategory(categoryKeys[0]);
@@ -218,7 +218,7 @@ export default function EventsList({ categoryKeys }) {
                             </>
                           )}
 
-                          {eventWithoutLocation && (
+                          {eventWithLocation && (
                             <th className="px-4 py-3 text-left font-semibold">Ubicación</th>
                           )}
 
@@ -236,7 +236,7 @@ export default function EventsList({ categoryKeys }) {
                               key={item.id} 
                               event={item} 
                               isMeruBirthday={isMeruBirthday} 
-                              eventWithoutLocation={eventWithoutLocation}
+                              eventWithLocation={eventWithLocation}
                               isEventWithStatus={isEventWithStatus}
                             />
                           ))}

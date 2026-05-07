@@ -9,7 +9,7 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 
-export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, isEventWithStatus} ) {
+export default function EventRow( {event, isMeruBirthday, eventWithLocation, isEventWithStatus} ) {
 
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,7 +62,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithoutLocation, 
           </>
         )}
 
-        {eventWithoutLocation && (
+        {eventWithLocation && (
           <td className="px-4 py-3 text-white-700">{event.extendedProps?.location?.label}</td>
         )}
         <td className="px-4 py-3 text-white-700">{eventCategoryLabel}</td>
