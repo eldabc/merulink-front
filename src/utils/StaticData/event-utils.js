@@ -34,7 +34,7 @@
 //       status: 'Tentativo',
 //       departmentName: 'Contabilidad',
 //       repeatEvent: true,
-//       repeatInterval: 'Anual',
+//       repeatInterval: 'YEARLY',
 //       coloringDay: true,
 //       createdBy: "Sistema"
 //     },
@@ -50,7 +50,7 @@
 //       status: 'Confirmado',
 //       departmentName: 'Administración',
 //       repeatEvent: true,
-//       repeatInterval: 'Anual',
+//       repeatInterval: 'YEARLY',
 //       coloringDay: true,
 //       createdBy: "Sistema"
 //     },
@@ -99,7 +99,7 @@
 //       locationId: null,
 //       locationName: null,
 //       repeatEvent: true,
-//       repeatInterval: 'Anual',
+//       repeatInterval: 'YEARLY',
 //       coloringDay: true,
 //       description: '',
 //       comments: 'Comentario del evento 5',
@@ -118,7 +118,7 @@
 //       locationId: null,
 //       locationName: null,
 //       repeatEvent: true,
-//       repeatInterval: 'Anual',
+//       repeatInterval: 'YEARLY',
 //       coloringDay: true,
 //       comments: 'Comentario del evento 6',
 //       createdBy: "Sistema"
@@ -276,3 +276,26 @@ export const STATUS_EVENTS = {
   confirmed: 'Confirmado',
   finalized: 'Finalizado'
 }
+
+export const recurrenceOptions = [
+  {
+    id: 1,
+    label: 'Anual',
+    value: 'YEARLY',
+  },
+  {
+    id: 2,
+    label: 'Mensual',
+    value: 'MONTHLY',
+  },
+  {
+    id: 3,
+    label: 'Quincenal',
+    value: 'WEEKLY_2',
+  },
+  {
+    id: 4,
+    label: 'Rotativo',
+    value: 'ROTATIVE',
+  },
+];

@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import { getDisabledClasses } from '../../utils/global-utils';  
+import { getDisabledClasses } from '../../utils/global-utils';
+import { recurrenceOptions } from '../../utils/StaticData/event-utils.js';
 
 import ErrorMessage from '../Shared/ErrorMessage.jsx';
 import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
@@ -10,6 +11,7 @@ import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
 import ToggleStatus from '../Shared/ToggleStatus.jsx';
 import RichTextEditor from '../Shared/RichTextEditor';
+import OptionSelect from '../Shared/OptionSelect';
 
 export default function EventFormContent({ 
   register, 
@@ -37,6 +39,19 @@ export default function EventFormContent({
 
   const yearlyEvent = config?.isYearly;
   const repeatEventDisabledClasses = getDisabledClasses(yearlyEvent, !isRepeatEvent);
+
+  const renderRepeatInterval = () => {
+    return recurrenceOptions
+            .filter(option => {
+              if (option.value === 'ROTATIVE') {
+                return isGoogleCategory; // solo se incluye si la categoría seleccionada es Google Calendar
+              }
+              return true;
+            })
+            .map(recurrenceOption => (
+              <OptionSelect key={`repeatInterval-${recurrenceOption.id}`} value={recurrenceOption.value} text={recurrenceOption.label} />
+    ));
+  };
 
   return (
     <>
@@ -178,12 +193,8 @@ export default function EventFormContent({
                   {...register('repeatInterval')}
                   className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses} ${repeatEventDisabledClasses}`}
                 >
-                    <option className='bg-[#3c4042]' value="">Seleccionar...</option>
-                    <option className='bg-[#3c4042]' value='Anual'>Anual</option>
-                    <option className='bg-[#3c4042]' value='Mensual'>Mensual</option>
-                    <option className='bg-[#3c4042]' value='Quincenal'>Quincenal</option>
-
-                    {isGoogleCategory && (<option className='bg-[#3c4042]' value='Rotativo'>Rotativo</option>)}
+                  <OptionSelect text="Seleccionar..." />
+                  {renderRepeatInterval()}
                 </select>
                 {errors?.repeatInterval && <ErrorMessage msg={errors.repeatInterval.message} /> }  
               </div>

@@ -11,7 +11,7 @@ export const eventValidationSchema = yup.object().shape({
   eventName: yup
     .string()
     .required('Nombre del evento es requerido')
-    .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-\/]+$/, "Solo se permiten letras y los signos '-','/'.")
+   .matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\/\.]+$/, "Solo se permiten letras, números y los signos '-', '/', '.'.")
     .max(100, 'Debe contener máximo 100 dígitos'),
 
   startDate: yup

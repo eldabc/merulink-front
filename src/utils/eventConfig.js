@@ -165,3 +165,39 @@ export const getPathByCategory = (key) => {
   const category = Object.values(EVENT_CAT).find(c => c.key === key);
   return category ? category.path : "eventos-meru";
 };
+
+export const buildRRule = (frequency, startDate, until = null) => {
+  console.log("helper", frequency, startDate)
+
+  if (!frequency) return null;
+
+  let rule = '';
+
+  switch (frequency) {
+
+    case 'WEEKLY':
+      rule = 'FREQ=WEEKLY';
+      break;
+
+    case 'WEEKLY_2':
+      rule = 'FREQ=WEEKLY;INTERVAL=2';
+      break;
+
+    case 'MONTHLY':
+      rule = 'FREQ=MONTHLY';
+      break;
+
+    case 'YEARLY':
+      rule = 'FREQ=YEARLY';
+      break;
+
+    default:
+      return null;
+  }
+
+  if (until) {
+    rule += `;UNTIL=${until}`;
+  }
+
+  return rule;
+};

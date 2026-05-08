@@ -141,7 +141,7 @@ export default function EventForm({ mode = 'create' }) {
 
     const yearlyEventValue = config?.isYearly;
     const defaultRepitedEvent = yearlyEventValue ? true : event?.extendedProps?.repeatEvent ?? false;
-    const defaultRepitedInterval = yearlyEventValue ? 'Anual' : event?.extendedProps?.repeatInterval ?? '';
+    const defaultRepitedInterval = yearlyEventValue ? 'YEARLY' : event?.extendedProps?.repeatInterval ?? '';
     const status = config.hasStatus && createMode ? STATUS_EVENTS.tentative : event?.extendedProps?.status ?? '';
 
     return {
@@ -188,7 +188,7 @@ export default function EventForm({ mode = 'create' }) {
     const yearlyEventValue = config?.isYearly;
     if (yearlyEventValue && selectedCategory) {
       const defaultRepitedEvent = yearlyEventValue ? true : false;
-      const defaultRepitedInterval = yearlyEventValue ? 'Anual' : '';
+      const defaultRepitedInterval = yearlyEventValue ? 'YEARLY' : '';
 
       setValue('repeatEvent', defaultRepitedEvent, { shouldValidate: true });
       setValue('repeatInterval', defaultRepitedInterval, { shouldValidate: true });
@@ -215,7 +215,7 @@ export default function EventForm({ mode = 'create' }) {
     if (success) {
       const targetPath = getPathByCategory(selectedCategory);
       navigate(`/eventos/${targetPath}`, { 
-        state: { justChanged: true }
+        // state: { justChanged: true }
       });
     }
   };

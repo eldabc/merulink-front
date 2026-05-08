@@ -24,7 +24,7 @@ export const mapGoogleEventToFullCalendar = (event, fixedEventsList = []) => {
             description: event.description || 'Feriado oficial de Venezuela',
             externalDate: true,
             repeatEvent: true, 
-            repeatInterval: isFixed ? 'Anual' : 'Rotativo',
+            repeatInterval: isFixed ? 'YEARLY' : 'ROTATIVE',
             isFixed,
             createdBy: 'Calendario Google'
         }
