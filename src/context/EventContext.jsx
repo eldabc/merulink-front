@@ -8,7 +8,6 @@ import { fixedEvents } from '../utils/StaticData/event-utils';
 import { CATEGORY_CONFIGS, DEFAULT_CONFIG, EVENT_CAT } from '../utils/eventConfig';
 import { mapEventToBackend } from '../utils/mappers/eventMapper';
 import { mapBankingEventToBackend } from '../utils/mappers/bankingEventMapper';
-import { GoogleCalendarService } from '../services/googleCalendarService';
 
 const EventContext = createContext();
 
