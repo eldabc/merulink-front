@@ -13,10 +13,12 @@ import { capitalizeDateString } from '../../utils/date-utils';
 import { filterEventsByDate } from '../../utils/calendar-utils';
 import { getTodayNormalized } from '../../utils/date-utils';
 import { categoryLegend } from '../../utils/Events/events-utils';
+import { getDisabledClasses } from '../../utils/global-utils';  
 
 import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import SpanText from '../Shared/SpanText';
 
 import '../../Calendar.css';
 
@@ -26,32 +28,39 @@ export default function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(getTodayNormalized);
   const [currentTitle, setCurrentTitle] = useState('');
-  const { eventData, loadEvents, refetchEvents, specialDays } = useEvents();
+  const { eventData, loadEvents, refetchEvents, specialDays, currentYear, currentMonth, loading, setCurrentYear, setCurrentMonth } = useEvents();
   const calendarRef = useRef(null);
   const navigate = useNavigate();
 
   // Funciones para controlar el calendario manualmente
   const handlePrev = () => calendarRef.current.getApi().prev();
   const handleNext = () => calendarRef.current.getApi().next(); 
+  const disabledClasses = getDisabledClasses(loading);
 
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-
-  useEffect(() => {      
-    loadEvents();
+  useEffect(() => {  
+    // console.log(`Mes: ${currentMonth}, Año: ${currentYear}`);
+    loadEvents({year: currentYear, month: currentMonth});
   }, []);
 
   const handleDatesSet = (dateInfo) => {
-    const yearInView = dateInfo.view.currentStart.getFullYear();
+  const yearInView = dateInfo.view.currentStart.getFullYear();
+  const monthInView = dateInfo.view.currentStart.getMonth() + 1;
 
-    // Si el año cambia
-    if (yearInView !== currentYear) {
-      setCurrentYear(yearInView);
-      refetchEvents(yearInView);
-    }
+  // Comparamos lo que hay en vista contra lo que tenemos en el contexto
+  if (monthInView !== currentMonth || yearInView !== currentYear) {
+    console.log(`Cambiando a Mes: ${monthInView}, Año: ${yearInView}`);
     
-    setCurrentTitle(dateInfo.view.title);
-  };
+    // Actualizamos los estados del contexto
+    // setCurrentYear(yearInView);
+    // setCurrentMonth(monthInView);
 
+    // LLAMADA CRUCIAL: Usamos las variables locales, NO los estados
+    // porque los estados aún no se han refrescado en este ciclo de render
+    loadEvents({ year: yearInView, month: monthInView });
+  }
+  
+  setCurrentTitle(dateInfo.view.title);
+};
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
     "meru-events": true,
@@ -176,11 +185,21 @@ export default function Calendar() {
   return (
     <div className='container'>
       <div className='calendar-container'>
-        <div className='demo-app-main'>
+        <div className='demo-app-main relative'>
+          
+          {loading && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473] backdrop-blur-[1px]">
+              <div className="bg-[#2f3d44] px-6 py-3 rounded-xl shadow-2xl border border-[#9fd8ff] flex items-center gap-3">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
+                <SpanText text="Cargando eventos..." dinamicClasses="text-white font-medium" />
+              </div>
+            </div>
+          )}
+
           <div className='w-full flex flex-col md:flex-row items-center justify-around gap-4 mb-2'> 
             <div className="flex gap-2">
-              <button onClick={handlePrev} className="bg-gray-700 p-2 rounded">Ant.</button>
-              <button onClick={handleNext} className="bg-gray-700 p-2 rounded">Sig.</button>
+              <button disabled={loading} onClick={handlePrev} className={`bg-gray-700 p-2 rounded ${disabledClasses}`}>Ant.</button>
+              <button disabled={loading} onClick={handleNext} className={`bg-gray-700 p-2 rounded ${disabledClasses}`}>Sig.</button>
             </div>
             <div className='flex flex-col items-center'>
               <h3 className="text-lg md:text-2xl font-bold text-white">Calendario Plaza Meru</h3>
@@ -197,7 +216,7 @@ export default function Calendar() {
               </button>
             </div>
           </div>
-         
+          
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             ref={calendarRef}
@@ -217,8 +236,8 @@ export default function Calendar() {
             datesSet={handleDatesSet}
             moreLinkClick="none"
           />
+
         </div>
-        
         <CalendarSidebar
           eventsOfSelectedDay={allEventsForSidebar}
           selectedEvent={selectedEvent}
@@ -235,7 +254,7 @@ export default function Calendar() {
               return (
                 <button
                   key={cat.key.join('-')}
-                  className={`skip-style-btn legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'}`}
+                  className={`skip-style-btn legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'} ${disabledClasses}`}
                   onClick={() => toggleCategory(cat.key)}
                 >
                   {cat.label}

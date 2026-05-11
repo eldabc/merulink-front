@@ -31,6 +31,7 @@ export const EventProvider = ({ showNotification, children }) => {
   const [eventResults, setEventResults] = useState('');
   const [initialLoadCategory, setInitialLoadCategory] = useState(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const { categoryEvents } = useGlobalData();
 
   const config = CATEGORY_CONFIGS[selectedCategory] || DEFAULT_CONFIG;
@@ -40,11 +41,12 @@ export const EventProvider = ({ showNotification, children }) => {
     categoryKeys = ['all'], 
     history = false, 
     year = currentYear, 
+    month = null,
     anyDateInCategory = false 
   } = {}) => {
     setLoading(true);
     try {
-
+// console.log("mo", month)
       // let combinedEvents = [];
       let currentGoogleEvents = googleEvents;
       const requestAll = categoryKeys[0] === 'all' && true;
@@ -57,6 +59,7 @@ export const EventProvider = ({ showNotification, children }) => {
                                             &history=${history}
                                             &anyDateInCategory=${anyDateInCategory}
                                             &year=${year}
+                                            &month=${month}
                                           `);
       const eventResultsData = eventResults.data.data;
       console.log("eventResultsData", eventResultsData);
@@ -78,11 +81,11 @@ export const EventProvider = ({ showNotification, children }) => {
 
 
   // *** Recargar datos manualmente
-  const refetchEvents = async (year) => {
+  const refetchEvents = async (year, month = null) => {
     
     try {
       console.log("Refresh", year);
-      await loadEvents({ categoryKeys: ['all'], year: year});
+      await loadEvents({ categoryKeys: ['all'], year: year, month: month});
 
     } catch (err) {
       setError(err.message);
@@ -326,7 +329,11 @@ export const EventProvider = ({ showNotification, children }) => {
     config,
     initialLoadCategory,
     setInitialLoadCategory,
-    loadEventById
+    loadEventById,
+    currentYear,
+    currentMonth,
+    setCurrentYear,
+    setCurrentMonth
   };
 
   return (
