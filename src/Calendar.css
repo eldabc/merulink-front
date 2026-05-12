@@ -523,6 +523,10 @@ b { /* used for event dates/times */
   color: #282a2b;
 }
 
+.event-title:hover {
+  color: #389fd2 !important;
+}
+
 .selected-event {
   margin-top: 1em;
 }

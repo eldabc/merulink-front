@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function SidebarEvent({ event, isSelected, onSelectEvent }) {
   // Obtener la clase CSS del evento
   const eventColorClass = event.classNames?.[0] || event.className || 'g-calendar-ve-holidays';
@@ -20,7 +22,9 @@ export default function SidebarEvent({ event, isSelected, onSelectEvent }) {
             flexShrink: 0
           }}
         />
-        <span className="event-title">{event.title}</span>
+        <span>
+           <Link className="event-title" to={event?.extendedProps?.routePath}> {event.title} </Link>
+        </span>
       </div>
     </li>
   );
