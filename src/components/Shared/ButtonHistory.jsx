@@ -1,6 +1,13 @@
+import { useEffect } from 'react';
+
 import { ClockIcon } from '@heroicons/react/24/solid';
 
-function ButtonHistory({ showHistory, setShowHistory }) {
+function ButtonHistory({ showHistory, setShowHistory, setHistoryYear, currentSystemYear }) {
+  
+  useEffect(() => {
+    if(!showHistory) setHistoryYear(currentSystemYear);
+  }, [showHistory]);
+
   return (
     <button
       onClick={() => setShowHistory(!showHistory)}

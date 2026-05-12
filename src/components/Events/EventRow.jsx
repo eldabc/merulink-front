@@ -8,18 +8,18 @@ import { divideDateTime, normalizeDateToString, formatTimeTo12H } from '../../ut
 import ButtonDelete from '../Shared/ButtonDelete';
 import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
 import ConfirmDialog from '../Shared/ConfirmDialog';
+import SpanText from "../Shared/SpanText";
 
 export default function EventRow( {event, isMeruBirthday, eventWithLocation, isEventWithStatus, isGoogleEvent} ) {
-
   const { deleteEvent } = useEvents();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const divideDateTimeStart = divideDateTime(event?.start);
   const status = event?.extendedProps?.status ?? null;
-  const isNotConfirmedEvent = status !== 'Confirmado' && status !== null;
+  const isConfirmedEvent = status === 'Confirmado';
   const isNotExternalEvent = !event.extendedProps?.externalDate;
-  const blockBtn = isNotConfirmedEvent ? false : true;
+  const blockBtn = isConfirmedEvent  ? true : false;
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar evento con Estatus Confirmado' : 'Eliminar';
   const eventCategoryLabel = event?.extendedProps?.specialLabel ? event?.extendedProps?.specialLabel : event?.extendedProps?.category?.label;
   const eventIsToday = event?.start.split('T')[0] === new Date().toISOString().split('T')[0];
@@ -69,7 +69,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, isE
         
         {isEventWithStatus && <td className="px-4 py-3 text-white-700">{event.extendedProps?.status}</td> }
 
-        {(!isMeruBirthday && isNotExternalEvent || isNotConfirmedEvent ) && (
+        {(!isMeruBirthday && isNotExternalEvent ) ? (
           <td className="px-4 py-3">
               <ButtonDelete 
                 setIsModalOpen={setIsModalOpen}
@@ -78,6 +78,12 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, isE
                 disabled={blockBtn} 
                 id={event.id} />
           </td>
+        ) : (
+          !isMeruBirthday && (
+            <div className="mt-5">
+              <SpanText text="Sin Acciones" />
+            </div>
+          )
         )}
 
         {event.extendedProps?.isTemplate && <ButtonIsTemplate/> }

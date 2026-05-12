@@ -74,6 +74,7 @@ export default function EventsList({ categoryKeys }) {
         setSearchDateValue('');
         setCurrentPage(1);
         setShowHistory(false);
+        setHistoryYear(currentSystemYear);
       });
       
       loadEvents({ categoryKeys: categoryKeys });
@@ -167,9 +168,7 @@ export default function EventsList({ categoryKeys }) {
         showFilterDate={true}
       />
       
-      {/* {!holidaysEvents &&  */}
-      <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} /> 
-      {/* } */}
+      <ButtonHistory showHistory={showHistory} setShowHistory={setShowHistory} setHistoryYear={setHistoryYear} currentSystemYear={currentSystemYear} /> 
 
       {showHistory && (
         <HistoryNavigation 
