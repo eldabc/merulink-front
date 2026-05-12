@@ -38,7 +38,6 @@ export default function Calendar() {
   const disabledClasses = getDisabledClasses(loading);
 
   useEffect(() => {  
-    // console.log(`Mes: ${currentMonth}, Año: ${currentYear}`);
     loadEvents({year: currentYear, month: currentMonth});
   }, []);
 
@@ -54,8 +53,6 @@ export default function Calendar() {
     // setCurrentYear(yearInView);
     // setCurrentMonth(monthInView);
 
-    // LLAMADA CRUCIAL: Usamos las variables locales, NO los estados
-    // porque los estados aún no se han refrescado en este ciclo de render
     loadEvents({ year: yearInView, month: monthInView });
   }
   

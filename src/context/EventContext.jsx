@@ -28,7 +28,6 @@ export const EventProvider = ({ showNotification, children }) => {
   const [isTemplate, setIsTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
   const [googleEvents, setGoogleEvents] = useState('');
-  const [eventResults, setEventResults] = useState('');
   const [initialLoadCategory, setInitialLoadCategory] = useState(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
@@ -46,11 +45,6 @@ export const EventProvider = ({ showNotification, children }) => {
   } = {}) => {
     setLoading(true);
     try {
-// console.log("mo", month)
-      // let combinedEvents = [];
-      let currentGoogleEvents = googleEvents;
-      const requestAll = categoryKeys[0] === 'all' && true;
-      const hasGoogle = categoryKeys.includes("google-calendar");
       
       // Carga Eventos de BD
       const eventResults = await axios.get(`
@@ -62,13 +56,11 @@ export const EventProvider = ({ showNotification, children }) => {
                                             &month=${month}
                                           `);
       const eventResultsData = eventResults.data.data;
+
       console.log("eventResultsData", eventResultsData);
-      // combinedEvents = eventResultsData;
-  
       // console.log("EventResults:", eventResultsData);
       
       setEventData(eventResultsData);
-      setEventResults(eventResultsData);
       setInitialLoadCategory(JSON.stringify(categoryKeys));
       
     } catch (err) {
