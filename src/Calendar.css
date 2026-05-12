@@ -271,28 +271,46 @@ b { /* used for event dates/times */
     background-color: #668CD9;
     border-color: #bebebe;
 }
+.border-meru-events {
+  border-left: 3px solid #668CD9;
+}
 .meru-birthdays {
   background-color: #603F99;
   border-color: #bebebe;
+}
+.border-meru-birthdays {
+  border-left: 3px solid #603F99;
 }
 .di-heights-wedding-nights /*, .wedding-nights, .dinner-heights */
 {
   background-color: #7EC225;
   border-color: #bebebe;
 }
+.border-di-heights-wedding-nights {
+  border-left: 3px solid #7EC225;
+}
 .executive-mod {
   background-color: #E0C240;
   border-color: #bebebe;
+}
+.border-executive-mod {
+  border-left: 3px solid #E0C240;
 }
 .g-calendar-ve-holidays /*, .google-calendar, .ve-holidays*/
 {
   background-color: #AD2D2D;
   border-color: #bebebe;
 }
+.border-g-calendar-ve-holidays {
+  border-left: 3px solid #AD2D2D;
+}
 
 .banking-mondays{
   background-color: #e67e22;
   border-color: #bebebe;
+}
+.border-banking-mondays {
+  border-left: 3px solid #e67e22;
 }
 /* FIN Events Colors */
 
@@ -311,7 +329,7 @@ b { /* used for event dates/times */
     background: none !important;
 }
 .demo-app-sidebar-bottom-section {
-    background: linear-gradient(360deg,rgba(188, 191, 194, 1) 0%, rgb(167 172 169 / 55%) 50%, rgb(255 255 245) 100%);
+    background-color: #2f3d4426;
     padding: 8%;
     border-radius: 5%;
     margin: 5%;
@@ -487,13 +505,12 @@ b { /* used for event dates/times */
   transition: background-color 0.2s;
 }
 
-.sidebar-event-item:hover {
+.sidebar-event-item:hover, .demo-app-sidebar-bottom-section:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.sidebar-event-item.selected {
-  background-color: rgba(13, 0, 128, 0.1);
-  border-left: 3px solid rgb(13, 0, 128);
+.sidebar-event-item {
+  background-color: #2f3d4426;
 }
 
 .sidebar-event-content {

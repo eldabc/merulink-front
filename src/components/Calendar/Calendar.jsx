@@ -42,22 +42,23 @@ export default function Calendar() {
   }, []);
 
   const handleDatesSet = (dateInfo) => {
-  const yearInView = dateInfo.view.currentStart.getFullYear();
-  const monthInView = dateInfo.view.currentStart.getMonth() + 1;
+    const yearInView = dateInfo.view.currentStart.getFullYear();
+    const monthInView = dateInfo.view.currentStart.getMonth() + 1;
 
-  // Comparamos lo que hay en vista contra lo que tenemos en el contexto
-  if (monthInView !== currentMonth || yearInView !== currentYear) {
-    console.log(`Cambiando a Mes: ${monthInView}, Año: ${yearInView}`);
+    // Comparamos lo que hay en vista contra lo que tenemos en el contexto
+    if (monthInView !== currentMonth || yearInView !== currentYear) {
+      console.log(`Cambiando a Mes: ${monthInView}, Año: ${yearInView}`);
+      
+      // Actualizamos los estados del contexto
+      // setCurrentYear(yearInView);
+      // setCurrentMonth(monthInView);
+
+      loadEvents({ year: yearInView, month: monthInView });
+    }
     
-    // Actualizamos los estados del contexto
-    // setCurrentYear(yearInView);
-    // setCurrentMonth(monthInView);
-
-    loadEvents({ year: yearInView, month: monthInView });
-  }
+    setCurrentTitle(dateInfo.view.title);
+  };
   
-  setCurrentTitle(dateInfo.view.title);
-};
   // Categorías activas
   const [activeCategories, setActiveCategories] = useState({
     "meru-events": true,

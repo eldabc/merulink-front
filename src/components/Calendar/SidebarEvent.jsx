@@ -4,7 +4,7 @@ export default function SidebarEvent({ event, isSelected, onSelectEvent }) {
   
   return (
     <li 
-      className={`sidebar-event-item ${isSelected ? 'selected' : ''}`} 
+      className={`sidebar-event-item ${isSelected ? `border-${eventColorClass}` : ''}`} 
       onClick={() => onSelectEvent(event)}
       style={{ cursor: 'pointer' }}
     >
