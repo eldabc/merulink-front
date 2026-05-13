@@ -88,6 +88,16 @@ export const eventValidationSchema = yup.object().shape({
         .required('Debe indicar el intervalo de repetición'),
       otherwise: (schema) => schema.notRequired(),
     }),
+
+   repeatUntil: yup.string()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .when('repeatEvent', {
+      is: true, // Si repeatEvent es true (está clicado)
+      then: (schema) => schema
+        .required('Debe indicar fecha límite de repetición.'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   
   createAlert: yup.boolean(),
 

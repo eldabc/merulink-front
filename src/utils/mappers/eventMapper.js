@@ -35,6 +35,8 @@ export const mapEventToBackend = (formData) => {
 
       repeat_event: formData.repeatEvent,
       repeat_interval: formData.repeatInterval,
+      repeat_until: formData.repeatUntil,
+      // is_repeat_active: formData,
 
       extended_props: {
         status: status,

@@ -155,6 +155,7 @@ export default function EventForm({ mode = 'create' }) {
         locationId: event?.extendedProps?.location?.id ?? '',
         repeatEvent: defaultRepitedEvent,
         repeatInterval: defaultRepitedInterval,
+        repeatUntil: event?.repeatUntil ?? null,
         createAlert: event?.extendedProps?.createAlert ?? false,
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
@@ -162,7 +163,6 @@ export default function EventForm({ mode = 'create' }) {
         category: event?.extendedProps?.category?.key,
         isTemplate: isTemplateValue,
         templateName: templateNameValue,
-        // phones: event?.extendedProps?.phones ?? [{ code: '0414', number: '' }],
         contacts: event?.contacts ? prepareContactsForForm(event.contacts) : []
       }
   }

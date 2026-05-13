@@ -295,6 +295,11 @@ export const recurrenceOptions = [
   },
   {
     id: 4,
+    label: 'Semanal',
+    value: 'WEEKLY',
+  },
+  {
+    id: 5,
     label: 'Rotativo',
     value: 'ROTATIVE',
   },
