@@ -29,16 +29,16 @@ export const mapEventToBackend = (formData) => {
       all_day: allDay,
       
       ...(formData.category === EVENT_CAT.G_CALENDAR.key && {
-          rrule: rrule,
           external_source: EVENT_CAT.G_CALENDAR.key,
           external_id: formData.id, // En este caso este es el ID que viene de Google
         }),
 
+      repeat_event: formData.repeatEvent,
+      repeat_interval: formData.repeatInterval,
+
       extended_props: {
         status: status,
         event_type: formData?.eventType,
-        repeat_event: formData.repeatEvent,
-        repeat_interval: formData.repeatInterval,
         create_alert: formData.createAlert,
         coloring_day: formData.coloringDay,
         description: formData.description ?? '',

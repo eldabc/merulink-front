@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../../context/EventContext';
 
 import { truncateText } from '../../utils/text-utils';
-import { divideDateTime, normalizeDateToString, formatTimeTo12H } from '../../utils/date-utils'; //, getNextHour
+import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
+import { divideDateTime, normalizeDateToString, formatTimeTo12H } from '../../utils/date-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ButtonIsTemplate from '../Shared/ButtonIsTemplate';
@@ -17,7 +18,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, isE
 
   const divideDateTimeStart = divideDateTime(event?.start);
   const status = event?.extendedProps?.status ?? null;
-  const isConfirmedEvent = status === 'Confirmado';
+  const isConfirmedEvent = status === STATUS_EVENTS.confirmed;
   const isNotExternalEvent = !event.extendedProps?.externalDate;
   const blockBtn = isConfirmedEvent  ? true : false;
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar evento con Estatus Confirmado' : 'Eliminar';
@@ -80,9 +81,9 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, isE
           </td>
         ) : (
           !isMeruBirthday && (
-            <div className="mt-5">
+            <td className="mt-5">
               <SpanText text="Sin Acciones" />
-            </div>
+            </td>
           )
         )}
 

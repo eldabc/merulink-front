@@ -129,7 +129,7 @@ export default function EventForm({ mode = 'create' }) {
   }
 
   const eventReset = (event) => { 
-    // console.log("EventData", event?.extendedProps?.eventType);
+    // console.log("EventData", event);
 
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
@@ -140,8 +140,8 @@ export default function EventForm({ mode = 'create' }) {
     setTemplateName(templateNameValue);
 
     const yearlyEventValue = config?.isYearly;
-    const defaultRepitedEvent = yearlyEventValue ? true : event?.extendedProps?.repeatEvent ?? false;
-    const defaultRepitedInterval = yearlyEventValue ? 'YEARLY' : event?.extendedProps?.repeatInterval ?? '';
+    const defaultRepitedEvent = yearlyEventValue ? true : event?.repeatEvent ?? false;
+    const defaultRepitedInterval = yearlyEventValue ? 'YEARLY' : event?.repeatInterval ?? '';
     const status = config.hasStatus && createMode ? STATUS_EVENTS.tentative : event?.extendedProps?.status ?? '';
 
     return {
@@ -319,9 +319,8 @@ export default function EventForm({ mode = 'create' }) {
                 </div>
                 <div className='mt-5'>
                   {viewMode || editMode ? (
-                    <div className={`text-xl w-full px-2 py-2 rounded-lg ${event?.extendedProps?.category?.color ?? 'bg-[#56a2c8]'} 
-                                     text-center text-white-600 border border-gray-300 hover:border-[#9fd8ff]! transition-all duration-600 ease-in-out
-                                     hover:shadow-lg hover:-translate-y-1`}
+                    <div className={`text-xl w-full px-2 py-2 rounded-lg text-center text-white-600 border border-gray-300 hover:border-[#9fd8ff]! transition-all
+                                     duration-600 ease-in-out hover:shadow-lg hover:-translate-y-1 ${event?.extendedProps?.category?.color ?? ''}`}
                     >
                      {event?.extendedProps?.category?.label || 'Sin tipo'}
                     </div>
