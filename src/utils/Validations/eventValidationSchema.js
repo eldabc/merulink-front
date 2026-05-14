@@ -96,7 +96,7 @@ export const eventValidationSchema = yup.object().shape({
       is: (repeatEvent, repeatAlways, startDate) => repeatEvent === true && !repeatAlways,
       then: (schema) => schema
         .required('Debe indicar fecha límite de repetición.')
-        .test('min-week-after', 'Fecha límite debe ser al menos una semana después de la fecha de inicio.', function(value) {
+        .test('min-week-after', 'Fecha límite debe ser superior la fecha de inicio.', function(value) {
           const { startDate } = this.parent;
           if (!value || !startDate) return true;
           const repeatDate = new Date(value);

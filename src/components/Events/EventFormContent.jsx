@@ -59,6 +59,11 @@ export default function EventFormContent({
     ));
   };
 
+  const checkRepeatFields = () => {
+    setValue('repeatUntil', null, { shouldValidate: true });
+    setValue('repeatAlways', false, { shouldValidate: true });
+  };
+
   return (
     <>
       <TitleHeader title={editMode ? ( 'Editar Evento' ):( 'Datos Evento')} /> 
@@ -191,7 +196,7 @@ export default function EventFormContent({
               <div className='items-center gap-2 min-h-15'>
                 <div className='flex flex-row items-center gap-2'>
                   <input 
-                    disabled={viewMode || yearlyEvent}
+                    disabled={viewMode || yearlyEvent} onClick={() => checkRepeatFields()}
                     {...register('repeatEvent')}  type='checkbox' className={`w-6 h-6 rounded filter-input ${disabledClasses} `}  
                   />
                   <div>
