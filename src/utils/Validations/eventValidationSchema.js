@@ -89,13 +89,21 @@ export const eventValidationSchema = yup.object().shape({
       otherwise: (schema) => schema.notRequired(),
     }),
 
-   repeatUntil: yup.string()
+  repeatUntil: yup.string()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
-    .when('repeatEvent', {
-      is: true, // Si repeatEvent es true (está clicado)
+    .when(['repeatEvent', 'repeatAlways', 'startDate'], {
+      is: (repeatEvent, repeatAlways, startDate) => repeatEvent === true && !repeatAlways,
       then: (schema) => schema
-        .required('Debe indicar fecha límite de repetición.'),
+        .required('Debe indicar fecha límite de repetición.')
+        .test('min-week-after', 'Fecha límite debe ser al menos una semana después de la fecha de inicio.', function(value) {
+          const { startDate } = this.parent;
+          if (!value || !startDate) return true;
+          const repeatDate = new Date(value);
+          const minDate = new Date(startDate);
+          minDate.setDate(minDate.getDate() + 7);
+          return repeatDate >= minDate;
+        }),
       otherwise: (schema) => schema.notRequired(),
     }),
   

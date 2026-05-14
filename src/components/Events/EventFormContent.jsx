@@ -39,7 +39,13 @@ export default function EventFormContent({
 
   const yearlyEvent = config?.isYearly;
   const repeatEventDisabledClasses = getDisabledClasses(yearlyEvent, !isRepeatEvent);
+  const watchRepeatAlways = watch('repeatAlways');
+  const disableRepeatUntil = getDisabledClasses(watchRepeatAlways);
 
+  useEffect(() => {
+    setValue('repeatUntil', null, { shouldValidate: true });
+  }, [watchRepeatAlways])
+  
   const renderRepeatInterval = () => {
     return recurrenceOptions
             .filter(option => {
@@ -201,29 +207,30 @@ export default function EventFormContent({
                   </div>
                   
                 </div>
-
-                <div className='pb-1 w-full  bg-field rounded-xl'>
-                  <div className='flex flex-row p-2 mt-2 gap-4 justify-center'>
-                    <div className=''>
-                      <span> Hasta: </span>
+                {isRepeatEvent && (
+                  <div className='pb-1 w-full  bg-field rounded-xl'>
+                    <div className='flex flex-row p-2 mt-2 gap-4 justify-center'>
+                      <div className=''>
+                        <span> Hasta: </span>
+                        <input 
+                          readOnly={viewMode || watchRepeatAlways } type='date'
+                          {...register('repeatUntil')}
+                          className={`w-40 px-3 py-2 rounded-lg filter-input ${disabledClasses} ${disableRepeatUntil}`}  
+                        />
+                        {errors?.repeatUntil && <ErrorMessage msg={errors.repeatUntil.message} />}  
+                      </div> 
+                    </div>
+                
+                    <div className='flex items-center mb-2 justify-center'>
+                      <span className='text-gray-300! text-xs ml-4'> Repetir Siempre: </span>
                       <input 
-                        readOnly={viewMode} type='date'
-                        {...register('repeatUntil')}
-                        className={`w-40 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}  
+                        readOnly={viewMode} type='checkbox'
+                        {...register('repeatAlways')}
+                        className={`ml-2 w-4 h-4 rounded filter-input ${disabledClasses}`}  
                       />
-                      {errors?.repeatUntil && <ErrorMessage msg={errors.repeatUntil.message} />}  
-                    </div> 
+                    </div>
                   </div>
-              
-                  <div className='flex items-center mb-2 justify-center'>
-                    <span className='text-gray-300! text-xs ml-4'> Repetir Siempre: </span>
-                    <input 
-                      readOnly={viewMode} type='checkbox'
-                      {...register('repeatAlways')}
-                      className={`ml-2 w-4 h-4 rounded filter-input ${disabledClasses}`}  
-                    />
-                  </div>
-                </div>
+                )}
               </div>
             </>
           )}

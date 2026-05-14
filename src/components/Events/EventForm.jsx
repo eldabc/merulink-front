@@ -133,6 +133,7 @@ export default function EventForm({ mode = 'create' }) {
 
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
+    const divideDateTimeRepeatUntil = divideDateTime(event?.repeatUntil);
     const isTemplateValue = event?.extendedProps?.isTemplate ?? false;
     const templateNameValue = event?.extendedProps?.templateName ?? '';
 
@@ -155,7 +156,9 @@ export default function EventForm({ mode = 'create' }) {
         locationId: event?.extendedProps?.location?.id ?? '',
         repeatEvent: defaultRepitedEvent,
         repeatInterval: defaultRepitedInterval,
-        repeatUntil: event?.repeatUntil ?? null,
+        repeatUntil: divideDateTimeRepeatUntil.date ?? null,
+        repeatAlways: event?.repeatAlways ?? false,
+        isRepeatActive: event?.isRepeatActive ?? false,
         createAlert: event?.extendedProps?.createAlert ?? false,
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',

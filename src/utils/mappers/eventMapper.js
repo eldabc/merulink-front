@@ -6,7 +6,7 @@ import { sanitizePhone } from "../global-utils";
 import { buildRRule } from '../eventConfig.js';
 
 export const mapEventToBackend = (formData) => {
-  // console.log("Mapping event data for backend:", formData?.eventType);
+  // console.log("Mapping event data for backend:", formData);
 
   const isFixed = findFixedEvents(formData); 
   const status = formData.status ? formData.status : 'Creado';
@@ -36,7 +36,8 @@ export const mapEventToBackend = (formData) => {
       repeat_event: formData.repeatEvent,
       repeat_interval: formData.repeatInterval,
       repeat_until: formData.repeatUntil,
-      // is_repeat_active: formData,
+      repeat_always: formData.repeatAlways,
+      is_repeat_active: formData.isRepeatActive,
 
       extended_props: {
         status: status,
