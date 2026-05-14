@@ -75,6 +75,7 @@ export default function EventForm({ mode = 'create' }) {
   const eventOneDayWithEndTime = selectedCategory === EVENT_CAT.D_HEIGHTS.key;
   const isGoogleCategory = selectedCategory === EVENT_CAT.G_CALENDAR.key;
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
+  const hasParentEvent = Object.keys(event?.parentEvent ?? {}).length > 0 ? true : false;
  
   useEffect(() => {
     if(categoryEvents.length === 0){
@@ -130,10 +131,11 @@ export default function EventForm({ mode = 'create' }) {
 
   const eventReset = (event) => { 
     // console.log("EventData", event);
-
+    
+    const repeatEventRouteJson = hasParentEvent ? event?.parentEvent : event;
     const divideDateTimeStart = divideDateTime(event?.start);
     const divideDateTimeEnd = divideDateTime(event?.end);
-    const divideDateTimeRepeatUntil = divideDateTime(event?.repeatUntil);
+    const divideDateTimeRepeatUntil = divideDateTime(repeatEventRouteJson?.repeatUntil);
     const isTemplateValue = event?.extendedProps?.isTemplate ?? false;
     const templateNameValue = event?.extendedProps?.templateName ?? '';
 
@@ -141,8 +143,8 @@ export default function EventForm({ mode = 'create' }) {
     setTemplateName(templateNameValue);
 
     const yearlyEventValue = config?.isYearly;
-    const defaultRepitedEvent = yearlyEventValue ? true : event?.repeatEvent ?? false;
-    const defaultRepitedInterval = yearlyEventValue ? 'YEARLY' : event?.repeatInterval ?? '';
+    const defaultRepitedEvent = yearlyEventValue ? true : repeatEventRouteJson?.repeatEvent ?? false;
+    const defaultRepitedInterval = yearlyEventValue ? 'YEARLY' : repeatEventRouteJson?.repeatInterval ?? '';
     const status = config.hasStatus && createMode ? STATUS_EVENTS.tentative : event?.extendedProps?.status ?? '';
 
     return {
@@ -154,11 +156,14 @@ export default function EventForm({ mode = 'create' }) {
         status: status,
         eventType: event?.extendedProps?.eventType ? event?.extendedProps?.eventType : null,
         locationId: event?.extendedProps?.location?.id ?? '',
+
+        // Campos para repetición de eventos
         repeatEvent: defaultRepitedEvent,
         repeatInterval: defaultRepitedInterval,
         repeatUntil: divideDateTimeRepeatUntil.date ?? null,
-        repeatAlways: event?.repeatAlways ?? false,
-        isRepeatActive: event?.isRepeatActive ?? false,
+        repeatAlways: repeatEventRouteJson?.repeatAlways ?? false,
+        isRepeatActive: repeatEventRouteJson?.isRepeatActive ?? false,
+        
         createAlert: event?.extendedProps?.createAlert ?? false,
         coloringDay: event?.extendedProps?.coloringDay ?? false,
         description: event?.extendedProps?.description ?? '',
@@ -205,7 +210,7 @@ export default function EventForm({ mode = 'create' }) {
   const onSubmit = async (data) => {
     console.log("OnSubmit", data);
     let success = false;
-    data = { ...data, createdBy, isTemplate, templateName };
+    data = { ...data, createdBy, isTemplate, templateName, hasParentEvent, parentEventId: event?.parentEvent?.id };
 
     if (isGoogleCategory) { 
       success = await  handleGoogleEvents(updatedData(data, event));
@@ -376,7 +381,8 @@ export default function EventForm({ mode = 'create' }) {
                       locations={locations}
                       templateInfo={templateInfo}
                       watch={watch}
-                      setActiveTab={setActiveTab} 
+                      setActiveTab={setActiveTab}
+                      parentEventId={event?.parentEventId}
                     />
                   )}
 

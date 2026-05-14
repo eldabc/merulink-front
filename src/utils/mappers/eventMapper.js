@@ -6,7 +6,7 @@ import { sanitizePhone } from "../global-utils";
 import { buildRRule } from '../eventConfig.js';
 
 export const mapEventToBackend = (formData) => {
-  // console.log("Mapping event data for backend:", formData);
+  // console.log("Mapping event data for backend:", formData.hasParentEvent);
 
   const isFixed = findFixedEvents(formData); 
   const status = formData.status ? formData.status : 'Creado';
@@ -33,11 +33,32 @@ export const mapEventToBackend = (formData) => {
           external_id: formData.id, // En este caso este es el ID que viene de Google
         }),
 
-      repeat_event: formData.repeatEvent,
-      repeat_interval: formData.repeatInterval,
-      repeat_until: formData.repeatUntil,
-      repeat_always: formData.repeatAlways,
-      is_repeat_active: formData.isRepeatActive,
+      ...(formData?.hasParentEvent ? ({
+          
+          repeat_event: false,
+          repeat_interval: '',
+          repeat_until: null,
+          repeat_always: false,
+          is_repeat_active: false,
+
+          parentEvent: {
+            id: formData.parentEventId,
+            repeat_event: formData.repeatEvent,
+            repeat_interval: formData.repeatInterval,
+            repeat_until: formData.repeatUntil,
+            repeat_always: formData.repeatAlways,
+            is_repeat_active: formData.isRepeatActive,
+          }
+
+        }) : (
+          {
+            repeat_event: formData.repeatEvent,
+            repeat_interval: formData.repeatInterval,
+            repeat_until: formData.repeatUntil,
+            repeat_always: formData.repeatAlways,
+            is_repeat_active: formData.isRepeatActive,
+          }
+        )),
 
       extended_props: {
         status: status,

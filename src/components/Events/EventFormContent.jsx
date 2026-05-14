@@ -10,6 +10,7 @@ import InfoToggleSeccion from '../Shared/InfoToggleSecction.jsx';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import TitleHeader from '../Shared/TitleHeader';
 import ToggleStatus from '../Shared/ToggleStatus.jsx';
+import ToggleIsRepeatActive from '../Shared/ToggleIsRepeatActive.jsx';
 import RichTextEditor from '../Shared/RichTextEditor';
 import OptionSelect from '../Shared/OptionSelect';
 
@@ -34,13 +35,15 @@ export default function EventFormContent({
   locations,
   templateInfo,
   watch,
-  setActiveTab
+  setActiveTab,
+  parentEventId
 }) {
 
   const yearlyEvent = config?.isYearly;
   const repeatEventDisabledClasses = getDisabledClasses(yearlyEvent, !isRepeatEvent);
   const watchRepeatAlways = watch('repeatAlways');
   const disableRepeatUntil = getDisabledClasses(watchRepeatAlways);
+  // const hasParentEvent = parentEventId ?? true;
 
   useEffect(() => {
     setValue('repeatUntil', null, { shouldValidate: true });
@@ -59,9 +62,12 @@ export default function EventFormContent({
     ));
   };
 
-  const checkRepeatFields = () => {
+  const checkRepeatFields = (e) => {
+    const isChecked = e.target.checked;
+
     setValue('repeatUntil', null, { shouldValidate: true });
     setValue('repeatAlways', false, { shouldValidate: true });
+    setValue('isRepeatActive', isChecked, { shouldValidate: true });
   };
 
   return (
@@ -193,10 +199,10 @@ export default function EventFormContent({
           {config?.hasRepeatEvent && (
             <>
               <LabelFieldForm field="Se repite" />
-              <div className='items-center gap-2 min-h-15'>
-                <div className='flex flex-row items-center gap-2'>
+              <div className='items-center gap-2 min-h-15 bg-[#ffffff21] rounded-lg p-1'>
+                <div className='flex flex-row items-center gap-2 ml-2'>
                   <input 
-                    disabled={viewMode || yearlyEvent} onClick={() => checkRepeatFields()}
+                    disabled={viewMode || yearlyEvent} onClick={(e) => checkRepeatFields(e)}
                     {...register('repeatEvent')}  type='checkbox' className={`w-6 h-6 rounded filter-input ${disabledClasses} `}  
                   />
                   <div>
@@ -212,7 +218,8 @@ export default function EventFormContent({
                   </div>
                   
                 </div>
-                {isRepeatEvent && (
+                {(isRepeatEvent || parentEventId) && ( 
+                  <>
                   <div className='pb-1 w-full  bg-field rounded-xl'>
                     <div className='flex flex-row p-2 mt-2 gap-4 justify-center'>
                       <div className=''>
@@ -235,6 +242,16 @@ export default function EventFormContent({
                       />
                     </div>
                   </div>
+                
+                  <ToggleIsRepeatActive   
+                    readOnly={viewMode}
+                    register={register}
+                    errors={errors}
+                    setValue={setValue}
+                    watch={watch}
+                    dynamicClasses={disabledClasses}
+                  />
+                </>
                 )}
               </div>
             </>
