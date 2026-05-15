@@ -1,6 +1,6 @@
 import ErrorMessage from "../Shared/ErrorMessage";
 
-function InputGeneric ({ readOnly, name, register, dinamicClasses, errors, errorIndex }) {
+function InputGeneric ({ readOnly, name, register, dinamicClasses, errorIndex }) {
   return (
     <div className="flex flex-col">
       <input

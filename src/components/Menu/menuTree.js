@@ -10,7 +10,7 @@ export const menuTree = {
       Roles: { _meta: { label: "Roles", path: "/empleados/roles" } },
       Horarios: {
         _meta: { label: "Horarios", path: "/empleados/horarios" },
-        "Crear Turno": { _meta: { label: "Crear Turno", path: "/empleados/horarios/crear-turno" } },
+        Turnos: { _meta: { label: "Turnos", path: "/empleados/horarios/turnos" } },
         Asignar: { _meta: { label: "Asignar", path: "/empleados/horarios/asignar" } }
       },
       Vestuarios: {

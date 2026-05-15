@@ -10,6 +10,7 @@ const PadlockPage = lazy(() => import("./Padlock/PadlockPage"));
 const EventsPage = lazy(() => import("./Events/EventsPage"));
 const DefaultWorkspace = lazy(() => import("./DefaultWorkspace"));
 const PadlockPatternPage = lazy(() => import("./PadlockPattern/PadlockPatternPage"));
+const ShiftPage = lazy(() => import("./Shift/ShiftPage"));
 const LockerAssignPage = lazy(() => import("./LockerAssign/LockerAssignPage"));
 const EmployeePage = lazy(() => import("./Employee/EmployeePage"));
 
@@ -22,6 +23,7 @@ import { DepartmentProvider } from '../context/DepartmentContext';
 import { SubDepartmentProvider } from '../context/SubDepartmentContext'; 
 import { PositionProvider } from '../context/PositionContext'; 
 import { PadlockPatternProvider } from '../context/PadlockPatternContext'; 
+import { ShiftProvider } from '../context/ShiftContext'; 
 import { useNotification } from "../context/NotificationContext";
 
 const EventLayout = ({ showNotification }) => (
@@ -78,6 +80,12 @@ const PadlockPatternLayout = () => (
   </PadlockPatternProvider>
 );
 
+const ShiftLayout = () => (
+  <ShiftProvider>
+    <Outlet />
+  </ShiftProvider>
+);
+
 export default function Workspace({ activeMenu, activePath }) {
   const { showNotification } = useNotification();
   return (
@@ -104,6 +112,11 @@ export default function Workspace({ activeMenu, activePath }) {
         {/* Cargos */}
         <Route element={<PositionLayout />}>
           <Route path="/empleados/cargos/*" element={<div className="main-workspace"><PositionPage /></div>} />
+        </Route>
+
+        {/* Turnos */}
+        <Route element={<ShiftLayout />}>
+          <Route path="/empleados/horarios/turnos/*" element={<div className="main-workspace"><ShiftPage /></div>} />
         </Route>
         
         
