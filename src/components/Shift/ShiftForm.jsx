@@ -189,6 +189,22 @@ export default function ShiftForm({ mode = 'create' }) {
     },
   ]
 
+  /**
+ * Genera un array de opciones numéricas del 1 al N.
+ * @param {number} limit - El número máximo hasta el que llegará la lista.
+ * @returns {Array} - Array de objetos con formato { value, label }
+ */
+const generateNumericOptions = (limit) => {
+  // Array.from crea el array y el segundo parámetro es una función map
+  return Array.from({ length: limit }, (_, index) => {
+    const number = index + 1;
+    return {
+      value: number,
+      label: number.toString() // O `${number}`
+    };
+  });
+};
+console.log("const weeksOptions = generateNumericOptions(12);",generateNumericOptions(12))
   return (
     <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -270,38 +286,24 @@ export default function ShiftForm({ mode = 'create' }) {
                   {errors?.checkOutTime && <ErrorMessage msg={errors.checkOutTime.message} />}  
                 </div>
                   {/* <InputGeneric readOnly={viewMode} name="code" register={register}  /> */}
-              </div>
               
+              
+                <LabelFieldForm field="Descanso" simbol="*"/>
+                  <div>
+                    <SelectGeneric 
+                      name="typeShift"
+                      register={register} 
+                      disabled={viewMode} 
+                      dynamicClasses={`${disabledClasses} w-20!`} 
+                      dataSelect={generateNumericOptions(2)}
+                      errors={errors}
+                      // placeholder=''
+                    />
+                    {errors?.checkOutTime && <ErrorMessage msg={errors.checkOutTime.message} />}  
+                  </div>
+              </div>
             </div>
           </div>
-          {position?.employees && (
-            <div className="mt-6">
-              <div className="shadow md:w-2xl mx-auto mb-4">
-
-                <TitleHeader title="Empleados en este Turno" dinamicClasses="!mb-3" />
-                <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
-                  <thead>
-                    <tr className="tr-thead-table">
-                      <th className="px-4 py-3 text-left font-semibold">Nombre</th>
-                      <th className="px-4 py-3 text-left font-semibold">Departamento</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {position?.employees.length === 0 ? (
-                      <RowTableResults colSpan={2} message="Sin empleados asociados" />
-                    ) : (
-                      position?.employees.map((emp) => (
-                        <tr key={emp.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
-                          <td className="px-4 py-3 text-white-800 font-medium">{emp?.firstName} {emp?.lastName}</td>
-                          <td className="px-4 py-3 text-white-700">{emp?.department?.departmentName}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
         </div>
         <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
       </form>
