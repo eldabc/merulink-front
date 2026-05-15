@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { set, useForm } from 'react-hook-form';
+import { set, useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
@@ -37,15 +37,30 @@ export default function ShiftForm({ mode = 'create' }) {
     );
   }, [filteredSubDepartments]);
 
-  const { register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting } } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      code: '',
-      name: '',
-      departmentId: '',
-      subDepartmentId: 0
-    }
-  });
+  // const { register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting } } = useForm({
+  //   resolver: yupResolver(schema),
+  //   defaultValues: {
+  //     code: '',
+  //     name: '',
+  //     departmentId: '',
+  //     subDepartmentId: 0
+  //   }
+  // });
+
+  const methods = useForm({
+      resolver: yupResolver(schema),
+      defaultValues: {
+        code: '',
+        name: '',
+        departmentId: '',
+        subDepartmentId: 0
+      }
+    });
+  
+    // Desestructuración de methods
+    const { 
+      register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting }
+    } = methods;
 
   useEffect(() => {
     trigger('subDepartmentId');
@@ -175,6 +190,7 @@ export default function ShiftForm({ mode = 'create' }) {
   ]
 
   return (
+    <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
     {(viewMode) && <HeadFormButtons url={`/empleados/horarios/turnos/editar/${position?.id}`} data={[]} /> }
@@ -184,10 +200,27 @@ export default function ShiftForm({ mode = 'create' }) {
             <div className='mx-auto mt-6'>
               <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-5" />
               
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
-
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
+                
                   <LabelFieldForm field="Código" simbol="*"/>
-                  <InputGeneric readOnly={viewMode} name="code" register={register}  />
+                <div>
+                  <input
+                    readOnly={viewMode}
+                    {...register('code')}
+                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                  />
+                  {errors?.code && <ErrorMessage msg={errors.code.message} />}  
+                </div>
+
+                  <LabelFieldForm field="Nocturno" simbol="*"/>
+                <div>
+                  <ToggleGeneric name="nightShift" textOn="Nocturno" textOff="Diurno" readOnly={viewMode} register={register} 
+                  errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} />
+                </div>
+
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
 
                   <LabelFieldForm field="Departamento" simbol="*"/>
                 <div>
@@ -216,25 +249,29 @@ export default function ShiftForm({ mode = 'create' }) {
                     errors={errors}
                   />
                 </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
 
-                  <LabelFieldForm field="Typo" simbol="*"/>
+                  <LabelFieldForm field="Hora Entrada" simbol="*"/>
                 <div>
-                  <ToggleGeneric name="nightShift" textOn="Nocturno" textOff="Diurno" readOnly={viewMode} register={register} 
-                  errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} />
-                </div>
-
-                  <LabelFieldForm field="Código" simbol="*"/>
-                <div>
-                  <input
-                    readOnly={viewMode}
-                    {...register('code')}
-                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                  <input 
+                    readOnly={viewMode} type='time'
+                    {...register('checkInTime', { onChange: (e) => { handleNextTime(e)} })} 
+                    className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                   />
-                  {errors?.code && <ErrorMessage msg={errors.code.message} />}  
+                  {errors?.checkInTime && <ErrorMessage msg={errors.checkInTime.message} />}  
                 </div>
+
+                <LabelFieldForm field="Hora Salida" simbol="*"/>
+                <div>
+                  <input 
+                    readOnly={viewMode} type='time'
+                    {...register('checkOutTime', { onChange: (e) => { handleNextTime(e)} })} 
+                    className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+                  />
+                  {errors?.checkOutTime && <ErrorMessage msg={errors.checkOutTime.message} />}  
+                </div>
+                  {/* <InputGeneric readOnly={viewMode} name="code" register={register}  /> */}
               </div>
+              
             </div>
           </div>
           {position?.employees && (
@@ -269,5 +306,6 @@ export default function ShiftForm({ mode = 'create' }) {
         <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
       </form>
     </div>
+  </FormProvider>
   );
 }

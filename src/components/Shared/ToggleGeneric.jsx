@@ -1,10 +1,8 @@
-import { useEffect } from 'react';
-import { useEvents } from '../../context/EventContext';
+import { useFormContext } from "react-hook-form";
 
-import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
-import ButtonRadioEventType from './ButtonRadioEventType';
+function ToggleGeneric({ name, textOn, textOff, readOnly, dynamicClasses }) { 
 
-function ToggleGeneric({ name, textOn, textOff, readOnly, register, errors, setValue, watch, dynamicClasses }) {
+  const { register, watch, setValue, formState: { errors } } = useFormContext();
 
   const currentStatus = watch(name);
   const isActive = currentStatus === true; // Indica si el checkbox esta visualmente "on"
