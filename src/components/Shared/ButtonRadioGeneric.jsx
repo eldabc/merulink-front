@@ -2,10 +2,8 @@ import { useFormContext } from "react-hook-form";
 
 import ErrorMessage from './ErrorMessage.jsx';
 
-function ButtonRadioEventType({ name = "eventType", disabled = false, dynamicClasses }) {
+function ButtonRadioGeneric({ name = "eventType", disabled = false, dynamicClasses, optionOne, optionTwo }) {
   const { register, watch, formState: { errors } } = useFormContext();
-
-  const selected = watch(name);
   
   return (
     <>
@@ -14,22 +12,22 @@ function ButtonRadioEventType({ name = "eventType", disabled = false, dynamicCla
         <input
           className={`${dynamicClasses}`}
           type="radio"
-          value="paid"
+          value={optionOne.value}
           {...register(name)}
           disabled={disabled}
         />
-        Pagado
+        {optionOne.label}
       </label>
 
       <label className="flex items-center gap-2 cursor-pointer">
         <input
           className={`${dynamicClasses}`}
           type="radio"
-          value="courtesy"
+          value={optionTwo.value}
           {...register(name)}
           disabled={disabled}
         />
-        Cortesía
+        {optionTwo.label}
       </label>
       
     </div>
@@ -37,4 +35,4 @@ function ButtonRadioEventType({ name = "eventType", disabled = false, dynamicCla
   );
 }
 
-export default ButtonRadioEventType;
+export default ButtonRadioGeneric;

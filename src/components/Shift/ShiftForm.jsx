@@ -8,6 +8,7 @@ import { useShifts } from '../../context/ShiftContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { newCodePosition } from '../../utils/Positions/positions-utils';
+import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -19,6 +20,7 @@ import InputGeneric from '../Shared/InputGeneric';
 import OptionSelect from '../Shared/OptionSelect';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ToggleGeneric from '../Shared/ToggleGeneric';
+import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import '../../Tables.css';
 
 export default function ShiftForm({ mode = 'create' }) {
@@ -36,16 +38,6 @@ export default function ShiftForm({ mode = 'create' }) {
       filteredSubDepartments.length > 0
     );
   }, [filteredSubDepartments]);
-
-  // const { register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting } } = useForm({
-  //   resolver: yupResolver(schema),
-  //   defaultValues: {
-  //     code: '',
-  //     name: '',
-  //     departmentId: '',
-  //     subDepartmentId: 0
-  //   }
-  // });
 
   const methods = useForm({
       resolver: yupResolver(schema),
@@ -67,14 +59,59 @@ export default function ShiftForm({ mode = 'create' }) {
   }, [filteredSubDepartments]);
 
   const selectedDepartmentId = watch('departmentId');
-  const selectedSubDepartmentId = watch('subDepartmentId');  
+  const watchCheckInTime = watch('checkInTime');  
+  const watchCheckOutTime = watch('checkOutTime');  
+  const watchRestPeriod = watch('timeRestPeriod');  
+  const watchMinHourRestPeriod = watch('minHourRestPeriod');  
+  const selectedTypeShift = watch('typeShift');  
+
   const position = shiftData.find(e => e.id === Number(id));
   const createMode = mode === 'create';
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
   const disabledClasses = getDisabledClasses(viewMode);
+  const alwaysApplyDisabledClasses = getDisabledClasses(true);
   const disabledTypeShift = getDisabledClasses(!selectedDepartmentId);
-  const subDepartmentIdDisabled = filteredSubDepartments?.length === 0 && 'cursor-not-allowed opacity-50';
+
+  const radioOptions = [
+    { optionOne: { value: "yes", label: "Sí" } }, 
+    { optionTwo: { value: "no", label: "No" } }
+  ];
+
+  useEffect(() => {
+    if (selectedTypeShift === 'administative') {
+      setValue('timeRestPeriod', 1, { shouldValidate: true });
+      setValue('minHourRestPeriod', 'hours', { shouldValidate: true });
+      setValue('nightShift', 'Diurno', { shouldValidate: true });
+    } else {
+      setValue('timeRestPeriod', 30, { shouldValidate: true });
+      setValue('minHourRestPeriod', 'minutes', { shouldValidate: true });
+    }
+  },[selectedTypeShift]);
+
+  useEffect(() => {
+    
+    // if (!watchCheckInTime || !watchCheckOutTime || !watchRestPeriod || !watchMinHourRestPeriod) return;
+    if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchMinHourRestPeriod) {
+
+      // console.log("watchCheckInTime", watchCheckInTime);
+      const result = calculateWorkPeriods(
+        watchCheckInTime,
+        watchCheckOutTime,
+        watchRestPeriod, watchMinHourRestPeriod
+      );
+
+      console.log(result);
+
+      setValue('timeTotalPeriod', result.totalPeriod, { shouldValidate: true });
+      setValue('minHourTotalPeriod', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      setValue('timeActivePeriod', result.activePeriod, { shouldValidate: true });
+      setValue('minHourActivePeriod', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+
+    }
+  },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchMinHourRestPeriod]);
+
+  
 
   useEffect(() => {  
     if (departments.length === 0) {
@@ -123,14 +160,6 @@ export default function ShiftForm({ mode = 'create' }) {
   }, [selectedDepartmentId, shiftData]);
 
   
-  useEffect(() => {
-    
-    // Si se seleccionó Sub-departamento
-    if (!viewMode && selectedSubDepartmentId && selectedSubDepartmentId !== "0") {
-      const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, shiftData, departments, position?.id);
-      setValue('code', newCode);
-    }
-  }, [selectedSubDepartmentId]);
 
 
   const onSubmit = async (data) => {
@@ -158,25 +187,6 @@ export default function ShiftForm({ mode = 'create' }) {
     if (!formErrors) return;
   };
 
-  const handleAddSudDep = (isAdding) => {
-    setAddSubDep(isAdding);
-    
-    setValue('subDepartmentName', '');
-    setValue('code', '');
-
-    if (isAdding) {
-      const selectedDep =  departments.find(sd => String(sd.id) === String(selectedDepartmentId));
-      const numNewSubDep = filteredSubDepartments?.length + 1;
-      const newSubDepPositionCode = `${selectedDepartmentId}${numNewSubDep}${selectedDep?.positions?.length}`;
-      
-      setValue('code', newSubDepPositionCode);
-      
-      const newSubDepartmentCode = `${selectedDepartmentId}${numNewSubDep}`;
-      // console.log("Código nuevo subdep:", newSubDepartmentCode);
-      setNewSubDepCode(newSubDepartmentCode);
-    }
-    
-  };
 
   const typeShiftData = [
     {
@@ -189,22 +199,19 @@ export default function ShiftForm({ mode = 'create' }) {
     },
   ]
 
-  /**
- * Genera un array de opciones numéricas del 1 al N.
- * @param {number} limit - El número máximo hasta el que llegará la lista.
- * @returns {Array} - Array de objetos con formato { value, label }
- */
-const generateNumericOptions = (limit) => {
-  // Array.from crea el array y el segundo parámetro es una función map
-  return Array.from({ length: limit }, (_, index) => {
-    const number = index + 1;
-    return {
-      value: number,
-      label: number.toString() // O `${number}`
-    };
-  });
-};
-console.log("const weeksOptions = generateNumericOptions(12);",generateNumericOptions(12))
+  const minHourOptions = () => {
+    return [
+      {
+        value: 'minutes',
+        label: 'Minutos',
+      },
+      {
+        value: 'hours',
+        label: 'Horas',
+      }
+    ];
+  };
+
   return (
     <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -226,6 +233,18 @@ console.log("const weeksOptions = generateNumericOptions(12);",generateNumericOp
                     className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                   />
                   {errors?.code && <ErrorMessage msg={errors.code.message} />}  
+                </div>
+
+                <LabelFieldForm field="Descripción" simbol="*"/>
+                <div>
+                  <InputGeneric
+                    readOnly={viewMode}
+                    name='description'
+                    register={register}
+                    errorIndex={errors}
+                    dinamicClasses={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                  />
+                  {errors?.description && <ErrorMessage msg={errors.description.message} />}  
                 </div>
 
                   <LabelFieldForm field="Nocturno" simbol="*"/>
@@ -270,7 +289,7 @@ console.log("const weeksOptions = generateNumericOptions(12);",generateNumericOp
                 <div>
                   <input 
                     readOnly={viewMode} type='time'
-                    {...register('checkInTime', { onChange: (e) => { handleNextTime(e)} })} 
+                    {...register('checkInTime')}
                     className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                   />
                   {errors?.checkInTime && <ErrorMessage msg={errors.checkInTime.message} />}  
@@ -280,27 +299,103 @@ console.log("const weeksOptions = generateNumericOptions(12);",generateNumericOp
                 <div>
                   <input 
                     readOnly={viewMode} type='time'
-                    {...register('checkOutTime', { onChange: (e) => { handleNextTime(e)} })} 
+                    {...register('checkOutTime')}
                     className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                   />
                   {errors?.checkOutTime && <ErrorMessage msg={errors.checkOutTime.message} />}  
                 </div>
-                  {/* <InputGeneric readOnly={viewMode} name="code" register={register}  /> */}
-              
-              
+
                 <LabelFieldForm field="Descanso" simbol="*"/>
-                  <div>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      readOnly={viewMode} type='number' min={1} max={30}
+                      {...register('timeRestPeriod')} 
+                      className={`w-20 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+                    />
                     <SelectGeneric 
-                      name="typeShift"
+                      name="minHourRestPeriod"
                       register={register} 
                       disabled={viewMode} 
-                      dynamicClasses={`${disabledClasses} w-20!`} 
-                      dataSelect={generateNumericOptions(2)}
+                      dynamicClasses={`${disabledClasses} w-40!`} 
+                      dataSelect={minHourOptions()}
                       errors={errors}
-                      // placeholder=''
                     />
-                    {errors?.checkOutTime && <ErrorMessage msg={errors.checkOutTime.message} />}  
+                    {errors?.minHourRestPeriod && <ErrorMessage msg={errors.minHourRestPeriod.message} />}  
                   </div>
+
+                 <LabelFieldForm field="Periodo Activo" simbol="*"/>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      readOnly={true} min={1} max={30} //type='number'
+                      {...register('timeActivePeriod')} 
+                      className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
+                    />
+                    <SelectGeneric 
+                      name="minHourActivePeriod"
+                      register={register} 
+                      disabled={true} 
+                      dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
+                      dataSelect={minHourOptions()}
+                      errors={errors}
+                    />
+                    {errors?.minHourActivePeriod && <ErrorMessage msg={errors.minHourActivePeriod.message} />}  
+                  </div>
+
+                <LabelFieldForm field="Periodo Total" simbol="*"/>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      readOnly={true} min={1} max={30} //type='number' 
+                      {...register('timeTotalPeriod')} 
+                      className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
+                    />
+                    <SelectGeneric 
+                      name="minHourTotalPeriod"
+                      register={register} 
+                      disabled={true} 
+                      dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
+                      dataSelect={minHourOptions()}
+                      errors={errors}
+                    />
+                    {errors?.minHourTotalPeriod && <ErrorMessage msg={errors.minHourTotalPeriod.message} />}  
+                  </div>
+
+                <LabelFieldForm field="Descripción" />
+                  <textarea
+                    name="comments"
+                    rows="5"                 
+                    cols="33"                 
+                    placeholder="Escribe aquí una descripción..."
+                    className="filter-input"
+                  />
+                
+                <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
+                  <ButtonRadioGeneric
+                    name="allowExit" 
+                    disabled={viewMode} 
+                    dynamicClasses={disabledClasses} 
+                    optionOne={radioOptions[0].optionOne} 
+                    optionTwo={radioOptions[1].optionTwo } 
+                  />
+
+                <LabelFieldForm field="¿Permitir Remarcaje?" simbol="*"/>
+                  <ButtonRadioGeneric
+                    name="reScanned" 
+                    disabled={viewMode} 
+                    dynamicClasses={disabledClasses} 
+                    optionOne={radioOptions[0].optionOne} 
+                    optionTwo={radioOptions[1].optionTwo } 
+                  />
+
+                <LabelFieldForm field="Disponible" simbol="*"/>
+                  <ButtonRadioGeneric
+                    name="available" 
+                    disabled={viewMode} 
+                    dynamicClasses={disabledClasses} 
+                    optionOne={radioOptions[0].optionOne} 
+                    optionTwo={radioOptions[1].optionTwo } 
+                  />
+
+                
               </div>
             </div>
           </div>

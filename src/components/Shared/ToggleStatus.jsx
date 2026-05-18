@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useEvents } from '../../context/EventContext';
 
 import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
-import ButtonRadioEventType from './ButtonRadioEventType';
+import ButtonRadioGeneric from './ButtonRadioGeneric';
 
 function ToggleStatus({ readOnly, register, errors, setValue, watch, dynamicClasses }) {
 
@@ -17,6 +17,11 @@ function ToggleStatus({ readOnly, register, errors, setValue, watch, dynamicClas
     setValue("status", nextStatus, { shouldValidate: true, shouldDirty: true });
     setValue("eventType", null, { shouldValidate: true, shouldDirty: true });
   };
+
+  const radioOptions = [
+    { optionOne: { value: "paid", label: "Pagado" } }, 
+    { optionTwo: { value: "courtesy", label: "Cortesía" } }
+  ];
 
   return (
     <>
@@ -47,7 +52,14 @@ function ToggleStatus({ readOnly, register, errors, setValue, watch, dynamicClas
 
     </div>
     <div className='mt-3 mb-3 '>
-      {isConfirmed && <ButtonRadioEventType disabled={readOnly} dynamicClasses={dynamicClasses} isConfirmed={isConfirmed} /> }
+      {isConfirmed && (
+        <ButtonRadioGeneric 
+          disabled={readOnly} 
+          dynamicClasses={dynamicClasses} 
+          optionOne={radioOptions[0].optionOne} 
+          optionTwo={radioOptions[1].optionTwo} 
+        /> 
+      )}
     </div>
     </>
   );

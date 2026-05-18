@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useEvents } from '../../context/EventContext';
 
 import { STATUS_EVENTS } from '../../utils/StaticData/event-utils';
-import ButtonRadioEventType from './ButtonRadioEventType';
+// import ButtonRadioGeneric from './ButtonRadioGeneric';
 
 function ToggleIsRepeatActive({ readOnly, register, errors, setValue, watch, dynamicClasses }) {
 
