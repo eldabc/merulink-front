@@ -1,4 +1,5 @@
 import OptionSelect from './OptionSelect';
+import ErrorMessage from './ErrorMessage';
 
 function SelectGeneric({ 
   name,
@@ -23,7 +24,6 @@ function SelectGeneric({
       </select>
       
       {errors[name] && <ErrorMessage msg={errors[name].message} />}
-      {/* <p className="text-red-500 text-sm mt-1">{errors[name].message}</p> */}
     </div>
   );
 }

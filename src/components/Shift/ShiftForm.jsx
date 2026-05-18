@@ -3,12 +3,13 @@ import { set, useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
-import { positionValidationSchema  } from '../../utils/Validations/positionValidationSchema';
+import { shiftValidationSchema  } from '../../utils/Validations/shiftValidationSchema';
 import { useShifts } from '../../context/ShiftContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { newCodePosition } from '../../utils/Positions/positions-utils';
 import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
+
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -33,20 +34,15 @@ export default function ShiftForm({ mode = 'create' }) {
   const [addSubDep, setAddSubDep] = useState(false);
   const [newSubDepCode, setNewSubDepCode] = useState('');
   // console.log("departments en Form", departments)
-  const schema = useMemo(() => {
-    return positionValidationSchema(
-      filteredSubDepartments.length > 0
-    );
-  }, [filteredSubDepartments]);
 
   const methods = useForm({
-      resolver: yupResolver(schema),
-      defaultValues: {
-        code: '',
-        name: '',
-        departmentId: '',
-        subDepartmentId: 0
-      }
+      resolver: yupResolver(shiftValidationSchema),
+      // defaultValues: {
+      //   code: '',
+      //   name: '',
+      //   departmentId: '',
+      //   subDepartmentId: 0
+      // }
     });
   
     // Desestructuración de methods
@@ -62,13 +58,14 @@ export default function ShiftForm({ mode = 'create' }) {
   const watchCheckInTime = watch('checkInTime');  
   const watchCheckOutTime = watch('checkOutTime');  
   const watchRestPeriod = watch('timeRestPeriod');  
-  const watchMinHourRestPeriod = watch('minHourRestPeriod');  
+  const watchDurationUnitRestPeriod = watch('durationUnitRestPeriod');  
   const selectedTypeShift = watch('typeShift');  
 
-  const position = shiftData.find(e => e.id === Number(id));
+  const shift = shiftData.find(e => e.id === Number(id));
   const createMode = mode === 'create';
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
+
   const disabledClasses = getDisabledClasses(viewMode);
   const alwaysApplyDisabledClasses = getDisabledClasses(true);
   const disabledTypeShift = getDisabledClasses(!selectedDepartmentId);
@@ -81,35 +78,32 @@ export default function ShiftForm({ mode = 'create' }) {
   useEffect(() => {
     if (selectedTypeShift === 'administative') {
       setValue('timeRestPeriod', 1, { shouldValidate: true });
-      setValue('minHourRestPeriod', 'hours', { shouldValidate: true });
+      setValue('durationUnitRestPeriod', 'hours', { shouldValidate: true });
       setValue('nightShift', 'Diurno', { shouldValidate: true });
-    } else {
+    } else if (selectedTypeShift === 'operative') {
       setValue('timeRestPeriod', 30, { shouldValidate: true });
-      setValue('minHourRestPeriod', 'minutes', { shouldValidate: true });
+      setValue('durationUnitRestPeriod', 'minutes', { shouldValidate: true });
     }
   },[selectedTypeShift]);
 
   useEffect(() => {
     
-    // if (!watchCheckInTime || !watchCheckOutTime || !watchRestPeriod || !watchMinHourRestPeriod) return;
-    if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchMinHourRestPeriod) {
-
-      // console.log("watchCheckInTime", watchCheckInTime);
+    if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchDurationUnitRestPeriod) {
+      console.log("AQUI", watchCheckInTime);
       const result = calculateWorkPeriods(
         watchCheckInTime,
         watchCheckOutTime,
-        watchRestPeriod, watchMinHourRestPeriod
+        watchRestPeriod, watchDurationUnitRestPeriod
       );
 
-      console.log(result);
-
+      // console.log(result);
       setValue('timeTotalPeriod', result.totalPeriod, { shouldValidate: true });
-      setValue('minHourTotalPeriod', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      setValue('durationUnitTotalPeriod', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
       setValue('timeActivePeriod', result.activePeriod, { shouldValidate: true });
-      setValue('minHourActivePeriod', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      setValue('durationUnitActivePeriod', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
 
     }
-  },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchMinHourRestPeriod]);
+  },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchDurationUnitRestPeriod]);
 
   
 
@@ -119,26 +113,31 @@ export default function ShiftForm({ mode = 'create' }) {
     }
   }, [mode]);
 
-  useEffect(() => {    
-    if (departments.length > 0 && position?.department?.id) {
-      // Cargar subdepartamentos si ya cargó departamentos y se tiene un departamento asignado al cargo
-      const filtered = departments?.find(sd => String(sd.id) === String(position?.department?.id));
-      setFilteredSubDepartments(filtered?.subDepartments);
-    }
-  }, [departments]);
 
   useEffect(() => {
 
-    if (position) {
+    // if (shift) {
       reset({
-        code: position?.code ?? '',
-        name: position?.name ?? '',
-        departmentId: position?.department?.id ?? '',
-        subDepartmentId: position?.subDepartment?.id ?? 0,
-        subDepartmentName: '',
+        code: shift?.code ?? '',
+        description: shift?.description ?? '',
+        nightShift: shift?.nightShift ?? 'Diurno',
+        departmentId: shift?.department?.id ?? '',
+        typeShift: shift?.typeShift ?? '',
+        checkInTime: shift?.checkInTime ?? null,
+        checkOutTime: shift?.checkOutTime ?? null,
+        timeRestPeriod: shift?.timeRestPeriod ?? null,
+        durationUnitRestPeriod: shift?.durationUnitRestPeriod ?? '',
+        timeActivePeriod: shift?.timeActivePeriod ?? null,
+        durationUnitActivePeriod: shift?.durationUnitActivePeriod ?? '',
+        timeTotalPeriod: shift?.timeTotalPeriod ?? null,
+        durationUnitTotalPeriod: shift?.durationUnitTotalPeriod ?? '',
+        allowExit: shift?.allowExit ?? false,
+        allowReScanned: shift?.allowReScanned ?? false,
+        available: shift?.available ?? false,
+        observation: shift?.observation ?? '',
       });
-    }
-  }, [mode, position, reset]);
+    // }
+  }, [mode, shift, reset]);
 
   useEffect(() => {
     if (!viewMode) {
@@ -149,7 +148,7 @@ export default function ShiftForm({ mode = 'create' }) {
         setFilteredSubDepartments(filtered?.subDepartments);
         
         // Genera código
-        const newCode = newCodePosition(selectedDepartmentId, 0, shiftData, departments, position?.id);
+        const newCode = newCodePosition(selectedDepartmentId, 0, shiftData, departments, shift?.id);
         setValue('code', newCode);
       } else {
         setFilteredSubDepartments([]);
@@ -163,22 +162,20 @@ export default function ShiftForm({ mode = 'create' }) {
 
 
   const onSubmit = async (data) => {
+    console.log("data submit", data);
     let success = false;
-    const dataChanges = { 
-      ...data, 
-      id: position?.id,
-      newSubDepartmentCode: newSubDepCode
-     };
+    const dataChanges = { ...data, id: shift?.id };
 
-    if (editMode && position) { 
+    if (editMode && shift) { 
       success = await updateShift(dataChanges);
     } else {
       success = await createShift(dataChanges);
     }
 
     if (success) {
-      if (createMode) navigate(-1);
-      else navigate(-2);
+      navigate(`/empleados/horarios/turnos`);
+      // if (createMode) navigate(-1);
+      // else navigate(-2);
     }
   };
 
@@ -216,7 +213,7 @@ export default function ShiftForm({ mode = 'create' }) {
     <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
-    {(viewMode) && <HeadFormButtons url={`/empleados/horarios/turnos/editar/${position?.id}`} data={[]} /> }
+    {(viewMode) && <HeadFormButtons url={`/empleados/horarios/turnos/editar/${shift?.id}`} data={[]} /> }
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
@@ -313,14 +310,14 @@ export default function ShiftForm({ mode = 'create' }) {
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                     />
                     <SelectGeneric 
-                      name="minHourRestPeriod"
+                      name="durationUnitRestPeriod"
                       register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
                       dataSelect={minHourOptions()}
                       errors={errors}
                     />
-                    {errors?.minHourRestPeriod && <ErrorMessage msg={errors.minHourRestPeriod.message} />}  
+                    {errors?.durationUnitRestPeriod && <ErrorMessage msg={errors.durationUnitRestPeriod.message} />}  
                   </div>
 
                  <LabelFieldForm field="Periodo Activo" simbol="*"/>
@@ -331,14 +328,14 @@ export default function ShiftForm({ mode = 'create' }) {
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
                     <SelectGeneric 
-                      name="minHourActivePeriod"
+                      name="durationUnitActivePeriod"
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions()}
                       errors={errors}
                     />
-                    {errors?.minHourActivePeriod && <ErrorMessage msg={errors.minHourActivePeriod.message} />}  
+                    {errors?.durationUnitActivePeriod && <ErrorMessage msg={errors.durationUnitActivePeriod.message} />}  
                   </div>
 
                 <LabelFieldForm field="Periodo Total" simbol="*"/>
@@ -349,53 +346,60 @@ export default function ShiftForm({ mode = 'create' }) {
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
                     <SelectGeneric 
-                      name="minHourTotalPeriod"
+                      name="durationUnitTotalPeriod"
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions()}
                       errors={errors}
                     />
-                    {errors?.minHourTotalPeriod && <ErrorMessage msg={errors.minHourTotalPeriod.message} />}  
+                    {errors?.durationUnitTotalPeriod && <ErrorMessage msg={errors.durationUnitTotalPeriod.message} />}  
+                  </div>
+                {/* <div className="hidden md:block md:col-span-2"></div> */}
+
+                <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
+                  <div className='mt-3'> 
+                    <ButtonRadioGeneric
+                      name="allowExit" 
+                      disabled={viewMode} 
+                      dynamicClasses={disabledClasses} 
+                      optionOne={radioOptions[0].optionOne} 
+                      optionTwo={radioOptions[1].optionTwo } 
+                    />
+                  </div>
+                <LabelFieldForm field="¿Permitir Remarcaje?" simbol="*"/>
+                  <div className='mt-3'> 
+                    <ButtonRadioGeneric
+                      name="allowReScanned" 
+                      disabled={viewMode} 
+                      dynamicClasses={disabledClasses} 
+                      optionOne={radioOptions[0].optionOne} 
+                      optionTwo={radioOptions[1].optionTwo } 
+                    />
                   </div>
 
-                <LabelFieldForm field="Descripción" />
-                  <textarea
-                    name="comments"
-                    rows="5"                 
-                    cols="33"                 
-                    placeholder="Escribe aquí una descripción..."
-                    className="filter-input"
-                  />
-                
-                <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
-                  <ButtonRadioGeneric
-                    name="allowExit" 
-                    disabled={viewMode} 
-                    dynamicClasses={disabledClasses} 
-                    optionOne={radioOptions[0].optionOne} 
-                    optionTwo={radioOptions[1].optionTwo } 
-                  />
-
-                <LabelFieldForm field="¿Permitir Remarcaje?" simbol="*"/>
-                  <ButtonRadioGeneric
-                    name="reScanned" 
-                    disabled={viewMode} 
-                    dynamicClasses={disabledClasses} 
-                    optionOne={radioOptions[0].optionOne} 
-                    optionTwo={radioOptions[1].optionTwo } 
-                  />
-
                 <LabelFieldForm field="Disponible" simbol="*"/>
-                  <ButtonRadioGeneric
-                    name="available" 
-                    disabled={viewMode} 
-                    dynamicClasses={disabledClasses} 
-                    optionOne={radioOptions[0].optionOne} 
-                    optionTwo={radioOptions[1].optionTwo } 
-                  />
+                  <div className='mt-3'>                   
+                    <ButtonRadioGeneric
+                      name="available" 
+                      disabled={viewMode} 
+                      dynamicClasses={disabledClasses} 
+                      optionOne={radioOptions[0].optionOne} 
+                      optionTwo={radioOptions[1].optionTwo } 
+                    />
+                  </div>
 
-                
+                <LabelFieldForm field="Observación" />
+                 <div className="hidden md:block md:col-span-3"> 
+                    <textarea
+                      name="observation"
+                      rows="5"                 
+                      cols="33"                 
+                      placeholder="Escribe aquí una observación..."
+                      className="filter-input"
+                    />
+                    {errors?.observation && <ErrorMessage msg={errors.observation.message} />}  
+                  </div>  
               </div>
             </div>
           </div>

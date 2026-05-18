@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
 
-import { mapPositionToBackend } from '../utils/mappers/positionMapper';
+import { mapShiftToBackend } from '../utils/mappers/shiftMapper';
 
 const ShiftContext = createContext();
 
@@ -44,23 +44,22 @@ export const ShiftProvider = ({ children }) => {
   const createShift = async (formData) => {
 
     try {
-      const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-      const newPosition = mapPositionToBackend(formData, isAddingSubDepartment); //formattedPosition(formData);
+      const newShift = mapShiftToBackend(formData);
 
-      console.log("Creado", newPosition);
-      const response = await axios.post(`${ENV.API_BACK_URL}shifts`, newPosition);
+      console.log("Creado", newShift);
+      const response = await axios.post(`${ENV.API_BACK_URL}shifts`, newShift);
       // console.log("response.data.data,", response.data.data,);
 
       setShiftData(prevData => {
         return [response.data.data, ...prevData]; 
       });
 
-      const globalData = updateGlobalStage(response.data.data);
-      console.log("globalData", globalData,departments);
+      // const globalData = updateGlobalStage(response.data.data);
+      // console.log("globalData", globalData,departments);
 
-      addPositionGlobalState(globalData, isAddingSubDepartment);
+      // addPositionGlobalState(globalData, isAddingSubDepartment);
 
-      showNotification(`Cargo ${newPosition.name} creado con éxito`);
+      showNotification(`Cargo ${newShift.description} creado con éxito`);
       
       return true;
     } catch (error) {
@@ -81,7 +80,7 @@ export const ShiftProvider = ({ children }) => {
       }
 
       const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-      const updatedPosition = mapPositionToBackend(formData); //formattedPosition(formData);
+      const updatedPosition = mapShiftToBackend(formData); //formattedPosition(formData);
       console.log("Actualizado:", updatedPosition);
       
       const response = await axios.put(`${ENV.API_BACK_URL}shifts/${positionId}`, updatedPosition);
@@ -91,10 +90,10 @@ export const ShiftProvider = ({ children }) => {
         return [response.data.data, ...filteredData];
       });
 
-      const globalData = updateGlobalStage(response.data.data);
-      console.log("globalData update", globalData);
+      // const globalData = updateGlobalStage(response.data.data);
+      // console.log("globalData update", globalData);
 
-      updatePositionGlobalState(globalData, isAddingSubDepartment);
+      // updatePositionGlobalState(globalData, isAddingSubDepartment);
 
       showNotification(`Cargo ${formData.name} actualizado con éxito`); 
       return true;
@@ -124,18 +123,18 @@ export const ShiftProvider = ({ children }) => {
     }
   };
 
-  const updateGlobalStage = (shiftData) => {
-    return {
-      id: shiftData.id,
-      code: shiftData.code,
-      name: shiftData.name,
-      department: { ...shiftData.department },
-      employees: [ 
-        ...shiftData.employees
-      ],
-      subDepartment: { ...shiftData.subDepartment }
-    };
-  };
+  // const updateGlobalStage = (shiftData) => {
+  //   return {
+  //     id: shiftData.id,
+  //     code: shiftData.code,
+  //     name: shiftData.name,
+  //     department: { ...shiftData.department },
+  //     employees: [ 
+  //       ...shiftData.employees
+  //     ],
+  //     subDepartment: { ...shiftData.subDepartment }
+  //   };
+  // };
   
   const contextValue = {
     loading,
