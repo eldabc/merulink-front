@@ -17,7 +17,7 @@ export default function ShiftRow({ shift }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState(null);
 
-  const blockBtn = shift?.schedules?.length > 0 ? true : false;
+  const blockBtn = shift?.hasSchedules ? true : false;
   const disabledClasses = getDisabledClasses(blockBtn);
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar, turno tiene Horarios asociados' : 'Eliminar';
 
@@ -59,7 +59,6 @@ export default function ShiftRow({ shift }) {
       <td className="px-4 py-3 text-white-700">
         {shift.available === 'yes' ? 'Sí' : 'No'}
       </td>
-
 
       <td className="px-4 py-3">
         <ButtonDelete 
