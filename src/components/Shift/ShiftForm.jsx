@@ -147,8 +147,6 @@ export default function ShiftForm({ mode = 'create' }) {
     
   }, [selectedDepartmentId, shiftData]);
 
-  
-
 
   const onSubmit = async (data) => {
     console.log("data submit", data);
@@ -280,7 +278,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
-                      dataSelect={minHourGetOptions()}
+                      dataSelect={minHourOptions}
                       errors={errors}
                     />
                     {errors?.durationUnitRestPeriod && <ErrorMessage msg={errors.durationUnitRestPeriod.message} />}  
@@ -298,7 +296,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
-                      dataSelect={minHourGetOptions()}
+                      dataSelect={minHourOptions}
                       errors={errors}
                     />
                     {errors?.durationUnitActivePeriod && <ErrorMessage msg={errors.durationUnitActivePeriod.message} />}  
@@ -316,7 +314,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
-                      dataSelect={minHourGetOptions()}
+                      dataSelect={minHourOptions}
                       errors={errors}
                     />
                     {errors?.durationUnitTotalPeriod && <ErrorMessage msg={errors.durationUnitTotalPeriod.message} />}  
@@ -358,11 +356,12 @@ export default function ShiftForm({ mode = 'create' }) {
                 <LabelFieldForm field="Observación" />
                  <div className="hidden md:block md:col-span-3"> 
                     <textarea
+                      readOnly={viewMode}
                       name="observation"
                       rows="5"                 
                       cols="33"                 
                       placeholder="Escribe aquí una observación..."
-                      className="filter-input"
+                      className={`filter-input ${disabledClasses}`}
                     />
                     {errors?.observation && <ErrorMessage msg={errors.observation.message} />}  
                   </div>  

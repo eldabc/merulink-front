@@ -48,54 +48,42 @@ export const ShiftProvider = ({ children }) => {
 
       console.log("Creado", newShift);
       const response = await axios.post(`${ENV.API_BACK_URL}shifts`, newShift);
-      // console.log("response.data.data,", response.data.data,);
 
       setShiftData(prevData => {
         return [response.data.data, ...prevData]; 
       });
 
-      // const globalData = updateGlobalStage(response.data.data);
-      // console.log("globalData", globalData,departments);
-
-      // addPositionGlobalState(globalData, isAddingSubDepartment);
-
-      showNotification(`Cargo ${newShift.description} creado con éxito`);
+      showNotification(`Turno ${newShift.description} creado con éxito`);
       
       return true;
     } catch (error) {
       console.log("error", error);
-      showNotification('Error al crear cargo', error.response.data.message, 'error');
+      showNotification('Error al crear Turno', error.response.data.message, 'error');
       return false;
     }
   };
 
   // *** Actualizar
-  const updatePosition = async (formData) => {
+  const updateShift = async (formData) => {
     try {
-      const positionId = formData.id;
+      const shiftId = formData.id;
 
-      if (!positionId) {
-        showNotification('Error:', 'No se encontró ID de cargo', 'error');
+      if (!shiftId) {
+        showNotification('Error:', 'No se encontró ID de Turno', 'error');
         return false;
       }
 
-      const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-      const updatedPosition = mapShiftToBackend(formData); //formattedPosition(formData);
-      console.log("Actualizado:", updatedPosition);
+      const updatedShift = mapShiftToBackend(formData);
+      console.log("Actualizado:", updatedShift);
       
-      const response = await axios.put(`${ENV.API_BACK_URL}shifts/${positionId}`, updatedPosition);
+      const response = await axios.put(`${ENV.API_BACK_URL}shifts/${shiftId}`, updatedShift);
       
       setShiftData(prevData => {
-        const filteredData = prevData.filter(position => position.id !== positionId);
+        const filteredData = prevData.filter(shift => shift.id !== shiftId);
         return [response.data.data, ...filteredData];
       });
 
-      // const globalData = updateGlobalStage(response.data.data);
-      // console.log("globalData update", globalData);
-
-      // updatePositionGlobalState(globalData, isAddingSubDepartment);
-
-      showNotification(`Cargo ${formData.name} actualizado con éxito`); 
+      showNotification(`Turno ${formData.name} actualizado con éxito`); 
       return true;
 
     } catch (error) {
@@ -107,40 +95,27 @@ export const ShiftProvider = ({ children }) => {
   };
 
   // *** Eliminar
-  const deletePosition = async (position) => {
+  const deleteShift = async (shift) => {
     try {
-      await axios.delete(`${ENV.API_BACK_URL}shifts/${position.id}`);
+      await axios.delete(`${ENV.API_BACK_URL}shifts/${shift.id}`);
 
       setShiftData(prevData => {
-        return prevData.filter(item => item.id !== position.id);
+        return prevData.filter(item => item.id !== shift.id);
       });
 
-      showNotification(`Cargo ${position.name} eliminado con éxito`);
+      showNotification(`Turno ${shift.description} eliminado con éxito`);
       return true;
     } catch (error) {
-      showNotification('Error al eliminar Cargo', error.response.data.message, 'error');
+      showNotification('Error al eliminar Turno', error.response.data.message, 'error');
       return false;
     }
   };
-
-  // const updateGlobalStage = (shiftData) => {
-  //   return {
-  //     id: shiftData.id,
-  //     code: shiftData.code,
-  //     name: shiftData.name,
-  //     department: { ...shiftData.department },
-  //     employees: [ 
-  //       ...shiftData.employees
-  //     ],
-  //     subDepartment: { ...shiftData.subDepartment }
-  //   };
-  // };
   
   const contextValue = {
     loading,
     createShift,
-    updatePosition,
-    deletePosition,
+    updateShift,
+    deleteShift,
     shiftData,
     setShiftData, 
   };
