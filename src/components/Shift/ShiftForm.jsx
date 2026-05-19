@@ -9,6 +9,7 @@ import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { newCodePosition } from '../../utils/Positions/positions-utils';
 import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
+import { typeShiftOptions, minHourOptions, radioOptions } from '../../utils/StaticData/shift-utils';
 
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -33,17 +34,10 @@ export default function ShiftForm({ mode = 'create' }) {
   const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
   const [addSubDep, setAddSubDep] = useState(false);
   const [newSubDepCode, setNewSubDepCode] = useState('');
-  // console.log("departments en Form", departments)
 
   const methods = useForm({
       resolver: yupResolver(shiftValidationSchema),
-      // defaultValues: {
-      //   code: '',
-      //   name: '',
-      //   departmentId: '',
-      //   subDepartmentId: 0
-      // }
-    });
+  });
   
     // Desestructuración de methods
     const { 
@@ -70,13 +64,8 @@ export default function ShiftForm({ mode = 'create' }) {
   const alwaysApplyDisabledClasses = getDisabledClasses(true);
   const disabledTypeShift = getDisabledClasses(!selectedDepartmentId);
 
-  const radioOptions = [
-    { optionOne: { value: "yes", label: "Sí" } }, 
-    { optionTwo: { value: "no", label: "No" } }
-  ];
-
   useEffect(() => {
-    if (selectedTypeShift === 'administative') {
+    if (selectedTypeShift === 'administrative') {
       setValue('timeRestPeriod', 1, { shouldValidate: true });
       setValue('durationUnitRestPeriod', 'hours', { shouldValidate: true });
       setValue('nightShift', 'Diurno', { shouldValidate: true });
@@ -89,7 +78,7 @@ export default function ShiftForm({ mode = 'create' }) {
   useEffect(() => {
     
     if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchDurationUnitRestPeriod) {
-      console.log("AQUI", watchCheckInTime);
+      // console.log("AQUI", watchCheckInTime);
       const result = calculateWorkPeriods(
         watchCheckInTime,
         watchCheckOutTime,
@@ -174,39 +163,16 @@ export default function ShiftForm({ mode = 'create' }) {
 
     if (success) {
       navigate(`/empleados/horarios/turnos`);
-      // if (createMode) navigate(-1);
-      // else navigate(-2);
     }
   };
 
   const onError = (formErrors) => {
-    console.warn('ShiftForm validation errors:', formErrors);
+    console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
 
-
-  const typeShiftData = [
-    {
-      value: 'operative',
-      label: 'Operativo',
-    },
-    {
-      value: 'administative',
-      label: 'Administrativo',
-    },
-  ]
-
-  const minHourOptions = () => {
-    return [
-      {
-        value: 'minutes',
-        label: 'Minutos',
-      },
-      {
-        value: 'hours',
-        label: 'Horas',
-      }
-    ];
+  const minHourGetOptions = () => {
+    return minHourOptions;
   };
 
   return (
@@ -277,7 +243,7 @@ export default function ShiftForm({ mode = 'create' }) {
                     register={register} 
                     disabled={viewMode || !selectedDepartmentId} 
                     dynamicClasses={`${disabledClasses} ${disabledTypeShift}`} 
-                    dataSelect={typeShiftData}
+                    dataSelect={typeShiftOptions}
                     errors={errors}
                   />
                 </div>
@@ -314,7 +280,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
-                      dataSelect={minHourOptions()}
+                      dataSelect={minHourGetOptions()}
                       errors={errors}
                     />
                     {errors?.durationUnitRestPeriod && <ErrorMessage msg={errors.durationUnitRestPeriod.message} />}  
@@ -332,7 +298,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
-                      dataSelect={minHourOptions()}
+                      dataSelect={minHourGetOptions()}
                       errors={errors}
                     />
                     {errors?.durationUnitActivePeriod && <ErrorMessage msg={errors.durationUnitActivePeriod.message} />}  
@@ -350,7 +316,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
-                      dataSelect={minHourOptions()}
+                      dataSelect={minHourGetOptions()}
                       errors={errors}
                     />
                     {errors?.durationUnitTotalPeriod && <ErrorMessage msg={errors.durationUnitTotalPeriod.message} />}  

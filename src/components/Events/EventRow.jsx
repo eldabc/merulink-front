@@ -72,12 +72,13 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, isE
 
         {(!isMeruBirthday && isNotExternalEvent ) ? (
           <td className="px-4 py-3">
-              <ButtonDelete 
-                setIsModalOpen={setIsModalOpen}
-                title={deleteBtnTitle}
-                dinamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
-                disabled={blockBtn} 
-                id={event.id} />
+            <ButtonDelete 
+              setIsModalOpen={setIsModalOpen}
+              title={deleteBtnTitle}
+              dinamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
+              disabled={blockBtn} 
+              id={event.id} 
+            />
           </td>
         ) : (
           !isMeruBirthday && (

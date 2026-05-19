@@ -22,7 +22,7 @@ export const shiftValidationSchema = yup.object().shape({
   
   typeShift: yup.string()
     .required('Debe seleccionar Tipo de Turno')
-    .oneOf(['operative', 'administative'], 'Opción inválida'),
+    .oneOf(['operative', 'administrative'], 'Opción inválida'),
 
   checkInTime: yup.string()
     .required('La hora de inicio es obligatoria'),
