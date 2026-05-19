@@ -5,13 +5,13 @@ function ToggleGeneric({ name, textOn, textOff, readOnly, dynamicClasses }) {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
 
   const currentStatus = watch(name);
-  const isActive = currentStatus === true; // Indica si el checkbox esta visualmente "on"
+  const isActive = currentStatus === 'Nocturno'; // Indica si el checkbox esta visualmente "on"
   
   const handleToggle = () => {
     if (readOnly) return;
 
     // Alterna manualmente entre los dos valores del diccionario
-    const nextStatus = !currentStatus;
+    const nextStatus = currentStatus === 'Nocturno' ? 'Diurno' : 'Nocturno';
     setValue(name, nextStatus, { shouldValidate: true, shouldDirty: true });
   };
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { set, useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
@@ -23,17 +23,16 @@ import OptionSelect from '../Shared/OptionSelect';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ToggleGeneric from '../Shared/ToggleGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
+import CodesCircles from '../Shared/CodesCircles';
 import '../../Tables.css';
 
 export default function ShiftForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { shiftData, createShift, updateShift } = useShifts();
+  const { shiftData, createShift, updateShift, getCodeDataByDepartment, loading } = useShifts();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
-  const [filteredSubDepartments, setFilteredSubDepartments] = useState([]);
-  const [addSubDep, setAddSubDep] = useState(false);
-  const [newSubDepCode, setNewSubDepCode] = useState('');
+  const [existingCodes, setExistingCodes] = useState([]);
 
   const methods = useForm({
       resolver: yupResolver(shiftValidationSchema),
@@ -44,9 +43,6 @@ export default function ShiftForm({ mode = 'create' }) {
       register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting }
     } = methods;
 
-  useEffect(() => {
-    trigger('subDepartmentId');
-  }, [filteredSubDepartments]);
 
   const selectedDepartmentId = watch('departmentId');
   const watchCheckInTime = watch('checkInTime');  
@@ -128,23 +124,32 @@ export default function ShiftForm({ mode = 'create' }) {
   }, [mode, shift, reset]);
 
   useEffect(() => {
-    if (!viewMode) {
-      if (selectedDepartmentId) {
-        setValue('code', '');
 
-        const filtered = departments.find(sd => String(sd.id) === String(selectedDepartmentId));
-        setFilteredSubDepartments(filtered?.subDepartments);
-        
-        // Genera código
-        const newCode = newCodePosition(selectedDepartmentId, 0, shiftData, departments, shift?.id);
-        setValue('code', newCode);
+    const fetchCodeData = async () => {
+      if (selectedDepartmentId) {
+        try {
+
+          const codeDataByDepartment = await getCodeDataByDepartment(selectedDepartmentId);
+          // console.log("codeData", codeDataByDepartment, selectedDepartmentId);
+          
+          if (codeDataByDepartment?.suggestedCode) {
+            setValue('code', codeDataByDepartment.suggestedCode);
+            setExistingCodes(codeDataByDepartment.existingCodes);
+          }
+
+        } catch (error) {
+          console.error("Error al obtener el código del departamento:", error);
+        }
+
       } else {
-        setFilteredSubDepartments([]);
         setValue('code', '');
+        setExistingCodes([]);
       }
-    }
+    };
+
+    if (!viewMode) fetchCodeData(); 
     
-  }, [selectedDepartmentId, shiftData]);
+  }, [selectedDepartmentId, viewMode]);
 
 
   const onSubmit = async (data) => {
@@ -179,16 +184,28 @@ export default function ShiftForm({ mode = 'create' }) {
             <div className='mx-auto mt-6'>
               <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-5" />
               
+                {loading ? (
+                  <SpanText text="Cargando..." />
+                ) : (
+                  <CodesCircles codes={existingCodes} />
+                )}
+              
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
                 
                   <LabelFieldForm field="Código" simbol="*"/>
                 <div>
-                  <input
-                    readOnly={viewMode}
-                    {...register('code')}
-                    className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
-                  />
-                  {errors?.code && <ErrorMessage msg={errors.code.message} />}  
+                  {loading ? (
+                    <SpanText text="Cargando..." />
+                  ) : (
+                    <>
+                    <input
+                      readOnly={viewMode}
+                      {...register('code')}
+                      className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                    />
+                    {errors?.code && <ErrorMessage msg={errors.code.message} />}  
+                    </>
+                  )}
                 </div>
 
                 <LabelFieldForm field="Descripción" simbol="*"/>
@@ -356,7 +373,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       rows="5"                 
                       cols="33"                 
                       placeholder="Escribe aquí una observación..."
-                      className={`filter-input ${disabledClasses}`}
+                      className={`filter-input p-2 ${disabledClasses}`}
                     />
                     {errors?.observation && <ErrorMessage msg={errors.observation.message} />}  
                   </div>  

@@ -97,10 +97,16 @@ export const ShiftProvider = ({ children }) => {
   // *** Eliminar
   const deleteShift = async (shift) => {
     try {
-      await axios.delete(`${ENV.API_BACK_URL}shifts/${shift.id}`);
+      const shiftId = shift.id;
+
+      if (!shiftId) {
+        showNotification('Error:', 'No se encontró ID de Turno', 'error');
+        return false;
+      }
+      await axios.delete(`${ENV.API_BACK_URL}shifts/${shiftId}`);
 
       setShiftData(prevData => {
-        return prevData.filter(item => item.id !== shift.id);
+        return prevData.filter(item => item.id !== shiftId);
       });
 
       showNotification(`Turno ${shift.description} eliminado con éxito`);
@@ -110,12 +116,31 @@ export const ShiftProvider = ({ children }) => {
       return false;
     }
   };
+
+  // *** Obtener datos para generar código y mostrar códigos anteriores
+  const getCodeDataByDepartment = async (departmentId) => {
+    try {
+      setLoading(true);
+      if (!departmentId) {
+        showNotification('Error:', 'No se encontró ID de Departamento', 'error');
+        return false;
+      }
+      const response = await axios.get(`${ENV.API_BACK_URL}shifts/next-code/${departmentId}`);
+      return response.data.data;
+
+    } catch (error) {
+        showNotification('Error al obtener datos para código', error.response.data.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const contextValue = {
     loading,
     createShift,
     updateShift,
     deleteShift,
+    getCodeDataByDepartment,
     shiftData,
     setShiftData, 
   };

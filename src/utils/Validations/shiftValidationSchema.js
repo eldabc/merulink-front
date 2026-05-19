@@ -4,7 +4,7 @@ export const shiftValidationSchema = yup.object().shape({
   code: yup
     .string()
     .required('Código es requerido')
-    .matches(/^[0-9]+$/, 'Solo se permiten números.')
+    .matches(/^[A-Z0-9-]+$/, 'Solo se permiten letras mayúsculas, números y guiones.')
     .max(5, 'Debe contener máximo 5 dígitos')
     .min(3, 'Debe contener mínimo 3 dígitos'),
 
