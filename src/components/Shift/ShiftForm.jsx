@@ -105,7 +105,6 @@ export default function ShiftForm({ mode = 'create' }) {
 
   useEffect(() => {
 
-    // if (shift) {
       reset({
         code: shift?.code ?? '',
         description: shift?.description ?? '',
@@ -125,7 +124,7 @@ export default function ShiftForm({ mode = 'create' }) {
         available: shift?.available ?? false,
         observation: shift?.observation ?? '',
       });
-    // }
+
   }, [mode, shift, reset]);
 
   useEffect(() => {
@@ -167,10 +166,6 @@ export default function ShiftForm({ mode = 'create' }) {
   const onError = (formErrors) => {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
-  };
-
-  const minHourGetOptions = () => {
-    return minHourOptions;
   };
 
   return (
@@ -287,7 +282,7 @@ export default function ShiftForm({ mode = 'create' }) {
                  <LabelFieldForm field="Periodo Activo" simbol="*"/>
                   <div className="flex items-center gap-2">
                     <input 
-                      readOnly={true} min={1} max={30} //type='number'
+                      readOnly={true} //min={1} max={30}
                       {...register('timeActivePeriod')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
@@ -305,7 +300,7 @@ export default function ShiftForm({ mode = 'create' }) {
                 <LabelFieldForm field="Periodo Total" simbol="*"/>
                   <div className="flex items-center gap-2">
                     <input 
-                      readOnly={true} min={1} max={30} //type='number' 
+                      readOnly={true}// min={1} max={30}
                       {...register('timeTotalPeriod')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
@@ -319,7 +314,6 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     {errors?.durationUnitTotalPeriod && <ErrorMessage msg={errors.durationUnitTotalPeriod.message} />}  
                   </div>
-                {/* <div className="hidden md:block md:col-span-2"></div> */}
 
                 <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
                   <div className='mt-3'> 
@@ -331,6 +325,7 @@ export default function ShiftForm({ mode = 'create' }) {
                       optionTwo={radioOptions[1].optionTwo } 
                     />
                   </div>
+
                 <LabelFieldForm field="¿Permitir Remarcaje?" simbol="*"/>
                   <div className='mt-3'> 
                     <ButtonRadioGeneric

@@ -1,50 +1,42 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useShifts } from "../../context/ShiftContext";
 
-import { stringCategoryEvents } from '../../utils/Events/events-utils';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
-import { EVENT_CAT } from '../../utils/eventConfig.js';
 
 import ShiftRow from './ShiftRow';
 import Pagination from '../Pagination';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
 import FilterByFields from '../Filters/FilterByFields.jsx';
-import ButtonHistory from '../Shared/ButtonHistory.jsx';
 import SpanText from '../Shared/SpanText.jsx';
 import RowTableLoading from '../Shared/RowTableLoading.jsx';
-import HistoryNavigation from '../Shared/HistoryNavigation.jsx';
 
 import '../../Tables.css';
 
 export default function ShiftList({ categoryKeys }) {
   
   const navigate = useNavigate();
-  const location = useLocation();
   const { loading, shiftData } = useShifts();
   const [searchDateValue, setSearchDateValue] = useState('');
-  const [showHistory, setShowHistory] = useState(false);
-  const currentSystemYear = new Date().getFullYear();
-  const [historyYear, setHistoryYear] = useState(currentSystemYear);
-  
-  const prevCategoryKeys = useRef();
-  const prevShowHistory = useRef();
-  const prevHistoryYear = useRef(currentSystemYear);
-  const isFirstRender = useRef(true);
 
   const itemsPerPage = 10;
-   const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
-  const SEARCH_FIELDS = useMemo(() => ['title', 'start'], []);
-  const categoryKeysString = JSON.stringify(categoryKeys);
-  const locationState = location.state;
-  const stringCategory = stringCategoryEvents(categoryKeys);
+  const SEARCH_FIELDS = useMemo(() => ['description'], []);
 
+  useEffect(() => {
+    if (searchValue.trim()) {
+      setHasSearched(true);
+    } else {
+      setHasSearched(false);
+    }
+    setCurrentPage(1);
+  }, [searchValue]);
 
-    // Filtrar
+  // Filtrar
   const filteredShifts = useMemo(() => {
       return filterData(
           shiftData,
@@ -75,9 +67,8 @@ export default function ShiftList({ categoryKeys }) {
         searchDateValue={searchDateValue}
         onSearchChange={(val) => { setSearchValue(val); setCurrentPage(1); }}
         onFilterDate={(val) => { setSearchDateValue(val); setCurrentPage(1); }}
-        moduleName='Evento'
-        placeholder='Ingrese nombre del evento'
-        showFilterDate={true}
+        moduleName='Turno'
+        placeholder='Ingrese descripción'
       />
 
       {(dataToDisplay.length === 0 ) && !loading ? (
@@ -121,18 +112,18 @@ export default function ShiftList({ categoryKeys }) {
         </>
       )}
 
-      {/* <Pagination
+      <Pagination
         paginatedData={paginatedShifts}
         startIndex={startIndex}
         itemsPerPage={itemsPerPage}
         dataToDisplay={dataToDisplay}
-        hasSearched={isSearching}
+        hasSearched={hasSearched}
         data={shiftData}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
         totalPages={totalPages}
-        moduleName={'Evento'}
-      /> */}
+        moduleName={'Turno'}
+      />
     </div>        
   );
 }

@@ -13,36 +13,36 @@ import SpanText from '../Shared/SpanText';
 export default function ShiftRow({ shift }) {
 
   const navigate = useNavigate();
-  // const { deletePosition } = useShifts();
+  const { deleteShift } = useShifts();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState(null);
+  const [selectedShift, setSelectedShift] = useState(null);
 
-  const blockBtn = shift.employees?.length > 0 ? true : false;
+  const blockBtn = shift?.schedules?.length > 0 ? true : false;
   const disabledClasses = getDisabledClasses(blockBtn);
-  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, cargo tiene Empleados asociados' : 'Eliminar';
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, turno tiene Horarios asociados' : 'Eliminar';
 
-  const handleSelectedPosition = (id) => {
+  const handleSelectedShift = (id) => {
     navigate(`/empleados/horarios/turnos/ver/${id}`); 
   };
 
   const handleDeleteClick = (shift) => {
-    setSelectedPosition(shift);
+    setSelectedShift(shift);
     setIsModalOpen(true);
   };
   
   const handleConfirmDelete = async () => {
-    if (!selectedPosition) return;
+    if (!selectedShift) return;
 
-    // await deletePosition(selectedPosition);
+    await deleteShift(selectedShift);
     setIsModalOpen(false);
-    setSelectedPosition(null);
+    setSelectedShift(null);
   };
 
   return (
     <>
     <tr
       key={shift.id}
-      onClick={() => handleSelectedPosition(shift.id)}
+      onClick={() => handleSelectedShift(shift.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
       <td className="px-4 py-3 text-white-800 font-medium">{shift.code}</td>
@@ -76,11 +76,11 @@ export default function ShiftRow({ shift }) {
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
-            setSelectedPosition(null);
+            setSelectedShift(null);
           }}
           onConfirm={handleConfirmDelete}
-          title="Eliminar Cargo"
-          message={`¿Está seguro que desea eliminar Cargo "${selectedPosition?.name}"?`}
+          title="Eliminar Turno"
+          message={`¿Está seguro que desea eliminar Turno "${selectedShift?.description}"?`}
         />
       </td>
     </tr>
