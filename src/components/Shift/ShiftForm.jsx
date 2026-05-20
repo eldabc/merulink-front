@@ -173,7 +173,7 @@ export default function ShiftForm({ mode = 'create' }) {
 
 
   const onSubmit = async (data) => {
-    console.log("data submit", data);
+    // console.log("data submit", data);
     let success = false;
     const dataChanges = { ...data, id: shift?.id };
 
