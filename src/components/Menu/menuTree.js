@@ -8,13 +8,13 @@ export const menuTree = {
       "Sub-Departamentos": { _meta: { label: "Sub-Departamentos", path: "/empleados/sub-departamentos" } },
       Cargos: { _meta: { label: "Cargos", path: "/empleados/cargos" } },
       Roles: { _meta: { label: "Roles", path: "/empleados/roles" } },
-      Horarios: {
-        _meta: { label: "Horarios", path: "/empleados/horarios" },
-        Turnos: { _meta: { label: "Turnos", path: "/empleados/horarios/turnos" } },
-        Asignar: { _meta: { label: "Asignar", path: "/empleados/horarios/asignar" } }
+      Planificación: {
+        _meta: { label: "Planificación", path: "#" },
+        Turnos: { _meta: { label: "Turnos", path: "/empleados/turnos" } },
+        Asignar: { _meta: { label: "Horarios", path: "/empleados/horarios" } }
       },
       Vestuarios: {
-        _meta: { label: "Vestuarios", path: "/empleados/vestuarios" },
+        _meta: { label: "Vestuarios", path: "#" },
         Lockers: { _meta: { label: "Lockers", path: "/empleados/vestuarios/lockers" } },
         Candados: { _meta: { label: "Candados", path: "/empleados/vestuarios/candados" } },
         "Patrones Candados": { _meta: { label: "Patrones", path: "/empleados/vestuarios/candados/patrones" } },

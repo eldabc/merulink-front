@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useShifts } from "../../context/ShiftContext";
+import { useSchedules } from "../../context/ScheduleContext";
 
-import { normalizeText } from '../../utils/text-utils';
-import { filterData } from '../../utils/filter-utils';
+import { normalizeText } from '../../utils/text-utils.js';
+import { filterData } from '../../utils/filter-utils.js';
 
-import ShiftRow from './ShiftRow';
-import Pagination from '../Pagination';
-import TitleHeader from '../Shared/TitleHeader';
+import ScheduleRow from './ScheduleRow';
+import Pagination from '../Pagination.jsx';
+import TitleHeader from '../Shared/TitleHeader.jsx';
 import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
 import FilterByFields from '../Filters/FilterByFields.jsx';
 import SpanText from '../Shared/SpanText.jsx';
@@ -15,10 +15,10 @@ import RowTableLoading from '../Shared/RowTableLoading.jsx';
 
 import '../../Tables.css';
 
-export default function ShiftList({ categoryKeys }) {
+export default function ScheduleList({ categoryKeys }) {
   
   const navigate = useNavigate();
-  const { loading, shiftData } = useShifts();
+  const { loading, scheduleData } = useSchedules();
   const [searchDateValue, setSearchDateValue] = useState('');
 
   const itemsPerPage = 10;
@@ -37,21 +37,21 @@ export default function ShiftList({ categoryKeys }) {
   }, [searchValue]);
 
   // Filtrar
-  const filteredShifts = useMemo(() => {
+  const filteredSchedules = useMemo(() => {
       return filterData(
-          shiftData,
+          scheduleData,
           searchValue,
           SEARCH_FIELDS,
           "",
           normalizeText
       );
-  }, [shiftData, searchValue]);
+  }, [scheduleData, searchValue]);
 
     // Datos para mostrar
-  const dataToDisplay = hasSearched ? filteredShifts : shiftData;
+  const dataToDisplay = hasSearched ? filteredSchedules : scheduleData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedShifts = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedSchedules = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="main-data-cont table-container">
@@ -93,10 +93,10 @@ export default function ShiftList({ categoryKeys }) {
                     </tr>
                     </thead>
                     <tbody>
-                        {paginatedShifts.map((item) => (
-                          <ShiftRow 
+                        {paginatedSchedules.map((item) => (
+                          <ScheduleRow 
                             key={item.id} 
-                            shift={item} 
+                            schedule={item} 
                           />
                         ))}
                     
@@ -113,12 +113,12 @@ export default function ShiftList({ categoryKeys }) {
       )}
 
       <Pagination
-        paginatedData={paginatedShifts}
+        paginatedData={paginatedSchedules}
         startIndex={startIndex}
         itemsPerPage={itemsPerPage}
         dataToDisplay={dataToDisplay}
         hasSearched={hasSearched}
-        data={shiftData}
+        data={scheduleData}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
         totalPages={totalPages}

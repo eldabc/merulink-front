@@ -22,7 +22,7 @@ export default function ShiftRow({ shift }) {
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar, turno tiene Horarios asociados' : 'Eliminar';
 
   const handleSelectedShift = (id) => {
-    navigate(`/empleados/horarios/turnos/ver/${id}`); 
+    navigate(`/empleados/turnos/ver/${id}`); 
   };
 
   const handleDeleteClick = (shift) => {

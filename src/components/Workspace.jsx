@@ -24,6 +24,7 @@ import { SubDepartmentProvider } from '../context/SubDepartmentContext';
 import { PositionProvider } from '../context/PositionContext'; 
 import { PadlockPatternProvider } from '../context/PadlockPatternContext'; 
 import { ShiftProvider } from '../context/ShiftContext'; 
+import { ScheduleProvider } from '../context/ScheduleContext'; 
 import { useNotification } from "../context/NotificationContext";
 
 const EventLayout = ({ showNotification }) => (
@@ -86,6 +87,12 @@ const ShiftLayout = () => (
   </ShiftProvider>
 );
 
+const ScheduleLayout = () => (
+  <ScheduleProvider>
+    <Outlet />
+  </ScheduleProvider>
+);
+
 export default function Workspace({ activeMenu, activePath }) {
   const { showNotification } = useNotification();
   return (
@@ -116,7 +123,12 @@ export default function Workspace({ activeMenu, activePath }) {
 
         {/* Turnos */}
         <Route element={<ShiftLayout />}>
-          <Route path="/empleados/horarios/turnos/*" element={<div className="main-workspace"><ShiftPage /></div>} />
+          <Route path="/empleados/turnos/*" element={<div className="main-workspace"><ShiftPage /></div>} />
+        </Route>
+
+        {/* Horarios */}
+        <Route element={<ScheduleLayout />}>
+          <Route path="/empleados/horarios/*" element={<div className="main-workspace"><ScheduleLayout /></div>} />
         </Route>
         
         

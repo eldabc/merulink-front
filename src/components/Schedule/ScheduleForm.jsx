@@ -3,13 +3,13 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
-import { shiftValidationSchema  } from '../../utils/Validations/shiftValidationSchema';
-import { useShifts } from '../../context/ShiftContext';
+import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
+import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { newCodePosition } from '../../utils/Positions/positions-utils';
-import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
-import { typeShiftOptions, minHourOptions, radioOptions, nigthShiftOptions } from '../../utils/StaticData/shift-utils';
+import { calculateWorkPeriods } from '../../utils/Schedule/schedule-utils';
+import { typeScheduleOptions, minHourOptions, radioOptions, nigthScheduleOptions } from '../../utils/StaticData/schedule-utils';
 
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -26,15 +26,15 @@ import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import CodesCircles from '../Shared/CodesCircles';
 import '../../Tables.css';
 
-export default function ShiftForm({ mode = 'create' }) {
+export default function ScheduleForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { shiftData, createShift, updateShift, getCodeDataByDepartment, loading } = useShifts();
+  const { scheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
 
-  const methods = useForm({ resolver: yupResolver(shiftValidationSchema), });
+  const methods = useForm({ resolver: yupResolver(scheduleValidationSchema), });
   
   // Desestructuración de methods
   const { 
@@ -47,27 +47,27 @@ export default function ShiftForm({ mode = 'create' }) {
   const watchCheckOutTime = watch('checkOutTime');  
   const watchRestPeriod = watch('restPeriodTime');  
   const watchRestPeriodUnitTime = watch('restPeriodUnitTime');  
-  const selectedTypeShift = watch('typeShift');  
+  const selectedTypeSchedule = watch('typeSchedule');  
 
-  const shift = shiftData.find(e => e.id === Number(id));
+  const schedule = scheduleData.find(e => e.id === Number(id));
   const createMode = mode === 'create';
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
 
   const disabledClasses = getDisabledClasses(viewMode);
   const alwaysApplyDisabledClasses = getDisabledClasses(true);
-  const disabledTypeShift = getDisabledClasses(!selectedDepartmentId);
+  const disabledTypeSchedule = getDisabledClasses(!selectedDepartmentId);
 
   useEffect(() => {
-    if (selectedTypeShift === 'administrative') {
+    if (selectedTypeSchedule === 'administrative') {
       setValue('restPeriodTime', 1, { shouldValidate: true });
       setValue('restPeriodUnitTime', 'hours', { shouldValidate: true });
-      setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
-    } else if (selectedTypeShift === 'operative') {
+      setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
+    } else if (selectedTypeSchedule === 'operative') {
       setValue('restPeriodTime', 30, { shouldValidate: true });
       setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
     }
-  },[selectedTypeShift]);
+  },[selectedTypeSchedule]);
 
   useEffect(() => {
 
@@ -82,9 +82,9 @@ export default function ShiftForm({ mode = 'create' }) {
 
     // Si los minutos de salida son menores o iguales es nocturno
     if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
-      setValue('nightShift', nigthShiftOptions.optionTwo.key, { shouldValidate: true }); 
+      setValue('nightSchedule', nigthScheduleOptions.optionTwo.key, { shouldValidate: true }); 
     } else {
-      setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
+      setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
     }
 
   }, [watchCheckInTime, watchCheckOutTime, setValue]);
@@ -121,26 +121,26 @@ export default function ShiftForm({ mode = 'create' }) {
   useEffect(() => {
 
       reset({
-        code: shift?.code ?? '',
-        description: shift?.description ?? '',
-        nightShift: shift?.nightShift ?? nigthShiftOptions.optionOne.key,
-        departmentId: shift?.department?.id ?? '',
-        typeShift: shift?.typeShift ?? '',
-        checkInTime: shift?.checkInTime ?? null,
-        checkOutTime: shift?.checkOutTime ?? null,
-        restPeriodTime: shift?.restPeriodTime ?? null,
-        restPeriodUnitTime: shift?.restPeriodUnitTime ?? '',
-        activePeriodTime: shift?.activePeriodTime ?? null,
-        activePeriodUnitTime: shift?.activePeriodUnitTime ?? '',
-        totalPeriodTime: shift?.totalPeriodTime ?? null,
-        totalPeriodUnitTime: shift?.totalPeriodUnitTime ?? '',
-        allowExit: shift?.allowExit ?? false,
-        allowReScanned: shift?.allowReScanned ?? false,
-        available: shift?.available ?? false,
-        observation: shift?.observation ?? '',
+        code: schedule?.code ?? '',
+        description: schedule?.description ?? '',
+        nightSchedule: schedule?.nightSchedule ?? nigthScheduleOptions.optionOne.key,
+        departmentId: schedule?.department?.id ?? '',
+        typeSchedule: schedule?.typeSchedule ?? '',
+        checkInTime: schedule?.checkInTime ?? null,
+        checkOutTime: schedule?.checkOutTime ?? null,
+        restPeriodTime: schedule?.restPeriodTime ?? null,
+        restPeriodUnitTime: schedule?.restPeriodUnitTime ?? '',
+        activePeriodTime: schedule?.activePeriodTime ?? null,
+        activePeriodUnitTime: schedule?.activePeriodUnitTime ?? '',
+        totalPeriodTime: schedule?.totalPeriodTime ?? null,
+        totalPeriodUnitTime: schedule?.totalPeriodUnitTime ?? '',
+        allowExit: schedule?.allowExit ?? false,
+        allowReScanned: schedule?.allowReScanned ?? false,
+        available: schedule?.available ?? false,
+        observation: schedule?.observation ?? '',
       });
 
-  }, [mode, shift, reset]);
+  }, [mode, schedule, reset]);
 
   useEffect(() => {
 
@@ -175,12 +175,12 @@ export default function ShiftForm({ mode = 'create' }) {
   const onSubmit = async (data) => {
     // console.log("data submit", data);
     let success = false;
-    const dataChanges = { ...data, id: shift?.id };
+    const dataChanges = { ...data, id: schedule?.id };
 
-    if (editMode && shift) { 
-      success = await updateShift(dataChanges);
+    if (editMode && schedule) { 
+      success = await updateSchedule(dataChanges);
     } else {
-      success = await createShift(dataChanges);
+      success = await createSchedule(dataChanges);
     }
 
     if (success) {
@@ -197,7 +197,7 @@ export default function ShiftForm({ mode = 'create' }) {
     <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
-    {(viewMode) && <HeadFormButtons url={`/empleados/turnos/editar/${shift?.id}`} data={[]} /> }
+    {(viewMode) && <HeadFormButtons url={`/empleados/turnos/editar/${schedule?.id}`} data={[]} /> }
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
@@ -243,11 +243,11 @@ export default function ShiftForm({ mode = 'create' }) {
                   <LabelFieldForm field="Tipo" simbol="*"/>
                 <div>                 
                   <SelectGeneric 
-                    name="typeShift"
+                    name="typeSchedule"
                     register={register} 
                     disabled={viewMode || !selectedDepartmentId} 
-                    dynamicClasses={`${disabledClasses} ${disabledTypeShift}`} 
-                    dataSelect={typeShiftOptions}
+                    dynamicClasses={`${disabledClasses} ${disabledTypeSchedule}`} 
+                    dataSelect={typeScheduleOptions}
                     errors={errors}
                   />
                 </div>
@@ -271,7 +271,7 @@ export default function ShiftForm({ mode = 'create' }) {
                   <LabelFieldForm field="Nocturno" simbol="*"/>
                 <div>
                   <ToggleGeneric 
-                    name="nightShift" optionsToggle={nigthShiftOptions} readOnly={viewMode} register={register}
+                    name="nightSchedule" optionsToggle={nigthScheduleOptions} readOnly={viewMode} register={register}
                     errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} 
                   />
                 </div>
