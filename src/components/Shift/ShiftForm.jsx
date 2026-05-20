@@ -9,7 +9,7 @@ import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { newCodePosition } from '../../utils/Positions/positions-utils';
 import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
-import { typeShiftOptions, minHourOptions, radioOptions } from '../../utils/StaticData/shift-utils';
+import { typeShiftOptions, minHourOptions, radioOptions, nigthShiftOptions } from '../../utils/StaticData/shift-utils';
 
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -62,7 +62,7 @@ export default function ShiftForm({ mode = 'create' }) {
     if (selectedTypeShift === 'administrative') {
       setValue('timeRestPeriod', 1, { shouldValidate: true });
       setValue('durationUnitRestPeriod', 'hours', { shouldValidate: true });
-      setValue('nightShift', 'Diurno', { shouldValidate: true });
+      setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
     } else if (selectedTypeShift === 'operative') {
       setValue('timeRestPeriod', 30, { shouldValidate: true });
       setValue('durationUnitRestPeriod', 'minutes', { shouldValidate: true });
@@ -82,10 +82,10 @@ export default function ShiftForm({ mode = 'create' }) {
 
     // Si los minutos de salida son menores o iguales es nocturno
     if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
-      setValue('nightShift', 'Nocturno', { shouldValidate: true }); 
+      setValue('nightShift', nigthShiftOptions.optionTwo.key, { shouldValidate: true }); 
       // console.log("aqui", startTotalMinutes);      
     } else {
-      setValue('nightShift', 'Diurno', { shouldValidate: true });
+      setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
     }
 
   }, [watchCheckInTime, watchCheckOutTime, setValue]);
@@ -124,7 +124,7 @@ export default function ShiftForm({ mode = 'create' }) {
       reset({
         code: shift?.code ?? '',
         description: shift?.description ?? '',
-        nightShift: shift?.nightShift ?? 'Diurno',
+        nightShift: shift?.nightShift ?? nigthShiftOptions.optionOne.key,
         departmentId: shift?.department?.id ?? '',
         typeShift: shift?.typeShift ?? '',
         checkInTime: shift?.checkInTime ?? null,
@@ -242,7 +242,7 @@ export default function ShiftForm({ mode = 'create' }) {
 
                   <LabelFieldForm field="Nocturno" simbol="*"/>
                 <div>
-                  <ToggleGeneric name="nightShift" textOn="Nocturno" textOff="Diurno" readOnly={viewMode} register={register} 
+                  <ToggleGeneric name="nightShift" optionsToggle={nigthShiftOptions} readOnly={viewMode} register={register}
                   errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} />
                 </div>
 

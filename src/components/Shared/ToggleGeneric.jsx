@@ -1,17 +1,17 @@
 import { useFormContext } from "react-hook-form";
 
-function ToggleGeneric({ name, textOn, textOff, readOnly, dynamicClasses }) { 
+function ToggleGeneric({ name, optionsToggle, readOnly, dynamicClasses }) { //textOn, textOff, 
 
   const { register, watch, setValue, formState: { errors } } = useFormContext();
 
   const currentStatus = watch(name);
-  const isActive = currentStatus === 'Nocturno'; // Indica si el checkbox esta visualmente "on"
+  const isActive = currentStatus === optionsToggle.optionTwo.key; // Controla si el checkbox esta visualmente "on"
   
   const handleToggle = () => {
     if (readOnly) return;
 
     // Alterna manualmente entre los dos valores del diccionario
-    const nextStatus = currentStatus === 'Nocturno' ? 'Diurno' : 'Nocturno';
+    const nextStatus = currentStatus === optionsToggle.optionTwo.key ? optionsToggle.optionOne.key : optionsToggle.optionTwo.key;
     setValue(name, nextStatus, { shouldValidate: true, shouldDirty: true });
   };
 
@@ -19,7 +19,7 @@ function ToggleGeneric({ name, textOn, textOff, readOnly, dynamicClasses }) {
     <>
     <div className="flex items-center justify-center gap-3 mt-2 mb-2">
       <span className={`text-xs ${!isActive ? 'text-amber-400 font-bold' : 'text-gray-500'}`}>
-        {textOff}
+        {optionsToggle.optionOne.label}
       </span>
 
       <div 
@@ -35,7 +35,7 @@ function ToggleGeneric({ name, textOn, textOff, readOnly, dynamicClasses }) {
       </div>
 
       <span className={`text-xs ${isActive ? 'text-green-400 font-bold' : 'text-gray-500'}`}>
-        {textOn}
+        {optionsToggle.optionTwo.label}
       </span>
 
       {/* Mantiene el valor real para el formulario */}

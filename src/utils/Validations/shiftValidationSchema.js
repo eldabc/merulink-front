@@ -1,4 +1,6 @@
 import * as yup from 'yup';
+import { nigthShiftOptions } from '../../utils/StaticData/shift-utils';
+
 
 export const shiftValidationSchema = yup.object().shape({
   code: yup
@@ -14,7 +16,7 @@ export const shiftValidationSchema = yup.object().shape({
 
   nightShift: yup.string()
     .required('Debe seleccionar Turno')
-    .oneOf(['Diurno', 'Nocturno'], 'Opción inválida'),
+    .oneOf([nigthShiftOptions.optionOne.key, nigthShiftOptions.optionTwo.key], 'Opción inválida'),
 
   departmentId: yup
     .string()
@@ -42,8 +44,8 @@ checkOutTime: yup.string()
         // Si falta la salida o la entrada, no valida
         if (!value || !checkInTime) return true;
 
-        // Si el turno es Nocturno ('night') salta la validación 
-        if (nightShift === 'night' || nightShift === 'Nocturno') {
+        // Si es turno Nocturno ('night') salta la validación 
+        if (nightShift === nigthShiftOptions.optionTwo.key) {
           return true; 
         }
 

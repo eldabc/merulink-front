@@ -4,7 +4,7 @@ import { useShifts } from "../../context/ShiftContext";
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { formatTimeTo12H } from '../../utils/date-utils';
-import { typeShiftOptions, minHourOptions } from '../../utils/StaticData/shift-utils';
+import { minHourOptions } from '../../utils/StaticData/shift-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';

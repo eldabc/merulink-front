@@ -1,3 +1,14 @@
+  export const nigthShiftOptions = {
+    optionOne: {
+      key: "day",
+      label: "Diurno",
+    },
+    optionTwo: {
+      key: "night",
+      label: "Nocturno",
+    },
+  };
+
   export const radioOptions = [
     { optionOne: { value: "yes", label: "Sí" } }, 
     { optionTwo: { value: "no", label: "No" } }

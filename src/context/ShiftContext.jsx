@@ -83,7 +83,7 @@ export const ShiftProvider = ({ children }) => {
         return [response.data.data, ...filteredData];
       });
 
-      showNotification(`Turno ${formData.name} actualizado con éxito`); 
+      showNotification(`Turno ${formData.description} actualizado con éxito`); 
       return true;
 
     } catch (error) {
