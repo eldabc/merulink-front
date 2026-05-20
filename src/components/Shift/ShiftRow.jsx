@@ -51,10 +51,10 @@ export default function ShiftRow({ shift }) {
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(shift.checkOutTime)}</td>
       <td className="px-4 py-3 text-white-700">{shift.department.departmentName}</td>
       <td className="px-4 py-3 text-white-700">
-        {`${shift.timeRestPeriod} ${minHourOptions.find(opt => opt.value === shift.durationUnitRestPeriod)?.label}`}
+        {`${shift.restPeriodTime} ${minHourOptions.find(opt => opt.value === shift.restPeriodUnitTime)?.label}`}
       </td>
       <td className="px-4 py-3 text-white-700">
-        {`${shift.timeActivePeriod} ${minHourOptions.find(opt => opt.value === shift.durationUnitActivePeriod)?.label}`}
+        {`${shift.activePeriodTime} ${minHourOptions.find(opt => opt.value === shift.activePeriodUnitTime)?.label}`}
       </td>
       <td className="px-4 py-3 text-white-700">
         {shift.available === 'yes' ? 'Sí' : 'No'}

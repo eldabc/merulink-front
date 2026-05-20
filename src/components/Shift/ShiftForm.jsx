@@ -45,8 +45,8 @@ export default function ShiftForm({ mode = 'create' }) {
   const selectedDepartmentId = watch('departmentId');
   const watchCheckInTime = watch('checkInTime');  
   const watchCheckOutTime = watch('checkOutTime');  
-  const watchRestPeriod = watch('timeRestPeriod');  
-  const watchDurationUnitRestPeriod = watch('durationUnitRestPeriod');  
+  const watchRestPeriod = watch('restPeriodTime');  
+  const watchRestPeriodUnitTime = watch('restPeriodUnitTime');  
   const selectedTypeShift = watch('typeShift');  
 
   const shift = shiftData.find(e => e.id === Number(id));
@@ -60,12 +60,12 @@ export default function ShiftForm({ mode = 'create' }) {
 
   useEffect(() => {
     if (selectedTypeShift === 'administrative') {
-      setValue('timeRestPeriod', 1, { shouldValidate: true });
-      setValue('durationUnitRestPeriod', 'hours', { shouldValidate: true });
+      setValue('restPeriodTime', 1, { shouldValidate: true });
+      setValue('restPeriodUnitTime', 'hours', { shouldValidate: true });
       setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
     } else if (selectedTypeShift === 'operative') {
-      setValue('timeRestPeriod', 30, { shouldValidate: true });
-      setValue('durationUnitRestPeriod', 'minutes', { shouldValidate: true });
+      setValue('restPeriodTime', 30, { shouldValidate: true });
+      setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
     }
   },[selectedTypeShift]);
 
@@ -92,22 +92,22 @@ export default function ShiftForm({ mode = 'create' }) {
 
   useEffect(() => {
     
-    if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchDurationUnitRestPeriod) {
+    if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchRestPeriodUnitTime) {
 
       const result = calculateWorkPeriods(
         watchCheckInTime,
         watchCheckOutTime,
-        watchRestPeriod, watchDurationUnitRestPeriod
+        watchRestPeriod, watchRestPeriodUnitTime
       );
 
       // console.log(result);
-      setValue('timeTotalPeriod', result.totalPeriod, { shouldValidate: true });
-      setValue('durationUnitTotalPeriod', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
-      setValue('timeActivePeriod', result.activePeriod, { shouldValidate: true });
-      setValue('durationUnitActivePeriod', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      setValue('totalPeriodTime', result.totalPeriod, { shouldValidate: true });
+      setValue('totalPeriodUnitTime', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      setValue('activePeriodTime', result.activePeriod, { shouldValidate: true });
+      setValue('activePeriodUnitTime', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
 
     }
-  },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchDurationUnitRestPeriod]);
+  },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchRestPeriodUnitTime]);
 
   
 
@@ -128,12 +128,12 @@ export default function ShiftForm({ mode = 'create' }) {
         typeShift: shift?.typeShift ?? '',
         checkInTime: shift?.checkInTime ?? null,
         checkOutTime: shift?.checkOutTime ?? null,
-        timeRestPeriod: shift?.timeRestPeriod ?? null,
-        durationUnitRestPeriod: shift?.durationUnitRestPeriod ?? '',
-        timeActivePeriod: shift?.timeActivePeriod ?? null,
-        durationUnitActivePeriod: shift?.durationUnitActivePeriod ?? '',
-        timeTotalPeriod: shift?.timeTotalPeriod ?? null,
-        durationUnitTotalPeriod: shift?.durationUnitTotalPeriod ?? '',
+        restPeriodTime: shift?.restPeriodTime ?? null,
+        restPeriodUnitTime: shift?.restPeriodUnitTime ?? '',
+        activePeriodTime: shift?.activePeriodTime ?? null,
+        activePeriodUnitTime: shift?.activePeriodUnitTime ?? '',
+        totalPeriodTime: shift?.totalPeriodTime ?? null,
+        totalPeriodUnitTime: shift?.totalPeriodUnitTime ?? '',
         allowExit: shift?.allowExit ?? false,
         allowReScanned: shift?.allowReScanned ?? false,
         available: shift?.available ?? false,
@@ -304,54 +304,54 @@ export default function ShiftForm({ mode = 'create' }) {
                   <div className="flex items-center gap-2">
                     <input 
                       readOnly={viewMode} type='number' min={1} max={30}
-                      {...register('timeRestPeriod')} 
+                      {...register('restPeriodTime')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                     />
                     <SelectGeneric 
-                      name="durationUnitRestPeriod"
+                      name="restPeriodUnitTime"
                       register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
                       errors={errors}
                     />
-                    {errors?.durationUnitRestPeriod && <ErrorMessage msg={errors.durationUnitRestPeriod.message} />}  
+                    {errors?.restPeriodUnitTime && <ErrorMessage msg={errors.restPeriodUnitTime.message} />}  
                   </div>
 
                  <LabelFieldForm field="Periodo Activo" simbol="*"/>
                   <div className="flex items-center gap-2">
                     <input 
                       readOnly={true} //min={1} max={30}
-                      {...register('timeActivePeriod')} 
+                      {...register('activePeriodTime')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
                     <SelectGeneric 
-                      name="durationUnitActivePeriod"
+                      name="activePeriodUnitTime"
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
                       errors={errors}
                     />
-                    {errors?.durationUnitActivePeriod && <ErrorMessage msg={errors.durationUnitActivePeriod.message} />}  
+                    {errors?.activePeriodUnitTime && <ErrorMessage msg={errors.activePeriodUnitTime.message} />}  
                   </div>
 
                 <LabelFieldForm field="Periodo Total" simbol="*"/>
                   <div className="flex items-center gap-2">
                     <input 
                       readOnly={true}// min={1} max={30}
-                      {...register('timeTotalPeriod')} 
+                      {...register('totalPeriodTime')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
                     <SelectGeneric 
-                      name="durationUnitTotalPeriod"
+                      name="totalPeriodUnitTime"
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
                       errors={errors}
                     />
-                    {errors?.durationUnitTotalPeriod && <ErrorMessage msg={errors.durationUnitTotalPeriod.message} />}  
+                    {errors?.totalPeriodUnitTime && <ErrorMessage msg={errors.totalPeriodUnitTime.message} />}  
                   </div>
 
                 <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
