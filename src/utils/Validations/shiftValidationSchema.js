@@ -27,21 +27,26 @@ export const shiftValidationSchema = yup.object().shape({
   checkInTime: yup.string()
     .required('La hora de inicio es obligatoria'),
 
-  checkOutTime: yup.string()
+checkOutTime: yup.string()
   .transform((curr, orig) => (orig === '' ? null : curr))
   .required('La hora de culminación es obligatoria')
-  .when('checkInTime', {
-    is: (checkInTime) => !!checkInTime, // Solo se ejecuta si ya pusiste la hora de entrada
+  .when(['checkInTime', 'nightShift'], {
+    is: (checkInTime, nightShift) => !!checkInTime, // Se activa si hay hora de entrada puesta
     then: (schema) => schema.test(
       'is-after-checkInTime',
       'La hora de salida no puede ser menor que la hora de entrada',
       function (value) {
-        const { checkInTime } = this.parent;
+        // Traer ambos valores desde el parent
+        const { checkInTime, nightShift } = this.parent;
         
-        // Si falta alguno de los dos valores por escribir, no validamos todavía
+        // Si falta la salida o la entrada, no valida
         if (!value || !checkInTime) return true;
 
-        // Compara directamente los strings "17:00" >= "08:00"
+        // Si el turno es Nocturno ('night') salta la validación 
+        if (nightShift === 'night' || nightShift === 'Nocturno') {
+          return true; 
+        }
+
         return value >= checkInTime;
       }
     ),

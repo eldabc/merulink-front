@@ -34,14 +34,12 @@ export default function ShiftForm({ mode = 'create' }) {
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
 
-  const methods = useForm({
-      resolver: yupResolver(shiftValidationSchema),
-  });
+  const methods = useForm({ resolver: yupResolver(shiftValidationSchema), });
   
-    // Desestructuración de methods
-    const { 
-      register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting }
-    } = methods;
+  // Desestructuración de methods
+  const { 
+    register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting }
+  } = methods;
 
 
   const selectedDepartmentId = watch('departmentId');
@@ -72,9 +70,31 @@ export default function ShiftForm({ mode = 'create' }) {
   },[selectedTypeShift]);
 
   useEffect(() => {
+
+    if (!watchCheckInTime || !watchCheckOutTime) return;
+
+    // Convertir horas a minutos para comparar con precisión
+    const [startHours, startMinutes] = watchCheckInTime.split(':').map(Number);
+    const [endHours, endMinutes] = watchCheckOutTime.split(':').map(Number);
+
+    const startTotalMinutes = (startHours * 60) + startMinutes;
+    const endTotalMinutes = (endHours * 60) + endMinutes;
+
+    // Si los minutos de salida son menores o iguales es nocturno
+    if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
+      setValue('nightShift', 'Nocturno', { shouldValidate: true }); 
+      // console.log("aqui", startTotalMinutes);      
+    } else {
+      setValue('nightShift', 'Diurno', { shouldValidate: true });
+    }
+
+  }, [watchCheckInTime, watchCheckOutTime, setValue]);
+
+
+  useEffect(() => {
     
     if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchDurationUnitRestPeriod) {
-      // console.log("AQUI", watchCheckInTime);
+
       const result = calculateWorkPeriods(
         watchCheckInTime,
         watchCheckOutTime,
@@ -182,7 +202,7 @@ export default function ShiftForm({ mode = 'create' }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-5" />
+              <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
               
                 {loading ? (
                   <SpanText text="Cargando..." />
