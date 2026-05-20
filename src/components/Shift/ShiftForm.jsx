@@ -212,22 +212,6 @@ export default function ShiftForm({ mode = 'create' }) {
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
                 
-                  <LabelFieldForm field="Código" simbol="*"/>
-                <div>
-                  {loading ? (
-                    <SpanText text="Cargando..." />
-                  ) : (
-                    <>
-                    <input
-                      readOnly={viewMode}
-                      {...register('code')}
-                      className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {errors?.code && <ErrorMessage msg={errors.code.message} />}  
-                    </>
-                  )}
-                </div>
-
                 <LabelFieldForm field="Descripción" simbol="*"/>
                 <div>
                   <InputGeneric
@@ -240,17 +224,7 @@ export default function ShiftForm({ mode = 'create' }) {
                   {errors?.description && <ErrorMessage msg={errors.description.message} />}  
                 </div>
 
-                  <LabelFieldForm field="Nocturno" simbol="*"/>
-                <div>
-                  <ToggleGeneric name="nightShift" optionsToggle={nigthShiftOptions} readOnly={viewMode} register={register}
-                  errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} />
-                </div>
-
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
-
-                  <LabelFieldForm field="Departamento" simbol="*"/>
+                <LabelFieldForm field="Departamento" simbol="*"/>
                 <div>
                   <select 
                     disabled= {viewMode}
@@ -277,6 +251,32 @@ export default function ShiftForm({ mode = 'create' }) {
                     errors={errors}
                   />
                 </div>
+
+                <LabelFieldForm field="Código" simbol="*"/>
+                <div>
+                  {loading ? (
+                    <SpanText text="Cargando..." />
+                  ) : (
+                    <>
+                    <input
+                      readOnly={viewMode}
+                      {...register('code')}
+                      className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                    />
+                    {errors?.code && <ErrorMessage msg={errors.code.message} />}  
+                    </>
+                  )}
+                </div>
+
+                  <LabelFieldForm field="Nocturno" simbol="*"/>
+                <div>
+                  <ToggleGeneric name="nightShift" optionsToggle={nigthShiftOptions} readOnly={viewMode} register={register}
+                  errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} />
+                </div>
+
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
 
                   <LabelFieldForm field="Hora Entrada" simbol="*"/>
                 <div>
