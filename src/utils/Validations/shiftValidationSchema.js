@@ -14,9 +14,41 @@ export const shiftValidationSchema = yup.object().shape({
     .nullable()
     .required('Debe ingresar Descripción'),
 
-  nightShift: yup.string()
+  nightShift: yup
+    .string()
     .required('Debe seleccionar Turno')
-    .oneOf([nigthShiftOptions.optionOne.key, nigthShiftOptions.optionTwo.key], 'Opción inválida'),
+    .oneOf(
+      [
+        nigthShiftOptions.optionOne.key, // Diurno
+        nigthShiftOptions.optionTwo.key  // Nocturno
+      ],
+      'Opción inválida'
+    )
+    .test(
+      'night-shift-validation',
+      'Las horas no corresponden a un turno nocturno',
+      function (value) {
+
+        const { checkInTime, checkOutTime } = this.parent;
+        if (!checkInTime || !checkOutTime) return true;
+
+        // Si NO seleccionó turno nocturno, no validar
+        if (value !== nigthShiftOptions.optionTwo.key) {
+          return true;
+        }
+
+        const toMinutes = (time) => {
+          const [h, m] = time.split(':').map(Number);
+          return h * 60 + m;
+        };
+
+        const checkIn = toMinutes(checkInTime);
+        const checkOut = toMinutes(checkOutTime);
+
+        // turno nocturno cruza medianoche
+        return checkOut < checkIn;
+      }
+    ),
 
   departmentId: yup
     .string()

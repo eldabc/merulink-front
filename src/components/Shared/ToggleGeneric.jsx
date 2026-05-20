@@ -1,6 +1,8 @@
 import { useFormContext } from "react-hook-form";
 
-function ToggleGeneric({ name, optionsToggle, readOnly, dynamicClasses }) { //textOn, textOff, 
+import ErrorMessage from './ErrorMessage';
+
+function ToggleGeneric({ name, optionsToggle, readOnly, dynamicClasses }) {
 
   const { register, watch, setValue, formState: { errors } } = useFormContext();
 
@@ -40,8 +42,9 @@ function ToggleGeneric({ name, optionsToggle, readOnly, dynamicClasses }) { //te
 
       {/* Mantiene el valor real para el formulario */}
       <input type="hidden" {...register(name)} />
-
+        
     </div>
+    {errors[name] && <ErrorMessage msg={errors[name].message} />}
     </>
   );
 }

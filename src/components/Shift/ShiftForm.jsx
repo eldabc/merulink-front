@@ -83,7 +83,6 @@ export default function ShiftForm({ mode = 'create' }) {
     // Si los minutos de salida son menores o iguales es nocturno
     if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
       setValue('nightShift', nigthShiftOptions.optionTwo.key, { shouldValidate: true }); 
-      // console.log("aqui", startTotalMinutes);      
     } else {
       setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
     }
@@ -146,6 +145,7 @@ export default function ShiftForm({ mode = 'create' }) {
   useEffect(() => {
 
     const fetchCodeData = async () => {
+
       if (selectedDepartmentId) {
         try {
 
@@ -270,8 +270,10 @@ export default function ShiftForm({ mode = 'create' }) {
 
                   <LabelFieldForm field="Nocturno" simbol="*"/>
                 <div>
-                  <ToggleGeneric name="nightShift" optionsToggle={nigthShiftOptions} readOnly={viewMode} register={register}
-                  errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} />
+                  <ToggleGeneric 
+                    name="nightShift" optionsToggle={nigthShiftOptions} readOnly={viewMode} register={register}
+                    errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} 
+                  />
                 </div>
 
               </div>
@@ -389,7 +391,7 @@ export default function ShiftForm({ mode = 'create' }) {
                  <div className="hidden md:block md:col-span-3"> 
                     <textarea
                       readOnly={viewMode}
-                      name="observation"
+                      {...register('observation')}
                       rows="5"                 
                       cols="33"                 
                       placeholder="Escribe aquí una observación..."
