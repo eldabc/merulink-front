@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getDepartments, getEventCategories, getEventLocations } from '../services/masterDataService';
+import { getDepartments, getEventCategories, getEventLocations, getEmployeesByDepartment } from '../services/masterDataService';
 import { useNotification } from "../context/NotificationContext"; 
 
 const GlobalDataContext = createContext();
@@ -163,6 +163,20 @@ export const GlobalDataProvider = ({ children }) => {
     }
   };
 
+  const getEmployeesByDepartment = async (departmentId) => {
+    setGlobalLoading(true);
+    try {
+      
+      const res = await getEmployeesByDepartment(departmentId);
+      // console.log("getEventLocations", res);
+      setEmployees(res);
+    } catch (error) {
+      console.error("Error cargando Localizaciones:", error);
+    } finally {
+      setGlobalLoading(false);
+    }
+  };
+
   const contextValue = {
     departments, 
     setDepartments,
@@ -178,7 +192,8 @@ export const GlobalDataProvider = ({ children }) => {
     loadEventCategories,
     categoryEvents,
     getLocations,
-    locations
+    locations,
+    getEmployeesByDepartment
   };
 
   return (

@@ -39,6 +39,27 @@ export const ScheduleProvider = ({ children }) => {
     loadSchedules();
   }, [loadSchedules]);
 
+  const loadFormData = async () => {
+    try {
+      // Ejecuta las peticiones en paralelo para mantener el orden en form
+      const [shiftData, employeesData, departmentsData] = await Promise.all([
+        getShifts(departmentId),
+        getEmployeesByDepartment(departmentId),
+        // getEvents(start,end) //Eventos en el intervalo de fechas seleccionado que tengas colorinDay activo. (id,title,path 'path colocar solo solo en modoView')
+      ]);
+
+      setAvailablePadlocks(shiftData);
+      setAvailableEmployees(employeesData);
+      setAvailableDepartments(departmentsData);
+
+    } catch (error) {
+      console.error("Error cargando dependencias del formulario", error);
+    } finally {
+      setLoadingData(false);
+      setLoadingEmployees(false);
+    }
+  };
+
 
   // *** Crear
   const createSchedule = async (formData) => {
@@ -117,19 +138,19 @@ export const ScheduleProvider = ({ children }) => {
     }
   };
 
-  // *** Obtener datos para generar código y mostrar códigos anteriores
-  const getCodeDataByDepartment = async (departmentId) => {
+  // *** Obtener datos de los turnos disponibles por departamento
+  const getShifts = async (departmentId) => {
     try {
       setLoading(true);
       if (!departmentId) {
         showNotification('Error:', 'No se encontró ID de Departamento', 'error');
         return false;
       }
-      const response = await axios.get(`${ENV.API_BACK_URL}schedules/next-code/${departmentId}`);
+      const response = await axios.get(`${ENV.API_BACK_URL}shifts/department/${departmentId}`);
       return response.data.data;
 
     } catch (error) {
-        showNotification('Error al obtener datos para código', error.response.data.message, 'error');
+        showNotification('Error al obtener datos de los Turnos', error.response.data.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -140,7 +161,7 @@ export const ScheduleProvider = ({ children }) => {
     createSchedule,
     updateSchedule,
     deleteSchedule,
-    getCodeDataByDepartment,
+    getShifts,
     scheduleData,
     setScheduleData, 
   };

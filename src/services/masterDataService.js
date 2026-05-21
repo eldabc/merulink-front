@@ -15,3 +15,8 @@ export const getEventLocations = async () => {
   const response = await axios.get(`${ENV.API_BACK_URL}locations`);
   return await response.data.data;
 };
+
+export const getEmployeesByDepartment = async (departmentId) => {
+  const response = await axios.get(`${ENV.API_BACK_URL}employees/?departmentId=${departmentId}`);
+  return await response.data.data;
+};
