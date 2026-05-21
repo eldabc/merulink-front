@@ -244,11 +244,11 @@ export default function ShiftForm({ mode = 'create' }) {
                 <div>                 
                   <SelectGeneric 
                     name="typeShift"
-                    register={register} 
+                    // register={register} 
                     disabled={viewMode || !selectedDepartmentId} 
                     dynamicClasses={`${disabledClasses} ${disabledTypeShift}`} 
                     dataSelect={typeShiftOptions}
-                    errors={errors}
+                    // errors={errors}
                   />
                 </div>
 
@@ -309,11 +309,11 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     <SelectGeneric 
                       name="restPeriodUnitTime"
-                      register={register} 
+                      // register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
-                      errors={errors}
+                      // errors={errors}
                     />
                     {errors?.restPeriodUnitTime && <ErrorMessage msg={errors.restPeriodUnitTime.message} />}  
                   </div>
@@ -327,11 +327,11 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     <SelectGeneric 
                       name="activePeriodUnitTime"
-                      register={register} 
+                      // register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
-                      errors={errors}
+                      // errors={errors}
                     />
                     {errors?.activePeriodUnitTime && <ErrorMessage msg={errors.activePeriodUnitTime.message} />}  
                   </div>
@@ -345,11 +345,11 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     <SelectGeneric 
                       name="totalPeriodUnitTime"
-                      register={register} 
+                      // register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
-                      errors={errors}
+                      // errors={errors}
                     />
                     {errors?.totalPeriodUnitTime && <ErrorMessage msg={errors.totalPeriodUnitTime.message} />}  
                   </div>

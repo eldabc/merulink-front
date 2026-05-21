@@ -8,9 +8,9 @@ import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { newCodePosition } from '../../utils/Positions/positions-utils';
-import { calculateWorkPeriods } from '../../utils/Schedule/schedule-utils';
-import { typeScheduleOptions, minHourOptions, radioOptions, nigthScheduleOptions } from '../../utils/StaticData/schedule-utils';
-
+// import { calculateWorkPeriods } from '../../utils/Schedule/schedule-utils';
+// import { typeScheduleOptions, minHourOptions, radioOptions, nigthScheduleOptions } from '../../utils/StaticData/schedule-utils';
+import ScheduleFilterModal from './ScheduleFilterModal';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -43,6 +43,8 @@ export default function ScheduleForm({ mode = 'create' }) {
 
 
   const selectedDepartmentId = watch('departmentId');
+  const selectedMonthId = watch('monthId');
+  const selectedFortnight = watch('fortnight');
   const watchCheckInTime = watch('checkInTime');  
   const watchCheckOutTime = watch('checkOutTime');  
   const watchRestPeriod = watch('restPeriodTime');  
@@ -59,10 +61,18 @@ export default function ScheduleForm({ mode = 'create' }) {
   const disabledTypeSchedule = getDisabledClasses(!selectedDepartmentId);
 
   useEffect(() => {
+    if (selectedDepartmentId && selectedMonthId && selectedFortnigh) {
+      // Renderizar quincena numeros
+      // Consulta BD empleados agrupados por subdepartamentos, turnos activos para el departamento
+    }
+
+  }, [selectedDepartmentId, selectedMonthId, selectedFortnight])
+
+  useEffect(() => {
     if (selectedTypeSchedule === 'administrative') {
       setValue('restPeriodTime', 1, { shouldValidate: true });
       setValue('restPeriodUnitTime', 'hours', { shouldValidate: true });
-      setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
+      // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
     } else if (selectedTypeSchedule === 'operative') {
       setValue('restPeriodTime', 30, { shouldValidate: true });
       setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
@@ -82,9 +92,9 @@ export default function ScheduleForm({ mode = 'create' }) {
 
     // Si los minutos de salida son menores o iguales es nocturno
     if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
-      setValue('nightSchedule', nigthScheduleOptions.optionTwo.key, { shouldValidate: true }); 
+      // setValue('nightSchedule', nigthScheduleOptions.optionTwo.key, { shouldValidate: true }); 
     } else {
-      setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
+      // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
     }
 
   }, [watchCheckInTime, watchCheckOutTime, setValue]);
@@ -94,17 +104,17 @@ export default function ScheduleForm({ mode = 'create' }) {
     
     if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchRestPeriodUnitTime) {
 
-      const result = calculateWorkPeriods(
-        watchCheckInTime,
-        watchCheckOutTime,
-        watchRestPeriod, watchRestPeriodUnitTime
-      );
+      // const result = calculateWorkPeriods(
+      //   watchCheckInTime,
+      //   watchCheckOutTime,
+      //   watchRestPeriod, watchRestPeriodUnitTime
+      // );
 
       // console.log(result);
-      setValue('totalPeriodTime', result.totalPeriod, { shouldValidate: true });
-      setValue('totalPeriodUnitTime', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
-      setValue('activePeriodTime', result.activePeriod, { shouldValidate: true });
-      setValue('activePeriodUnitTime', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      // setValue('totalPeriodTime', result.totalPeriod, { shouldValidate: true });
+      // setValue('totalPeriodUnitTime', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
+      // setValue('activePeriodTime', result.activePeriod, { shouldValidate: true });
+      // setValue('activePeriodUnitTime', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
 
     }
   },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchRestPeriodUnitTime]);
@@ -123,7 +133,7 @@ export default function ScheduleForm({ mode = 'create' }) {
       reset({
         code: schedule?.code ?? '',
         description: schedule?.description ?? '',
-        nightSchedule: schedule?.nightSchedule ?? nigthScheduleOptions.optionOne.key,
+        // nightSchedule: schedule?.nightSchedule ?? nigthScheduleOptions.optionOne.key,
         departmentId: schedule?.department?.id ?? '',
         typeSchedule: schedule?.typeSchedule ?? '',
         checkInTime: schedule?.checkInTime ?? null,
@@ -204,11 +214,7 @@ export default function ScheduleForm({ mode = 'create' }) {
             <div className='mx-auto mt-6'>
               <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
               
-                {loading ? (
-                  <SpanText text="Cargando..." />
-                ) : (
-                  <CodesCircles codes={existingCodes} />
-                )}
+                <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
                 
@@ -226,7 +232,7 @@ export default function ScheduleForm({ mode = 'create' }) {
 
                 <LabelFieldForm field="Departamento" simbol="*"/>
                 <div>
-                  <select 
+                  {/* <select 
                     disabled= {viewMode}
                     {...register('departmentId')} 
                     className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}>
@@ -236,20 +242,20 @@ export default function ScheduleForm({ mode = 'create' }) {
                       {departments.map((dep, index) => (
                         <OptionSelect key={`departmentId-${dep.id}-${index}`} value={dep.id} text={dep.departmentName} />
                       ))}
-                  </select>
+                  </select> */}
                   {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} />}  
                 </div>
 
                   <LabelFieldForm field="Tipo" simbol="*"/>
                 <div>                 
-                  <SelectGeneric 
+                  {/* <SelectGeneric 
                     name="typeSchedule"
                     register={register} 
                     disabled={viewMode || !selectedDepartmentId} 
                     dynamicClasses={`${disabledClasses} ${disabledTypeSchedule}`} 
                     dataSelect={typeScheduleOptions}
                     errors={errors}
-                  />
+                  /> */}
                 </div>
 
                 <LabelFieldForm field="Código" simbol="*"/>
@@ -270,10 +276,10 @@ export default function ScheduleForm({ mode = 'create' }) {
 
                   <LabelFieldForm field="Nocturno" simbol="*"/>
                 <div>
-                  <ToggleGeneric 
+                  {/* <ToggleGeneric 
                     name="nightSchedule" optionsToggle={nigthScheduleOptions} readOnly={viewMode} register={register}
                     errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} 
-                  />
+                  /> */}
                 </div>
 
               </div>
@@ -307,14 +313,14 @@ export default function ScheduleForm({ mode = 'create' }) {
                       {...register('restPeriodTime')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                     />
-                    <SelectGeneric 
+                    {/* <SelectGeneric 
                       name="restPeriodUnitTime"
                       register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
                       errors={errors}
-                    />
+                    /> */}
                     {errors?.restPeriodUnitTime && <ErrorMessage msg={errors.restPeriodUnitTime.message} />}  
                   </div>
 
@@ -325,14 +331,14 @@ export default function ScheduleForm({ mode = 'create' }) {
                       {...register('activePeriodTime')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
-                    <SelectGeneric 
+                    {/* <SelectGeneric 
                       name="activePeriodUnitTime"
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
                       errors={errors}
-                    />
+                    /> */}
                     {errors?.activePeriodUnitTime && <ErrorMessage msg={errors.activePeriodUnitTime.message} />}  
                   </div>
 
@@ -343,48 +349,48 @@ export default function ScheduleForm({ mode = 'create' }) {
                       {...register('totalPeriodTime')} 
                       className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
                     />
-                    <SelectGeneric 
+                    {/* <SelectGeneric 
                       name="totalPeriodUnitTime"
                       register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
                       errors={errors}
-                    />
+                    /> */}
                     {errors?.totalPeriodUnitTime && <ErrorMessage msg={errors.totalPeriodUnitTime.message} />}  
                   </div>
 
                 <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
                   <div className='mt-3'> 
-                    <ButtonRadioGeneric
+                    {/* <ButtonRadioGeneric
                       name="allowExit" 
                       disabled={viewMode} 
                       dynamicClasses={disabledClasses} 
                       optionOne={radioOptions[0].optionOne} 
                       optionTwo={radioOptions[1].optionTwo } 
-                    />
+                    /> */}
                   </div>
 
                 <LabelFieldForm field="¿Permitir Remarcaje?" simbol="*"/>
                   <div className='mt-3'> 
-                    <ButtonRadioGeneric
+                    {/* <ButtonRadioGeneric
                       name="allowReScanned" 
                       disabled={viewMode} 
                       dynamicClasses={disabledClasses} 
                       optionOne={radioOptions[0].optionOne} 
                       optionTwo={radioOptions[1].optionTwo } 
-                    />
+                    /> */}
                   </div>
 
                 <LabelFieldForm field="Disponible" simbol="*"/>
                   <div className='mt-3'>                   
-                    <ButtonRadioGeneric
+                    {/* <ButtonRadioGeneric
                       name="available" 
                       disabled={viewMode} 
                       dynamicClasses={disabledClasses} 
                       optionOne={radioOptions[0].optionOne} 
                       optionTwo={radioOptions[1].optionTwo } 
-                    />
+                    /> */}
                   </div>
 
                 <LabelFieldForm field="Observación" />

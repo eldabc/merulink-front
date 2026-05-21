@@ -1,15 +1,20 @@
+import { useFormContext } from "react-hook-form";
+
 import OptionSelect from './OptionSelect';
 import ErrorMessage from './ErrorMessage';
 
 function SelectGeneric({ 
   name,
-  register, 
+  // register, 
   disabled, 
   dynamicClasses, 
-  errors, 
+  // errors, 
   dataSelect,
   placeholder = "Seleccionar..." 
 }) {
+
+  const { register, formState: { errors } } = useFormContext();
+
   return (
     <div className="w-full">
       <select 

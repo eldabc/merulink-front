@@ -25,7 +25,7 @@ export const ScheduleProvider = ({ children }) => {
     try {
 
       const response = await axios.get(`${ENV.API_BACK_URL}schedules`);
-      console.log("response.data.data", response.data.data);
+      // console.log("response.data.data", response.data.data);
       setScheduleData(response.data.data);
 
     } catch (error) {

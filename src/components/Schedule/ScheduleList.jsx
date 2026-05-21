@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedules } from "../../context/ScheduleContext";
 
@@ -20,7 +20,6 @@ export default function ScheduleList({ categoryKeys }) {
   const navigate = useNavigate();
   const { loading, scheduleData } = useSchedules();
   const [searchDateValue, setSearchDateValue] = useState('');
-
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
@@ -56,9 +55,9 @@ export default function ScheduleList({ categoryKeys }) {
   return (
     <div className="main-data-cont table-container">
       <div className="titles-table">
-        <TitleHeader title="Turnos" />
+        <TitleHeader title="Horarios" />
         <div className="text-sm">
-          <ButtonNavigate url={`/empleados/turnos/nuevo`} navigate={navigate} />
+          <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
         </div>
       </div>
 
@@ -67,12 +66,12 @@ export default function ScheduleList({ categoryKeys }) {
         searchDateValue={searchDateValue}
         onSearchChange={(val) => { setSearchValue(val); setCurrentPage(1); }}
         onFilterDate={(val) => { setSearchDateValue(val); setCurrentPage(1); }}
-        moduleName='Turno'
+        moduleName='Horario'
         placeholder='Ingrese descripción'
       />
 
       {(dataToDisplay.length === 0 ) && !loading ? (
-        <SpanText text={`No se encontraron turnos registrados.`} />
+        <SpanText text={`No se encontraron horarios registrados.`} />
       ) : (
         <>
         <div className="rounded-lg shadow">
@@ -122,7 +121,7 @@ export default function ScheduleList({ categoryKeys }) {
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
         totalPages={totalPages}
-        moduleName={'Turno'}
+        moduleName={'Horario'}
       />
     </div>        
   );

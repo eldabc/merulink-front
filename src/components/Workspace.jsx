@@ -11,6 +11,7 @@ const EventsPage = lazy(() => import("./Events/EventsPage"));
 const DefaultWorkspace = lazy(() => import("./DefaultWorkspace"));
 const PadlockPatternPage = lazy(() => import("./PadlockPattern/PadlockPatternPage"));
 const ShiftPage = lazy(() => import("./Shift/ShiftPage"));
+const SchedulePage = lazy(() => import("./Schedule/SchedulePage"));
 const LockerAssignPage = lazy(() => import("./LockerAssign/LockerAssignPage"));
 const EmployeePage = lazy(() => import("./Employee/EmployeePage"));
 
@@ -128,7 +129,7 @@ export default function Workspace({ activeMenu, activePath }) {
 
         {/* Horarios */}
         <Route element={<ScheduleLayout />}>
-          <Route path="/empleados/horarios/*" element={<div className="main-workspace"><ScheduleLayout /></div>} />
+          <Route path="/empleados/horarios/*" element={<div className="main-workspace"><SchedulePage /></div>} />
         </Route>
         
         

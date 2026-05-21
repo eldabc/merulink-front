@@ -4,7 +4,7 @@ import { useSchedules } from "../../context/ScheduleContext";
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { formatTimeTo12H } from '../../utils/date-utils';
-import { minHourOptions } from '../../utils/StaticData/schedule-utils';
+// import { minHourOptions } from '../../utils/StaticData/schedule-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
@@ -49,12 +49,12 @@ export default function ScheduleRow({ schedule }) {
       <td className="px-4 py-3 text-white-700">{schedule.description}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkInTime)}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkOutTime)}</td>
-      <td className="px-4 py-3 text-white-700">{schedule.department.departmentName}</td>
+      {/* <td className="px-4 py-3 text-white-700">{schedule.department.departmentName}</td> */}
       <td className="px-4 py-3 text-white-700">
-        {`${schedule.restPeriodTime} ${minHourOptions.find(opt => opt.value === schedule.restPeriodUnitTime)?.label}`}
+        {/* {`${schedule.restPeriodTime} ${minHourOptions.find(opt => opt.value === schedule.restPeriodUnitTime)?.label}`} */}
       </td>
       <td className="px-4 py-3 text-white-700">
-        {`${schedule.activePeriodTime} ${minHourOptions.find(opt => opt.value === schedule.activePeriodUnitTime)?.label}`}
+        {/* {`${schedule.activePeriodTime} ${minHourOptions.find(opt => opt.value === schedule.activePeriodUnitTime)?.label}`} */}
       </td>
       <td className="px-4 py-3 text-white-700">
         {schedule.available === 'yes' ? 'Sí' : 'No'}
