@@ -21,7 +21,7 @@ import OptionSelect from '../Shared/OptionSelect';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ToggleGeneric from '../Shared/ToggleGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
-import CodesCircles from '../Shared/CodesCircles';
+import ShiftLegend from '../Shift/ShiftLegend';
 import '../../Tables.css';
 
 export default function ScheduleForm({ mode = 'create' }) {
@@ -58,26 +58,34 @@ export default function ScheduleForm({ mode = 'create' }) {
   const alwaysApplyDisabledClasses = getDisabledClasses(true);
   const disabledTypeSchedule = getDisabledClasses(!selectedDepartmentId);
 
-  // En tu componente, asumimos que tienes un estado para guardar los días a pintar
-const [fortnightDays, setFortnightDays] = useState([]);
-const currentYear = new Date().getFullYear(); // O el año que tengas seleccionado
+  const [fortnightDays, setFortnightDays] = useState([]);
+  const currentYear = new Date().getFullYear();
+  const [formDataBack, setFormData] = useState([]);
 
-useEffect(() => {
-  if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
-    // 1. Calculamos los días que comprende la quincena elegida
-    const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
-    console.log("fortnightDays", days);
-    // 2. Guardamos las fechas en el estado para renderizar los números de la quincena en la tabla
-    setFortnightDays(days);
+  useEffect(() => {
+    const loadData = async () => {
 
-    // 3. Extraemos el primer y último día del array para tu API en Laravel
-    const startDate = days[0].date;
-    const endDate = days[days.length - 1].date;
+      if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
+      // Calculamos los días que comprende la quincena elegida
+      const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
+      console.log("fortnightDays", days);
+      // Guardamos las fechas en el estado para renderizar los números de la quincena en la tabla
+      setFortnightDays(days);
 
-    // 4. Mandamos los parámetros requeridos a la función de carga
-    loadFormData(selectedDepartmentId, startDate, endDate);
-  }
-}, [selectedDepartmentId, selectedMonthId, selectedFortnight]);
+      // Extraer primer y último día
+      const startDate = days[0].date;
+      const endDate = days[days.length - 1].date;
+
+      const data = await loadFormData(selectedDepartmentId, startDate, endDate);
+      console.log("eew", data.employees)
+      setFormData(data);
+    }
+
+    };
+
+    loadData();
+    
+  }, [selectedDepartmentId, selectedMonthId, selectedFortnight]);
 
   useEffect(() => {
     if (selectedTypeSchedule === 'administrative') {
@@ -110,27 +118,6 @@ useEffect(() => {
 
   }, [watchCheckInTime, watchCheckOutTime, setValue]);
 
-
-  useEffect(() => {
-    
-    if (watchCheckInTime && watchCheckOutTime && watchRestPeriod && watchRestPeriodUnitTime) {
-
-      // const result = calculateWorkPeriods(
-      //   watchCheckInTime,
-      //   watchCheckOutTime,
-      //   watchRestPeriod, watchRestPeriodUnitTime
-      // );
-
-      // console.log(result);
-      // setValue('totalPeriodTime', result.totalPeriod, { shouldValidate: true });
-      // setValue('totalPeriodUnitTime', result.totalMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
-      // setValue('activePeriodTime', result.activePeriod, { shouldValidate: true });
-      // setValue('activePeriodUnitTime', result.activeMinutes > 59 ? 'hours' : 'minutes', { shouldValidate: true });
-
-    }
-  },[watchCheckInTime, watchCheckOutTime, watchRestPeriod, watchRestPeriodUnitTime]);
-
-  
 
   useEffect(() => {  
     if (departments.length === 0) {
@@ -213,6 +200,7 @@ useEffect(() => {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
+    console.log("formDataBack?.shifts", formDataBack?.shifts)
 
   return (
     <FormProvider {...methods}>
@@ -227,25 +215,47 @@ useEffect(() => {
               
                 <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
               
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2 div-border">
-                
-                {/* Columna inicial para el nombre del empleado */}
-                <div className="w-48 p-2 font-bold text-gray-200 border-r border-gray-200">
-                  Empleados
-                </div>
+              <div className="div-border">
 
-                {/* Columnas dinámicas de los días de la quincena */}
-                {fortnightDays.map((day) => (
-                  <div
-                    key={day.date}
-                    className={`flex-1 flex flex-col items-center justify-center p-2 border-r text-center transition-colors ${day.borderClass}`}
-                  >
-                    <span className={`text-xs ${day.colorClass} text-gray-200!`}>
-                      {day.dayName} {day.dayNumber}
-                    </span>
+                {loading ? (
+                  <SpanText text="Cargando..." />
+                ) : (
+                  formDataBack?.shifts?.length > 0 && ( <ShiftLegend shifts={formDataBack?.shifts} /> )
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2">
+ 
+                  <div className="w-48 p-2 font-bold text-gray-200 border-r border-gray-200">
+                    <span>Empleados</span>
+                    {Object.entries(formDataBack?.employees || {}).map(
+                      ([departmentName, employees]) => (
+
+                        <div key={departmentName}>
+                          {/* Título departamento */}
+                          <div className="bg-gray-500 p-2 font-bold"> {departmentName} </div>
+
+                          {/* empleados */}
+                          {employees.map(employee => (
+                            <div key={employee.id} className="flex border-b p-2">
+                              {`${employee.firstName} ${employee.lastName}`}
+                            </div>
+                          ))}
+                        </div>
+                    ))}
                   </div>
-                ))}
-
+                  <div>
+                    {fortnightDays.map((day) => (
+                      <div
+                        key={day.date}
+                        className={`flex-1 flex flex-col items-center justify-center p-2 border-r text-center transition-colors ${day.borderClass}`}
+                      >
+                        <span className={`text-xs ${day.colorClass} text-gray-200!`}>
+                          {day.dayName} {day.dayNumber}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

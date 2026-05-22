@@ -54,9 +54,7 @@ export const ScheduleProvider = ({ children }) => {
       ]);
       // console.log("shift", shiftData);
       // console.log("employeesData", employeesData);
-      setShifts(shiftData);
-      setEmployees(employeesData);
-      // setEvents(eventsData);
+      return { shifts: shiftData, employees: employeesData }; //, eventsData
 
     } catch (error) {
       console.error("Error cargando datos del formulario", error);
