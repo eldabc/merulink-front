@@ -1,4 +1,4 @@
 export const radioOptions = [
-  { optionOne: { value: "fortnightOne", label: "Quincena 1" } }, 
-  { optionTwo: { value: "fortnightTwo", label: "Quincena 2" } }
+  { optionOne: { value: 1, label: "Quincena 1" } }, 
+  { optionTwo: { value: 2, label: "Quincena 2" } }
 ];

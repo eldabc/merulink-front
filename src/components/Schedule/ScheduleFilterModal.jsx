@@ -20,7 +20,7 @@ function ScheduleFilterModal({ viewMode, departments = [], onAccept, onClose, gl
   ];
 
   return (
-    <div className=" p-6 rounded-lg w-full div-border">
+    <div className="rounded-lg w-full p-2 div-border">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
 
         {/* Departamento */}

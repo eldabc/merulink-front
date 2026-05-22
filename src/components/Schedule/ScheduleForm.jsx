@@ -7,9 +7,7 @@ import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValid
 import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { newCodePosition } from '../../utils/Positions/positions-utils';
-// import { calculateWorkPeriods } from '../../utils/Schedule/schedule-utils';
-// import { typeScheduleOptions, minHourOptions, radioOptions, nigthScheduleOptions } from '../../utils/StaticData/schedule-utils';
+import { getFortnightDays } from '../../utils/Schedule/schedule-utils';
 import ScheduleFilterModal from './ScheduleFilterModal';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -30,7 +28,7 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { scheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading } = useSchedules();
+  const { scheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
 
@@ -60,13 +58,26 @@ export default function ScheduleForm({ mode = 'create' }) {
   const alwaysApplyDisabledClasses = getDisabledClasses(true);
   const disabledTypeSchedule = getDisabledClasses(!selectedDepartmentId);
 
-  useEffect(() => {
-    if (selectedDepartmentId && selectedMonthId && selectedFortnigh) {
-      // Renderizar quincena numeros
-      // Consulta BD empleados agrupados por subdepartamentos, turnos activos para el departamento
-    }
+  // En tu componente, asumimos que tienes un estado para guardar los días a pintar
+const [fortnightDays, setFortnightDays] = useState([]);
+const currentYear = new Date().getFullYear(); // O el año que tengas seleccionado
 
-  }, [selectedDepartmentId, selectedMonthId, selectedFortnight])
+useEffect(() => {
+  if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
+    // 1. Calculamos los días que comprende la quincena elegida
+    const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
+    console.log("fortnightDays", days);
+    // 2. Guardamos las fechas en el estado para renderizar los números de la quincena en la tabla
+    setFortnightDays(days);
+
+    // 3. Extraemos el primer y último día del array para tu API en Laravel
+    const startDate = days[0].date;
+    const endDate = days[days.length - 1].date;
+
+    // 4. Mandamos los parámetros requeridos a la función de carga
+    loadFormData(selectedDepartmentId, startDate, endDate);
+  }
+}, [selectedDepartmentId, selectedMonthId, selectedFortnight]);
 
   useEffect(() => {
     if (selectedTypeSchedule === 'administrative') {
@@ -177,7 +188,7 @@ export default function ScheduleForm({ mode = 'create' }) {
       }
     };
 
-    if (!viewMode) fetchCodeData(); 
+    // if (!viewMode) fetchCodeData(); 
     
   }, [selectedDepartmentId, viewMode]);
 
@@ -212,199 +223,29 @@ export default function ScheduleForm({ mode = 'create' }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
+              <TitleHeader title={editMode ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
                 <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
               
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full div-border">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2 div-border">
                 
-                <LabelFieldForm field="Descripción" simbol="*"/>
-                <div>
-                  <InputGeneric
-                    readOnly={viewMode}
-                    name='description'
-                    register={register}
-                    errorIndex={errors}
-                    dinamicClasses={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
-                  />
-                  {errors?.description && <ErrorMessage msg={errors.description.message} />}  
+                {/* Columna inicial para el nombre del empleado */}
+                <div className="w-48 p-2 font-bold text-gray-200 border-r border-gray-200">
+                  Empleados
                 </div>
 
-                <LabelFieldForm field="Departamento" simbol="*"/>
-                <div>
-                  {/* <select 
-                    disabled= {viewMode}
-                    {...register('departmentId')} 
-                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}>
-
-                      <OptionSelect text={ globalLoading ? "Cargando..." : "Seleccionar..."} />
-
-                      {departments.map((dep, index) => (
-                        <OptionSelect key={`departmentId-${dep.id}-${index}`} value={dep.id} text={dep.departmentName} />
-                      ))}
-                  </select> */}
-                  {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} />}  
-                </div>
-
-                  <LabelFieldForm field="Tipo" simbol="*"/>
-                <div>                 
-                  {/* <SelectGeneric 
-                    name="typeSchedule"
-                    register={register} 
-                    disabled={viewMode || !selectedDepartmentId} 
-                    dynamicClasses={`${disabledClasses} ${disabledTypeSchedule}`} 
-                    dataSelect={typeScheduleOptions}
-                    errors={errors}
-                  /> */}
-                </div>
-
-                <LabelFieldForm field="Código" simbol="*"/>
-                <div>
-                  {loading ? (
-                    <SpanText text="Cargando..." />
-                  ) : (
-                    <>
-                    <input
-                      readOnly={viewMode}
-                      {...register('code')}
-                      className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {errors?.code && <ErrorMessage msg={errors.code.message} />}  
-                    </>
-                  )}
-                </div>
-
-                  <LabelFieldForm field="Nocturno" simbol="*"/>
-                <div>
-                  {/* <ToggleGeneric 
-                    name="nightSchedule" optionsToggle={nigthScheduleOptions} readOnly={viewMode} register={register}
-                    errors={errors} setValue={setValue} watch={watch} dynamicClasses={disabledClasses} 
-                  /> */}
-                </div>
-
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
-
-                  <LabelFieldForm field="Hora Entrada" simbol="*"/>
-                <div>
-                  <input 
-                    readOnly={viewMode} type='time'
-                    {...register('checkInTime')}
-                    className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
-                  />
-                  {errors?.checkInTime && <ErrorMessage msg={errors.checkInTime.message} />}  
-                </div>
-
-                <LabelFieldForm field="Hora Salida" simbol="*"/>
-                <div>
-                  <input 
-                    readOnly={viewMode} type='time'
-                    {...register('checkOutTime')}
-                    className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
-                  />
-                  {errors?.checkOutTime && <ErrorMessage msg={errors.checkOutTime.message} />}  
-                </div>
-
-                <LabelFieldForm field="Descanso" simbol="*"/>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      readOnly={viewMode} type='number' min={1} max={30}
-                      {...register('restPeriodTime')} 
-                      className={`w-20 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
-                    />
-                    {/* <SelectGeneric 
-                      name="restPeriodUnitTime"
-                      register={register} 
-                      disabled={viewMode} 
-                      dynamicClasses={`${disabledClasses} w-40!`} 
-                      dataSelect={minHourOptions}
-                      errors={errors}
-                    /> */}
-                    {errors?.restPeriodUnitTime && <ErrorMessage msg={errors.restPeriodUnitTime.message} />}  
+                {/* Columnas dinámicas de los días de la quincena */}
+                {fortnightDays.map((day) => (
+                  <div
+                    key={day.date}
+                    className={`flex-1 flex flex-col items-center justify-center p-2 border-r text-center transition-colors ${day.borderClass}`}
+                  >
+                    <span className={`text-xs ${day.colorClass} text-gray-200!`}>
+                      {day.dayName} {day.dayNumber}
+                    </span>
                   </div>
+                ))}
 
-                 <LabelFieldForm field="Periodo Activo" simbol="*"/>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      readOnly={true} //min={1} max={30}
-                      {...register('activePeriodTime')} 
-                      className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
-                    />
-                    {/* <SelectGeneric 
-                      name="activePeriodUnitTime"
-                      register={register} 
-                      disabled={true} 
-                      dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
-                      dataSelect={minHourOptions}
-                      errors={errors}
-                    /> */}
-                    {errors?.activePeriodUnitTime && <ErrorMessage msg={errors.activePeriodUnitTime.message} />}  
-                  </div>
-
-                <LabelFieldForm field="Periodo Total" simbol="*"/>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      readOnly={true}// min={1} max={30}
-                      {...register('totalPeriodTime')} 
-                      className={`w-20 px-3 py-2 rounded-lg filter-input ${alwaysApplyDisabledClasses}`}
-                    />
-                    {/* <SelectGeneric 
-                      name="totalPeriodUnitTime"
-                      register={register} 
-                      disabled={true} 
-                      dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
-                      dataSelect={minHourOptions}
-                      errors={errors}
-                    /> */}
-                    {errors?.totalPeriodUnitTime && <ErrorMessage msg={errors.totalPeriodUnitTime.message} />}  
-                  </div>
-
-                <LabelFieldForm field="¿Permitir salida?" simbol="*"/>
-                  <div className='mt-3'> 
-                    {/* <ButtonRadioGeneric
-                      name="allowExit" 
-                      disabled={viewMode} 
-                      dynamicClasses={disabledClasses} 
-                      optionOne={radioOptions[0].optionOne} 
-                      optionTwo={radioOptions[1].optionTwo } 
-                    /> */}
-                  </div>
-
-                <LabelFieldForm field="¿Permitir Remarcaje?" simbol="*"/>
-                  <div className='mt-3'> 
-                    {/* <ButtonRadioGeneric
-                      name="allowReScanned" 
-                      disabled={viewMode} 
-                      dynamicClasses={disabledClasses} 
-                      optionOne={radioOptions[0].optionOne} 
-                      optionTwo={radioOptions[1].optionTwo } 
-                    /> */}
-                  </div>
-
-                <LabelFieldForm field="Disponible" simbol="*"/>
-                  <div className='mt-3'>                   
-                    {/* <ButtonRadioGeneric
-                      name="available" 
-                      disabled={viewMode} 
-                      dynamicClasses={disabledClasses} 
-                      optionOne={radioOptions[0].optionOne} 
-                      optionTwo={radioOptions[1].optionTwo } 
-                    /> */}
-                  </div>
-
-                <LabelFieldForm field="Observación" />
-                 <div className="hidden md:block md:col-span-3"> 
-                    <textarea
-                      readOnly={viewMode}
-                      {...register('observation')}
-                      rows="5"                 
-                      cols="33"                 
-                      placeholder="Escribe aquí una observación..."
-                      className={`filter-input p-2 ${disabledClasses}`}
-                    />
-                    {errors?.observation && <ErrorMessage msg={errors.observation.message} />}  
-                  </div>  
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getDepartments, getEventCategories, getEventLocations, getEmployeesByDepartment } from '../services/masterDataService';
+import { getDepartments, getEventCategories, getEventLocations, getEmployeesByDept } from '../services/masterDataService';
 import { useNotification } from "../context/NotificationContext"; 
 
 const GlobalDataContext = createContext();
@@ -163,12 +163,14 @@ export const GlobalDataProvider = ({ children }) => {
     }
   };
 
-  const getEmployeesByDepartment = async (departmentId) => {
+  const getEmployeesByDepartment = async (departmentId, start, end) => {
     setGlobalLoading(true);
     try {
+      console.log("getEmployeesByDepartment", departmentId, start, end);
       
-      const res = await getEmployeesByDepartment(departmentId);
-      // console.log("getEventLocations", res);
+      const res = await getEmployeesByDept(departmentId, start, end);
+      console.log("RES getEmployees", res);
+      return res;
       setEmployees(res);
     } catch (error) {
       console.error("Error cargando Localizaciones:", error);

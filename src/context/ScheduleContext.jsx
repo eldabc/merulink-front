@@ -18,7 +18,11 @@ export const ScheduleProvider = ({ children }) => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [scheduleData, setScheduleData] = useState([]);
-  const { departments } = useGlobalData();
+  const [shifts, setShifts] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [events, setEvents] = useState([]);
+  
+  const { getEmployeesByDepartment } = useGlobalData();
 
   const loadSchedules = useCallback(async () => {
     setLoading(true);
@@ -39,24 +43,25 @@ export const ScheduleProvider = ({ children }) => {
     loadSchedules();
   }, [loadSchedules]);
 
-  const loadFormData = async () => {
+  const loadFormData = async (departmentId, start, end) => {
+    setLoading(true);
     try {
       // Ejecuta las peticiones en paralelo para mantener el orden en form
-      const [shiftData, employeesData, departmentsData] = await Promise.all([
+      const [shiftData, employeesData] = await Promise.all([//, eventsData
         getShifts(departmentId),
-        getEmployeesByDepartment(departmentId),
+        getEmployeesByDepartment(departmentId, start, end),
         // getEvents(start,end) //Eventos en el intervalo de fechas seleccionado que tengas colorinDay activo. (id,title,path 'path colocar solo solo en modoView')
       ]);
-
-      setAvailablePadlocks(shiftData);
-      setAvailableEmployees(employeesData);
-      setAvailableDepartments(departmentsData);
+      // console.log("shift", shiftData);
+      // console.log("employeesData", employeesData);
+      setShifts(shiftData);
+      setEmployees(employeesData);
+      // setEvents(eventsData);
 
     } catch (error) {
-      console.error("Error cargando dependencias del formulario", error);
+      console.error("Error cargando datos del formulario", error);
     } finally {
-      setLoadingData(false);
-      setLoadingEmployees(false);
+      setLoading(false);
     }
   };
 
@@ -142,11 +147,12 @@ export const ScheduleProvider = ({ children }) => {
   const getShifts = async (departmentId) => {
     try {
       setLoading(true);
+      console.log("getShifts departmentId", departmentId);
       if (!departmentId) {
         showNotification('Error:', 'No se encontró ID de Departamento', 'error');
         return false;
       }
-      const response = await axios.get(`${ENV.API_BACK_URL}shifts/department/${departmentId}`);
+      const response = await axios.get(`${ENV.API_BACK_URL}shifts?departmentId=${departmentId}`);
       return response.data.data;
 
     } catch (error) {
@@ -158,6 +164,7 @@ export const ScheduleProvider = ({ children }) => {
   
   const contextValue = {
     loading,
+    loadFormData,
     createSchedule,
     updateSchedule,
     deleteSchedule,
