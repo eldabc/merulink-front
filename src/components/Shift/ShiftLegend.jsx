@@ -15,7 +15,7 @@ function ShiftLegend({ shifts=[] }){
 
           <span
             className="text-sm">
-            {formatTimeTo12H(shift.checkInTime)} - {formatTimeTo12H(shift.checkOutTime)}
+            {shift.id === 0 ? shift.description : `${formatTimeTo12H(shift.checkInTime)} - ${formatTimeTo12H(shift.checkOutTime)}`}
           </span>
         </div>
       ))}
