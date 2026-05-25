@@ -22,6 +22,7 @@ import SelectGeneric from '../Shared/SelectGeneric';
 import ToggleGeneric from '../Shared/ToggleGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import ShiftLegend from '../Shift/ShiftLegend';
+import ScheduleGrid from './ScheduleGrid';
 import '../../Tables.css';
 
 export default function ScheduleForm({ mode = 'create' }) {
@@ -200,7 +201,7 @@ export default function ScheduleForm({ mode = 'create' }) {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
-    console.log("formDataBack?.shifts", formDataBack?.shifts)
+      // console.log("formDataBack?.shifts", formDataBack?.shifts)
 
   return (
     <FormProvider {...methods}>
@@ -210,31 +211,29 @@ export default function ScheduleForm({ mode = 'create' }) {
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
-            <div className='mx-auto mt-6'>
+            <div className='w-full mt-6'>
               <TitleHeader title={editMode ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
                 <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
               
               <div className="div-border">
 
-                {loading ? (
+                {/* {loading ? (
                   <SpanText text="Cargando..." />
                 ) : (
                   formDataBack?.shifts?.length > 0 && ( <ShiftLegend shifts={formDataBack?.shifts} /> )
-                )}
+                )} */}
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2">
  
-                  <div className="w-48 p-2 font-bold text-gray-200 border-r border-gray-200">
+                  {/* <div className="w-48 p-2 font-bold text-gray-200 border-r border-gray-200">
                     <span>Empleados</span>
                     {Object.entries(formDataBack?.employees || {}).map(
                       ([departmentName, employees]) => (
 
                         <div key={departmentName}>
-                          {/* Título departamento */}
                           <div className="bg-gray-500 p-2 font-bold"> {departmentName} </div>
 
-                          {/* empleados */}
                           {employees.map(employee => (
                             <div key={employee.id} className="flex border-b p-2">
                               {`${employee.firstName} ${employee.lastName}`}
@@ -242,8 +241,8 @@ export default function ScheduleForm({ mode = 'create' }) {
                           ))}
                         </div>
                     ))}
-                  </div>
-                  <div>
+                  </div> */}
+                  {/* <div>
                     {fortnightDays.map((day) => (
                       <div
                         key={day.date}
@@ -254,8 +253,10 @@ export default function ScheduleForm({ mode = 'create' }) {
                         </span>
                       </div>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
+                  <ScheduleGrid groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
+                
               </div>
             </div>
           </div>

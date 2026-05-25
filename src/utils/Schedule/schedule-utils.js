@@ -47,13 +47,13 @@ export const getFortnightDays = (year, monthId, fortnight) => {
     let bgHeaderClass = '';
 
     if (isToday) {
-      colorClass = 'text-blue-600 font-bold';
+      colorClass = 'text-blue-800 font-bold bg-blue-500';
       borderClass = 'border-blue-400';
-      bgHeaderClass = 'bg-blue-50';
+      bgHeaderClass = 'bg-blue-500';
     } else if (isWeekend) {
-      colorClass = 'text-red-500 font-medium';
-      borderClass = 'border-red-300';
-      bgHeaderClass = 'bg-red-50';
+      colorClass = 'text-red-800 font-medium bg-red-100';
+      borderClass = 'border-red-300!';
+      bgHeaderClass = 'bg-red-100 text-red-800';
     }
 
     days.push({
