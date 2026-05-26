@@ -44,7 +44,7 @@ export const ScheduleProvider = ({ children }) => {
   }, [loadSchedules]);
 
   const loadFormData = async (departmentId, start, end) => {
-    setLoading(true);
+    // setLoading(true);
     try {
       // Ejecuta las peticiones en paralelo para mantener el orden en form
       const [shiftData, employeesData] = await Promise.all([//, eventsData
@@ -162,6 +162,7 @@ export const ScheduleProvider = ({ children }) => {
   
   const contextValue = {
     loading,
+    setLoading,
     loadFormData,
     createSchedule,
     updateSchedule,

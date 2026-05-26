@@ -30,6 +30,12 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
     console.log(`Empleado N: ${params.data.id}, Nombre: ${params.data.fullName} Fecha: ${fieldName}, Nuevo Turno: ${brushShift.id}`);
   };
 
+
+  const localeText = useMemo(() => ({
+    noRowsToShow: 'No hay registros para mostrar',
+    loadingOoo: 'Cargando datos...',
+  }), []);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -103,7 +109,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           return `${day.dayName} ${day.dayNumber}`;
         },
 
-        // ASIGNAR EL COLOR DINÁMICAMENTE SEGÚN EL VALOR DE LA CELDA
+        // COLOR DINÁMICAMENTE SEGÚN EL VALOR DE LA CELDA
         cellStyle: (params) => {
           // Si no hay valor, dejamos que AG Grid use sus estilos nativos (mantiene el hover)
           if (!params.value) return null;
@@ -174,7 +180,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         {loading ? (
           <SpanText text="Cargando..." />
         ) : (
-          shifts?.length > 0 && ( 
+          shifts?.length > 1 ? ( 
             <>
             <ShiftLegend 
               shifts={shifts} 
@@ -197,9 +203,9 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
                   mode: 'multiRow',
                   checkboxes: false, // Fuerte en false para que no dibuje nada
                   headerCheckbox: false, // Desactiva explícitamente el del header en el config del nodo
-                  // isRowSelectable: (rowNode) => !rowNode.data.vacation
                 }}
                 onCellClicked={handleCellClicked}
+                localeText={localeText}
               />
             </div>
 
@@ -209,7 +215,10 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
               <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-bold">VAC </span><span className='text-gray-500'> (Vacaciones)</span>
             </div>
             </>
-        ))}
+          ) : (
+            <SpanText text="Sin turnos disponibles para este departamento" />
+          )
+        )}
       </div>
     </div>
   );

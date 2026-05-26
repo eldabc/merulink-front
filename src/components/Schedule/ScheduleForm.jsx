@@ -29,10 +29,10 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { scheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData } = useSchedules();
+  const { scheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
-
+  
   const methods = useForm({ resolver: yupResolver(scheduleValidationSchema), });
   
   // Desestructuración de methods
@@ -43,12 +43,7 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   const selectedDepartmentId = watch('departmentId');
   const selectedMonthId = watch('monthId');
-  const selectedFortnight = watch('fortnight');
-  const watchCheckInTime = watch('checkInTime');  
-  const watchCheckOutTime = watch('checkOutTime');  
-  const watchRestPeriod = watch('restPeriodTime');  
-  const watchRestPeriodUnitTime = watch('restPeriodUnitTime');  
-  const selectedTypeSchedule = watch('typeSchedule');  
+  const selectedFortnight = watch('fortnight');  
 
   const schedule = scheduleData.find(e => e.id === Number(id));
   const createMode = mode === 'create';
@@ -65,59 +60,58 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   useEffect(() => {
     const loadData = async () => {
-
       if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
-      // Calculamos los días que comprende la quincena elegida
-      const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
-      console.log("fortnightDays", days);
-      // Guardamos las fechas en el estado para renderizar los números de la quincena en la tabla
-      setFortnightDays(days);
+        setLoading(true);
+        // Calculamos los días que comprende la quincena elegida
+        const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
+        // console.log("fortnightDays", days);
+        // Guardamos las fechas en el estado para renderizar los números de la quincena en la tabla
+        setFortnightDays(days);
 
-      // Extraer primer y último día
-      const startDate = days[0].date;
-      const endDate = days[days.length - 1].date;
+        // Extraer primer y último día
+        const startDate = days[0].date;
+        const endDate = days[days.length - 1].date;
 
-      const data = await loadFormData(selectedDepartmentId, startDate, endDate);
-      console.log("eew", data.employees)
-      setFormData(data);
-    }
-
+        const data = await loadFormData(selectedDepartmentId, startDate, endDate);
+        console.log("eew", data.employees)
+        setFormData(data);
+        // setLoading(false);
+      }
     };
 
-    loadData();
-    
+    loadData();    
   }, [selectedDepartmentId, selectedMonthId, selectedFortnight]);
 
-  useEffect(() => {
-    if (selectedTypeSchedule === 'administrative') {
-      setValue('restPeriodTime', 1, { shouldValidate: true });
-      setValue('restPeriodUnitTime', 'hours', { shouldValidate: true });
-      // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
-    } else if (selectedTypeSchedule === 'operative') {
-      setValue('restPeriodTime', 30, { shouldValidate: true });
-      setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
-    }
-  },[selectedTypeSchedule]);
+  // useEffect(() => {
+  //   if (selectedTypeSchedule === 'administrative') {
+  //     setValue('restPeriodTime', 1, { shouldValidate: true });
+  //     setValue('restPeriodUnitTime', 'hours', { shouldValidate: true });
+  //     // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
+  //   } else if (selectedTypeSchedule === 'operative') {
+  //     setValue('restPeriodTime', 30, { shouldValidate: true });
+  //     setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
+  //   }
+  // },[selectedTypeSchedule]);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (!watchCheckInTime || !watchCheckOutTime) return;
+  //   if (!watchCheckInTime || !watchCheckOutTime) return;
 
-    // Convertir horas a minutos para comparar con precisión
-    const [startHours, startMinutes] = watchCheckInTime.split(':').map(Number);
-    const [endHours, endMinutes] = watchCheckOutTime.split(':').map(Number);
+  //   // Convertir horas a minutos para comparar con precisión
+  //   const [startHours, startMinutes] = watchCheckInTime.split(':').map(Number);
+  //   const [endHours, endMinutes] = watchCheckOutTime.split(':').map(Number);
 
-    const startTotalMinutes = (startHours * 60) + startMinutes;
-    const endTotalMinutes = (endHours * 60) + endMinutes;
+  //   const startTotalMinutes = (startHours * 60) + startMinutes;
+  //   const endTotalMinutes = (endHours * 60) + endMinutes;
 
-    // Si los minutos de salida son menores o iguales es nocturno
-    if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
-      // setValue('nightSchedule', nigthScheduleOptions.optionTwo.key, { shouldValidate: true }); 
-    } else {
-      // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
-    }
+  //   // Si los minutos de salida son menores o iguales es nocturno
+  //   if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
+  //     // setValue('nightSchedule', nigthScheduleOptions.optionTwo.key, { shouldValidate: true }); 
+  //   } else {
+  //     // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
+  //   }
 
-  }, [watchCheckInTime, watchCheckOutTime, setValue]);
+  // }, [watchCheckInTime, watchCheckOutTime, setValue]);
 
 
   useEffect(() => {  
@@ -214,11 +208,12 @@ export default function ScheduleForm({ mode = 'create' }) {
             <div className='w-full mt-6'>
               <TitleHeader title={editMode ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
-                <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
+              <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
               
               <div className="div-border">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2"></div>
-                <ScheduleGrid groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
+                {selectedDepartmentId && selectedMonthId && selectedFortnight && (
+                  <ScheduleGrid groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
+                )}
               </div>
             </div>
           </div>
