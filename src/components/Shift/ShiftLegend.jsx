@@ -34,7 +34,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
             className={`flex items-center gap-2 mt-2 p-1 rounded-lg cursor-pointer transition-all duration-200 ${
               isSelected 
                 ? 'bg-gray-700/50 scale-105 border border-cyan-500/50 shadow-md' // Estilo activo
-                : 'hover:bg-gray-800/30 border border-transparent'               // Estilo hover normal
+                : 'transition-all duration-200 cursor-pointer hover:bg-gray-800/30 hover:scale-105 hover:shadow-sm border border-transparent' // Estilo hover normal
             }`}
           >
             <div

@@ -4,9 +4,9 @@ import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-communi
 import SpanText from '../Shared/SpanText';
 
 import ShiftLegend from '../Shift/ShiftLegend';
+import ScheduleLegend from './ScheduleLegend';
 
-
-// 1. Registrar los módulos de AG Grid (Requerido en versiones recientes)
+// Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, loading }) {
@@ -111,7 +111,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
         // COLOR DINÁMICAMENTE SEGÚN EL VALOR DE LA CELDA
         cellStyle: (params) => {
-          // Si no hay valor, dejamos que AG Grid use sus estilos nativos (mantiene el hover)
+
           if (!params.value) return null;
 
           // Si es fin de semana y tiene turno 'L' (Libre), priorizamos el estilo limpio de fin de semana
@@ -139,7 +139,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         },
 
         valueGetter: (params) => {
-          // Buscamos si este nodo ya tiene un valor asignado para esta fecha
+          // Busca si este nodo ya tiene un valor asignado para esta fecha
           // AG Grid guarda los estados internos aquí si usas setDataValue
           if (params.data[`date_${day.date}`]) {
             return params.data[`date_${day.date}`];
@@ -174,13 +174,16 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
     sortingOrder: ['asc', 'desc'],
   }), []);
 
+  const isDataPending = loading || shifts === undefined;
+  const hasShiftGrid = !isDataPending && shifts?.length > 1;
+
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-wrap gap-2 p-2 bg-gray-50 border rounded-md text-sm">
-        {loading ? (
+        {isDataPending ? (
           <SpanText text="Cargando..." />
         ) : (
-          shifts?.length > 1 ? ( 
+          hasShiftGrid ? ( 
             <>
             <ShiftLegend 
               shifts={shifts} 
@@ -209,11 +212,8 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
               />
             </div>
 
-            <div className="flex flex-col md:flex-row gap-2 p-2 bg-gray-50 border rounded-md text-sm">
-              <span className="px-2 py-0.5 bg-blue-500 rounded text-xs font-bold">Fecha</span> <span className='text-gray-500'> Día de Hoy </span>
-              <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-medium">Fecha</span> <span className='text-gray-500'> Feriados, Sábados, Domingos </span>
-              <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-bold">VAC </span><span className='text-gray-500'> (Vacaciones)</span>
-            </div>
+            <ScheduleLegend />
+
             </>
           ) : (
             <SpanText text="Sin turnos disponibles para este departamento" />

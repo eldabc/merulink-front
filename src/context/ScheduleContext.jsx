@@ -144,7 +144,6 @@ export const ScheduleProvider = ({ children }) => {
   // *** Obtener datos de los turnos disponibles por departamento
   const getShifts = async (departmentId) => {
     try {
-      setLoading(true);
       console.log("getShifts departmentId", departmentId);
       if (!departmentId) {
         showNotification('Error:', 'No se encontró ID de Departamento', 'error');
@@ -155,8 +154,6 @@ export const ScheduleProvider = ({ children }) => {
 
     } catch (error) {
         showNotification('Error al obtener datos de los Turnos', error.response.data.message, 'error');
-    } finally {
-      setLoading(false);
     }
   };
   
