@@ -61,11 +61,10 @@ export default function ScheduleForm({ mode = 'create' }) {
   useEffect(() => {
     const loadData = async () => {
       if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
+        
         setLoading(true);
-        // Calculamos los días que comprende la quincena elegida
+        // Calcula los días que comprende la quincena elegida
         const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
-        // console.log("fortnightDays", days);
-        // Guardamos las fechas en el estado para renderizar los números de la quincena en la tabla
         setFortnightDays(days);
 
         // Extraer primer y último día
@@ -73,45 +72,12 @@ export default function ScheduleForm({ mode = 'create' }) {
         const endDate = days[days.length - 1].date;
 
         const data = await loadFormData(selectedDepartmentId, startDate, endDate);
-        console.log("eew", data.employees)
         setFormData(data);
-        // setLoading(false);
       }
     };
 
     loadData();    
   }, [selectedDepartmentId, selectedMonthId, selectedFortnight]);
-
-  // useEffect(() => {
-  //   if (selectedTypeSchedule === 'administrative') {
-  //     setValue('restPeriodTime', 1, { shouldValidate: true });
-  //     setValue('restPeriodUnitTime', 'hours', { shouldValidate: true });
-  //     // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
-  //   } else if (selectedTypeSchedule === 'operative') {
-  //     setValue('restPeriodTime', 30, { shouldValidate: true });
-  //     setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
-  //   }
-  // },[selectedTypeSchedule]);
-
-  // useEffect(() => {
-
-  //   if (!watchCheckInTime || !watchCheckOutTime) return;
-
-  //   // Convertir horas a minutos para comparar con precisión
-  //   const [startHours, startMinutes] = watchCheckInTime.split(':').map(Number);
-  //   const [endHours, endMinutes] = watchCheckOutTime.split(':').map(Number);
-
-  //   const startTotalMinutes = (startHours * 60) + startMinutes;
-  //   const endTotalMinutes = (endHours * 60) + endMinutes;
-
-  //   // Si los minutos de salida son menores o iguales es nocturno
-  //   if (endTotalMinutes <= startTotalMinutes && !errors?.checkOutTime) {
-  //     // setValue('nightSchedule', nigthScheduleOptions.optionTwo.key, { shouldValidate: true }); 
-  //   } else {
-  //     // setValue('nightSchedule', nigthScheduleOptions.optionOne.key, { shouldValidate: true });
-  //   }
-
-  // }, [watchCheckInTime, watchCheckOutTime, setValue]);
 
 
   useEffect(() => {  
@@ -145,38 +111,9 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   }, [mode, schedule, reset]);
 
-  useEffect(() => {
-
-    const fetchCodeData = async () => {
-
-      if (selectedDepartmentId) {
-        try {
-
-          const codeDataByDepartment = await getCodeDataByDepartment(selectedDepartmentId);
-          // console.log("codeData", codeDataByDepartment, selectedDepartmentId);
-          
-          if (codeDataByDepartment?.suggestedCode) {
-            setValue('code', codeDataByDepartment.suggestedCode);
-            setExistingCodes(codeDataByDepartment.existingCodes);
-          }
-
-        } catch (error) {
-          console.error("Error al obtener el código del departamento:", error);
-        }
-
-      } else {
-        setValue('code', '');
-        setExistingCodes([]);
-      }
-    };
-
-    // if (!viewMode) fetchCodeData(); 
-    
-  }, [selectedDepartmentId, viewMode]);
-
 
   const onSubmit = async (data) => {
-    // console.log("data submit", data);
+    console.log("onSubmit", data);
     let success = false;
     const dataChanges = { ...data, id: schedule?.id };
 
@@ -187,7 +124,7 @@ export default function ScheduleForm({ mode = 'create' }) {
     }
 
     if (success) {
-      navigate(`/empleados/turnos`);
+      // navigate(`/empleados/horarios`);
     }
   };
 
@@ -195,7 +132,7 @@ export default function ScheduleForm({ mode = 'create' }) {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
-      // console.log("formDataBack?.shifts", formDataBack?.shifts)
+  // console.log("formDataBack?.shifts", formDataBack?.shifts)
 
   return (
     <FormProvider {...methods}>

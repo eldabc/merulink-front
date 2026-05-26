@@ -9,9 +9,19 @@ import ScheduleLegend from './ScheduleLegend';
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, loading }) {
-
+export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, loading, onSave }) {
+console.log("fortnightDays", fortnightDays)
   const [brushShift, setBrushShift] = useState(null);
+  const [gridApi, setGridApi] = useState(null);
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+  };
+
+  // Busca el ID del turno 'L' para usarlo por defecto
+  const freeShiftObj = useMemo(() => {
+    return shifts?.find(s => s.letterShift === 'L') || { id: null };
+  }, [shifts]);
 
   const handleCellClicked = (params) => {
     if (!brushShift) return;
@@ -19,17 +29,57 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
     const fieldName = params.column.getColId();
 
-    // Guardar el valor en el objeto de datos de la fila de AG Grid
-    params.data[fieldName] = brushShift.code;
+    // ASIGNACIÓN DIRECTA DEL ID: El valor real de la celda pasa a ser el ID numérico
+    params.data[fieldName] = brushShift.id;
 
-    // Avisa a AG Grid que el valor cambió para que ejecute 'cellStyle' y cambie el color
-    params.node.setDataValue(fieldName, brushShift.code);
+    // Notificar a AG Grid el cambio del ID
+    params.node.setDataValue(fieldName, brushShift.id);
     
-    // Forzar refresh de esta celda en particular para asegurar el render inmediato
     params.api.refreshCells({ rowNodes: [params.node], columns: [fieldName] });
-    console.log(`Empleado N: ${params.data.id}, Nombre: ${params.data.fullName} Fecha: ${fieldName}, Nuevo Turno: ${brushShift.id}`);
+    console.log(`Empleado ID: ${params.data.id}, Guardando ID de Turno: ${brushShift.id}`);
   };
 
+  // RECOLECCIÓN DEL LOTE
+  const handleBulkCollect = () => {
+    if (!gridApi) return;
+
+    const schedulesBatch = [];
+
+    gridApi.forEachNode((node) => {
+      const row = node.data;
+      
+      const employeeSchedule = {
+        employeeId: row.id,
+        subDepartmentId: row.subDepartmentId || null,
+        isVacation: !!row.vacation,
+        dates: {}
+      };
+
+      fortnightDays.forEach((day) => {
+        const dateKey = `date_${day.date}`;
+        
+        if (row.vacation) {
+          employeeSchedule.dates[day.date] = 'VAC'; 
+        } else {
+          // 💡 Como rowData ya se cargó con IDs, aquí garantizamos que SIEMPRE salgan IDs numéricos
+          employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
+        }
+      });
+
+      schedulesBatch.push(employeeSchedule);
+    });
+
+    const payload = {
+      shifts: shifts, 
+      schedules: schedulesBatch
+    };
+
+    if (onSave) {
+      onSave(payload);
+    } else {
+      console.log("Payload 100% IDs listo para la BD:", payload);
+    }
+  };
 
   const localeText = useMemo(() => ({
     noRowsToShow: 'No hay registros para mostrar',
@@ -38,9 +88,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        setBrushShift(null); // Apaga la brocha
-      }
+      if (e.key === 'Escape') setBrushShift(null);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -49,55 +97,65 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
   const myTheme = useMemo(() => {
     return themeQuartz.withParams({
       baseTheme: 'dark',
-      accentColor: '#00A4BC', // Color para los elementos activos
-      backgroundColor: '#535557', // Fondo de la grilla
+      accentColor: '#00A4BC', 
+      backgroundColor: '#535557', 
       textColor: '#E0E0E0',
     });
-  }, [shifts]); 
+  }, []); 
   
-  // Aplanar los datos que vienen agrupados por subdepartamento de Laravel
+  // TRADUCCIÓN INICIAL DE LETRAS A IDs
   const rowData = useMemo(() => {
-    if (!groupedEmployees) return [];
+    if (!groupedEmployees || !shifts) return [];
     
     const flatRows = [];
-    // Itera sobre cada subdepartamento (ej: 'Contabilidad')
     Object.keys(groupedEmployees).forEach((subDeptName) => {
       groupedEmployees[subDeptName].forEach((employee) => {
-        flatRows.push({
+        const formattedEmployee = {
           ...employee,
-          subDepartmentName: subDeptName, // Guardamos el nombre para poder agrupar o mostrar
+          // subDepartmentName: subDeptName, 
           fullName: `${employee.firstName} ${employee.lastName || ''}`.trim()
+        };
+
+        // Si el backend mandó letras (ej: "M"), las convertimos inmediatamente al ID del catálogo
+        fortnightDays.forEach((day) => {
+          const dateKey = `date_${day.date}`;
+          const currentLetter = employee[dateKey];
+
+          if (currentLetter && currentLetter !== 'L') {
+            const matchShift = shifts.find(s => s.letterShift === currentLetter);
+            formattedEmployee[dateKey] = matchShift ? matchShift.id : freeShiftObj.id;
+          } else {
+            // Si viene vacío o es 'L', le setea directamente el ID del turno libre
+            formattedEmployee[dateKey] = freeShiftObj.id;
+          }
         });
+
+        flatRows.push(formattedEmployee);
       });
     });
     
     return flatRows;
-  }, [groupedEmployees]);
+  }, [groupedEmployees, shifts, fortnightDays, freeShiftObj]);
 
-  // Construcción Dinámica de Columnas (Definición de Columnas)
   const columnDefs = useMemo(() => {
-    // Columnas fijas iniciales para los datos del empleado
     const baseCols = [
       { 
         headerName: 'Empleado', 
         field: 'fullName', 
-        pinned: 'left', // Mantiene el nombre congelado a la izquierda al hacer scroll horizontal
+        pinned: 'left', 
         width: 200,
-        // Estilar la celda si el empleado está de vacaciones
         cellClassRules: {
           'pointer-events-none cursor-not-allowed opacity-50 select-none font-semibold text-gray-600 bg-gray-50': (params) => !!params.data.vacation,
           'pointer-events-none': (params) => !params.data.vacation,
         },
         cellRenderer: (params) => {
-          if (params.data.vacation) {
-            return `🌴 ${params.value} (Vacaciones)`;
-          }
+          if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
           return params.value;
         }
       }
     ];
 
-    // Columnas dinámicas por cada día de la quincena
+    // Días de la quincena
     const dayCols = fortnightDays.map((day) => {
       return {        
         headerName: `${day.dayName} ${day.dayNumber}`, 
@@ -109,17 +167,15 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           return `${day.dayName} ${day.dayNumber}`;
         },
 
-        // COLOR DINÁMICAMENTE SEGÚN EL VALOR DE LA CELDA
+        // Color dinámico según valor de shift
         cellStyle: (params) => {
-
           if (!params.value) return null;
 
-          // Si es fin de semana y tiene turno 'L' (Libre), priorizamos el estilo limpio de fin de semana
-          if (day.isWeekend && params.value === 'L') {
+          // Si es fin de semana y tiene turno 'L', prioriza el estilo fin de semana
+          if (day.isWeekend && params.value === freeShiftObj.id) {
             return { fontWeight: 'bold', textAlign: 'center' };
           }
 
-          // Busca el turno actual
           const currentShift = shifts?.find(s => s.letterShift === params.value);
 
           if (currentShift?.color) {
@@ -131,22 +187,17 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
             };
           }
 
-          // Retornamos null en background para asegurar que el Hover nativo de AG Grid funcione
-          return { 
-            fontWeight: 'bold', 
-            textAlign: 'center' 
-          };
+          return { fontWeight: 'bold', textAlign: 'center' };
         },
 
+        // El valor real es el ID, pero muestra (A, B, C...)
         valueGetter: (params) => {
-          // Busca si este nodo ya tiene un valor asignado para esta fecha
-          // AG Grid guarda los estados internos aquí si usas setDataValue
-          if (params.data[`date_${day.date}`]) {
-            return params.data[`date_${day.date}`];
-          }
-          
           if (params.data.vacation) return 'VAC';
-          return 'L'; 
+          
+          const shiftIdInCell = params.data[`date_${day.date}`];
+          const found = shifts?.find(s => s.id === shiftIdInCell);
+          
+          return found ? found.letterShift : 'L';
         },
 
         flex: 1,           
@@ -161,12 +212,12 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           'cursor-not-allowed opacity-50 select-none font-semibold text-gray-600 bg-gray-50 pointer-events-none': (params) => !!params.data.vacation,
         }
       };
-    }, [fortnightDays, shifts]);
+    });
 
     return [...baseCols, ...dayCols];
-  }, [fortnightDays, shifts]);
+  }, [fortnightDays, shifts, freeShiftObj]);
 
-  // Configuraciones por defecto para todas las columnas
+  // Configuración por defecto todas las columnas
   const defaultColDef = useMemo(() => ({
     sortable: true,
     filter: false,
@@ -185,35 +236,40 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         ) : (
           hasShiftGrid ? ( 
             <>
-            <ShiftLegend 
-              shifts={shifts} 
-              activeBrush={brushShift} // Para saber cuál está seleccionado
-              onSelectBrush={setBrushShift} // Para activar/desactivar
-            /> 
+              <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} /> 
 
-            {/* Contenedor AG Grid */}
-            <div className={`ag-theme-alpine w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                animateRows={true}
-                theme={myTheme}
-                // Evita que las filas de vacaciones tengan interacciones
-                suppressRowClickSelection={true} 
-        
-                rowSelection={{
-                  mode: 'multiRow',
-                  checkboxes: false, // Fuerte en false para que no dibuje nada
-                  headerCheckbox: false, // Desactiva explícitamente el del header en el config del nodo
-                }}
-                onCellClicked={handleCellClicked}
-                localeText={localeText}
-              />
-            </div>
+              <div className={`ag-theme-alpine w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  animateRows={true}
+                  theme={myTheme}
+                  rowSelection={{
+                    mode: 'multiRow',
+                    checkboxes: false, 
+                    headerCheckbox: false,
+                    enableClickSelection: false,
+                  }}
+                  
+                  onCellClicked={handleCellClicked}
+                  localeText={localeText}
+                  onGridReady={onGridReady}
+                />
+              </div>
 
-            <ScheduleLegend />
+              <ScheduleLegend />
 
+              <div className="w-full flex justify-between items-center bg-white p-2 border rounded-md shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-700 px-2">Planificación de Horarios</h3>
+                <button
+                  onClick={handleBulkCollect}
+                  disabled={isDataPending || !gridApi}
+                  className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-300 text-white font-semibold rounded shadow-sm text-sm transition-all duration-200 cursor-pointer"
+                >
+                  Guardar Cambios por Lote
+                </button>
+              </div>
             </>
           ) : (
             <SpanText text="Sin turnos disponibles para este departamento" />
