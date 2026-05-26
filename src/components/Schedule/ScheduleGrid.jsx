@@ -44,13 +44,6 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
     // Columnas fijas iniciales para los datos del empleado
     const baseCols = [
       { 
-        headerName: 'Subdepartamento', 
-        field: 'subDepartmentName', 
-        rowGroup: false, // Puedes ponerlo en true si usas la versión Enterprise, en Community lo dejamos como columna
-        width: 150,
-        // filter: true
-      },
-      { 
         headerName: 'Empleado', 
         field: 'fullName', 
         pinned: 'left', // Mantiene el nombre congelado a la izquierda al hacer scroll horizontal
@@ -70,15 +63,38 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
     // Columnas dinámicas por cada día de la quincena
     const dayCols = fortnightDays.map((day) => {
-      console.log("headr", day.borderClass 
-)
+      console.log("headr", day.borderClass)
       return {        
         headerName: `${day.dayName} ${day.dayNumber}`, // Nombre corto número ej: "Sáb. 16"
         field: `date_${day.date}`, // Campo virtual único para cada día de la malla
-        width: 85,
+        flex: 1,           // Hace que todas las columnas de los días midan lo mismo y llenen el espacio
+        minWidth: 50,
         resizable: true,
         sortable: false,
         suppressMovable: true,
+
+        headerValueGetter: (params) => {
+          const columnWidth = params.column.getActualWidth();
+          
+          // Si la columna mide menos de 65px (pantallas chicas), muestra solo el número
+          if (columnWidth < 65) {
+            return `${day.dayNumber}`;
+          }
+          // Si hay espacio, muestra el formato completo (Ej: "Lun 18")
+          return `${day.dayName} ${day.dayNumber}`;
+        },
+
+        // Celda adaptativa (Muestra 'V' o 'VAC' según el espacio)
+        valueGetter: (params) => {
+          if (params.data.vacation) {
+            const columnWidth = params.column.getActualWidth();
+            return columnWidth < 65 ? 'V' : 'VAC'; 
+          }
+          
+          // Aquí mapearás con el array de turnos/horarios asignados que traiga el empleado de la BD
+          // Ejemplo: params.data.schedules?.[day.date]?.code || '-'
+          return '-'; 
+        },
         
         // Estilo dinámico de celdas
         cellClass: `${day.colorClass}`,
@@ -90,16 +106,6 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         cellClassRules: {
           'pointer-events-none bg-gray-100 text-gray-400': (params) => !!params.data.vacation,
         },
-
-        // Renderizador de la celda: busca si el empleado ya tiene un turno asignado para esta fecha
-        valueGetter: (params) => {
-          // Si está de vacaciones, pintamos 'VAC' de forma fija
-          if (params.data.vacation) return 'VAC';
-          
-          // Aquí mapearás con el array de turnos/horarios asignados que traiga el empleado de la BD
-          // Ejemplo: params.data.schedules?.[day.date]?.code || '-'
-          return '-'; 
-        }
       };
     });
 
@@ -131,15 +137,17 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           animateRows={true}
-          rowSelection="multiple"
           theme={myTheme}
           // Evita que las filas de vacaciones tengan interacciones
+          suppressRowClickSelection={true} 
+  
           rowSelection={{
             mode: 'multiRow',
-            checkboxes: false,
+            checkboxes: false, // Fuerte en false para que no dibuje nada
+            headerCheckbox: false, // Desactiva explícitamente el del header en el config del nodo
             isRowSelectable: (rowNode) => !rowNode.data.vacation
           }}
-        />
+                />
       </div>
 
       <div className="flex flex-col md:flex-row gap-2 p-2 bg-gray-50 border rounded-md text-sm">
