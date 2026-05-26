@@ -217,46 +217,8 @@ export default function ScheduleForm({ mode = 'create' }) {
                 <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
               
               <div className="div-border">
-
-                {/* {loading ? (
-                  <SpanText text="Cargando..." />
-                ) : (
-                  formDataBack?.shifts?.length > 0 && ( <ShiftLegend shifts={formDataBack?.shifts} /> )
-                )} */}
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2">
- 
-                  {/* <div className="w-48 p-2 font-bold text-gray-200 border-r border-gray-200">
-                    <span>Empleados</span>
-                    {Object.entries(formDataBack?.employees || {}).map(
-                      ([departmentName, employees]) => (
-
-                        <div key={departmentName}>
-                          <div className="bg-gray-500 p-2 font-bold"> {departmentName} </div>
-
-                          {employees.map(employee => (
-                            <div key={employee.id} className="flex border-b p-2">
-                              {`${employee.firstName} ${employee.lastName}`}
-                            </div>
-                          ))}
-                        </div>
-                    ))}
-                  </div> */}
-                  {/* <div>
-                    {fortnightDays.map((day) => (
-                      <div
-                        key={day.date}
-                        className={`flex-1 flex flex-col items-center justify-center p-2 border-r text-center transition-colors ${day.borderClass}`}
-                      >
-                        <span className={`text-xs ${day.colorClass} text-gray-200!`}>
-                          {day.dayName} {day.dayNumber}
-                        </span>
-                      </div>
-                    ))}
-                  </div> */}
-                </div>
-                  <ScheduleGrid groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
-                
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mt-2"></div>
+                <ScheduleGrid groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
               </div>
             </div>
           </div>

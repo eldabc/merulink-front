@@ -105,26 +105,31 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
         // ASIGNAR EL COLOR DINÁMICAMENTE SEGÚN EL VALOR DE LA CELDA
         cellStyle: (params) => {
-          // Si está vacío o es el valor por defecto
-          if (!params.value || params.value === '-') return null;
-          
-          // Si está de vacaciones
-          if (params.value === 'VAC' || params.value === 'V') {
-            // return { backgroundColor: '#a6a7a9', color: '#CBD5E1', fontWeight: 'bold' }; 
+          // Si no hay valor, dejamos que AG Grid use sus estilos nativos (mantiene el hover)
+          if (!params.value) return null;
+
+          // Si es fin de semana y tiene turno 'L' (Libre), priorizamos el estilo limpio de fin de semana
+          if (day.isWeekend && params.value === 'L') {
+            return { fontWeight: 'bold', textAlign: 'center' };
           }
 
-          // Busca en el array de 'shifts' globales el turno que coincida con la letra actual
+          // Busca el turno actual
           const currentShift = shifts?.find(s => s.letterShift === params.value);
-          
-          if (currentShift && currentShift.color) {
-            return { 
-              backgroundColor: currentShift.color, 
-              color: '#FFFFFF', // Texto blanco para que resalte sobre el color
+
+          if (currentShift?.color) {
+            return {
+              backgroundColor: currentShift.color,
+              color: '#FFFFFF',
               fontWeight: 'bold',
               textAlign: 'center'
             };
           }
-          return null;
+
+          // Retornamos null en background para asegurar que el Hover nativo de AG Grid funcione
+          return { 
+            fontWeight: 'bold', 
+            textAlign: 'center' 
+          };
         },
 
         valueGetter: (params) => {
@@ -135,7 +140,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           }
           
           if (params.data.vacation) return 'VAC';
-          return '-'; 
+          return 'L'; 
         },
 
         flex: 1,           
@@ -170,39 +175,41 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           <SpanText text="Cargando..." />
         ) : (
           shifts?.length > 0 && ( 
+            <>
             <ShiftLegend 
               shifts={shifts} 
               activeBrush={brushShift} // Para saber cuál está seleccionado
               onSelectBrush={setBrushShift} // Para activar/desactivar
-            /> )
-        )}
-      </div>
+            /> 
 
-      {/* Contenedor AG Grid */}
-      <div className={`ag-theme-alpine w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          animateRows={true}
-          theme={myTheme}
-          // Evita que las filas de vacaciones tengan interacciones
-          suppressRowClickSelection={true} 
-  
-          rowSelection={{
-            mode: 'multiRow',
-            checkboxes: false, // Fuerte en false para que no dibuje nada
-            headerCheckbox: false, // Desactiva explícitamente el del header en el config del nodo
-            // isRowSelectable: (rowNode) => !rowNode.data.vacation
-          }}
-          onCellClicked={handleCellClicked}
-        />
-      </div>
+            {/* Contenedor AG Grid */}
+            <div className={`ag-theme-alpine w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+              <AgGridReact
+                rowData={rowData}
+                columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
+                animateRows={true}
+                theme={myTheme}
+                // Evita que las filas de vacaciones tengan interacciones
+                suppressRowClickSelection={true} 
+        
+                rowSelection={{
+                  mode: 'multiRow',
+                  checkboxes: false, // Fuerte en false para que no dibuje nada
+                  headerCheckbox: false, // Desactiva explícitamente el del header en el config del nodo
+                  // isRowSelectable: (rowNode) => !rowNode.data.vacation
+                }}
+                onCellClicked={handleCellClicked}
+              />
+            </div>
 
-      <div className="flex flex-col md:flex-row gap-2 p-2 bg-gray-50 border rounded-md text-sm">
-        <span className="px-2 py-0.5 bg-blue-500 rounded text-xs font-bold">Fecha</span> <span className='text-gray-500'> Día de Hoy </span>
-        <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-medium">Fecha</span> <span className='text-gray-500'> Feriados, Sábados, Domingos </span>
-        <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-bold">VAC </span><span className='text-gray-500'> (Vacaciones)</span>
+            <div className="flex flex-col md:flex-row gap-2 p-2 bg-gray-50 border rounded-md text-sm">
+              <span className="px-2 py-0.5 bg-blue-500 rounded text-xs font-bold">Fecha</span> <span className='text-gray-500'> Día de Hoy </span>
+              <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-medium">Fecha</span> <span className='text-gray-500'> Feriados, Sábados, Domingos </span>
+              <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-bold">VAC </span><span className='text-gray-500'> (Vacaciones)</span>
+            </div>
+            </>
+        ))}
       </div>
     </div>
   );
