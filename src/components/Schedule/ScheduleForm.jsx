@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,7 +7,7 @@ import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValid
 import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { getFortnightDays } from '../../utils/Schedule/schedule-utils';
+import { getStarEndFortnight, getFortnightDays } from '../../utils/Schedule/schedule-utils';
 import ScheduleFilterModal from './ScheduleFilterModal';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -45,7 +45,7 @@ export default function ScheduleForm({ mode = 'create' }) {
   const selectedMonthId = watch('monthId');
   const selectedFortnight = watch('fortnight');  
 
-  const schedule = scheduleData.find(e => e.id === Number(id));
+  const schedule = scheduleData?.find(e => 1 === Number(id));
   const createMode = mode === 'create';
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
@@ -56,7 +56,8 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   const [fortnightDays, setFortnightDays] = useState([]);
   const currentYear = new Date().getFullYear();
-  const [formDataBack, setFormData] = useState([]);
+  const [formDataBack, setFormData] = useState({});
+  const scheduleGridRef = useRef(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -64,6 +65,9 @@ export default function ScheduleForm({ mode = 'create' }) {
         
         setLoading(true);
         // Calcula los días que comprende la quincena elegida
+        const startEndFortnight = getStarEndFortnight(currentYear, selectedMonthId, selectedFortnight);
+        console.log("startEndFortnight", startEndFortnight);
+        // SE LE VA A MANDAR EL BE PARA CONSULTAR SI HAY HORARIO Y TRAERLO EN MODO VIEW
         const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
         setFortnightDays(days);
 
@@ -90,37 +94,31 @@ export default function ScheduleForm({ mode = 'create' }) {
   useEffect(() => {
 
       reset({
-        code: schedule?.code ?? '',
-        description: schedule?.description ?? '',
-        // nightSchedule: schedule?.nightSchedule ?? nigthScheduleOptions.optionOne.key,
         departmentId: schedule?.department?.id ?? '',
-        typeSchedule: schedule?.typeSchedule ?? '',
-        checkInTime: schedule?.checkInTime ?? null,
-        checkOutTime: schedule?.checkOutTime ?? null,
-        restPeriodTime: schedule?.restPeriodTime ?? null,
-        restPeriodUnitTime: schedule?.restPeriodUnitTime ?? '',
-        activePeriodTime: schedule?.activePeriodTime ?? null,
-        activePeriodUnitTime: schedule?.activePeriodUnitTime ?? '',
-        totalPeriodTime: schedule?.totalPeriodTime ?? null,
-        totalPeriodUnitTime: schedule?.totalPeriodUnitTime ?? '',
-        allowExit: schedule?.allowExit ?? false,
-        allowReScanned: schedule?.allowReScanned ?? false,
-        available: schedule?.available ?? false,
-        observation: schedule?.observation ?? '',
+        status: schedule?.status ?? '',
+        observations: schedule?.observation ?? '',
       });
 
   }, [mode, schedule, reset]);
 
-
   const onSubmit = async (data) => {
-    console.log("onSubmit", data);
+    const gridPayload = scheduleGridRef.current ? scheduleGridRef.current.collectGridPayload() : { shifts: [], schedules: [] };
+    const payload = {
+      ...data,
+      id: schedule?.id,
+      shifts: gridPayload.shifts,
+      schedules: gridPayload.schedules,
+    };
+
+    console.log('onSubmit payload', payload);
+
     let success = false;
-    const dataChanges = { ...data, id: schedule?.id };
+    // const dataChanges = payload;
 
     if (editMode && schedule) { 
-      success = await updateSchedule(dataChanges);
+      success = await updateSchedule(payload);
     } else {
-      success = await createSchedule(dataChanges);
+      success = await createSchedule(payload);
     }
 
     if (success) {
@@ -149,7 +147,7 @@ export default function ScheduleForm({ mode = 'create' }) {
               
               <div className="div-border">
                 {selectedDepartmentId && selectedMonthId && selectedFortnight && (
-                  <ScheduleGrid groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
+                  <ScheduleGrid ref={scheduleGridRef} groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
                 )}
               </div>
             </div>

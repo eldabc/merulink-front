@@ -6,6 +6,44 @@
  * @param {number|string} fortnight - Quincena elegida (1 o 2)
  * @returns {Array} Array de objetos de días listos para la cabecera
  */
+export const generateDates = (year, monthIndex, date) => {
+  
+  const dateObjStart = new Date(year, monthIndex, date);
+  
+  const yyyy = dateObjStart.getFullYear();
+  const mm = String(dateObjStart.getMonth() + 1).padStart(2, '0');
+  const dd = String(dateObjStart.getDate()).padStart(2, '0');
+  const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+  return formattedDate;
+
+};
+export const getStarEndFortnight = (year, monthId, fortnight) => {
+
+  const monthIndex = parseInt(monthId, 10) - 1;
+  const intFortnight = parseInt(fortnight, 10);
+
+  // Obtener la fecha de HOY (YYYY-MM-DD) 
+  const todayObj = new Date();
+  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+
+  let startDay = 1;
+  let endDay = 15;
+
+  if (intFortnight === 2) {
+    startDay = 16;
+    endDay = new Date(year, monthIndex + 1, 0).getDate();
+  }
+
+  const dateStart = generateDates(year, monthIndex, startDay);
+  const dateEnd = generateDates(year, monthIndex, endDay);
+  // console.log("dates", dateStart,dateEnd );
+
+  return {
+    start: dateStart, end: dateEnd
+  }
+
+};
 export const getFortnightDays = (year, monthId, fortnight) => {
   
   const days = [];

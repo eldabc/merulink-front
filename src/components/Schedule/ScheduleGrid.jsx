@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { forwardRef, useMemo, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import SpanText from '../Shared/SpanText';
@@ -9,7 +9,7 @@ import ScheduleLegend from './ScheduleLegend';
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, loading, onSave }) {
+const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, loading, onSave }, ref) => {
 
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
@@ -44,8 +44,8 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
   };
 
   // RECOLECCIÓN DEL LOTE
-  const handleBulkCollect = () => {
-    if (!gridApi) return;
+  const collectGridPayload = useCallback(() => {
+    if (!gridApi) return { shifts: shifts || [], schedules: [] };
 
     const schedulesBatch = [];
 
@@ -63,19 +63,16 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         const dateKey = `date_${day.date}`;
         
         if (row.vacation && row.vacation.start && row.vacation.end) {
-            const columnDate = new Date(day.date.replace(/-/g, '/'));
-            const startDate = new Date(row.vacation.start.replace(/-/g, '/'));
-            const endDate = new Date(row.vacation.end.replace(/-/g, '/'));
+          const columnDate = new Date(day.date.replace(/-/g, '/'));
+          const startDate = new Date(row.vacation.start.replace(/-/g, '/'));
+          const endDate = new Date(row.vacation.end.replace(/-/g, '/'));
 
-            if (columnDate >= startDate && columnDate <= endDate) {
-              // console.log("holaaaaa", columnDate)
-              employeeSchedule.dates[day.date] = absenceShiftObj.id; // 'VAC'; 
-            } else {
-              employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
-            }
-
+          if (columnDate >= startDate && columnDate <= endDate) {
+            employeeSchedule.dates[day.date] = absenceShiftObj.id;
+          } else {
+            employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
+          }
         } else {
-          // Si se asigno turno pasa ID sino es ID turno L
           employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
         }
       });
@@ -83,17 +80,27 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
       schedulesBatch.push(employeeSchedule);
     });
 
-    const payload = {
-      shifts: shifts, 
+    return {
+      shifts: shifts || [],
       schedules: schedulesBatch
     };
+  }, [gridApi, fortnightDays, shifts, absenceShiftObj, freeShiftObj]);
+
+  const handleBulkCollect = () => {
+    const payload = collectGridPayload();
 
     if (onSave) {
       onSave(payload);
     } else {
       console.log("Payload 100% IDs listo para la BD:", payload);
     }
+
+    return payload;
   };
+
+  useImperativeHandle(ref, () => ({
+    collectGridPayload
+  }), [collectGridPayload]);
 
   const localeText = useMemo(() => ({
     noRowsToShow: 'No hay registros para mostrar',
@@ -288,7 +295,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
   }), []);
 
   const isDataPending = loading || shifts === undefined;
-  const hasShiftGrid = !isDataPending && shifts?.length > 1;
+  const hasShiftGrid = !isDataPending && shifts?.length > 2;
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -322,7 +329,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
               <ScheduleLegend />
 
-              <div className="w-full flex justify-between items-center bg-white p-2 border rounded-md shadow-sm">
+              {/* <div className="w-full flex justify-between items-center bg-white p-2 border rounded-md shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-700 px-2">Planificación de Horarios</h3>
                 <button
                   onClick={handleBulkCollect}
@@ -331,7 +338,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
                 >
                   Guardar Cambios por Lote
                 </button>
-              </div>
+              </div> */}
             </>
           ) : (
             <SpanText text="Sin turnos disponibles para este departamento" />
@@ -340,4 +347,6 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
       </div>
     </div>
   );
-}
+});
+
+export default ScheduleGrid;

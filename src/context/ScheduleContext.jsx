@@ -33,7 +33,7 @@ export const ScheduleProvider = ({ children }) => {
       setScheduleData(response.data.data);
 
     } catch (error) {
-      showNotification('Error al cargar Turnos', error.message, 'error');
+      showNotification('Error al cargar Horarios', error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -77,12 +77,12 @@ export const ScheduleProvider = ({ children }) => {
         return [response.data.data, ...prevData]; 
       });
 
-      showNotification(`Turno ${newSchedule.description} creado con éxito`);
+      showNotification(`Horario ${newSchedule.description} creado con éxito`);
       
       return true;
     } catch (error) {
       console.log("error", error);
-      showNotification('Error al crear Turno', error.response.data.message, 'error');
+      showNotification('Error al crear Horario', error.response.data.message, 'error');
       return false;
     }
   };
@@ -93,7 +93,7 @@ export const ScheduleProvider = ({ children }) => {
       const scheduleId = formData.id;
 
       if (!scheduleId) {
-        showNotification('Error:', 'No se encontró ID de Turno', 'error');
+        showNotification('Error:', 'No se encontró ID de Horario', 'error');
         return false;
       }
 
@@ -107,7 +107,7 @@ export const ScheduleProvider = ({ children }) => {
         return [response.data.data, ...filteredData];
       });
 
-      showNotification(`Turno ${formData.description} actualizado con éxito`); 
+      showNotification(`Horario ${formData.description} actualizado con éxito`); 
       return true;
 
     } catch (error) {
@@ -124,7 +124,7 @@ export const ScheduleProvider = ({ children }) => {
       const scheduleId = schedule.id;
 
       if (!scheduleId) {
-        showNotification('Error:', 'No se encontró ID de Turno', 'error');
+        showNotification('Error:', 'No se encontró ID de Horario', 'error');
         return false;
       }
       await axios.delete(`${ENV.API_BACK_URL}schedules/${scheduleId}`);
@@ -133,10 +133,10 @@ export const ScheduleProvider = ({ children }) => {
         return prevData.filter(item => item.id !== scheduleId);
       });
 
-      showNotification(`Turno ${schedule.description} eliminado con éxito`);
+      showNotification(`Horario ${schedule.description} eliminado con éxito`);
       return true;
     } catch (error) {
-      showNotification('Error al eliminar Turno', error.response.data.message, 'error');
+      showNotification('Error al eliminar Horario', error.response.data.message, 'error');
       return false;
     }
   };
@@ -153,7 +153,7 @@ export const ScheduleProvider = ({ children }) => {
       return response.data.data;
 
     } catch (error) {
-        showNotification('Error al obtener datos de los Turnos', error.response.data.message, 'error');
+        showNotification('Error al obtener datos de los Horarios', error.response.data.message, 'error');
     }
   };
   
