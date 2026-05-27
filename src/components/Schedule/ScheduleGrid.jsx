@@ -27,15 +27,15 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
     if (!brushShift) return;
     if (params.value === 'VAC') return;
 
-    const fieldName = params.column.getColId();
+    const dateFieldName = params.column.getColId();
 
-    // ASIGNACIÓN DIRECTA DEL ID: El valor real de la celda pasa a ser el ID numérico
-    params.data[fieldName] = brushShift.id;
+    // ASIGNACIÓN del ID de turno que trae la brocha
+    params.data[dateFieldName] = brushShift.id;
 
     // Notificar a AG Grid el cambio del ID
-    params.node.setDataValue(fieldName, brushShift.id);
-    
-    params.api.refreshCells({ rowNodes: [params.node], columns: [fieldName] });
+    params.node.setDataValue(dateFieldName, brushShift.id);
+
+    params.api.refreshCells({ rowNodes: [params.node], columns: [dateFieldName] });
     console.log(`Empleado ID: ${params.data.id}, Guardando ID de Turno: ${brushShift.id}`);
   };
 
@@ -195,20 +195,31 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           if (params.value === 'VAC') return null;
 
           const currentShiftId = params.value ?? freeShiftObj.id;
-          const baseStyle = { textAlign: 'center',  };
 
-          // HOY
-          if (day.isToday) {
-            return { ...baseStyle, backgroundColor: '#3b82f6' };
-          }
-
-          // FIN DE SEMANA
-          if (day.isWeekend) { //&& Number(currentShiftId) === Number(freeShiftObj.id)
-            return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e', };
-          }
-
-          // colores de turnos
+          const baseStyle = { textAlign: 'center' };
           const currentShift = shifts?.find(s => s.id === Number(currentShiftId));
+          const isFreeShift = Number(currentShiftId) === Number(freeShiftObj.id);
+
+          // SOLO L usa colores especiales
+          if (isFreeShift) {
+
+            if (day.isToday) {
+              return {
+                ...baseStyle,
+                backgroundColor:'#3b82f6'
+              };
+            }
+
+            if (day.isWeekend) {
+              return {
+                ...baseStyle,
+                backgroundColor:'#f8d7da',
+                color:'#81262e'
+              };
+            }
+          }
+
+          // cualquier otro turno
           if (currentShift?.color) {
             return {
               ...baseStyle,
@@ -217,7 +228,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           }
 
           return baseStyle;
-      },
+        },
 
         flex: 1,           
         minWidth: 35,      
@@ -225,7 +236,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         sortable: false,
         suppressMovable: true,
         
-        // Bloquea la celda si su valor es 'VAC'
+        // Bloquea la celda si es 'VAC'
         editable: (params) => params.value !== 'VAC',
 
         //  Aplica opacidad gris y bloquea clics en celdas 'VAC'
