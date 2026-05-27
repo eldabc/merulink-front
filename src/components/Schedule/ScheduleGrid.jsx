@@ -25,7 +25,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
   const handleCellClicked = (params) => {
     if (!brushShift) return;
-    if (params.data.vacation) return;
+    if (params.value === 'VAC') return;
 
     const fieldName = params.column.getColId();
 
@@ -61,7 +61,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         if (row.vacation) {
           employeeSchedule.dates[day.date] = 'VAC'; 
         } else {
-          // 💡 Como rowData ya se cargó con IDs, aquí garantizamos que SIEMPRE salgan IDs numéricos
+          // Como rowData ya se cargó con IDs, aquí garantizamos que SIEMPRE salgan IDs numéricos
           employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
         }
       });
@@ -125,7 +125,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
             const matchShift = shifts.find(s => s.letterShift === currentLetter);
             formattedEmployee[dateKey] = matchShift ? matchShift.id : freeShiftObj.id;
           } else {
-            // Si viene vacío o es 'L', le setea directamente el ID del turno libre
+            // Si viene vacío o es 'L', le setea directamente ID del turno libre
             formattedEmployee[dateKey] = freeShiftObj.id;
           }
         });
@@ -145,7 +145,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
         pinned: 'left', 
         width: 200,
         cellClassRules: {
-          'pointer-events-none cursor-not-allowed opacity-50 select-none font-semibold text-gray-600 bg-gray-50': (params) => !!params.data.vacation,
+          'pointer-events-none cursor-not-allowed opacity-50 select-none text-gray-600 bg-gray-50': (params) => !!params.data.vacation, 
           'pointer-events-none': (params) => !params.data.vacation,
         },
         cellRenderer: (params) => {
@@ -157,8 +157,9 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
 
     // Días de la quincena
     const dayCols = fortnightDays.map((day) => {
-      const generalStyles = { fontWeight: 'bold', textAlign: 'center' };
-      return {  
+  
+      // Evalua si esta columna específica coincide con el día de hoy
+      return {        
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
         
@@ -168,70 +169,84 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
           return `${day.dayName} ${day.dayNumber}`;
         },
 
-        // VALOR REAL DE LA CELDA: Siempre devuelve el ID numérico puro
+        // Asigna 'VAC' solo si el día actual está en el rango
         valueGetter: (params) => {
           const vacation = params.data.vacation;
-
-          // 💡 1. Si el empleado tiene vacaciones registradas, validamos si el día actual cae en el rango
           if (vacation && vacation.start && vacation.end) {
-            const currentDate = new Date(day.date.replace(/-/g, '/'));
+            const columnDate = new Date(day.date.replace(/-/g, '/'));
             const startDate = new Date(vacation.start.replace(/-/g, '/'));
             const endDate = new Date(vacation.end.replace(/-/g, '/'));
 
-            // Comparamos si la fecha actual está entre el inicio y el fin (inclusive)
-            if (currentDate >= startDate && currentDate <= endDate) {
+            if (columnDate >= startDate && columnDate <= endDate) {
               return 'VAC';
             }
           }
-          
-          // 💡 2. Si no está en vacaciones en este día específico, retorna su ID de turno o el Libre
           return params.data[`date_${day.date}`] ?? freeShiftObj.id;
         },
 
-        // MÁSCARA VISUAL: Transforma el ID en Letra solo para mostrarlo en pantalla
+        // MÁSCARA VISUAL: Muestra 'VAC' o la letra del turno
         valueFormatter: (params) => {
           if (params.value === 'VAC') return 'VAC';
           const found = shifts?.find(s => s.id === params.value);
           return found ? found.letterShift : 'L';
         },
 
-        // params.value SIEMPRE es el ID, lo busca directamente en el catálogo
         cellStyle: (params) => {
-
           if (params.value === 'VAC') return null;
 
-          // Evita value undefined
           const currentShiftId = params.value ?? freeShiftObj.id;
+          const baseStyle = { textAlign: 'center',  };
 
-          // Si la celda tiene el ID del turno L, prioriza estilo fin de semana
-          if (day.isWeekend && params.value === freeShiftObj.id) {
-            return generalStyles;
+          // HOY
+          if (day.isToday) {
+            return { ...baseStyle, backgroundColor: '#3b82f6' };
           }
 
-          // Busca el turno usando estrictamente el ID (params.value)
-          const currentShift = shifts?.find(s => s.id === params.value);
+          // FIN DE SEMANA
+          if (day.isWeekend) { //&& Number(currentShiftId) === Number(freeShiftObj.id)
+            return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e', };
+          }
 
+          // colores de turnos
+          const currentShift = shifts?.find(s => s.id === Number(currentShiftId));
           if (currentShift?.color) {
             return {
-              backgroundColor: currentShift.color,
-              color: '#FFFFFF',
-              ...generalStyles
+              ...baseStyle,
+              backgroundColor: currentShift.color
             };
           }
 
-          return generalStyles;
-        },
+          return baseStyle;
+      },
 
         flex: 1,           
         minWidth: 35,      
         resizable: true,
         sortable: false,
         suppressMovable: true,
-        cellClass: `${day.colorClass}`,
-        headerClass: `${day.bgHeaderClass} ${day.borderClass}`,
-        editable: (params) => !params.data.vacation,
+        
+        // Bloquea la celda si su valor es 'VAC'
+        editable: (params) => params.value !== 'VAC',
+
+        //  Aplica opacidad gris y bloquea clics en celdas 'VAC'
         cellClassRules: {
-          'cursor-not-allowed opacity-50 select-none font-semibold text-gray-600 bg-gray-50 pointer-events-none': (params) => !!params.data.vacation,
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100 pointer-events-none': (params) => params.value === 'VAC',
+        },
+        
+        cellClass: '!font-bold',
+        // headerClass: `${day.bgHeaderClass} ${day.borderClass}`,
+        headerClass: params => {
+          const classes = [];
+
+          if (day.isToday) {
+            classes.push('header-today');
+          }
+
+          if (day.isWeekend) {
+            classes.push('header-weekend');
+          }
+
+          return classes.join(' ');
         }
       };
     });
@@ -260,7 +275,7 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
             <>
               <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} /> 
 
-              <div className={`ag-theme-alpine w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+              <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
                 <AgGridReact
                   rowData={rowData}
                   columnDefs={columnDefs}

@@ -7,13 +7,14 @@
  * @returns {Array} Array de objetos de días listos para la cabecera
  */
 export const getFortnightDays = (year, monthId, fortnight) => {
+  
   const days = [];
   const monthIndex = parseInt(monthId, 10) - 1;
   const intFortnight = parseInt(fortnight, 10);
 
   const dayNames = ['Dom.', 'Lun.', 'Mar.', 'Mié.', 'Jue.', 'Vie.', 'Sáb.'];
 
-  // Obtener la fecha de HOY YYYY-MM-DD 
+  // Obtener la fecha de HOY (YYYY-MM-DD) 
   const todayObj = new Date();
   const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
 
@@ -41,30 +42,12 @@ export const getFortnightDays = (year, monthId, fortnight) => {
     // Evalua si la cela es HOY
     const isToday = formattedDate === todayFormatted;
 
-    // Asignación de estilos
-    let colorClass = 'text-gray-700';
-    let borderClass = 'border-gray-200';
-    let bgHeaderClass = '';
-
-    if (isToday) {
-      colorClass = 'text-blue-800 font-bold bg-blue-500';
-      borderClass = 'border-blue-400';
-      bgHeaderClass = 'bg-blue-500';
-    } else if (isWeekend) {
-      colorClass = 'text-red-800 font-medium bg-red-100';
-      borderClass = 'border-red-300!';
-      bgHeaderClass = 'bg-red-100 text-red-800';
-    }
-
     days.push({
       date: formattedDate,
       dayNumber: d,
       dayName: dayName,
       isWeekend: isWeekend,
-      isToday: isToday, // Bandera para AG Grid
-      colorClass: colorClass,
-      borderClass: borderClass,
-      bgHeaderClass: bgHeaderClass
+      isToday: isToday,
     });
   }
 

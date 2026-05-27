@@ -297,3 +297,24 @@ footer {
   background-image: none !important;
   box-shadow: none !important;
 }
+
+/* fondo fin de semana */
+.ag-theme-quartz .header-weekend {
+  background-color: #f8d7da;
+}
+
+/* texto fin de semana */
+.ag-theme-quartz .header-weekend .ag-header-cell-text {
+  color: #81262e;
+  font-weight: 700 !important;
+}
+
+/* hoy */
+.ag-theme-quartz .header-today {
+  background-color: #3b82f6;
+}
+
+.ag-theme-quartz .header-today .ag-header-cell-text {
+  color: white;
+  font-weight: 700 !important;
+}
