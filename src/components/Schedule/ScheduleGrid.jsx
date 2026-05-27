@@ -23,9 +23,13 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
     return shifts?.find(s => s.letterShift === 'L') || { id: null };
   }, [shifts]);
 
+  const absenceShiftObj = useMemo(() => {
+    return shifts?.find(s => s.letterShift === 'VAC') || { id: null };
+  }, [shifts]);
+
   const handleCellClicked = (params) => {
     if (!brushShift) return;
-    if (params.value === 'VAC') return;
+    if (params.value === absenceShiftObj.id) return;
 
     const dateFieldName = params.column.getColId();
 
@@ -58,10 +62,20 @@ export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, 
       fortnightDays.forEach((day) => {
         const dateKey = `date_${day.date}`;
         
-        if (row.vacation) {
-          employeeSchedule.dates[day.date] = 'VAC'; 
+        if (row.vacation && row.vacation.start && row.vacation.end) {
+            const columnDate = new Date(day.date.replace(/-/g, '/'));
+            const startDate = new Date(row.vacation.start.replace(/-/g, '/'));
+            const endDate = new Date(row.vacation.end.replace(/-/g, '/'));
+
+            if (columnDate >= startDate && columnDate <= endDate) {
+              // console.log("holaaaaa", columnDate)
+              employeeSchedule.dates[day.date] = absenceShiftObj.id; // 'VAC'; 
+            } else {
+              employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
+            }
+
         } else {
-          // Como rowData ya se cargó con IDs, aquí garantizamos que SIEMPRE salgan IDs numéricos
+          // Si se asigno turno pasa ID sino es ID turno L
           employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
         }
       });

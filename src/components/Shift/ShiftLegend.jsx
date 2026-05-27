@@ -26,6 +26,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
       {shifts.map((shift) => {
         // Verifica si este turno específico es el que está activo en la brocha
         const isSelected = activeBrush && activeBrush.id === shift.id;
+        const isShiftAbsence = shift.id === -1;
 
         return (
           <div 
@@ -37,21 +38,25 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
                 : 'transition-all duration-200 cursor-pointer hover:bg-gray-800/30 hover:scale-105 hover:shadow-sm border border-transparent' // Estilo hover normal
             }`}
           >
-            <div
-              className={`w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 transition-transform ${
-                isSelected ? 'animate-pulse' : ''
-              }`}
-              style={{ backgroundColor: shift.color ?? 'red' }}
-            >
-              {shift.letterShift}
-            </div>
+            {!isShiftAbsence && (
+            <>
+              <div
+                className={`w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 transition-transform ${
+                  isSelected ? 'animate-pulse' : ''
+                }`}
+                style={{ backgroundColor: shift.color ?? 'red' }}
+              >
+                {shift.letterShift}
+              </div>
 
-            <span className={`text-sm select-none ${isSelected ? 'text-cyan-400 font-medium' : 'text-gray-300'}`}>
-              {shift.id === 0 
-                ? shift.description 
-                : `${formatTimeTo12H(shift.checkInTime)} - ${formatTimeTo12H(shift.checkOutTime)}`
-              }
-            </span>
+              <span className={`text-sm select-none ${isSelected ? 'text-cyan-400 font-medium' : 'text-gray-300'}`}>
+                {shift.id === 0
+                  ? shift.description 
+                  : `${formatTimeTo12H(shift.checkInTime)} - ${formatTimeTo12H(shift.checkOutTime)}`
+                }
+              </span> 
+            </>
+            )}
           </div>
         );
       })}
