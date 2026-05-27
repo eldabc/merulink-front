@@ -10,7 +10,7 @@ import ScheduleLegend from './ScheduleLegend';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function ScheduleGrid({ groupedEmployees, fortnightDays, shifts, loading, onSave }) {
-console.log("fortnightDays", fortnightDays)
+
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
 
@@ -120,7 +120,7 @@ console.log("fortnightDays", fortnightDays)
         fortnightDays.forEach((day) => {
           const dateKey = `date_${day.date}`;
           const currentLetter = employee[dateKey];
-
+          
           if (currentLetter && currentLetter !== 'L') {
             const matchShift = shifts.find(s => s.letterShift === currentLetter);
             formattedEmployee[dateKey] = matchShift ? matchShift.id : freeShiftObj.id;
@@ -157,7 +157,8 @@ console.log("fortnightDays", fortnightDays)
 
     // Días de la quincena
     const dayCols = fortnightDays.map((day) => {
-      return {        
+      const generalStyles = { fontWeight: 'bold', textAlign: 'center' };
+      return {  
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
         
@@ -167,37 +168,58 @@ console.log("fortnightDays", fortnightDays)
           return `${day.dayName} ${day.dayNumber}`;
         },
 
-        // Color dinámico según valor de shift
-        cellStyle: (params) => {
-          if (!params.value) return null;
+        // VALOR REAL DE LA CELDA: Siempre devuelve el ID numérico puro
+        valueGetter: (params) => {
+          const vacation = params.data.vacation;
 
-          // Si es fin de semana y tiene turno 'L', prioriza el estilo fin de semana
+          // 💡 1. Si el empleado tiene vacaciones registradas, validamos si el día actual cae en el rango
+          if (vacation && vacation.start && vacation.end) {
+            const currentDate = new Date(day.date.replace(/-/g, '/'));
+            const startDate = new Date(vacation.start.replace(/-/g, '/'));
+            const endDate = new Date(vacation.end.replace(/-/g, '/'));
+
+            // Comparamos si la fecha actual está entre el inicio y el fin (inclusive)
+            if (currentDate >= startDate && currentDate <= endDate) {
+              return 'VAC';
+            }
+          }
+          
+          // 💡 2. Si no está en vacaciones en este día específico, retorna su ID de turno o el Libre
+          return params.data[`date_${day.date}`] ?? freeShiftObj.id;
+        },
+
+        // MÁSCARA VISUAL: Transforma el ID en Letra solo para mostrarlo en pantalla
+        valueFormatter: (params) => {
+          if (params.value === 'VAC') return 'VAC';
+          const found = shifts?.find(s => s.id === params.value);
+          return found ? found.letterShift : 'L';
+        },
+
+        // params.value SIEMPRE es el ID, lo busca directamente en el catálogo
+        cellStyle: (params) => {
+
+          if (params.value === 'VAC') return null;
+
+          // Evita value undefined
+          const currentShiftId = params.value ?? freeShiftObj.id;
+
+          // Si la celda tiene el ID del turno L, prioriza estilo fin de semana
           if (day.isWeekend && params.value === freeShiftObj.id) {
-            return { fontWeight: 'bold', textAlign: 'center' };
+            return generalStyles;
           }
 
-          const currentShift = shifts?.find(s => s.letterShift === params.value);
+          // Busca el turno usando estrictamente el ID (params.value)
+          const currentShift = shifts?.find(s => s.id === params.value);
 
           if (currentShift?.color) {
             return {
               backgroundColor: currentShift.color,
               color: '#FFFFFF',
-              fontWeight: 'bold',
-              textAlign: 'center'
+              ...generalStyles
             };
           }
 
-          return { fontWeight: 'bold', textAlign: 'center' };
-        },
-
-        // El valor real es el ID, pero muestra (A, B, C...)
-        valueGetter: (params) => {
-          if (params.data.vacation) return 'VAC';
-          
-          const shiftIdInCell = params.data[`date_${day.date}`];
-          const found = shifts?.find(s => s.id === shiftIdInCell);
-          
-          return found ? found.letterShift : 'L';
+          return generalStyles;
         },
 
         flex: 1,           
