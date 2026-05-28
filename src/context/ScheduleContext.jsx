@@ -24,12 +24,12 @@ export const ScheduleProvider = ({ children }) => {
   
   const { getEmployeesByDepartment } = useGlobalData();
 
-  const loadSchedules = useCallback(async () => {
+  const loadSchedules = useCallback(async (selectedDepartmentId = null, start = null, end = null) => {
     setLoading(true);
     try {
 
-      const response = await axios.get(`${ENV.API_BACK_URL}schedules`);
-      // console.log("response.data.data", response.data.data);
+      const response = await axios.get(`${ENV.API_BACK_URL}schedules?start=${start}&end=${end}&departmentId${selectedDepartmentId}`);
+      console.log("response.data.data", response.data.data);
       setScheduleData(response.data.data);
 
     } catch (error) {
@@ -156,11 +156,27 @@ export const ScheduleProvider = ({ children }) => {
         showNotification('Error al obtener datos de los Horarios', error.response.data.message, 'error');
     }
   };
+
+    const getSchedule = useCallback(async (selectedDepartmentId = null, start = null, end = null) => {
+    // setLoading(true);
+    try {
+
+      const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings?start=${start}&end=${end}&departmentId${selectedDepartmentId}`);
+      console.log("response.data.data", getSchedule);
+      return response.data.data;
+
+    } catch (error) {
+      showNotification('Error al cargar Horario', error.message, 'error');
+    } finally {
+      // setLoading(false);
+    }
+  }, []);
   
   const contextValue = {
     loading,
     setLoading,
     loadFormData,
+    getSchedule,
     createSchedule,
     updateSchedule,
     deleteSchedule,

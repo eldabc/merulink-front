@@ -39,9 +39,9 @@ export const getStarEndFortnight = (year, monthId, fortnight) => {
   const dateEnd = generateDates(year, monthIndex, endDay);
   // console.log("dates", dateStart,dateEnd );
 
-  return {
-    start: dateStart, end: dateEnd
-  }
+  return [
+    dateStart, dateEnd
+  ]
 
 };
 export const getFortnightDays = (year, monthId, fortnight) => {

@@ -29,7 +29,7 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { scheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading } = useSchedules();
+  const { scheduleData, setScheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading, getSchedule } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -65,9 +65,14 @@ export default function ScheduleForm({ mode = 'create' }) {
         
         setLoading(true);
         // Calcula los días que comprende la quincena elegida
-        const startEndFortnight = getStarEndFortnight(currentYear, selectedMonthId, selectedFortnight);
-        console.log("startEndFortnight", startEndFortnight);
+        const [start, end] = getStarEndFortnight(currentYear, selectedMonthId, selectedFortnight);
+        console.log("startEndFortnight", start ,end);
         // SE LE VA A MANDAR EL BE PARA CONSULTAR SI HAY HORARIO Y TRAERLO EN MODO VIEW
+        const schedule = getSchedule(selectedDepartmentId, start, end);
+
+        if(schedule.length > 0) {
+          setScheduleData(schedule);
+        }
         const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
         setFortnightDays(days);
 
