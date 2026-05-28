@@ -14,8 +14,10 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
       // Si hace clic en uno nuevo, activamos la brocha con ese turno
       // Guardamos tanto el id como la propiedad que usas para pintar las celdas (shift.letterShift)
       onSelectBrush({
-        id: shift.id,
-        code: shift.letterShift
+        ...shift
+        // id: shift.id,
+        // letterShift: shift.letterShift,
+        // color: shift.color
       });
     }
   };

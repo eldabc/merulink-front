@@ -47,7 +47,7 @@ export default function ScheduleForm({ mode = 'create' }) {
 
   const schedule = scheduleData?.find(e => 1 === Number(id));
   const createMode = mode === 'create';
-  const viewMode = mode === 'view';
+  let viewMode = mode === 'view';
   const editMode = mode === 'edit';
 
   const disabledClasses = getDisabledClasses(viewMode);
@@ -55,8 +55,11 @@ export default function ScheduleForm({ mode = 'create' }) {
   const disabledTypeSchedule = getDisabledClasses(!selectedDepartmentId);
 
   const [fortnightDays, setFortnightDays] = useState([]);
+  const [startEndFortnight, setStartEndFortnight] = useState({ start: [], end: [] });
   const currentYear = new Date().getFullYear();
-  const [formDataBack, setFormData] = useState({});
+  const todayObj = new Date();
+  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+  const [formData, setFormData] = useState({});
   const scheduleGridRef = useRef(null);
 
   useEffect(() => {
@@ -65,21 +68,32 @@ export default function ScheduleForm({ mode = 'create' }) {
         
         setLoading(true);
         // Calcula los días que comprende la quincena elegida
-        const [start, end] = getStarEndFortnight(currentYear, selectedMonthId, selectedFortnight);
-        console.log("startEndFortnight", start ,end);
-        // SE LE VA A MANDAR EL BE PARA CONSULTAR SI HAY HORARIO Y TRAERLO EN MODO VIEW
-        const schedule = getSchedule(selectedDepartmentId, start, end);
-
-        if(schedule.length > 0) {
-          setScheduleData(schedule);
-        }
         const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
         setFortnightDays(days);
 
-        // Extraer primer y último día
-        const startDate = days[0].date;
-        const endDate = days[days.length - 1].date;
+        const startDate = days[0]?.date;
+        const endDate = days[days.length - 1]?.date;
+        setStartEndFortnight({start: startDate, end: endDate});
 
+        const schedule = await getSchedule(selectedDepartmentId, startDate, endDate);
+        console.log("schedule", schedule.length);
+
+        if(todayFormatted <= schedule.start && todayFormatted <= schedule.end) {
+
+          if (schedule?.length > 0) {
+            const isStillOpen = schedule.status !== 'closed';
+
+            if(!isStillOpen) {
+              console.log("!isStillOpen", isStillOpen);
+              viewMode = true;
+            }
+
+            // setScheduleData(scheduleResponse);
+          }
+        }else {
+          viewMode = true;
+        }
+      
         const data = await loadFormData(selectedDepartmentId, startDate, endDate);
         setFormData(data);
       }
@@ -111,11 +125,13 @@ export default function ScheduleForm({ mode = 'create' }) {
     const payload = {
       ...data,
       id: schedule?.id,
+      start: startEndFortnight.start,
+      end: startEndFortnight.end,
       shifts: gridPayload.shifts,
       schedules: gridPayload.schedules,
     };
 
-    console.log('onSubmit payload', payload);
+    console.log('onSubmit payload', payload, startEndFortnight);
 
     let success = false;
     // const dataChanges = payload;
@@ -135,7 +151,7 @@ export default function ScheduleForm({ mode = 'create' }) {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
-  // console.log("formDataBack?.shifts", formDataBack?.shifts)
+  // console.log("formData?.shifts", formData?.shifts)
 
   return (
     <FormProvider {...methods}>
@@ -152,7 +168,7 @@ export default function ScheduleForm({ mode = 'create' }) {
               
               <div className="div-border">
                 {selectedDepartmentId && selectedMonthId && selectedFortnight && (
-                  <ScheduleGrid ref={scheduleGridRef} groupedEmployees={formDataBack?.employees} fortnightDays={fortnightDays} shifts={formDataBack?.shifts} loading={loading} />
+                  <ScheduleGrid ref={scheduleGridRef} groupedEmployees={formData?.employees} fortnightDays={fortnightDays} shifts={formData?.shifts} loading={loading} />
                 )}
               </div>
             </div>

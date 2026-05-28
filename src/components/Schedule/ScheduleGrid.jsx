@@ -29,18 +29,33 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
 
   const handleCellClicked = (params) => {
     if (!brushShift) return;
-    if (params.value === absenceShiftObj.id) return;
+    
+    // Modificamos la validación por si params.value ahora es un objeto o sigue siendo un ID
+    const currentShiftId = params.value?.id ?? params.value;
+    if (currentShiftId === absenceShiftObj.id) return;
 
     const dateFieldName = params.column.getColId();
 
-    // ASIGNACIÓN del ID de turno que trae la brocha
-    params.data[dateFieldName] = brushShift.id;
+    // Clona la data actual de la fila para no mutar el estado directamente
+    const updatedData = { ...params.data };
 
-    // Notificar a AG Grid el cambio del ID
-    params.node.setDataValue(dateFieldName, brushShift.id);
+    // Asigna el OBJETO COMPLETO de la brocha a la fecha params.data[`date_2026-05-01`] será { id: X, letterShift: 'A', color: '#fff'... }
+    updatedData[dateFieldName] = brushShift;
 
-    params.api.refreshCells({ rowNodes: [params.node], columns: [dateFieldName] });
-    console.log(`Empleado ID: ${params.data.id}, Guardando ID de Turno: ${brushShift.id}`);
+    // Forzar AG Grid a actualizar los datos de la fila completa e interniar el objeto
+    params.node.setData(updatedData);
+
+    // Refrescar la celda para que el renderizador aplique los nuevos estilos
+    params.api.refreshCells({ rowNodes: [params.node], columns: [dateFieldName], force: true });
+    console.log(`Empleado ID: ${updatedData.id}, Guardando Objeto de Turno completo:`, brushShift);
+  };
+
+  const formatShiftDay = (shiftData) => {
+    return {
+      shift: {
+        ...shiftData
+      }
+    }
   };
 
   // RECOLECCIÓN DEL LOTE
@@ -51,6 +66,7 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
 
     gridApi.forEachNode((node) => {
       const row = node.data;
+      // console.log("row", row)
       
       const employeeSchedule = {
         employeeId: row.id,
@@ -60,20 +76,21 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
       };
 
       fortnightDays.forEach((day) => {
-        const dateKey = `date_${day.date}`;
-        
+        const dateKey = `date_${day.date}`;       
         if (row.vacation && row.vacation.start && row.vacation.end) {
           const columnDate = new Date(day.date.replace(/-/g, '/'));
           const startDate = new Date(row.vacation.start.replace(/-/g, '/'));
           const endDate = new Date(row.vacation.end.replace(/-/g, '/'));
-
+          
           if (columnDate >= startDate && columnDate <= endDate) {
-            employeeSchedule.dates[day.date] = absenceShiftObj.id;
+            employeeSchedule.dates[day.date] = formatShiftDay(absenceShiftObj);
           } else {
-            employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
+            employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey]) || formatShiftDay(freeShiftObj);
           }
+
         } else {
-          employeeSchedule.dates[day.date] = row[dateKey] || freeShiftObj.id;
+      console.log("formatShiftDay(row[dateKey])", row)
+          employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey]) || formatShiftDay(freeShiftObj);
         }
       });
 
@@ -202,7 +219,17 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
               return 'VAC';
             }
           }
-          return params.data[`date_${day.date}`] ?? freeShiftObj.id;
+
+          // Extrae el valor crudo que da la consola
+          const cellValue = params.data[`date_${day.date}`];
+
+          if (cellValue && typeof cellValue === 'object') {
+            console.log("cellValue", cellValue)
+            return cellValue.id;
+          }
+
+          // Si es 0 (u otro ID primitivo), lo deja pasar. Si es null/undefined, usa el id del libre (0)
+          return cellValue.id ?? freeShiftObj.id;
         },
 
         // MÁSCARA VISUAL: Muestra 'VAC' o la letra del turno
@@ -214,9 +241,10 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
 
         cellStyle: (params) => {
           if (params.value === 'VAC') return null;
-
-          const currentShiftId = params.value ?? freeShiftObj.id;
-
+          
+          const cellValue = params.data[`date_${day.date}`];
+          const currentShiftId = cellValue.id ?? freeShiftObj.id;
+          // console.log("aquiii",params.data)
           const baseStyle = { textAlign: 'center' };
           const currentShift = shifts?.find(s => s.id === Number(currentShiftId));
           const isFreeShift = Number(currentShiftId) === Number(freeShiftObj.id);
