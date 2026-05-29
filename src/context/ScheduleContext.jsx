@@ -3,6 +3,8 @@ import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
+import { allMonths } from '../utils/StaticData/months-utils';
+
 
 import { mapScheduleToBackend } from '../utils/mappers/scheduleMapper';
 
@@ -71,13 +73,15 @@ export const ScheduleProvider = ({ children }) => {
       const newSchedule = mapScheduleToBackend(formData);
 
       console.log("Creado", newSchedule);
-      const response = await axios.post(`${ENV.API_BACK_URL}schedules`, newSchedule);
+      const response = await axios.post(`${ENV.API_BACK_URL}schedule-plannings`, newSchedule);
 
       setScheduleData(prevData => {
         return [response.data.data, ...prevData]; 
       });
 
-      showNotification(`Horario ${newSchedule.description} creado con éxito`);
+     const selectedMonth = allMonths.find(m => m.value === Number(formData.selectedMonthId));
+
+      showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} creado con éxito`);
       
       return true;
     } catch (error) {

@@ -114,7 +114,7 @@ export default function ScheduleForm({ mode = 'create' }) {
 
       reset({
         departmentId: schedule?.department?.id ?? '',
-        status: schedule?.status ?? '',
+        status: schedule?.status ?? 'created',
         observations: schedule?.observation ?? '',
       });
 
@@ -127,6 +127,8 @@ export default function ScheduleForm({ mode = 'create' }) {
       id: schedule?.id,
       start: startEndFortnight.start,
       end: startEndFortnight.end,
+      selectedMonthId,
+      selectedFortnight,
       shifts: gridPayload.shifts,
       schedules: gridPayload.schedules,
     };

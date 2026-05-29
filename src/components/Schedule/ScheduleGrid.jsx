@@ -85,12 +85,11 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
           if (columnDate >= startDate && columnDate <= endDate) {
             employeeSchedule.dates[day.date] = formatShiftDay(absenceShiftObj);
           } else {
-            employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey]) || formatShiftDay(freeShiftObj);
+            employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey] || freeShiftObj);
           }
 
         } else {
-      console.log("formatShiftDay(row[dateKey])", row)
-          employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey]) || formatShiftDay(freeShiftObj);
+          employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey] || freeShiftObj);
         }
       });
 
@@ -161,10 +160,10 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
           
           if (currentLetter && currentLetter !== 'L') {
             const matchShift = shifts.find(s => s.letterShift === currentLetter);
-            formattedEmployee[dateKey] = matchShift ? matchShift.id : freeShiftObj.id;
+            formattedEmployee[dateKey] = matchShift ? matchShift : freeShiftObj;
           } else {
             // Si viene vacío o es 'L', le setea directamente ID del turno libre
-            formattedEmployee[dateKey] = freeShiftObj.id;
+            formattedEmployee[dateKey] = freeShiftObj;
           }
         });
 
@@ -224,7 +223,6 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
           const cellValue = params.data[`date_${day.date}`];
 
           if (cellValue && typeof cellValue === 'object') {
-            console.log("cellValue", cellValue)
             return cellValue.id;
           }
 
