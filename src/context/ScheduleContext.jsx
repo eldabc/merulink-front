@@ -26,11 +26,11 @@ export const ScheduleProvider = ({ children }) => {
   
   const { getEmployeesByDepartment } = useGlobalData();
 
-  const loadSchedules = useCallback(async (selectedDepartmentId = null, start = null, end = null) => {
+  const loadSchedules = useCallback(async (selectedDepartmentId = '', start = '', end = '') => {
     setLoading(true);
     try {
 
-      const response = await axios.get(`${ENV.API_BACK_URL}schedules?start=${start}&end=${end}&departmentId=${selectedDepartmentId}`);
+      const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings?start=${start}&end=${end}&departmentId=${selectedDepartmentId}`);
       console.log("response.data.data", response.data.data);
       setScheduleData(response.data.data);
 
@@ -166,7 +166,7 @@ export const ScheduleProvider = ({ children }) => {
     try {
 
       const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings?start=${start}&end=${end}&departmentId=${selectedDepartmentId}`);
-      console.log("response.data.data", response.data.data);
+      console.log("getSchedule", response.data.data);
       return response.data.data;
 
     } catch (error) {

@@ -94,7 +94,7 @@ export default function ScheduleList({ categoryKeys }) {
                     <tbody>
                         {paginatedSchedules.map((item) => (
                           <ScheduleRow 
-                            key={item.id} 
+                            key={item?.id} 
                             schedule={item} 
                           />
                         ))}

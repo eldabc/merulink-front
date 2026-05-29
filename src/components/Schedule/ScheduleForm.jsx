@@ -75,27 +75,25 @@ export default function ScheduleForm({ mode = 'create' }) {
         const endDate = days[days.length - 1]?.date;
         setStartEndFortnight({start: startDate, end: endDate});
 
-        const schedule = await getSchedule(selectedDepartmentId, startDate, endDate);
-        console.log("schedule", schedule.length);
+        const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
 
-        if(todayFormatted <= schedule.start && todayFormatted <= schedule.end) {
+        if (schedule?.length > 0) {
+          console.log("Tiene schedule", schedule);
+          const isStillOpen = schedule.status !== 'closed';
 
-          if (schedule?.length > 0) {
-            const isStillOpen = schedule.status !== 'closed';
-
-            if(!isStillOpen) {
-              console.log("!isStillOpen", isStillOpen);
-              viewMode = true;
-            }
-
-            // setScheduleData(scheduleResponse);
+          if(isStillOpen && todayFormatted <= schedule.start && todayFormatted <= schedule.end) {
+            console.log("IsStillOpen", isStillOpen);
+            // Modo edit
+          } else {
+            // Modo view
+            viewMode = true;
           }
-        }else {
-          viewMode = true;
+        } else {
+            // Modo create
+          console.log("Carga Data calendario registro", schedule);
+          setFormData(schedule);
         }
-      
-        const data = await loadFormData(selectedDepartmentId, startDate, endDate);
-        setFormData(data);
+       
       }
     };
 

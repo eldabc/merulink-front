@@ -17,6 +17,6 @@ export const getEventLocations = async () => {
 };
 
 export const getEmployeesByDept = async (departmentId, start, end) => {
-  const response = await axios.get(`${ENV.API_BACK_URL}employees/filter-schedule/?departmentId=${departmentId}&start=${start}&end=${end}`);
+  const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings/filter-schedule/?departmentId=${departmentId}&start=${start}&end=${end}`);
   return await response.data;
 };

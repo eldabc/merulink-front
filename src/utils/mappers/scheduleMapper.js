@@ -1,5 +1,5 @@
 export const mapScheduleToBackend = (formData) => { 
-  console.log("formData", formData);
+  // console.log("formData", formData);
   return {
     id: formData.id ? formData.id : Date.now(),
     start: formData.start,
