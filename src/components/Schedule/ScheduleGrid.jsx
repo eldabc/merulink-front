@@ -18,47 +18,32 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
     setGridApi(params.api);
   };
 
-  // Busca el ID del turno 'L' para usarlo por defecto
-  const freeShiftObj = useMemo(() => {
-    return shifts?.find(s => s.letterShift === 'L') || { id: null };
-  }, [shifts]);
-
-  const absenceShiftObj = useMemo(() => {
-    return shifts?.find(s => s.letterShift === 'VAC') || { id: null };
-  }, [shifts]);
-
   const handleCellClicked = (params) => {
     if (!brushShift) return;
     
-    // Modificamos la validación por si params.value ahora es un objeto o sigue siendo un ID
-    const currentShiftId = params.value?.id ?? params.value;
-    if (currentShiftId === absenceShiftObj.id) return;
+    // Si la celda es de vacaciones (ID -1), bloquea que la brocha pinte encima
+    const currentShiftId = params.value;
+    if (currentShiftId === -1) return;
 
     const dateFieldName = params.column.getColId();
-
-    // Clona la data actual de la fila para no mutar el estado directamente
     const updatedData = { ...params.data };
 
-    // Asigna el OBJETO COMPLETO de la brocha a la fecha params.data[`date_2026-05-01`] será { id: X, letterShift: 'A', color: '#fff'... }
-    updatedData[dateFieldName] = brushShift;
+    // Extrae la fecha limpia quitando el prefijo 'date_'
+    const rawDate = dateFieldName.replace('date_', '');
 
-    // Forzar AG Grid a actualizar los datos de la fila completa e interniar el objeto
+    // Actualiza la estructura de la celda con el nuevo turno de la brocha
+    updatedData.dates[rawDate] = {
+      shift: { ...brushShift }
+    };
+
+    // Notificar a AG Grid el cambio de fila
     params.node.setData(updatedData);
 
-    // Refrescar la celda para que el renderizador aplique los nuevos estilos
+    // Refrescar celda para recalcular estilos de color
     params.api.refreshCells({ rowNodes: [params.node], columns: [dateFieldName], force: true });
-    console.log(`Empleado ID: ${updatedData.id}, Guardando Objeto de Turno completo:`, brushShift);
   };
 
-  const formatShiftDay = (shiftData) => {
-    return {
-      shift: {
-        ...shiftData
-      }
-    }
-  };
-
-  // RECOLECCIÓN DEL LOTE
+  // RECOLECCIÓN DEL LOTE (Simplificado: Ya viene listo desde el backend)
   const collectGridPayload = useCallback(() => {
     if (!gridApi) return { shifts: shifts || [], schedules: [] };
 
@@ -66,62 +51,24 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
 
     gridApi.forEachNode((node) => {
       const row = node.data;
-      // console.log("row", row)
       
-      const employeeSchedule = {
+      schedulesBatch.push({
         employeeId: row.id,
-        subDepartmentId: row.subDepartmentId || null,
+        subDepartmentId: row.subDepartment?.id || null,
         isVacation: !!row.vacation,
-        dates: {}
-      };
-
-      fortnightDays.forEach((day) => {
-        const dateKey = `date_${day.date}`;       
-        if (row.vacation && row.vacation.start && row.vacation.end) {
-          const columnDate = new Date(day.date.replace(/-/g, '/'));
-          const startDate = new Date(row.vacation.start.replace(/-/g, '/'));
-          const endDate = new Date(row.vacation.end.replace(/-/g, '/'));
-          
-          if (columnDate >= startDate && columnDate <= endDate) {
-            employeeSchedule.dates[day.date] = formatShiftDay(absenceShiftObj);
-          } else {
-            employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey] || freeShiftObj);
-          }
-
-        } else {
-          employeeSchedule.dates[day.date] = formatShiftDay(row[dateKey] || freeShiftObj);
-        }
+        dates: row.dates // Directo: Ya mantiene la estructura JSON exacta
       });
-
-      schedulesBatch.push(employeeSchedule);
     });
 
-    return {
+  return {
       shifts: shifts || [],
       schedules: schedulesBatch
     };
-  }, [gridApi, fortnightDays, shifts, absenceShiftObj, freeShiftObj]);
-
-  const handleBulkCollect = () => {
-    const payload = collectGridPayload();
-
-    if (onSave) {
-      onSave(payload);
-    } else {
-      console.log("Payload 100% IDs listo para la BD:", payload);
-    }
-
-    return payload;
-  };
+  }, [gridApi, shifts]);
 
   useImperativeHandle(ref, () => ({
     collectGridPayload
   }), [collectGridPayload]);
-
-  const localeText = useMemo(() => ({
-    noRowsToShow: 'No hay registros para mostrar',
-    loadingOoo: 'Cargando datos...',
-  }), []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -140,39 +87,22 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
     });
   }, []); 
   
-  // TRADUCCIÓN INICIAL DE LETRAS A IDs
+  // RENDERIZADO DE FILAS
   const rowData = useMemo(() => {
-    if (!groupedEmployees || !shifts) return [];
+    if (!groupedEmployees) return [];
     
     const flatRows = [];
     Object.keys(groupedEmployees).forEach((subDeptName) => {
       groupedEmployees[subDeptName].forEach((employee) => {
-        const formattedEmployee = {
+        flatRows.push({
           ...employee,
-          // subDepartmentName: subDeptName, 
           fullName: `${employee.firstName} ${employee.lastName || ''}`.trim()
-        };
-
-        // Si el backend mandó letras (ej: "M"), las convertimos inmediatamente al ID del catálogo
-        fortnightDays.forEach((day) => {
-          const dateKey = `date_${day.date}`;
-          const currentLetter = employee[dateKey];
-          
-          if (currentLetter && currentLetter !== 'L') {
-            const matchShift = shifts.find(s => s.letterShift === currentLetter);
-            formattedEmployee[dateKey] = matchShift ? matchShift : freeShiftObj;
-          } else {
-            // Si viene vacío o es 'L', le setea directamente ID del turno libre
-            formattedEmployee[dateKey] = freeShiftObj;
-          }
         });
-
-        flatRows.push(formattedEmployee);
       });
     });
     
     return flatRows;
-  }, [groupedEmployees, shifts, fortnightDays, freeShiftObj]);
+  }, [groupedEmployees]);
 
   const columnDefs = useMemo(() => {
     const baseCols = [
@@ -181,10 +111,6 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
         field: 'fullName', 
         pinned: 'left', 
         width: 200,
-        cellClassRules: {
-          'pointer-events-none cursor-not-allowed opacity-50 select-none text-gray-600 bg-gray-50': (params) => !!params.data.vacation, 
-          'pointer-events-none': (params) => !params.data.vacation,
-        },
         cellRenderer: (params) => {
           if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
           return params.value;
@@ -192,10 +118,8 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
       }
     ];
 
-    // Días de la quincena
+    // Columnas de días dinámicas mapeadas directamente desde el objeto 'dates' enviado por el Back
     const dayCols = fortnightDays.map((day) => {
-  
-      // Evalua si esta columna específica coincide con el día de hoy
       return {        
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
@@ -206,113 +130,77 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
           return `${day.dayName} ${day.dayNumber}`;
         },
 
-        // Asigna 'VAC' solo si el día actual está en el rango
+        // Retorna el ID del shift asignado a esa fecha específica
         valueGetter: (params) => {
-          const vacation = params.data.vacation;
-          if (vacation && vacation.start && vacation.end) {
-            const columnDate = new Date(day.date.replace(/-/g, '/'));
-            const startDate = new Date(vacation.start.replace(/-/g, '/'));
-            const endDate = new Date(vacation.end.replace(/-/g, '/'));
-
-            if (columnDate >= startDate && columnDate <= endDate) {
-              return 'VAC';
-            }
-          }
-
-          // Extrae el valor crudo que da la consola
-          const cellValue = params.data[`date_${day.date}`];
-
-          if (cellValue && typeof cellValue === 'object') {
-            return cellValue.id;
-          }
-
-          // Si es 0 (u otro ID primitivo), lo deja pasar. Si es null/undefined, usa el id del libre (0)
-          return cellValue.id ?? freeShiftObj.id;
+          return params.data.dates?.[day.date]?.shift?.id ?? 0;
         },
 
-        // MÁSCARA VISUAL: Muestra 'VAC' o la letra del turno
+        // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
         valueFormatter: (params) => {
-          if (params.value === 'VAC') return 'VAC';
-          const found = shifts?.find(s => s.id === params.value);
-          return found ? found.letterShift : 'L';
+          const shiftObj = params.data.dates?.[day.date]?.shift;
+          return shiftObj?.letterShift || shiftObj?.letterShift || 'L';
         },
 
+        // Estilos
         cellStyle: (params) => {
-          if (params.value === 'VAC') return null;
           
-          const cellValue = params.data[`date_${day.date}`];
-          const currentShiftId = cellValue.id ?? freeShiftObj.id;
-          // console.log("aquiii",params.data)
           const baseStyle = { textAlign: 'center' };
-          const currentShift = shifts?.find(s => s.id === Number(currentShiftId));
-          const isFreeShift = Number(currentShiftId) === Number(freeShiftObj.id);
+          
+          // Extrae el objeto shift directo de la fila usando la fecha de la columna
+          const shiftObj = params.data.dates?.[day.date]?.shift;
+          const currentShiftId = shiftObj?.id;
 
-          // SOLO L usa colores especiales
-          if (isFreeShift) {
-
-            if (day.isToday) {
+          // Si el objeto tiene un color definido por el backend, lo pinta de inmediato
+          if (shiftObj?.color) {
+            // Si es fin de semana y es un día libre (ID 0), fuerza el color de fin de semana
+            if (currentShiftId === 0 && day.isWeekend) {
               return {
                 ...baseStyle,
-                backgroundColor:'#3b82f6'
+                backgroundColor: '#f8d7da',
+                color: '#81262e'
               };
             }
 
-            if (day.isWeekend) {
-              return {
-                ...baseStyle,
-                backgroundColor:'#f8d7da',
-                color:'#81262e'
-              };
+            if (currentShiftId === 0) {              
+              if (day.isToday) return { ...baseStyle, backgroundColor: '#3b82f6' };
+              if (day.isWeekend) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
             }
-          }
 
-          // cualquier otro turno
-          if (currentShift?.color) {
             return {
               ...baseStyle,
-              backgroundColor: currentShift.color
+              backgroundColor: shiftObj.color
             };
-          }
+          }    
 
           return baseStyle;
         },
-
-        flex: 1,           
+        flex: 1,          
         minWidth: 35,      
         resizable: true,
         sortable: false,
         suppressMovable: true,
         
-        // Bloquea la celda si es 'VAC'
-        editable: (params) => params.value !== 'VAC',
+        // Bloquea edición si es vacaciones (ID -1)
+        editable: (params) => params.value !== -1,
 
-        //  Aplica opacidad gris y bloquea clics en celdas 'VAC'
+        // Clases utilitarias de AG Grid según el tipo de celda
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100 pointer-events-none': (params) => params.value === 'VAC',
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100 pointer-events-none': (params) => params.value === -1,
         },
         
         cellClass: '!font-bold',
-        // headerClass: `${day.bgHeaderClass} ${day.borderClass}`,
-        headerClass: params => {
+        headerClass: () => {
           const classes = [];
-
-          if (day.isToday) {
-            classes.push('header-today');
-          }
-
-          if (day.isWeekend) {
-            classes.push('header-weekend');
-          }
-
+          if (day.isToday) classes.push('header-today');
+          if (day.isWeekend) classes.push('header-weekend');
           return classes.join(' ');
         }
       };
     });
 
     return [...baseCols, ...dayCols];
-  }, [fortnightDays, shifts, freeShiftObj]);
+  }, [fortnightDays]);
 
-  // Configuración por defecto todas las columnas
   const defaultColDef = useMemo(() => ({
     sortable: true,
     filter: false,
@@ -340,31 +228,14 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
                   defaultColDef={defaultColDef}
                   animateRows={true}
                   theme={myTheme}
-                  rowSelection={{
-                    mode: 'multiRow',
-                    checkboxes: false, 
-                    headerCheckbox: false,
-                    enableClickSelection: false,
-                  }}
-                  
+                  rowSelection={{ mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: false }}
                   onCellClicked={handleCellClicked}
-                  localeText={localeText}
+                  localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
                   onGridReady={onGridReady}
                 />
               </div>
 
               <ScheduleLegend />
-
-              {/* <div className="w-full flex justify-between items-center bg-white p-2 border rounded-md shadow-sm">
-                <h3 className="text-sm font-semibold text-gray-700 px-2">Planificación de Horarios</h3>
-                <button
-                  onClick={handleBulkCollect}
-                  disabled={isDataPending || !gridApi}
-                  className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-300 text-white font-semibold rounded shadow-sm text-sm transition-all duration-200 cursor-pointer"
-                >
-                  Guardar Cambios por Lote
-                </button>
-              </div> */}
             </>
           ) : (
             <SpanText text="Sin turnos disponibles para este departamento" />

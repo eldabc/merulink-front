@@ -77,23 +77,31 @@ export default function ScheduleForm({ mode = 'create' }) {
 
         const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
 
-        if (schedule?.length > 0) {
-          console.log("Tiene schedule", schedule);
+        // Convertir el objeto de subdepartamentos en una lista única de empleados
+        const todosLosEmpleados = Object.values(schedule.employees || {}).flat();
+
+        // Comprobar si alguno de ellos ya tiene la estructura de fechas
+        const hasDatesRegistred = todosLosEmpleados.some(emp => emp.dates && Object.keys(emp.dates).length > 0);
+
+        if (hasDatesRegistred) {
+          console.log("¿La respuesta del servidor trajo la posición 'dates':", schedule);
           const isStillOpen = schedule.status !== 'closed';
 
           if(isStillOpen && todayFormatted <= schedule.start && todayFormatted <= schedule.end) {
             console.log("IsStillOpen", isStillOpen);
             // Modo edit
+            // Los turnos son los que estan activos
           } else {
             // Modo view
+            // Los turnos son los que vienen en la respuesta del servidor
             viewMode = true;
           }
         } else {
             // Modo create
           console.log("Carga Data calendario registro", schedule);
-          setFormData(schedule);
         }
-       
+          setFormData(schedule);
+        
       }
     };
 

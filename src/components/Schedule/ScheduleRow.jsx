@@ -45,7 +45,7 @@ export default function ScheduleRow({ schedule }) {
       onClick={() => handleSelectedSchedule(schedule.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
-      <td className="px-4 py-3 text-white-800 font-medium">{schedule.code}</td>
+      <td className="px-4 py-3 text-white-800 font-medium">{schedule.employee}</td>
       <td className="px-4 py-3 text-white-700">{schedule.description}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkInTime)}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkOutTime)}</td>
