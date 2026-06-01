@@ -9,10 +9,11 @@ import ScheduleLegend from './ScheduleLegend';
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, loading, onSave }, ref) => {
+const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
 
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
+  const viewMode = mode === 'view';
 
   const onGridReady = (params) => {
     setGridApi(params.api);
@@ -209,7 +210,7 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
   }), []);
 
   const isDataPending = loading || shifts === undefined;
-  const hasShiftGrid = !isDataPending && shifts?.length > 2;
+  const hasShiftGrid = !isDataPending && shifts?.length > 0;
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -225,6 +226,9 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
                 <AgGridReact
                   rowData={rowData}
                   columnDefs={columnDefs}
+                  readOnlyEdit={viewMode} // Deshabilita la edición completa en modo view
+                  suppressCellSelection={viewMode}      // Evita que el usuario use la brocha
+                  suppressRowClickSelection={viewMode} // Deshabilita cliquear filas
                   defaultColDef={defaultColDef}
                   animateRows={true}
                   theme={myTheme}

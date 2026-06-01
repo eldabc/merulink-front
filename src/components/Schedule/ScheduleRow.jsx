@@ -4,7 +4,7 @@ import { useSchedules } from "../../context/ScheduleContext";
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { formatTimeTo12H } from '../../utils/date-utils';
-// import { minHourOptions } from '../../utils/StaticData/schedule-utils';
+import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
@@ -38,6 +38,9 @@ export default function ScheduleRow({ schedule }) {
     setSelectedSchedule(null);
   };
 
+  const monthJson = allMonths[schedule.monthNumber];
+  console.log("holaaa",monthJson);
+
   return (
     <>
     <tr
@@ -45,11 +48,9 @@ export default function ScheduleRow({ schedule }) {
       onClick={() => handleSelectedSchedule(schedule.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
-      <td className="px-4 py-3 text-white-800 font-medium">{schedule.employee}</td>
-      <td className="px-4 py-3 text-white-700">{schedule.description}</td>
-      <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkInTime)}</td>
+      <td className="px-4 py-3 text-white-700">{monthJson.label}</td>
+      <td className="px-4 py-3 text-white-700">{`${schedule.fortnightNumber} (${schedule.start} a ${schedule.end})`}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkOutTime)}</td>
-      {/* <td className="px-4 py-3 text-white-700">{schedule.department.departmentName}</td> */}
       <td className="px-4 py-3 text-white-700">
         {/* {`${schedule.restPeriodTime} ${minHourOptions.find(opt => opt.value === schedule.restPeriodUnitTime)?.label}`} */}
       </td>

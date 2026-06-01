@@ -18,13 +18,17 @@ import '../../Tables.css';
 export default function ScheduleList({ categoryKeys }) {
   
   const navigate = useNavigate();
-  const { loading, scheduleData } = useSchedules();
+  const { loading, scheduleData, loadSchedules } = useSchedules();
   const [searchDateValue, setSearchDateValue] = useState('');
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const SEARCH_FIELDS = useMemo(() => ['description'], []);
+
+  useEffect(() => {  
+    loadSchedules();
+  }, []);
 
   useEffect(() => {
     if (searchValue.trim()) {
@@ -80,14 +84,10 @@ export default function ScheduleList({ categoryKeys }) {
                 <>
                 <thead>
                     <tr className="tr-thead-table">
-                      <th className="px-4 py-3 text-left font-semibold">Código</th>
-                      <th className="px-4 py-3 text-left font-semibold">Descripción</th>
-                      <th className="px-4 py-3 text-left font-semibold">Hora Entrada</th>
-                      <th className="px-4 py-3 text-left font-semibold">Hora Salida</th>
-                      <th className="px-4 py-3 text-left font-semibold">Departamento</th>
-                      <th className="px-4 py-3 text-left font-semibold">Descanso</th>
-                      <th className="px-4 py-3 text-left font-semibold">Tiempo Activo</th>
-                      <th className="px-4 py-3 text-left font-semibold">Disponible</th>
+                      <th className="px-4 py-3 text-left font-semibold">Mes</th>
+                      <th className="px-4 py-3 text-left font-semibold">Quincena</th>
+                      <th className="px-4 py-3 text-left font-semibold">Empleado</th>
+                      <th className="px-4 py-3 text-left font-semibold">Turno</th>
                       <th className="px-4 py-3 text-left font-semibold">Acciones</th>
                     </tr>
                     </thead>

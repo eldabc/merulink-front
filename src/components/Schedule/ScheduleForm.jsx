@@ -50,10 +50,6 @@ export default function ScheduleForm({ }) {
   const scheduleGridRef = useRef(null);
 
   // const schedule = scheduleData?.find(e => 1 === Number(id));
-
-  // let createMode = mode === 'create';
-  // let viewMode = mode === 'view';
-  // let editMode = mode === 'edit';
   const currentYear = new Date().getFullYear();
   const todayObj = new Date();
   const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`; 
@@ -73,23 +69,20 @@ export default function ScheduleForm({ }) {
 
           // Llamada única al backend
           const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
-
-          // Determinar mode
-          if (schedule.isClosed || !(todayFormatted >= schedule.start && todayFormatted <= schedule.end)) {
-            // Si la quincena está cerrada
+          
+          // Determinar si la quincena está cerrada
+          if (schedule.isClosed || schedule.start && schedule.end && !(todayFormatted >= schedule.start && todayFormatted <= schedule.end)) {
+            
+            // console.log("schedule", schedule);
             setMode('view');
             console.log("Formulario en Modo: VIEW (Quincena Cerrada)");
           } else {
-            // Evalua si ya hay horario guardado previamente en el backend.
-            const allEmployees = Object.values(schedule.employees || {}).flat();
-            const tieneHorariosGuardados = allEmployees.some(emp => emp.dates && Object.keys(emp.dates).length > 0);
-
-            if (tieneHorariosGuardados) {
-              // Caso 2: Existe el registro y está abierta
+            // Si ya hay horario guardado
+            if (schedule?.id) {
               setMode('edit');
-              console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)");
+              console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)", schedule.employees);
             } else {
-              // Caso 3: No hay nada en la BD para esta quincena
+              // No hay nada en la BD para esta quincena
               setMode('create');
               console.log("Formulario en Modo: CREATE (Nueva Planificación)");
             }
@@ -116,14 +109,23 @@ export default function ScheduleForm({ }) {
 
 
   useEffect(() => {
+    if (!formData || Object.keys(formData).length === 0) return;
 
-      reset({
-        departmentId: formData?.department?.id ?? '',
-        status: formData?.status ?? 'created',
-        observations: formData?.observation ?? '',
-      });
+    if (formData?.department?.id) {
+      setValue('departmentId', formData.department.id);
+    }
 
-  }, [mode, formData, reset]);
+    if (formData?.monthId) {
+      setValue('monthId', formData.monthId);
+    }
+
+    if (formData?.fortnight) {
+      setValue('fortnight', formData.fortnight);
+    }
+
+    setValue('status', formData?.status ?? 'created');
+    setValue('observations', formData?.observation ?? '');
+  }, [formData, setValue]);
 
   const onSubmit = async (data) => {
     console.log("Procesando Submit en Modo:", mode);
@@ -140,7 +142,7 @@ export default function ScheduleForm({ }) {
 
     const payload = {
       ...data,
-      id: schedule?.id, // ID del schedule_planning si existe
+      id: formData?.id, // ID del schedule_planning si existe
       start: startEndFortnight.start,
       end: startEndFortnight.end,
       selectedMonthId,
@@ -158,7 +160,7 @@ export default function ScheduleForm({ }) {
     }
 
     if (success) {
-      // navigate(`/empleados/horarios`);
+      navigate(`/empleados/horarios`);
     }
   };
 
@@ -168,7 +170,7 @@ export default function ScheduleForm({ }) {
   };
   
   const disabledClasses = getDisabledClasses(mode === 'view');
-  console.log("mode", mode, disabledClasses)
+  // console.log("mode", mode)
 
   return (
     <FormProvider {...methods}>

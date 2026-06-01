@@ -41,22 +41,22 @@ export const ScheduleProvider = ({ children }) => {
     }
   }, []);
   
-  useEffect(() => {
-    loadSchedules();
-  }, [loadSchedules]);
+  // useEffect(() => {
+  //   loadSchedules();
+  // }, [loadSchedules]);
 
   const loadFormData = async (departmentId, start, end) => {
-    // setLoading(true);
+    setLoading(true);
     try {
-      // Ejecuta las peticiones en paralelo para mantener el orden en form
-      const [shiftData, employeesData] = await Promise.all([//, eventsData
-        getShifts(departmentId),
-        getEmployeesByDepartment(departmentId, start, end),
-        // getEvents(start,end) //Eventos en el intervalo de fechas seleccionado que tengas colorinDay activo. (id,title,path 'path colocar solo solo en modoView')
-      ]);
-      // console.log("shift", shiftData);
-      // console.log("employeesData", employeesData);
-      return { shifts: shiftData, employees: employeesData }; //, eventsData
+      // 💡 Una sola petición limpia al backend unificado
+      const responseData = await getEmployeesByDepartment(departmentId, start, end);
+      return responseData;
+      // responseData ya contiene { shifts: [...], employees: {...}, isClosed: true/false }
+      return {
+        planning: responseData.planning,
+        shifts: responseData.shifts, 
+        employees: responseData.employees 
+      };
 
     } catch (error) {
       console.error("Error cargando datos del formulario", error);
@@ -64,7 +64,6 @@ export const ScheduleProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
 
   // *** Crear
   const createSchedule = async (formData) => {
@@ -180,6 +179,7 @@ export const ScheduleProvider = ({ children }) => {
     loading,
     setLoading,
     loadFormData,
+    loadSchedules,
     getSchedule,
     createSchedule,
     updateSchedule,
