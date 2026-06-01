@@ -25,7 +25,7 @@ import ShiftLegend from '../Shift/ShiftLegend';
 import ScheduleGrid from './ScheduleGrid';
 import '../../Tables.css';
 
-export default function ScheduleForm({ mode = 'create' }) {
+export default function ScheduleForm({ }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -40,68 +40,67 @@ export default function ScheduleForm({ mode = 'create' }) {
     register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting }
   } = methods;
 
-
   const selectedDepartmentId = watch('departmentId');
   const selectedMonthId = watch('monthId');
   const selectedFortnight = watch('fortnight');  
-
-  const schedule = scheduleData?.find(e => 1 === Number(id));
-  const createMode = mode === 'create';
-  let viewMode = mode === 'view';
-  const editMode = mode === 'edit';
-
-  const disabledClasses = getDisabledClasses(viewMode);
-  const alwaysApplyDisabledClasses = getDisabledClasses(true);
-  const disabledTypeSchedule = getDisabledClasses(!selectedDepartmentId);
-
   const [fortnightDays, setFortnightDays] = useState([]);
   const [startEndFortnight, setStartEndFortnight] = useState({ start: [], end: [] });
-  const currentYear = new Date().getFullYear();
-  const todayObj = new Date();
-  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+  const [mode, setMode] = useState('create');
   const [formData, setFormData] = useState({});
   const scheduleGridRef = useRef(null);
+
+  // const schedule = scheduleData?.find(e => 1 === Number(id));
+
+  // let createMode = mode === 'create';
+  // let viewMode = mode === 'view';
+  // let editMode = mode === 'edit';
+  const currentYear = new Date().getFullYear();
+  const todayObj = new Date();
+  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`; 
 
   useEffect(() => {
     const loadData = async () => {
       if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
-        
         setLoading(true);
-        // Calcula los días que comprende la quincena elegida
-        const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
-        setFortnightDays(days);
+        try {
+          // Calcula los días que comprende la quincena elegida
+          const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
+          setFortnightDays(days);
 
-        const startDate = days[0]?.date;
-        const endDate = days[days.length - 1]?.date;
-        setStartEndFortnight({start: startDate, end: endDate});
+          const startDate = days[0]?.date;
+          const endDate = days[days.length - 1]?.date;
+          setStartEndFortnight({ start: startDate, end: endDate });
 
-        const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
+          // Llamada única al backend
+          const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
 
-        // Convertir el objeto de subdepartamentos en una lista única de empleados
-        const todosLosEmpleados = Object.values(schedule.employees || {}).flat();
-
-        // Comprobar si alguno de ellos ya tiene la estructura de fechas
-        const hasDatesRegistred = todosLosEmpleados.some(emp => emp.dates && Object.keys(emp.dates).length > 0);
-
-        if (hasDatesRegistred) {
-          console.log("¿La respuesta del servidor trajo la posición 'dates':", schedule);
-          const isStillOpen = schedule.status !== 'closed';
-
-          if(isStillOpen && todayFormatted <= schedule.start && todayFormatted <= schedule.end) {
-            console.log("IsStillOpen", isStillOpen);
-            // Modo edit
-            // Los turnos son los que estan activos
+          // Determinar mode
+          if (schedule.isClosed || !(todayFormatted >= schedule.start && todayFormatted <= schedule.end)) {
+            // Si la quincena está cerrada
+            setMode('view');
+            console.log("Formulario en Modo: VIEW (Quincena Cerrada)");
           } else {
-            // Modo view
-            // Los turnos son los que vienen en la respuesta del servidor
-            viewMode = true;
+            // Evalua si ya hay horario guardado previamente en el backend.
+            const allEmployees = Object.values(schedule.employees || {}).flat();
+            const tieneHorariosGuardados = allEmployees.some(emp => emp.dates && Object.keys(emp.dates).length > 0);
+
+            if (tieneHorariosGuardados) {
+              // Caso 2: Existe el registro y está abierta
+              setMode('edit');
+              console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)");
+            } else {
+              // Caso 3: No hay nada en la BD para esta quincena
+              setMode('create');
+              console.log("Formulario en Modo: CREATE (Nueva Planificación)");
+            }
           }
-        } else {
-            // Modo create
-          console.log("Carga Data calendario registro", schedule);
-        }
           setFormData(schedule);
-        
+
+        } catch (error) {
+          console.error("Error procesando los modos del calendario", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
@@ -119,18 +118,29 @@ export default function ScheduleForm({ mode = 'create' }) {
   useEffect(() => {
 
       reset({
-        departmentId: schedule?.department?.id ?? '',
-        status: schedule?.status ?? 'created',
-        observations: schedule?.observation ?? '',
+        departmentId: formData?.department?.id ?? '',
+        status: formData?.status ?? 'created',
+        observations: formData?.observation ?? '',
       });
 
-  }, [mode, schedule, reset]);
+  }, [mode, formData, reset]);
 
   const onSubmit = async (data) => {
-    const gridPayload = scheduleGridRef.current ? scheduleGridRef.current.collectGridPayload() : { shifts: [], schedules: [] };
+    console.log("Procesando Submit en Modo:", mode);
+    
+    // Bloqueo de seguridad por si acaso el botón quedó activo
+    if (mode === 'view') {
+      console.warn("No puedes guardar una quincena en modo vista.");
+      return;
+    }
+
+    const gridPayload = scheduleGridRef.current 
+      ? scheduleGridRef.current.collectGridPayload() 
+      : { shifts: [], schedules: [] };
+
     const payload = {
       ...data,
-      id: schedule?.id,
+      id: schedule?.id, // ID del schedule_planning si existe
       start: startEndFortnight.start,
       end: startEndFortnight.end,
       selectedMonthId,
@@ -139,14 +149,11 @@ export default function ScheduleForm({ mode = 'create' }) {
       schedules: gridPayload.schedules,
     };
 
-    console.log('onSubmit payload', payload, startEndFortnight);
-
     let success = false;
-    // const dataChanges = payload;
 
-    if (editMode && schedule) { 
+    if (mode === 'edit') { 
       success = await updateSchedule(payload);
-    } else {
+    } else if (mode === 'create') {
       success = await createSchedule(payload);
     }
 
@@ -159,24 +166,26 @@ export default function ScheduleForm({ mode = 'create' }) {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
-  // console.log("formData?.shifts", formData?.shifts)
+  
+  const disabledClasses = getDisabledClasses(mode === 'view');
+  console.log("mode", mode, disabledClasses)
 
   return (
     <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
-    {(viewMode) && <HeadFormButtons url={`/empleados/turnos/editar/${schedule?.id}`} data={[]} /> }
+    {/* {( mode === 'view') && <HeadFormButtons url={`/empleados/turnos/editar/${schedule?.id}`} data={[]} /> } */}
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='w-full mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
+              <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
-              <ScheduleFilterModal departments={departments} globalLoading={globalLoading} disabledClasses={disabledClasses} /> 
+               <ScheduleFilterModal departments={departments} globalLoading={globalLoading} /> {/* disabledClasses={disabledClasses} */}
               
               <div className="div-border">
                 {selectedDepartmentId && selectedMonthId && selectedFortnight && (
-                  <ScheduleGrid ref={scheduleGridRef} groupedEmployees={formData?.employees} fortnightDays={fortnightDays} shifts={formData?.shifts} loading={loading} />
+                  <ScheduleGrid ref={scheduleGridRef} groupedEmployees={formData?.employees} fortnightDays={fortnightDays} shifts={formData?.shifts} loading={loading} disabledClasses={disabledClasses} />
                 )}
               </div>
             </div>
