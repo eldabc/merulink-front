@@ -226,9 +226,9 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
                 <AgGridReact
                   rowData={rowData}
                   columnDefs={columnDefs}
-                  readOnlyEdit={viewMode} // Deshabilita la edición completa en modo view
-                  suppressCellSelection={viewMode}      // Evita que el usuario use la brocha
-                  suppressRowClickSelection={viewMode} // Deshabilita cliquear filas
+                  // readOnlyEdit={viewMode} // Deshabilita la edición completa en modo view
+                  // suppressCellSelection={viewMode}      // Evita que el usuario use la brocha
+                  // suppressRowClickSelection={viewMode} // Deshabilita cliquear filas
                   defaultColDef={defaultColDef}
                   animateRows={true}
                   theme={myTheme}

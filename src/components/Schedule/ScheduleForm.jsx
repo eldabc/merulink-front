@@ -67,15 +67,14 @@ export default function ScheduleForm({ }) {
           const endDate = days[days.length - 1]?.date;
           setStartEndFortnight({ start: startDate, end: endDate });
 
-          // Llamada única al backend
           const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
           
-          // Determinar si la quincena está cerrada
-          if (schedule.isClosed || schedule.start && schedule.end && !(todayFormatted >= schedule.start && todayFormatted <= schedule.end)) {
+          // Si la quincena está cerrada
+          if (schedule.isClosed) {
             
             // console.log("schedule", schedule);
             setMode('view');
-            console.log("Formulario en Modo: VIEW (Quincena Cerrada)");
+            console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
           } else {
             // Si ya hay horario guardado
             if (schedule?.id) {
@@ -145,8 +144,8 @@ export default function ScheduleForm({ }) {
       id: formData?.id, // ID del schedule_planning si existe
       start: startEndFortnight.start,
       end: startEndFortnight.end,
-      selectedMonthId,
-      selectedFortnight,
+      monthNumber: selectedMonthId,
+      // selectedFortnight,
       shifts: gridPayload.shifts,
       schedules: gridPayload.schedules,
     };

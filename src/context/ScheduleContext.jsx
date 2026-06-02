@@ -78,7 +78,7 @@ export const ScheduleProvider = ({ children }) => {
         return [response.data.data, ...prevData]; 
       });
 
-     const selectedMonth = allMonths.find(m => m.value === Number(formData.selectedMonthId));
+     const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
 
       showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} creado con éxito`);
       

@@ -38,7 +38,7 @@ export default function ScheduleRow({ schedule }) {
     setSelectedSchedule(null);
   };
 
-  const monthJson = allMonths[schedule.monthNumber];
+  const monthJson = allMonths[schedule.monthNumber -1];
   console.log("holaaa",monthJson);
 
   return (
@@ -49,11 +49,8 @@ export default function ScheduleRow({ schedule }) {
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
       <td className="px-4 py-3 text-white-700">{monthJson.label}</td>
-      <td className="px-4 py-3 text-white-700">{`${schedule.fortnightNumber} (${schedule.start} a ${schedule.end})`}</td>
+      <td className="px-4 py-3 text-white-700">{`${schedule.start} a ${schedule.end}`}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule.checkOutTime)}</td>
-      <td className="px-4 py-3 text-white-700">
-        {/* {`${schedule.restPeriodTime} ${minHourOptions.find(opt => opt.value === schedule.restPeriodUnitTime)?.label}`} */}
-      </td>
       <td className="px-4 py-3 text-white-700">
         {/* {`${schedule.activePeriodTime} ${minHourOptions.find(opt => opt.value === schedule.activePeriodUnitTime)?.label}`} */}
       </td>
