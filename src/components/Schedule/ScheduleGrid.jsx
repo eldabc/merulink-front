@@ -234,8 +234,7 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
                     rowData={rowData}
                     columnDefs={columnDefs}
                     readOnlyEdit={viewMode} 
-                    suppressCellFocus={viewMode} // Evita el recuadro de enfoque en modo vista
-                    
+                    suppressCellFocus={viewMode} // Evita el recuadro de enfoque en modo vista  
                     rowSelection={
                       viewMode 
                         ? { mode: 'none' } // En modo vista, apaga por completo cualquier selección

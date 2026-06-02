@@ -78,8 +78,7 @@ export const ScheduleProvider = ({ children }) => {
         return [response.data.data, ...prevData]; 
       });
 
-     const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
-
+      const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
       showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} creado con éxito`);
       
       return true;
@@ -103,14 +102,15 @@ export const ScheduleProvider = ({ children }) => {
       const updatedSchedule = mapScheduleToBackend(formData);
       console.log("Actualizado:", updatedSchedule);
       
-      const response = await axios.put(`${ENV.API_BACK_URL}schedules/${scheduleId}`, updatedSchedule);
+      const response = await axios.put(`${ENV.API_BACK_URL}schedule-plannings/${scheduleId}`, updatedSchedule);
       
       setScheduleData(prevData => {
         const filteredData = prevData.filter(schedule => schedule.id !== scheduleId);
         return [response.data.data, ...filteredData];
       });
 
-      showNotification(`Horario ${formData.description} actualizado con éxito`); 
+      const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
+      showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} actualizado con éxito`); 
       return true;
 
     } catch (error) {
