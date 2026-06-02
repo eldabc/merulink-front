@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 
 import { formatTimeTo12H } from '../../utils/date-utils';
 
-function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
-  
+function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode }) {
+
   const handleShiftClick = (shift) => {
-    if (!onSelectBrush) return;
+    if (!onSelectBrush || viewMode) return;
 
     // Si el usuario hace clic en el turno que ya está activo, apagamos la brocha (null)
     if (activeBrush && activeBrush.id === shift.id) {
@@ -15,9 +15,6 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
       // Guardamos tanto el id como la propiedad que usas para pintar las celdas (shift.letterShift)
       onSelectBrush({
         ...shift
-        // id: shift.id,
-        // letterShift: shift.letterShift,
-        // color: shift.color
       });
     }
   };
@@ -33,7 +30,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush }) {
         return (
           <div 
             key={shift.id} 
-            onClick={() => handleShiftClick(shift)} // Activa el clic en toda la fila del turno
+            onClick={() => !viewMode && handleShiftClick(shift)} // Activa el clic en toda la fila del turno
             className={`flex items-center gap-2 mt-2 p-1 rounded-lg cursor-pointer transition-all duration-200 ${
               isSelected 
                 ? 'bg-gray-700/50 scale-105 border border-cyan-500/50 shadow-md' // Estilo activo

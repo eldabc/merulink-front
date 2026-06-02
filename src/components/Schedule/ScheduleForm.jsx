@@ -83,7 +83,7 @@ export default function ScheduleForm({ }) {
             } else {
               // No hay nada en la BD para esta quincena
               setMode('create');
-              console.log("Formulario en Modo: CREATE (Nueva Planificación)");
+              console.log("Formulario en Modo: CREATE (Nueva Planificación)",schedule);
             }
           }
           setFormData(schedule);
@@ -145,7 +145,7 @@ export default function ScheduleForm({ }) {
       start: startEndFortnight.start,
       end: startEndFortnight.end,
       monthNumber: selectedMonthId,
-      // selectedFortnight,
+      selectedFortnight,
       shifts: gridPayload.shifts,
       schedules: gridPayload.schedules,
     };
@@ -186,7 +186,16 @@ export default function ScheduleForm({ }) {
               
               <div className="div-border">
                 {selectedDepartmentId && selectedMonthId && selectedFortnight && (
-                  <ScheduleGrid ref={scheduleGridRef} groupedEmployees={formData?.employees} fortnightDays={fortnightDays} shifts={formData?.shifts} loading={loading} disabledClasses={disabledClasses} />
+                  <ScheduleGrid 
+                    ref={scheduleGridRef}
+                    isClosed={formData?.isClosed} 
+                    groupedEmployees={formData?.employees} 
+                    fortnightDays={fortnightDays} 
+                    shifts={formData?.shifts} 
+                    loading={loading} 
+                    disabledClasses={disabledClasses} 
+                    mode={mode} 
+                  />
                 )}
               </div>
             </div>

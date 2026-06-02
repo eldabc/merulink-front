@@ -9,7 +9,7 @@ import ScheduleLegend from './ScheduleLegend';
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
+const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
 
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
@@ -211,7 +211,6 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
 
   const isDataPending = loading || shifts === undefined;
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
-
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-wrap gap-2 p-2 bg-gray-50 border rounded-md text-sm">
@@ -220,25 +219,37 @@ const ScheduleGrid = forwardRef(({ groupedEmployees, fortnightDays, shifts, load
         ) : (
           hasShiftGrid ? ( 
             <>
-              <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} /> 
+              <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} /> 
+              <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
+                {isClosed && (
+                  <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473]">
+                    <div className="bg-[#2f3d44] px-6 py-3 rounded-xl shadow-2xl border border-[#9fd8ff] flex items-center gap-3">
+                      Quincena cerrada
+                    </div>
+                  </div>
+                )}
 
-              <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={columnDefs}
-                  // readOnlyEdit={viewMode} // Deshabilita la edición completa en modo view
-                  // suppressCellSelection={viewMode}      // Evita que el usuario use la brocha
-                  // suppressRowClickSelection={viewMode} // Deshabilita cliquear filas
-                  defaultColDef={defaultColDef}
-                  animateRows={true}
-                  theme={myTheme}
-                  rowSelection={{ mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: false }}
-                  onCellClicked={handleCellClicked}
-                  localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
-                  onGridReady={onGridReady}
-                />
+                <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    readOnlyEdit={viewMode} 
+                    suppressCellFocus={viewMode} // Evita el recuadro de enfoque en modo vista
+                    
+                    rowSelection={
+                      viewMode 
+                        ? { mode: 'none' } // En modo vista, apaga por completo cualquier selección
+                        : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } // En modo edición, permite seleccionar filas normalmente
+                    }
+                    defaultColDef={defaultColDef}
+                    animateRows={true}
+                    theme={myTheme}
+                    onCellClicked={handleCellClicked}
+                    localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
+                    onGridReady={onGridReady}
+                  />
+                </div>
               </div>
-
               <ScheduleLegend />
             </>
           ) : (
