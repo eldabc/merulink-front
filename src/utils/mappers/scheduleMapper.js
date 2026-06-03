@@ -6,7 +6,7 @@ export const mapScheduleToBackend = (formData) => {
     end: formData.end,
     month_number: formData.monthNumber,
     department_id: formData.departmentId,
-    status: formData.status,
+    status: formData.status === '' ? 'created' : formData.status,
     observations: formData.observations,
     shifts: formData.shifts || [],
     schedules: formData.schedules || [],

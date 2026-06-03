@@ -4,16 +4,19 @@ import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-communi
 import { useFormContext } from "react-hook-form";
 
 import { getDisabledClasses } from '../../utils/global-utils';
+import { statusOptions } from '../../utils/StaticData/schedule-utils';
 
 import SpanText from '../Shared/SpanText';
 import ShiftLegend from '../Shift/ShiftLegend';
 import ScheduleLegend from './ScheduleLegend';
 import LabelFieldForm from '../Shared/LabelFieldForm';
+import SelectGeneric from '../Shared/SelectGeneric';
+import ErrorMessage from '../Shared/ErrorMessage';
 
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
+const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
   
   const { register, formState: { errors } } = useFormContext();
   const [brushShift, setBrushShift] = useState(null);
@@ -230,7 +233,20 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
         ) : (
           hasShiftGrid ? ( 
             <>
-              <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} /> 
+              <div className="div-border w-full flex flex-col md:flex-row gap-4 items-center justify-between p-4 rounded-lg">
+                <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
+                {scheduleSaved && (
+                  <div>
+                    <LabelFieldForm field="Estado" dinamicClasses="mb-3"/>
+                    <SelectGeneric 
+                      name="status"
+                      disabled={viewMode} 
+                      dynamicClasses={`${disabledClasses}`} 
+                      dataSelect={statusOptions}
+                    />
+                </div>
+                )}
+              </div>
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
                 {isClosed && (
                   <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473]">
@@ -268,13 +284,13 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
                   <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
                     <textarea
                       readOnly={mode === 'view'}
-                      {...register('observation')}
+                      {...register('observations')}
                       rows="5"                 
                       cols="33"                 
                       placeholder="Escribe aquí una observación..."
                       className={`filter-input p-2 ${disabledClasses}`}
                     />
-                    {errors?.observation && <ErrorMessage msg={errors.observation.message} />}  
+                    {errors?.observations && <ErrorMessage msg={errors.observations.message} />}  
                   </div>  
               </div>
             </>

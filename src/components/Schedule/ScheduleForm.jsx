@@ -12,12 +12,10 @@ import ScheduleFilterModal from './ScheduleFilterModal';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
-import ErrorMessage from '../Shared/ErrorMessage';
 import RowTableResults from '../Shared/RowTableResults';
 import SpanText from '../Shared/SpanText';
 import InputGeneric from '../Shared/InputGeneric';
 import OptionSelect from '../Shared/OptionSelect';
-import SelectGeneric from '../Shared/SelectGeneric';
 import ToggleGeneric from '../Shared/ToggleGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import ShiftLegend from '../Shift/ShiftLegend';
@@ -70,8 +68,6 @@ export default function ScheduleForm({ }) {
           
           // Si la quincena está cerrada
           if (schedule.isClosed) {
-            
-            // console.log("schedule", schedule);
             setMode('view');
             console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
           } else {
@@ -121,7 +117,7 @@ export default function ScheduleForm({ }) {
       setValue('fortnight', formData.fortnight);
     }
 
-    setValue('status', formData?.status ?? 'created');
+    setValue('status', formData?.status ?? '');
     setValue('observations', formData?.observation ?? '');
   }, [formData, setValue]);
 
@@ -168,7 +164,7 @@ export default function ScheduleForm({ }) {
   };
   
   const disabledClasses = getDisabledClasses(mode === 'view');
-  // console.log("mode", mode)
+  // console.log("formData?.status", formData?.status)
 
   return (
     <FormProvider {...methods}>
@@ -187,7 +183,8 @@ export default function ScheduleForm({ }) {
                 {selectedDepartmentId && selectedMonthId && selectedFortnight && (
                   <ScheduleGrid 
                     ref={scheduleGridRef}
-                    isClosed={formData?.isClosed} 
+                    isClosed={formData?.isClosed}
+                    scheduleSaved={!!formData?.id}
                     groupedEmployees={formData?.employees} 
                     fortnightDays={fortnightDays} 
                     shifts={formData?.shifts} 

@@ -39,7 +39,6 @@ export default function ScheduleRow({ schedule }) {
   };
 
   const monthJson = allMonths[schedule?.monthNumber -1];
-  console.log("holaaa",monthJson);
 
   return (
     <Fragment key={schedule?.id}>

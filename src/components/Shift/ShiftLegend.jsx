@@ -11,10 +11,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
     if (activeBrush && activeBrush.id === shift.id) {
       onSelectBrush(null);
     } else {
-      // Si hace clic en un turno nuevo, activa la brocha y guarda el turno completo
-      onSelectBrush({
-        ...shift
-      });
+      onSelectBrush(shift); // Si hace clic en un turno nuevo, activa la brocha con el turno completo
     }
   };
 
@@ -22,6 +19,9 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
     <div className="w-56 rounded-xl p-5 bg-[#2f3d44] hover:bg-[#535557]">
       <h3 className="text-gray-200 font-semibold mb-2"> Horarios: </h3>
       {shifts.map((shift) => {
+        if (shift.isNotShowShift) {
+          return null;
+        }
         // Verifica si este turno específico es el que está activo en la brocha
         const isSelected = activeBrush && activeBrush.id === shift.id;
 
@@ -35,25 +35,20 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
                 : 'transition-all duration-200 cursor-pointer hover:bg-gray-800/30 hover:scale-105 hover:shadow-sm border border-transparent' // Estilo hover normal
             }`}
           >
-            {!shift.isNotShowShift && (
-            <>
-              <div
-                className={`w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 transition-transform ${
-                  isSelected ? 'animate-pulse' : ''
-                }`}
-                style={{ backgroundColor: shift.color ?? 'red' }}
-              >
-                {shift.letterShift}
-              </div>
+            <div
+              className={`w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 transition-transform 
+              ${isSelected ? 'animate-pulse' : ''}`}
+              style={{ backgroundColor: shift.color ?? 'red' }}
+            >
+              {shift.letterShift}
+            </div>
 
-              <span className={`text-sm select-none ${isSelected ? 'text-cyan-400 font-medium' : 'text-gray-300'}`}>
-                {shift.id === 'S-0'
-                  ? shift.description 
-                  : `${formatTimeTo12H(shift.checkInTime)} - ${formatTimeTo12H(shift.checkOutTime)}`
-                }
-              </span> 
-            </>
-            )}
+            <span className={`text-sm select-none font-medium ${isSelected ? 'text-cyan-400' : 'text-gray-300'}`}>
+              {shift.id === 'S-0'
+                ? shift.description 
+                : `${formatTimeTo12H(shift.checkInTime)} - ${formatTimeTo12H(shift.checkOutTime)}`
+              }
+            </span> 
           </div>
         );
       })}
