@@ -13,7 +13,6 @@ import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import ErrorMessage from '../Shared/ErrorMessage';
-import LabelFieldForm from '../Shared/LabelFieldForm';
 import RowTableResults from '../Shared/RowTableResults';
 import SpanText from '../Shared/SpanText';
 import InputGeneric from '../Shared/InputGeneric';
@@ -184,7 +183,7 @@ export default function ScheduleForm({ }) {
               
                <ScheduleFilterModal departments={departments} globalLoading={globalLoading} /> {/* disabledClasses={disabledClasses} */}
               
-              <div className="div-border">
+              <div className="div-border mt-2">
                 {selectedDepartmentId && selectedMonthId && selectedFortnight && (
                   <ScheduleGrid 
                     ref={scheduleGridRef}

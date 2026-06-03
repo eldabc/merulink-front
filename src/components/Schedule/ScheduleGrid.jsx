@@ -1,19 +1,29 @@
 import React, { forwardRef, useMemo, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
-import SpanText from '../Shared/SpanText';
+import { useFormContext } from "react-hook-form";
 
+import { getDisabledClasses } from '../../utils/global-utils';
+
+import SpanText from '../Shared/SpanText';
 import ShiftLegend from '../Shift/ShiftLegend';
 import ScheduleLegend from './ScheduleLegend';
+import LabelFieldForm from '../Shared/LabelFieldForm';
 
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
-
+  
+  const { register, formState: { errors } } = useFormContext();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const viewMode = mode === 'view';
+  const disabledClasses = getDisabledClasses(viewMode);
+
+  useEffect(() => {
+    setBrushShift(null);
+  }, [fortnightDays]);
 
   const onGridReady = (params) => {
     setGridApi(params.api);
@@ -22,9 +32,10 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
   const handleCellClicked = (params) => {
     if (!brushShift) return;
     
-    // Si la celda es de vacaciones (ID -1), bloquea que la brocha pinte encima
     const currentShiftId = params.value;
-    if (currentShiftId === -1) return;
+
+    // Si es baja/vacaciones bloquea que la brocha pinte encima
+    if (currentShiftId === 'S-1' || currentShiftId === 'S-2') return;
 
     const dateFieldName = params.column.getColId();
     const updatedData = { ...params.data };
@@ -133,7 +144,7 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
 
         // Retorna el ID del shift asignado a esa fecha específica
         valueGetter: (params) => {
-          return params.data.dates?.[day.date]?.shift?.id ?? 0;
+          return params.data.dates?.[day.date]?.shift?.id ?? 'S-0';
         },
 
         // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
@@ -153,8 +164,8 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
 
           // Si el objeto tiene un color definido por el backend, lo pinta de inmediato
           if (shiftObj?.color) {
-            // Si es fin de semana y es un día libre (ID 0), fuerza el color de fin de semana
-            if (currentShiftId === 0 && day.isWeekend) {
+            // Si es fin de semana y es un día libre (ID 'S-0'), fuerza el color de fin de semana
+            if (currentShiftId === 'S-0' && day.isWeekend) {
               return {
                 ...baseStyle,
                 backgroundColor: '#f8d7da',
@@ -162,7 +173,7 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
               };
             }
 
-            if (currentShiftId === 0) {              
+            if (currentShiftId === 'S-0') {              
               if (day.isToday) return { ...baseStyle, backgroundColor: '#3b82f6' };
               if (day.isWeekend) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
             }
@@ -181,12 +192,12 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
         sortable: false,
         suppressMovable: true,
         
-        // Bloquea edición si es vacaciones (ID -1)
-        editable: (params) => params.value !== -1,
+        // Bloquea edición si es baja/vacaciones
+        editable: (params) => params.value !== 'S-1' || params.value !== 'S-2',
 
         // Clases utilitarias de AG Grid según el tipo de celda
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100 pointer-events-none': (params) => params.value === -1,
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100 pointer-events-none': (params) => params.value === 'S-1' || params.value === 'S-2' ,
         },
         
         cellClass: '!font-bold',
@@ -213,7 +224,7 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2 p-2 bg-gray-50 border rounded-md text-sm">
+      <div className="flex flex-wrap gap-2 p-2 rounded-md text-sm">
         {isDataPending ? (
           <SpanText text="Cargando..." />
         ) : (
@@ -249,7 +260,23 @@ const ScheduleGrid = forwardRef(({ isClosed, groupedEmployees, fortnightDays, sh
                   />
                 </div>
               </div>
-              <ScheduleLegend />
+              
+              <div className="flex flex-col md:flex-row gap-3 w-full div-border">
+                <ScheduleLegend />
+                
+                <div className="flex flex-col w-full md:flex-1"> 
+                  <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
+                    <textarea
+                      readOnly={mode === 'view'}
+                      {...register('observation')}
+                      rows="5"                 
+                      cols="33"                 
+                      placeholder="Escribe aquí una observación..."
+                      className={`filter-input p-2 ${disabledClasses}`}
+                    />
+                    {errors?.observation && <ErrorMessage msg={errors.observation.message} />}  
+                  </div>  
+              </div>
             </>
           ) : (
             <SpanText text="Sin turnos disponibles para este departamento" />

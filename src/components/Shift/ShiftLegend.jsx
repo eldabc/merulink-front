@@ -7,12 +7,11 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
   const handleShiftClick = (shift) => {
     if (!onSelectBrush || viewMode) return;
 
-    // Si el usuario hace clic en el turno que ya está activo, apagamos la brocha (null)
+    // Si hace clic en el turno que ya está activo, apaga la brocha
     if (activeBrush && activeBrush.id === shift.id) {
       onSelectBrush(null);
     } else {
-      // Si hace clic en uno nuevo, activamos la brocha con ese turno
-      // Guardamos tanto el id como la propiedad que usas para pintar las celdas (shift.letterShift)
+      // Si hace clic en un turno nuevo, activa la brocha y guarda el turno completo
       onSelectBrush({
         ...shift
       });
@@ -25,7 +24,6 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
       {shifts.map((shift) => {
         // Verifica si este turno específico es el que está activo en la brocha
         const isSelected = activeBrush && activeBrush.id === shift.id;
-        const isShiftAbsence = shift.id === -1;
 
         return (
           <div 
@@ -37,7 +35,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
                 : 'transition-all duration-200 cursor-pointer hover:bg-gray-800/30 hover:scale-105 hover:shadow-sm border border-transparent' // Estilo hover normal
             }`}
           >
-            {!isShiftAbsence && (
+            {!shift.isNotShowShift && (
             <>
               <div
                 className={`w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 transition-transform ${
@@ -49,7 +47,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
               </div>
 
               <span className={`text-sm select-none ${isSelected ? 'text-cyan-400 font-medium' : 'text-gray-300'}`}>
-                {shift.id === 0
+                {shift.id === 'S-0'
                   ? shift.description 
                   : `${formatTimeTo12H(shift.checkInTime)} - ${formatTimeTo12H(shift.checkOutTime)}`
                 }

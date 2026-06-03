@@ -16,10 +16,17 @@ function ScheduleLegend({  }) {
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-        <span className="w-20 text-center px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-red-200 hover:scale-105 hover:shadow-sm">
+        <span className="w-20 text-center px-2 py-1 bg-[#9ea2a3] text-[#696e74] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#9ea2a3d1] hover:scale-105 hover:shadow-sm">
           VAC
         </span>
-        <span className="text-gray-500 font-medium">(Vacaciones)</span>
+        <span className="text-gray-500 font-medium">Periodo de Vacaciones</span>
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+        <span className="w-20 text-center px-2 py-1 bg-[#363f4c] text-[#787e87] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#363f4cd9] hover:scale-105 hover:shadow-sm">
+          BAJA
+        </span>
+        <span className="text-gray-500 font-medium">Personal dado de baja</span>
       </div>
     </div> 
   );
