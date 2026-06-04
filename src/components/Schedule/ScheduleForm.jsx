@@ -118,7 +118,7 @@ export default function ScheduleForm({ }) {
     }
 
     setValue('status', formData?.status ?? '');
-    setValue('observations', formData?.observation ?? '');
+    setValue('observations', formData?.observations ?? '');
   }, [formData, setValue]);
 
   const onSubmit = async (data) => {
