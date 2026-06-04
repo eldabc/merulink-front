@@ -1,23 +1,26 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedules } from "../../context/ScheduleContext";
+import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { normalizeText } from '../../utils/text-utils.js';
 import { filterData } from '../../utils/filter-utils.js';
 
 import ScheduleRow from './ScheduleRow';
-import Pagination from '../Pagination.jsx';
-import TitleHeader from '../Shared/TitleHeader.jsx';
-import ButtonNavigate from '../Shared/ButtonNavigate.jsx';
-import FilterByFields from '../Filters/FilterByFields.jsx';
-import SpanText from '../Shared/SpanText.jsx';
-import RowTableLoading from '../Shared/RowTableLoading.jsx';
+import Pagination from '../Pagination';
+import TitleHeader from '../Shared/TitleHeader';
+import ButtonNavigate from '../Shared/ButtonNavigate';
+import FilterByFields from '../Filters/FilterByFields';
+import SpanText from '../Shared/SpanText';
+import RowTableLoading from '../Shared/RowTableLoading';
+import ScheduleFilter from './ScheduleFilterList';
 
 import '../../Tables.css';
 
 export default function ScheduleList({ categoryKeys }) {
   
   const navigate = useNavigate();
+  const { globalLoading, departments, loadDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules } = useSchedules();
   const [searchDateValue, setSearchDateValue] = useState('');
   const itemsPerPage = 10;
@@ -27,7 +30,10 @@ export default function ScheduleList({ categoryKeys }) {
   const SEARCH_FIELDS = useMemo(() => ['description'], []);
 
   useEffect(() => {  
-    loadSchedules();
+    if (departments.length === 0) {
+      loadDepartments();
+    }
+    // loadSchedules(); // Esto se usara más adelante pero para traer segun el departamente sobre el que tiene permisos el usuario
   }, []);
 
   useEffect(() => {
@@ -65,14 +71,7 @@ export default function ScheduleList({ categoryKeys }) {
         </div>
       </div>
 
-      <FilterByFields
-        searchValue={searchValue}
-        searchDateValue={searchDateValue}
-        onSearchChange={(val) => { setSearchValue(val); setCurrentPage(1); }}
-        onFilterDate={(val) => { setSearchDateValue(val); setCurrentPage(1); }}
-        moduleName='Horario'
-        placeholder='Ingrese descripción'
-      />
+      <ScheduleFilter departments={departments} globalLoading={globalLoading} />
 
       {(dataToDisplay.length === 0 ) && !loading ? (
         <SpanText text={`No se encontraron horarios registrados.`} />

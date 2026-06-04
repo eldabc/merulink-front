@@ -8,7 +8,9 @@ import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { getStarEndFortnight, getFortnightDays } from '../../utils/Schedule/schedule-utils';
-import ScheduleFilterModal from './ScheduleFilterModal';
+import { allMonths } from '../../utils/StaticData/months-utils';
+
+import ScheduleFilter from './ScheduleFilter';
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -62,6 +64,15 @@ export default function ScheduleForm({ }) {
     };
     getScheduleData();
   }, []);
+
+  // Mes actual
+  const currentMonthIndex = new Date().getMonth();
+  
+  // Mes actual + siguiente
+  const availableMonths = [
+    allMonths[currentMonthIndex],
+    allMonths[(currentMonthIndex + 1) % 12]
+  ];
 
   useEffect(() => {
     const loadData = async () => {
@@ -189,7 +200,7 @@ export default function ScheduleForm({ }) {
             <div className='w-full mt-6'>
               <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
-               <ScheduleFilterModal departments={departments} globalLoading={globalLoading} /> {/* disabledClasses={disabledClasses} */}
+               <ScheduleFilter departments={departments} months={availableMonths} globalLoading={globalLoading} /> {/* disabledClasses={disabledClasses} */}
               
               <div className="div-border mt-2">
                 {Object.keys(formData ?? {}).length > 0 && ( //selectedDepartmentId && selectedMonthId && selectedFortnight

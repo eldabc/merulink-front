@@ -1,24 +1,18 @@
 import { useEffect, useState, useMemo } from 'react';
 
 import { radioOptions } from '../../utils/StaticData/schedule-utils';
-import { allMonths } from '../../utils/StaticData/months-utils';
 
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import SelectDepartment from '../Shared/SelectDepartment';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
+import { allMonths } from '../../utils/StaticData/months-utils';
 
-function ScheduleFilterModal({ viewMode, departments = [], onAccept, onClose, globalLoading, disabledClasses }) {
+function ScheduleFilter({ viewMode, departments = [], months, onAccept, onClose, globalLoading, disabledClasses }) {
 
-  // Mes actual
-  const currentMonthIndex = new Date().getMonth();
-
-  // Mes actual + siguiente
-  const availableMonths = [
-    allMonths[currentMonthIndex],
-    allMonths[(currentMonthIndex + 1) % 12]
-  ];
-
+  if (months?.length === 0) {
+    months = allMonths; // Fallback a todos los meses si no se pasan como prop
+  }
   return (
     <div className="rounded-lg w-full p-2 div-border">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
@@ -37,7 +31,7 @@ function ScheduleFilterModal({ viewMode, departments = [], onAccept, onClose, gl
             name="monthId"
             disabled={viewMode} 
             dynamicClasses={`${disabledClasses}`} 
-            dataSelect={availableMonths}
+            dataSelect={months}
           />
         </div>
 
@@ -55,15 +49,9 @@ function ScheduleFilterModal({ viewMode, departments = [], onAccept, onClose, gl
               />
             </div>
         </div>
-
-
-      {/* BOTONES */}
-      {/* <div>
-        <button type="button" className="py-2 mt-10"> Seleccionar </button>
-      </div> */}
     </div>
   </div>
   );
 }
 
-export default ScheduleFilterModal;
+export default ScheduleFilter;
