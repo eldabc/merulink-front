@@ -56,6 +56,16 @@ export default function ScheduleList({ categoryKeys }) {
       );
   }, [scheduleData, searchValue]);
 
+  const loadSchedulesCon = (currentFilters) => {
+    // currentFilters traerá: { department: '1', month: '05', fortnight: '1ra' }
+    if (currentFilters.department) { // && (currentFilters.month || currentFilters.fortnigth)
+     console.log("Filtros cambiados automáticamente:", currentFilters.department, currentFilters.month);
+
+    }
+    
+    // Aquí haces tu petición Axios usando currentFilters.department, etc.
+  };
+
     // Datos para mostrar
   const dataToDisplay = hasSearched ? filteredSchedules : scheduleData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
@@ -71,7 +81,7 @@ export default function ScheduleList({ categoryKeys }) {
         </div>
       </div>
 
-      <ScheduleFilter departments={departments} globalLoading={globalLoading} />
+      <ScheduleFilter departments={departments} globalLoading={globalLoading} onAccept={loadSchedulesCon} />
 
       {(dataToDisplay.length === 0 ) && !loading ? (
         <SpanText text={`No se encontraron horarios registrados.`} />
