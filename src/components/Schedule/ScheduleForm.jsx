@@ -26,7 +26,7 @@ export default function ScheduleForm({ }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { scheduleData, setScheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading, getSchedule } = useSchedules();
+  const { scheduleData, setScheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading, getScheduleById } = useSchedules(); // getSchedule,
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -46,10 +46,22 @@ export default function ScheduleForm({ }) {
   const [formData, setFormData] = useState({});
   const scheduleGridRef = useRef(null);
 
-  // const schedule = scheduleData?.find(e => 1 === Number(id));
+  // const schedule = scheduleData?.find(e => e.id === Number(id));
+  // console.log("scheduleData", id, scheduleData, schedule);
   const currentYear = new Date().getFullYear();
   const todayObj = new Date();
   const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`; 
+
+  useEffect(() => {
+    const getScheduleData = async () => {
+      console.log("AQUIII");
+      if(id) {
+        const schedule = await getScheduleById(id);
+        setFormData(schedule);
+      }
+    };
+    getScheduleData();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -180,7 +192,7 @@ export default function ScheduleForm({ }) {
                <ScheduleFilterModal departments={departments} globalLoading={globalLoading} /> {/* disabledClasses={disabledClasses} */}
               
               <div className="div-border mt-2">
-                {selectedDepartmentId && selectedMonthId && selectedFortnight && (
+                {Object.keys(formData ?? {}).length > 0 && ( //selectedDepartmentId && selectedMonthId && selectedFortnight
                   <ScheduleGrid 
                     ref={scheduleGridRef}
                     isClosed={formData?.isClosed}

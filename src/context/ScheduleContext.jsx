@@ -160,16 +160,31 @@ export const ScheduleProvider = ({ children }) => {
     }
   };
 
-    const getSchedule = useCallback(async (selectedDepartmentId = null, start = null, end = null) => {
-    // setLoading(true);
+  // const getSchedule = useCallback(async (selectedDepartmentId = null, start = null, end = null) => {
+  //   // setLoading(true);
+  //   try {
+
+  //     const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings?start=${start}&end=${end}&departmentId=${selectedDepartmentId}`);
+  //     console.log("getSchedule", response.data.data);
+  //     return response.data.data;
+
+  //   } catch (error) {
+  //     showNotification('Error al cargar Horario', error.message, 'error');
+  //   } finally {
+  //     // setLoading(false);
+  //   }
+  // }, []);
+
+  const getScheduleById = useCallback(async (schedulePlanningId) => {
+    // setLoading(true); 
     try {
 
-      const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings?start=${start}&end=${end}&departmentId=${selectedDepartmentId}`);
-      console.log("getSchedule", response.data.data);
+      const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings/${schedulePlanningId}`);
+      console.log("getScheduleById", response.data.data);
       return response.data.data;
-
+    
     } catch (error) {
-      showNotification('Error al cargar Horario', error.message, 'error');
+      showNotification('Error al cargar el Horario por ID', error.message, 'error');
     } finally {
       // setLoading(false);
     }
@@ -180,7 +195,8 @@ export const ScheduleProvider = ({ children }) => {
     setLoading,
     loadFormData,
     loadSchedules,
-    getSchedule,
+    // getSchedule,
+    getScheduleById,
     createSchedule,
     updateSchedule,
     deleteSchedule,
