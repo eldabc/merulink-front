@@ -7,9 +7,11 @@ function ScheduleFilterList({
   viewMode, 
   departments = [], 
   months = [], 
-  onAccept,
+  onLoadSchedules,
   loading, 
-  disabledClasses 
+  disabledClasses,
+  filters,
+  setFilters
 }) {
 
   // Mes actual
@@ -20,13 +22,6 @@ function ScheduleFilterList({
     allMonths[currentMonthIndex],
     allMonths[(currentMonthIndex - 1 + 12) % 12]
   ];
-
-  // console.log("availableMonths", availableMonths)
-
-  const [filters, setFilters] = useState({
-    department: '',
-    month: '',
-  });
 
   // Manejador de cambios para actualizar el estado
   const handleChange = (e) => {
@@ -39,11 +34,10 @@ function ScheduleFilterList({
 
   // Escucha cuando 'filters' cambie y ejecuta automáticamente la búsqueda
   useEffect(() => {
-    if (onAccept) {
-      // Envía los valores frescos directamente a tu función contenedora (loadSchedules)
-      onAccept(filters); 
+    if (onLoadSchedules) {
+      onLoadSchedules(filters); // Envía los valores frescos directamente a función contenedora (loadSchedules)
     }
-  }, [filters, onAccept]);
+  }, [filters, onLoadSchedules]);
 
   return (
     <div className="rounded-lg w-full p-2 div-border">
@@ -56,7 +50,7 @@ function ScheduleFilterList({
             disabled={viewMode || loading} 
             name='department'
             value={filters.department} // Controlado por el estado
-            onChange={handleChange}     // Dispara el cambio
+            onChange={handleChange}
             className={`w-full text-xl px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
           >
             <option className="bg-[#3c4042]" value=""> 

@@ -8,7 +8,7 @@ import SelectGeneric from '../Shared/SelectGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
-function ScheduleFilter({ viewMode, departments = [], months, onAccept, onClose, globalLoading, disabledClasses }) {
+function ScheduleFilter({ viewMode, departments = [], months, onClose, globalLoading, disabledClasses }) {
 
   if (months?.length === 0) {
     months = allMonths; // Fallback a todos los meses si no se pasan como prop

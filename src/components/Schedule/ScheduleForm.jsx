@@ -29,7 +29,7 @@ export default function ScheduleForm({ }) {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { monthNumber, fortnight } = location.state || {};
+  const { departmentId, monthNumber, fortnight } = location.state || {};
 
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading, getScheduleById } = useSchedules(); // getSchedule,
   const { globalLoading, departments, loadDepartments } = useGlobalData();
@@ -57,12 +57,12 @@ export default function ScheduleForm({ }) {
 
   useEffect(() => {
     const getScheduleData = async () => {
-
+      // console.log("departmentId", departmentId)
       if(id && monthNumber && fortnight) {
         console.log("Datos",id, monthNumber, fortnight);
         console.log("fortnight = ", fortnight);
 
-        setValue('departmentId', 1);
+        setValue('departmentId', departmentId);
         setValue('monthId', monthNumber);
         setValue('fortnight', String(fortnight));
 

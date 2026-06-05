@@ -14,7 +14,7 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
 
-export default function ScheduleRow({ schedule, statusInfo }) {
+export default function ScheduleRow({ schedule, statusInfo, departmentId }) {
 
   const navigate = useNavigate();
   const { deleteSchedule } = useSchedules();
@@ -29,7 +29,7 @@ export default function ScheduleRow({ schedule, statusInfo }) {
   const end = normalizeDateDDMMYYY(schedule?.end);
   const fortnight = getFortnightInfo(schedule?.start);
 
-  const handleSelectedSchedule = (id, departmentId, monthNumber, fortnight) => {
+  const handleSelectedSchedule = (id, monthNumber, fortnight) => {
     // console.log("Datos",id, monthNumber, fortnight);
 
     navigate(`/empleados/horarios/ver/${id}`, { 
@@ -54,7 +54,7 @@ export default function ScheduleRow({ schedule, statusInfo }) {
   return (
     <Fragment key={schedule?.id}>
       <tr
-        onClick={() => handleSelectedSchedule(schedule.id, 1, schedule.monthNumber,fortnight.number)}
+        onClick={() => handleSelectedSchedule(schedule.id, schedule.monthNumber, fortnight.number)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
       >
         <td className="px-4 py-3 text-white-700">{monthJson?.label}</td>

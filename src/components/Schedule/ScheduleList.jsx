@@ -24,6 +24,10 @@ export default function ScheduleList({ categoryKeys }) {
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({
+    department: '',
+    month: '',
+  });
 
   const itemsPerPage = 10;
 
@@ -33,7 +37,7 @@ export default function ScheduleList({ categoryKeys }) {
     }
   }, []);
 
-  const loadSchedulesCon = useCallback((currentFilters) => {
+  const loadSchedulesData = useCallback((currentFilters) => {
     if (currentFilters.department) {
       loadSchedules(currentFilters.department, currentFilters?.month);
     } else {
@@ -61,7 +65,7 @@ export default function ScheduleList({ categoryKeys }) {
         </div>
       </div>
 
-      <ScheduleFilterList departments={departments} loading={globalLoading} onAccept={loadSchedulesCon} />
+      <ScheduleFilterList departments={departments} loading={globalLoading} onLoadSchedules={loadSchedulesData} filters={filters} setFilters={setFilters} />
 
       {(dataToDisplay.length === 0) && !loading ? (
         <SpanText text={`No se encontraron horarios registrados.`} />
@@ -93,6 +97,7 @@ export default function ScheduleList({ categoryKeys }) {
                             key={item?.id} 
                             schedule={item}
                             statusInfo={statusInfo}
+                            departmentId={filters.department}
                           />
                         );
                       })}
