@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
@@ -13,7 +13,7 @@ import ButtonNavigate from '../Shared/ButtonNavigate';
 import FilterByFields from '../Filters/FilterByFields';
 import SpanText from '../Shared/SpanText';
 import RowTableLoading from '../Shared/RowTableLoading';
-import ScheduleFilter from './ScheduleFilterList';
+import ScheduleFilterList from './ScheduleFilterList';
 
 import '../../Tables.css';
 
@@ -21,53 +21,29 @@ export default function ScheduleList({ categoryKeys }) {
   
   const navigate = useNavigate();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
-  const { loading, scheduleData, loadSchedules } = useSchedules();
-  const [searchDateValue, setSearchDateValue] = useState('');
-  const itemsPerPage = 10;
+  const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
-  const SEARCH_FIELDS = useMemo(() => ['description'], []);
+
+  const itemsPerPage = 10;
 
   useEffect(() => {  
     if (departments.length === 0) {
       loadDepartments();
     }
-    // loadSchedules(); // Esto se usara más adelante pero para traer segun el departamente sobre el que tiene permisos el usuario
   }, []);
 
-  useEffect(() => {
-    if (searchValue.trim()) {
-      setHasSearched(true);
+  const loadSchedulesCon = useCallback((currentFilters) => {
+    if (currentFilters.department) {
+      // console.log("Filtros cambiados automáticamente:", currentFilters.department, currentFilters.month);
+      loadSchedules(currentFilters.department, currentFilters?.month);
     } else {
-      setHasSearched(false);
-    }
-    setCurrentPage(1);
-  }, [searchValue]);
-
-  // Filtrar
-  const filteredSchedules = useMemo(() => {
-      return filterData(
-          scheduleData,
-          searchValue,
-          SEARCH_FIELDS,
-          "",
-          normalizeText
-      );
-  }, [scheduleData, searchValue]);
-
-  const loadSchedulesCon = (currentFilters) => {
-    // currentFilters traerá: { department: '1', month: '05', fortnight: '1ra' }
-    if (currentFilters.department) { // && (currentFilters.month || currentFilters.fortnigth)
-     console.log("Filtros cambiados automáticamente:", currentFilters.department, currentFilters.month);
-
+      setScheduleData([]);
     }
     
-    // Aquí haces tu petición Axios usando currentFilters.department, etc.
-  };
+  }, [loadSchedules]);
 
     // Datos para mostrar
-  const dataToDisplay = hasSearched ? filteredSchedules : scheduleData;
+  const dataToDisplay = scheduleData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSchedules = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
@@ -81,7 +57,7 @@ export default function ScheduleList({ categoryKeys }) {
         </div>
       </div>
 
-      <ScheduleFilter departments={departments} globalLoading={globalLoading} onAccept={loadSchedulesCon} />
+      <ScheduleFilterList departments={departments} loading={globalLoading} onAccept={loadSchedulesCon} />
 
       {(dataToDisplay.length === 0 ) && !loading ? (
         <SpanText text={`No se encontraron horarios registrados.`} />
@@ -95,19 +71,18 @@ export default function ScheduleList({ categoryKeys }) {
                     <tr className="tr-thead-table">
                       <th className="px-4 py-3 text-left font-semibold">Mes</th>
                       <th className="px-4 py-3 text-left font-semibold">Quincena</th>
-                      <th className="px-4 py-3 text-left font-semibold">Empleado</th>
-                      <th className="px-4 py-3 text-left font-semibold">Turno</th>
+                      <th className="px-4 py-3 text-left font-semibold">Observación</th>
+                      <th className="px-4 py-3 text-left font-semibold">Estado</th>
                       <th className="px-4 py-3 text-left font-semibold">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                        {paginatedSchedules.map((item) => (
-                          <ScheduleRow 
-                            key={item?.id} 
-                            schedule={item} 
-                          />
-                        ))}
-                    
+                      {paginatedSchedules.map((item) => (
+                        <ScheduleRow 
+                          key={item?.id} 
+                          schedule={item} 
+                        />
+                      ))}
                     </tbody>
                 </>
                 ) : (
@@ -125,7 +100,6 @@ export default function ScheduleList({ categoryKeys }) {
         startIndex={startIndex}
         itemsPerPage={itemsPerPage}
         dataToDisplay={dataToDisplay}
-        hasSearched={hasSearched}
         data={scheduleData}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}

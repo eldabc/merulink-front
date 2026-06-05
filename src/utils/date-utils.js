@@ -96,13 +96,18 @@ export function generateMondays (year) {
 };
 
 // Retorna "08-01-2026"
-export function normalizeDateDDMMYYY (date) {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
+export function normalizeDateDDMMYYY(date) {
+  if (!date) return '';
+
+  // Cambio para que acepte string
+  const dateObj = typeof date === 'string' ? new Date(date + 'T00:00:00') : date;
+
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const year = dateObj.getFullYear();
 
   return `${day}-${month}-${year}`;
-};
+}
 
 // Devolver hora en formato AM/PM
 export function formatTimeTo12H(timeString) {

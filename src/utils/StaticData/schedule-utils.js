@@ -9,3 +9,10 @@ export const statusOptions = [
   { value: 'approved', label: "Aprobado" },
   { value: 'closed',   label: "Cerrado" },
 ];
+
+export const STATUS_SCHEDULES = {
+  created:   'Creado',
+  reviewed: 'Tentativo',
+  approved: 'Confirmado',
+  closed: 'Finalizado'
+};

@@ -5,6 +5,8 @@ import { useSchedules } from "../../context/ScheduleContext";
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { formatTimeTo12H } from '../../utils/date-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
+import { normalizeDateDDMMYYY } from '../../utils/date-utils';
+import { STATUS_SCHEDULES } from '../../utils/StaticData/schedule-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
@@ -17,9 +19,13 @@ export default function ScheduleRow({ schedule }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
-  const blockBtn = schedule?.hasSchedules ? true : false;
+  const blockBtn = schedule?.status !== 'created' ? true : false;
   const disabledClasses = getDisabledClasses(blockBtn);
-  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, turno tiene Horarios asociados' : 'Eliminar';
+  const statusText = STATUS_SCHEDULES[schedule?.status] || schedule?.status || '';
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar Horario con estado ' + statusText : 'Eliminar';
+
+  const start = normalizeDateDDMMYYY(schedule?.start);
+  const end = normalizeDateDDMMYYY(schedule?.end);
 
   const handleSelectedSchedule = (id) => {
     navigate(`/empleados/horarios/ver/${id}`); 
@@ -47,14 +53,9 @@ export default function ScheduleRow({ schedule }) {
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
       >
         <td className="px-4 py-3 text-white-700">{monthJson?.label}</td>
-        <td className="px-4 py-3 text-white-700">{`${schedule?.start} a ${schedule?.end}`}</td>
-        <td className="px-4 py-3 text-white-700">{formatTimeTo12H(schedule?.checkOutTime)}</td>
-        <td className="px-4 py-3 text-white-700">
-          {/* {`${schedule.activePeriodTime} ${minHourOptions.find(opt => opt.value === schedule.activePeriodUnitTime)?.label}`} */}
-        </td>
-        <td className="px-4 py-3 text-white-700">
-          {schedule?.available === 'yes' ? 'Sí' : 'No'}
-        </td>
+        <td className="px-4 py-3 text-white-700">{`${start} a ${end}`}</td>
+        <td className="px-4 py-3 text-white-700">{`${schedule?.observations ?? '' }`}</td>
+        <td className="px-4 py-3 text-white-700">{statusText}</td>
 
         <td className="px-4 py-3">
           <ButtonDelete 
@@ -74,8 +75,8 @@ export default function ScheduleRow({ schedule }) {
               setSelectedSchedule(null);
             }}
             onConfirm={handleConfirmDelete}
-            title="Eliminar Turno"
-            message={`¿Está seguro que desea eliminar Turno "${selectedSchedule?.description}"?`}
+            title="Eliminar Horario"
+            message={`¿Está seguro que desea eliminar Horario "${start} al ${end} "?`}
           />
         </td>
       </tr>
