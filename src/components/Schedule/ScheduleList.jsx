@@ -5,6 +5,7 @@ import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { normalizeText } from '../../utils/text-utils.js';
 import { filterData } from '../../utils/filter-utils.js';
+import { statusOptions } from '../../utils/StaticData/schedule-utils';
 
 import ScheduleRow from './ScheduleRow';
 import Pagination from '../Pagination';
@@ -34,19 +35,22 @@ export default function ScheduleList({ categoryKeys }) {
 
   const loadSchedulesCon = useCallback((currentFilters) => {
     if (currentFilters.department) {
-      // console.log("Filtros cambiados automáticamente:", currentFilters.department, currentFilters.month);
       loadSchedules(currentFilters.department, currentFilters?.month);
     } else {
       setScheduleData([]);
     }
-    
   }, [loadSchedules]);
 
-    // Datos para mostrar
+  // Datos para mostrar
   const dataToDisplay = scheduleData;
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSchedules = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+
+  const statusOptionsMap = statusOptions.reduce((acc, option) => {
+    acc[option.value] = option;
+    return acc;
+  }, {});
 
   return (
     <div className="main-data-cont table-container">
@@ -59,7 +63,7 @@ export default function ScheduleList({ categoryKeys }) {
 
       <ScheduleFilterList departments={departments} loading={globalLoading} onAccept={loadSchedulesCon} />
 
-      {(dataToDisplay.length === 0 ) && !loading ? (
+      {(dataToDisplay.length === 0) && !loading ? (
         <SpanText text={`No se encontraron horarios registrados.`} />
       ) : (
         <>
@@ -77,12 +81,21 @@ export default function ScheduleList({ categoryKeys }) {
                     </tr>
                     </thead>
                     <tbody>
-                      {paginatedSchedules.map((item) => (
-                        <ScheduleRow 
-                          key={item?.id} 
-                          schedule={item} 
-                        />
-                      ))}
+                      {paginatedSchedules.map((item) => {
+                        const statusInfo = statusOptionsMap[item?.status] || { 
+                          value: item?.status || '', 
+                          label: 'Sin estado', 
+                          color: '#ffffff' 
+                        };
+
+                        return (
+                          <ScheduleRow 
+                            key={item?.id} 
+                            schedule={item}
+                            statusInfo={statusInfo}
+                          />
+                        );
+                      })}
                     </tbody>
                 </>
                 ) : (

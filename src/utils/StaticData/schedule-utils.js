@@ -4,15 +4,15 @@ export const radioOptions = [
 ];
 
 export const statusOptions = [
-  { value: 'created',  label: "Creado" },, , 
-  { value: 'reviewed', label: "Revisado" },
-  { value: 'approved', label: "Aprobado" },
-  { value: 'closed',   label: "Cerrado" },
+  { value: 'created',  label: "Creado", color: 's-status-created' }, 
+  { value: 'reviewed', label: "Revisado", color: 's-status-reviewed' },
+  { value: 'approved', label: "Aprobado", color: 's-status-approved' },
+  { value: 'closed',   label: "Cerrado", color: 's-status-closed' },
 ];
 
-export const STATUS_SCHEDULES = {
-  created:   'Creado',
-  reviewed: 'Tentativo',
-  approved: 'Confirmado',
-  closed: 'Finalizado'
-};
+// export const STATUS_SCHEDULES = {
+//   created:   'Creado',
+//   reviewed: 'Tentativo',
+//   approved: 'Confirmado',
+//   closed: 'Finalizado'
+// };

@@ -6,13 +6,12 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import { formatTimeTo12H } from '../../utils/date-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 import { normalizeDateDDMMYYY } from '../../utils/date-utils';
-import { STATUS_SCHEDULES } from '../../utils/StaticData/schedule-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
 
-export default function ScheduleRow({ schedule }) {
+export default function ScheduleRow({ schedule, statusInfo }) {
 
   const navigate = useNavigate();
   const { deleteSchedule } = useSchedules();
@@ -21,8 +20,7 @@ export default function ScheduleRow({ schedule }) {
 
   const blockBtn = schedule?.status !== 'created' ? true : false;
   const disabledClasses = getDisabledClasses(blockBtn);
-  const statusText = STATUS_SCHEDULES[schedule?.status] || schedule?.status || '';
-  const deleteBtnTitle = blockBtn ? 'No se puede eliminar Horario con estado ' + statusText : 'Eliminar';
+  const deleteBtnTitle = blockBtn ? 'No se puede eliminar Horario con estado ' + statusInfo?.label : 'Eliminar';
 
   const start = normalizeDateDDMMYYY(schedule?.start);
   const end = normalizeDateDDMMYYY(schedule?.end);
@@ -55,7 +53,11 @@ export default function ScheduleRow({ schedule }) {
         <td className="px-4 py-3 text-white-700">{monthJson?.label}</td>
         <td className="px-4 py-3 text-white-700">{`${start} a ${end}`}</td>
         <td className="px-4 py-3 text-white-700">{`${schedule?.observations ?? '' }`}</td>
-        <td className="px-4 py-3 text-white-700">{statusText}</td>
+        <td className="px-4 py-3 text-white-700">
+          <div className={`${statusInfo?.color} w-20 text-center px-2 py-1 text-gray-50 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#363f4cd9] hover:scale-105 hover:shadow-sm`}>
+            {statusInfo?.label}
+          </div>
+        </td>
 
         <td className="px-4 py-3">
           <ButtonDelete 

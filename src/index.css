@@ -318,3 +318,16 @@ footer {
   color: white;
   font-weight: 700 !important;
 }
+
+.s-status-created {
+  background-color: #717070;
+}
+.s-status-reviewed {
+  background-color: #ffee6c;
+}
+.s-status-approved {
+  background-color: #19c93f;
+}
+.s-status-closed {
+  background-color: #9f0712;
+}
