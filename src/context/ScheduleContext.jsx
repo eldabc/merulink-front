@@ -46,13 +46,14 @@ export const ScheduleProvider = ({ children }) => {
     try {
       // 💡 Una sola petición limpia al backend unificado
       const responseData = await getEmployeesByDepartment(departmentId, start, end);
+      console.log("loadFormData", responseData);
       return responseData;
       // responseData ya contiene { shifts: [...], employees: {...}, isClosed: true/false }
-      return {
-        planning: responseData.planning,
-        shifts: responseData.shifts, 
-        employees: responseData.employees 
-      };
+      // return {
+      //   planning: responseData.planning,
+      //   shifts: responseData.shifts, 
+      //   employees: responseData.employees 
+      // };
 
     } catch (error) {
       console.error("Error cargando datos del formulario", error);
@@ -172,17 +173,17 @@ export const ScheduleProvider = ({ children }) => {
   // }, []);
 
   const getScheduleById = useCallback(async (schedulePlanningId) => {
-    // setLoading(true); 
+    setLoading(true); 
     try {
 
       const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings/${schedulePlanningId}`);
-      console.log("getScheduleById", response.data.data);
-      return response.data.data;
+      console.log("getScheduleById", response.data);
+      return response.data;
     
     } catch (error) {
       showNotification('Error al cargar el Horario por ID', error.message, 'error');
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   }, []);
   

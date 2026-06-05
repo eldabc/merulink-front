@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /**
  * Genera el array de fechas de una quincena específica con nombres de días,
  * color rojo para fines de semana y azul para el día de hoy.
@@ -91,3 +93,23 @@ export const getFortnightDays = (year, monthId, fortnight) => {
 
   return days;
 };
+
+
+/**
+ * Determina qué quincena corresponde según la fecha de inicio.
+ * @param {string|Date} startDate - Campo schedule.start
+ * @returns {{ number: number, label: string }}
+ */
+export function getFortnightInfo(startDate) {
+  if (!startDate) return { number: 0, label: 'Sin quincena' };
+
+  // Días del mes (1 - 31)
+  const day = dayjs(startDate).date(); 
+
+  const fortnightNumber = day <= 15 ? 1 : 2;
+
+  return {
+    number: fortnightNumber,
+    label: `${fortnightNumber}ª Quincena`
+  };
+}

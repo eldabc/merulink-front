@@ -7,6 +7,8 @@ import { formatTimeTo12H } from '../../utils/date-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 import { normalizeDateDDMMYYY } from '../../utils/date-utils';
 import { truncateText } from '../../utils/text-utils';
+import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
+
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
@@ -25,11 +27,15 @@ export default function ScheduleRow({ schedule, statusInfo }) {
 
   const start = normalizeDateDDMMYYY(schedule?.start);
   const end = normalizeDateDDMMYYY(schedule?.end);
+  const fortnight = getFortnightInfo(schedule?.start);
 
-  const handleSelectedSchedule = (id) => {
-    navigate(`/empleados/horarios/ver/${id}`); 
+  const handleSelectedSchedule = (id, departmentId, monthNumber, fortnight) => {
+    // console.log("Datos",id, monthNumber, fortnight);
+
+    navigate(`/empleados/horarios/ver/${id}`, { 
+      state: { departmentId, monthNumber, fortnight } 
+    }); 
   };
-
   const handleDeleteClick = (schedule) => {
     setSelectedSchedule(schedule);
     setIsModalOpen(true);
@@ -48,7 +54,7 @@ export default function ScheduleRow({ schedule, statusInfo }) {
   return (
     <Fragment key={schedule?.id}>
       <tr
-        onClick={() => handleSelectedSchedule(schedule.id)}
+        onClick={() => handleSelectedSchedule(schedule.id, 1, schedule.monthNumber,fortnight.number)}
         className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
       >
         <td className="px-4 py-3 text-white-700">{monthJson?.label}</td>

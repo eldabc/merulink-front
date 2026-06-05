@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
 import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { getStarEndFortnight, getFortnightDays } from '../../utils/Schedule/schedule-utils';
+import { getStarEndFortnight, getFortnightDays, getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ScheduleFilter from './ScheduleFilter';
@@ -27,7 +27,10 @@ import '../../Tables.css';
 export default function ScheduleForm({ }) {
 
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  const { monthNumber, fortnight } = location.state || {};
+
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading, getScheduleById } = useSchedules(); // getSchedule,
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
@@ -48,18 +51,23 @@ export default function ScheduleForm({ }) {
   const [formData, setFormData] = useState({});
   const scheduleGridRef = useRef(null);
 
-  // const schedule = scheduleData?.find(e => e.id === Number(id));
-  // console.log("scheduleData", id, scheduleData, schedule);
   const currentYear = new Date().getFullYear();
   const todayObj = new Date();
   const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`; 
 
   useEffect(() => {
     const getScheduleData = async () => {
-      console.log("AQUIII");
-      if(id) {
-        const schedule = await getScheduleById(id);
-        setFormData(schedule);
+
+      if(id && monthNumber && fortnight) {
+        console.log("Datos",id, monthNumber, fortnight);
+        console.log("fortnight = ", fortnight);
+
+        setValue('departmentId', 1);
+        setValue('monthId', monthNumber);
+        setValue('fortnight', String(fortnight));
+
+        // const days = getFortnightDays(currentYear, monthNumber, fortnight);
+        // setFortnightDays(days);
       }
     };
     getScheduleData();
