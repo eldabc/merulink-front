@@ -6,6 +6,7 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import { formatTimeTo12H } from '../../utils/date-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 import { normalizeDateDDMMYYY } from '../../utils/date-utils';
+import { truncateText } from '../../utils/text-utils';
 
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
@@ -52,7 +53,7 @@ export default function ScheduleRow({ schedule, statusInfo }) {
       >
         <td className="px-4 py-3 text-white-700">{monthJson?.label}</td>
         <td className="px-4 py-3 text-white-700">{`${start} a ${end}`}</td>
-        <td className="px-4 py-3 text-white-700">{`${schedule?.observations ?? '' }`}</td>
+        <td className="px-4 py-3 text-white-700">{`${truncateText(schedule?.observations ?? '', 30)}`}</td>
         <td className="px-4 py-3 text-white-700">
           <div className={`${statusInfo?.color} w-20 text-center px-2 py-1 text-gray-50 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#363f4cd9] hover:scale-105 hover:shadow-sm`}>
             {statusInfo?.label}

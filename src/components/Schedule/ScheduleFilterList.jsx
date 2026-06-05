@@ -7,15 +7,21 @@ function ScheduleFilterList({
   viewMode, 
   departments = [], 
   months = [], 
-  onAccept, // Esta será la función (loadSchedules) que se ejecutará automáticamente
+  onAccept,
   loading, 
   disabledClasses 
 }) {
 
-  // Fallback a todos los meses si no se pasan como prop
-  if (months?.length === 0) {
-    months = allMonths;
-  }
+  // Mes actual
+  const currentMonthIndex = new Date().getMonth();
+  
+  // Mes actual + siguiente
+  const availableMonths = [
+    allMonths[currentMonthIndex],
+    allMonths[(currentMonthIndex - 1 + 12) % 12]
+  ];
+
+  console.log("availableMonths", availableMonths)
 
   // 1. Estado local para controlar los tres filtros
   const [filters, setFilters] = useState({
@@ -79,7 +85,7 @@ function ScheduleFilterList({
             <option className="bg-[#3c4042]" value=""> 
               {loading ? "Cargando..." : "Seleccionar..."} 
             </option>
-            {months.map((item) => ( 
+            {availableMonths.map((item) => ( 
               <option key={item.id} value={item.value} className='bg-[#3c4042]'> 
                 {item.label} 
               </option>
