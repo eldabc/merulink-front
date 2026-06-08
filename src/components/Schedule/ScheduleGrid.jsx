@@ -205,7 +205,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
           const titleHtml = `<div class="tooltip-title">Eventos Destacados</div>`;
           
           const listHtml = eventsList
-            .map((e, index) => `<div class="tooltip-item">${index + 1}. ${truncateText(e.title ?? '', 25)}</div>`)
+            .map((e, index) => `<div class="tooltip-item">${index + 1}. ${truncateText(e?.title ?? '', 25)}</div>`)
             .join('');
 
           return `<div class="custom-grid-tooltip">${titleHtml}${listHtml}</div>`;
