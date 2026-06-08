@@ -3,6 +3,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useFormContext } from "react-hook-form";
 
+import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
 
@@ -204,7 +205,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
           const titleHtml = `<div class="tooltip-title">Eventos Destacados</div>`;
           
           const listHtml = eventsList
-            .map((e, index) => `<div class="tooltip-item">${index + 1}. ${e.title}</div>`)
+            .map((e, index) => `<div class="tooltip-item">${index + 1}. ${truncateText(e.title ?? '', 25)}</div>`)
             .join('');
 
           return `<div class="custom-grid-tooltip">${titleHtml}${listHtml}</div>`;
