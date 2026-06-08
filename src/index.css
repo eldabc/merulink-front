@@ -331,3 +331,49 @@ footer {
 .s-status-closed {
   background-color: #9f0712;
 }
+/* Contenedor Tooltip */
+.ag-theme-quartz .ag-tooltip {
+  background-color: #e0f2fe !important;
+  border: 1px solid #7dd3fc !important;
+  border-radius: 8px !important;
+  padding: 0px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* El interior de Tooltip */
+.custom-grid-tooltip-container {
+  padding: 10px 14px;
+  color: #ffffff;
+  background-color: #2f3d44;
+  border-radius: 10px;
+}
+
+.tooltip-title {
+  font-weight: bold !important;
+  border-bottom: 1px solid #bae6fd;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tooltip-item {
+  font-size: 12px;
+  padding: 2px 0;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Fuerza a que las celdas con estilos inyectados mantengan sus sombras internas en hover */
+.ag-theme-quartz .ag-cell[style*="box-shadow"] {
+  box-shadow: inset 0 0 0 3px #ef4444 !important;
+}
+
+/* Si tiene días libres con bordes rojos específicos del fin de semana de MeruLink */
+.ag-theme-quartz .ag-cell-hover[style*="box-shadow"] {
+  transition: box-shadow 0.1s ease-in-out;
+}

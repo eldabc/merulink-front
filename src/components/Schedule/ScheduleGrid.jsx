@@ -16,6 +16,18 @@ import ErrorMessage from '../Shared/ErrorMessage';
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
+// Componente personalizado para renderizar HTML en ToolTip
+const CustomTooltip = (params) => {
+  if (!params.value) return null;
+
+  return (
+    <div 
+      className="custom-grid-tooltip-container"
+      dangerouslySetInnerHTML={{ __html: params.value }} // Inyecta el HTML armado
+    />
+  );
+};
+
 const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
   
   const { register, formState: { errors } } = useFormContext();
@@ -158,36 +170,44 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
 
         // Estilos
         cellStyle: (params) => {
-          
           const baseStyle = { textAlign: 'center' };
           
-          // Extrae el objeto shift directo de la fila usando la fecha de la columna
-          const shiftObj = params.data.dates?.[day.date]?.shift;
+          const dayData = params.data.dates?.[day.date];
+          const shiftObj = dayData?.shift;
+          const eventsList = dayData?.events || [];
           const currentShiftId = shiftObj?.id;
 
-          // Si el objeto tiene un color definido por el backend, lo pinta de inmediato
-          if (shiftObj?.color) {
-            // Si es fin de semana y es un día libre (ID 'S-0'), fuerza el color de fin de semana
-            if (currentShiftId === 'S-0' && day.isWeekend) {
-              return {
-                ...baseStyle,
-                backgroundColor: '#f8d7da',
-                color: '#81262e'
-              };
-            }
+          // Si hay al menos un evento para colorear, pinta el borde
+          const hasHighlightedEvent = eventsList.length > 0;
 
+          if (hasHighlightedEvent) {
+            baseStyle.boxShadow = 'inset 0 0 0 2px #ef4444';
+          }
+
+          if (shiftObj?.color) {
+            if (currentShiftId === 'S-0' && day.isWeekend) {
+              return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
+            }
             if (currentShiftId === 'S-0') {              
               if (day.isToday) return { ...baseStyle, backgroundColor: '#3b82f6' };
               if (day.isWeekend) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
             }
-
-            return {
-              ...baseStyle,
-              backgroundColor: shiftObj.color
-            };
+            return { ...baseStyle, backgroundColor: shiftObj.color };
           }    
 
           return baseStyle;
+        },
+        tooltipValueGetter: (params) => {
+          const eventsList = params.data.dates?.[day.date]?.events || [];
+          if (!eventsList || eventsList.length === 0) return null;
+
+          const titleHtml = `<div class="tooltip-title">Eventos Destacados</div>`;
+          
+          const listHtml = eventsList
+            .map((e, index) => `<div class="tooltip-item">${index + 1}. ${e.title}</div>`)
+            .join('');
+
+          return `<div class="custom-grid-tooltip">${titleHtml}${listHtml}</div>`;
         },
         flex: 1,          
         minWidth: 35,      
@@ -221,6 +241,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
     filter: false,
     resizable: true,
     sortingOrder: ['asc', 'desc'],
+    tooltipComponent: CustomTooltip,
   }), []);
 
   const isDataPending = loading || shifts === undefined;
@@ -273,6 +294,8 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                     onCellClicked={handleCellClicked}
                     localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
                     onGridReady={onGridReady}
+                    tooltipShowDelay={0}
+                    enableHtmlTooltips={true}
                   />
                 </div>
               </div>
