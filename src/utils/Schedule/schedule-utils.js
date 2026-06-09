@@ -2,92 +2,54 @@ import dayjs from 'dayjs';
 
 /**
  * Genera el array de fechas de una quincena específica con nombres de días,
- * color rojo para fines de semana y azul para el día de hoy.
- * @param {number|string} year - Año actual (ej: 2026)
- * @param {number|string} monthId - ID del mes (1 = Enero, 12 = Diciembre)
- * @param {number|string} fortnight - Quincena elegida (1 o 2)
- * @returns {Array} Array de objetos de días listos para la cabecera
+ * @param {number|string} year
+ * @param {number|string} monthId
+ * @param {number|string} day
+ * @returns {string}
  */
-export const generateDates = (year, monthIndex, date) => {
-  
-  const dateObjStart = new Date(year, monthIndex, date);
-  
-  const yyyy = dateObjStart.getFullYear();
-  const mm = String(dateObjStart.getMonth() + 1).padStart(2, '0');
-  const dd = String(dateObjStart.getDate()).padStart(2, '0');
-  const formattedDate = `${yyyy}-${mm}-${dd}`;
-
-  return formattedDate;
-
+const formatDate = (year, monthId, day) => {
+  const normalizedMonth = String(monthId).padStart(2, '0');
+  const normalizedDay = String(day).padStart(2, '0');
+  return dayjs(`${year}-${normalizedMonth}-${normalizedDay}`).format('YYYY-MM-DD');
 };
+
+export const generateDates = formatDate;
 export const getStarEndFortnight = (year, monthId, fortnight) => {
-
-  const monthIndex = parseInt(monthId, 10) - 1;
   const intFortnight = parseInt(fortnight, 10);
+  const monthString = String(monthId).padStart(2, '0');
+  const firstOfMonth = dayjs(`${year}-${monthString}-01`);
 
-  // Obtener la fecha de HOY (YYYY-MM-DD) 
-  const todayObj = new Date();
-  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
-
-  let startDay = 1;
-  let endDay = 15;
-
-  if (intFortnight === 2) {
-    startDay = 16;
-    endDay = new Date(year, monthIndex + 1, 0).getDate();
-  }
-
-  const dateStart = generateDates(year, monthIndex, startDay);
-  const dateEnd = generateDates(year, monthIndex, endDay);
-  // console.log("dates", dateStart,dateEnd );
+  const startDay = intFortnight === 2 ? 16 : 1;
+  const endDay = intFortnight === 2 ? firstOfMonth.endOf('month').date() : 15;
 
   return [
-    dateStart, dateEnd
-  ]
-
+    formatDate(year, monthId, startDay),
+    formatDate(year, monthId, endDay),
+  ];
 };
 export const getFortnightDays = (year, monthId, fortnight) => {
-  
   const days = [];
-  const monthIndex = parseInt(monthId, 10) - 1;
   const intFortnight = parseInt(fortnight, 10);
+  const monthString = String(monthId).padStart(2, '0');
+  const startDay = intFortnight === 2 ? 16 : 1;
+  const endDay = intFortnight === 2
+    ? dayjs(`${year}-${monthString}-01`).endOf('month').date()
+    : 15;
 
   const dayNames = ['Dom.', 'Lun.', 'Mar.', 'Mié.', 'Jue.', 'Vie.', 'Sáb.'];
+  const today = dayjs();
 
-  // Obtener la fecha de HOY (YYYY-MM-DD) 
-  const todayObj = new Date();
-  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
-
-  let startDay = 1;
-  let endDay = 15;
-
-  if (intFortnight === 2) {
-    startDay = 16;
-    endDay = new Date(year, monthIndex + 1, 0).getDate();
-  }
-
-  for (let d = startDay; d <= endDay; d++) {
-    const dateObj = new Date(year, monthIndex, d);
-    
-    const dayOfWeekIndex = dateObj.getDay();
-    const dayName = dayNames[dayOfWeekIndex];
-
-    const yyyy = dateObj.getFullYear();
-    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const dd = String(dateObj.getDate()).padStart(2, '0');
-    const formattedDate = `${yyyy}-${mm}-${dd}`;
-
-    const isWeekend = dayOfWeekIndex === 0 || dayOfWeekIndex === 6;
-    
-    // Evalua si la cela es HOY
-    const isToday = formattedDate === todayFormatted;
+  for (let d = startDay; d <= endDay; d += 1) {
+    const dateObj = dayjs(`${year}-${monthString}-${String(d).padStart(2, '0')}`);
+    const dayOfWeekIndex = dateObj.day();
+    const formattedDate = dateObj.format('YYYY-MM-DD');
 
     days.push({
       date: formattedDate,
       dayNumber: d,
-      dayName: dayName,
-      isWeekend: isWeekend,
-      isToday: isToday,
+      dayName: dayNames[dayOfWeekIndex],
+      isWeekend: dayOfWeekIndex === 0 || dayOfWeekIndex === 6,
+      isToday: dateObj.isSame(today, 'day'),
     });
   }
 

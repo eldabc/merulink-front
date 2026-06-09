@@ -89,7 +89,7 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           />
           <div className="flex flex-col">
             <span className={`text-sm font-bold ${isClosed ? 'text-red-400' : 'text-gray-300'}`}>3. Cerrado</span>
-            <span className="text-xs text-gray-400">Congelar histórico</span>
+            <span className="text-xs text-gray-400">Congelar Cambios</span>
           </div>
         </label>
 

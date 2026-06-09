@@ -31,7 +31,7 @@ export default function ScheduleForm({ }) {
   const navigate = useNavigate();
   const { departmentId, monthNumber, fortnight } = location.state || {};
 
-  const { scheduleData, setScheduleData, createSchedule, updateSchedule, getCodeDataByDepartment, loading, loadFormData, setLoading, getScheduleById } = useSchedules(); // getSchedule,
+  const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -54,6 +54,14 @@ export default function ScheduleForm({ }) {
   const currentYear = new Date().getFullYear();
   const todayObj = new Date();
   const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`; 
+  // Mes actual
+  const currentMonthIndex = new Date().getMonth();
+  
+  // Mes actual + siguiente
+  const availableMonths = [
+    allMonths[currentMonthIndex],
+    allMonths[(currentMonthIndex + 1) % 12]
+  ];
 
   useEffect(() => {
     const getScheduleData = async () => {
@@ -67,15 +75,7 @@ export default function ScheduleForm({ }) {
     getScheduleData();
   }, []);
 
-  // Mes actual
-  const currentMonthIndex = new Date().getMonth();
   
-  // Mes actual + siguiente
-  const availableMonths = [
-    allMonths[currentMonthIndex],
-    allMonths[(currentMonthIndex + 1) % 12]
-  ];
-
   useEffect(() => {
     const loadData = async () => {
       if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
@@ -131,8 +131,6 @@ export default function ScheduleForm({ }) {
     
     if (!formData || Object.keys(formData).length === 0) return;
     const backendStatus = formData?.status;
-    
-    if (!formData || Object.keys(formData).length === 0) return;
 
     if (formData?.department?.id) {
       setValue('departmentId', formData.department.id);
@@ -212,7 +210,6 @@ export default function ScheduleForm({ }) {
     <FormProvider {...methods}>
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
-    {/* {( mode === 'view') && <HeadFormButtons url={`/empleados/turnos/editar/${schedule?.id}`} data={[]} /> } */}
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
