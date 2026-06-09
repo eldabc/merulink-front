@@ -48,24 +48,37 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
   const handleCellClicked = (params) => {
     if (!brushShift) return;
     
+    const dateFieldName = params.column.getColId();
     const currentShiftId = params.value;
 
     // Si es baja/vacaciones bloquea que la brocha pinte encima
     if (currentShiftId === 'S-1' || currentShiftId === 'S-2') return;
 
-    const dateFieldName = params.column.getColId();
     const updatedData = { ...params.data };
-
     // Extrae la fecha limpia quitando el prefijo 'date_'
     const rawDate = dateFieldName.replace('date_', '');
 
-    // Actualiza la estructura de la celda con el nuevo turno de la brocha
-    updatedData.dates[rawDate] = {
-      ...updatedData.dates[rawDate],
-      shift: { ...brushShift }
-    };
+    // DETECTAR SEGUNDO CLIC
+    if (currentShiftId === brushShift.id) {
+      // Resetear turno al objeto Día Libre ('S-0')
+      updatedData.dates[rawDate] = {
+        ...updatedData.dates[rawDate],
+        shift: {
+          id: 'S-0',
+          letterShift: 'L',
+          color: '#535759',
+          isSystemShift: true
+        }
+      };
+    } else {
+      // PRIMER CLIC
+      updatedData.dates[rawDate] = {
+        ...updatedData.dates[rawDate],
+        shift: { ...brushShift }
+      };
+    }
 
-    // Notificar a AG Grid el cambio de fila
+    // Notificar a AG Grid el cambio
     params.node.setData(updatedData);
 
     // Refrescar celda para recalcular estilos de color
