@@ -57,17 +57,11 @@ export default function ScheduleForm({ }) {
 
   useEffect(() => {
     const getScheduleData = async () => {
-      // console.log("departmentId", departmentId)
       if(id && monthNumber && fortnight) {
-        console.log("Datos",id, monthNumber, fortnight);
-        console.log("fortnight = ", fortnight);
 
         setValue('departmentId', departmentId);
         setValue('monthId', monthNumber);
         setValue('fortnight', String(fortnight));
-
-        // const days = getFortnightDays(currentYear, monthNumber, fortnight);
-        // setFortnightDays(days);
       }
     };
     getScheduleData();
@@ -134,6 +128,10 @@ export default function ScheduleForm({ }) {
 
 
   useEffect(() => {
+    
+    if (!formData || Object.keys(formData).length === 0) return;
+    const backendStatus = formData?.status;
+    
     if (!formData || Object.keys(formData).length === 0) return;
 
     if (formData?.department?.id) {
@@ -148,7 +146,11 @@ export default function ScheduleForm({ }) {
       setValue('fortnight', formData.fortnight);
     }
 
-    setValue('status', formData?.status ?? '');
+    // Efecto cascada
+    setValue('is_reviewed',  ['reviewed', 'approved', 'closed'].includes(backendStatus) ?? '');
+    setValue('is_approved', ['approved', 'closed'].includes(backendStatus) ?? '');
+    setValue('is_closed', ['closed'].includes(backendStatus) ?? '');
+
     setValue('observations', formData?.observations ?? '');
   }, [formData, setValue]);
 

@@ -13,6 +13,7 @@ import ScheduleLegend from './ScheduleLegend';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
+import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
 
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -180,7 +181,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
         // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
         valueFormatter: (params) => {
           const shiftObj = params.data.dates?.[day.date]?.shift;
-          return shiftObj?.letterShift || shiftObj?.letterShift || 'L';
+          return shiftObj?.letterShift || 'L'; //|| shiftObj?.letterShift 
         },
 
         // Estilos
@@ -271,7 +272,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
             <>
               <div className="div-border w-full flex flex-col md:flex-row gap-4 items-center justify-between p-4 rounded-lg">
                 <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
-                {scheduleSaved && (
+                {/* {scheduleSaved && (
                   <div>
                     <LabelFieldForm field="Estado" dinamicClasses="mb-3"/>
                     <SelectGeneric 
@@ -281,7 +282,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                       dataSelect={statusOptions}
                     />
                 </div>
-                )}
+                )} */}
               </div>
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
                 {isClosed && (
@@ -310,11 +311,15 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                     localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
                     onGridReady={onGridReady}
                     tooltipShowDelay={0}
-                    enableHtmlTooltips={true}
+                    // enableHtmlTooltips={true}
                   />
                 </div>
               </div>
               
+
+              {scheduleSaved && (
+                <ScheduleWorkflowSteps />
+              )};
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
                 

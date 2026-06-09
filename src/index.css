@@ -323,13 +323,13 @@ footer {
   background-color: #717070;
 }
 .s-status-reviewed {
-  background-color: #ffe100;
+  background-color: #ffb900;
 }
 .s-status-approved {
-  background-color: #19c93f;
+  background-color: #00c950;
 }
 .s-status-closed {
-  background-color: #9f0712;
+  background-color: #fb2c36;
 }
 /* Contenedor Tooltip */
 .ag-theme-quartz .ag-tooltip {
