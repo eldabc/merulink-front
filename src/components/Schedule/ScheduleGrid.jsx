@@ -61,6 +61,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
 
     // Actualiza la estructura de la celda con el nuevo turno de la brocha
     updatedData.dates[rawDate] = {
+      ...updatedData.dates[rawDate],
       shift: { ...brushShift }
     };
 
@@ -217,11 +218,11 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
         suppressMovable: true,
         
         // Bloquea edición si es baja/vacaciones
-        editable: (params) => params.value !== 'S-1' || params.value !== 'S-2',
+        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2',
 
         // Clases utilitarias de AG Grid según el tipo de celda
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100 pointer-events-none': (params) => params.value === 'S-1' || params.value === 'S-2' ,
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' , // pointer-events-none
         },
         
         cellClass: '!font-bold',
