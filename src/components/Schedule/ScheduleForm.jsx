@@ -155,27 +155,36 @@ export default function ScheduleForm({ }) {
   }, [formData, setValue]);
 
   const onSubmit = async (data) => {
-    console.log("Procesando Submit en Modo:", mode);
+    // console.log("Data:", data);
     
-    // Bloqueo de seguridad por si acaso el botón quedó activo
+    // Bloqueo de seguridad
     if (mode === 'view') {
       console.warn("No puedes guardar una quincena en modo vista.");
       return;
     }
 
-    const gridPayload = scheduleGridRef.current 
-      ? scheduleGridRef.current.collectGridPayload() 
-      : { shifts: [], schedules: [] };
+    const gridPayload = scheduleGridRef.current ? scheduleGridRef.current.collectGridPayload() : { shifts: [], schedules: [] };
+
+    let finalStatus = 'created'; // Estado por defecto
+
+    if (data.is_closed) {
+      finalStatus = 'closed';
+    } else if (data.is_approved) {
+      finalStatus = 'approved';
+    } else if (data.is_reviewed) {
+      finalStatus = 'reviewed';
+    }
 
     const payload = {
       ...data,
-      id: formData?.id, // ID del schedule_planning si existe
+      id: formData?.id,
       start: startEndFortnight.start,
       end: startEndFortnight.end,
       monthNumber: selectedMonthId,
       selectedFortnight,
       shifts: gridPayload.shifts,
       schedules: gridPayload.schedules,
+      status: finalStatus
     };
 
     let success = false;

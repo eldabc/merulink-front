@@ -44,16 +44,10 @@ export const ScheduleProvider = ({ children }) => {
   const loadFormData = async (departmentId, start, end) => {
     setLoading(true);
     try {
-      // 💡 Una sola petición limpia al backend unificado
+
       const responseData = await getEmployeesByDepartment(departmentId, start, end);
-      console.log("loadFormData", responseData);
-      return responseData;
-      // responseData ya contiene { shifts: [...], employees: {...}, isClosed: true/false }
-      // return {
-      //   planning: responseData.planning,
-      //   shifts: responseData.shifts, 
-      //   employees: responseData.employees 
-      // };
+      // console.log("loadFormData", responseData);
+      return responseData;;
 
     } catch (error) {
       console.error("Error cargando datos del formulario", error);

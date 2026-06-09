@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import ErrorMessage from '../Shared/ErrorMessage'; // Tu componente de error existente
 
@@ -10,19 +10,27 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
   const isApproved = watch('is_approved', false);
   const isClosed = watch('is_closed', false);
 
-  // EFECTO CASCADA: Si se desmarca un paso previo, limpiamos los siguientes automáticamente
-  useEffect(() => {
-    if (!isReviewed) {
-      setValue('is_approved', false);
-      setValue('is_closed', false);
-    }
-  }, [isReviewed, setValue]);
+  const isInitialized = useRef(false);
 
   useEffect(() => {
-    if (!isApproved) {
+    isInitialized.current = true;
+  }, []);
+
+  // EFECTO CASCADA: Si se desmarca un paso previo, limpiamos los siguientes automáticamente
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    if (!isReviewed) {
+      if (isApproved) setValue('is_approved', false);
+      if (isClosed) setValue('is_closed', false);
+    }
+  }, [isReviewed, isApproved, isClosed, setValue]);
+
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    if (!isApproved && isClosed) {
       setValue('is_closed', false);
     }
-  }, [isApproved, setValue]);
+  }, [isApproved, isClosed, setValue]);
 
   return (
     <div className="flex flex-col gap-3 w-full p-5 mx-auto bg-[#2f3235] rounded-xl border border-[#43474a] shadow-md">

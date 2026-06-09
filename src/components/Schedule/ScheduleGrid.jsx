@@ -272,22 +272,13 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
             <>
               <div className="div-border w-full flex flex-col md:flex-row gap-4 items-center justify-between p-4 rounded-lg">
                 <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
-                {/* {scheduleSaved && (
-                  <div>
-                    <LabelFieldForm field="Estado" dinamicClasses="mb-3"/>
-                    <SelectGeneric 
-                      name="status"
-                      disabled={viewMode} 
-                      dynamicClasses={`${disabledClasses}`} 
-                      dataSelect={statusOptions}
-                    />
-                </div>
-                )} */}
               </div>
+
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
+                
                 {isClosed && (
-                  <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473]">
-                    <div className="bg-[#2f3d44] px-6 py-3 rounded-xl shadow-2xl border border-[#9fd8ff] flex items-center gap-3">
+                  <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
+                    <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
                       Quincena cerrada
                     </div>
                   </div>
@@ -314,12 +305,9 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                     // enableHtmlTooltips={true}
                   />
                 </div>
+                
               </div>
-              
-
-              {scheduleSaved && (
-                <ScheduleWorkflowSteps />
-              )};
+              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
                 
