@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
@@ -51,17 +52,22 @@ export default function ScheduleForm({ }) {
   const [formData, setFormData] = useState({});
   const scheduleGridRef = useRef(null);
 
-  const currentYear = new Date().getFullYear();
-  const todayObj = new Date();
-  const todayFormatted = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`; 
-  // Mes actual
-  const currentMonthIndex = new Date().getMonth();
-  
+  const now = dayjs();
+  const currentYear = now.year();
+  // const todayFormatted = now.format('YYYY-MM-DD');
+
+  // Añadir año correspondiente a los meses
+  const mapToMonthWithYear = (d) => {
+    const idx = d.month(); // 0-11
+    return { ...allMonths[idx], currentYear: d.year() };
+  };
+
   // Mes actual + siguiente
   const availableMonths = [
-    allMonths[currentMonthIndex],
-    allMonths[(currentMonthIndex + 1) % 12]
+    mapToMonthWithYear(now),
+    mapToMonthWithYear(now.add(1, 'month'))
   ];
+  // console.log('availableMonths', availableMonths);
 
   useEffect(() => {
     const getScheduleData = async () => {
@@ -79,10 +85,13 @@ export default function ScheduleForm({ }) {
   useEffect(() => {
     const loadData = async () => {
       if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
+        console.log("selectedMonthId", selectedMonthId)
         setLoading(true);
         try {
+          // Determinar el año correcto para el mes seleccionado (tomado de availableMonths)
+          const monthYear = availableMonths.find(m => Number(m.value) === Number(selectedMonthId))?.currentYear ?? currentYear;
           // Calcula los días que comprende la quincena elegida
-          const days = getFortnightDays(currentYear, selectedMonthId, selectedFortnight);
+          const days = getFortnightDays(monthYear, Number(selectedMonthId), selectedFortnight);
           setFortnightDays(days);
 
           const startDate = days[0]?.date;

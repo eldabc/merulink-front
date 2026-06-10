@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+
 import { radioOptions } from '../../utils/StaticData/schedule-utils';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import { allMonths } from '../../utils/StaticData/months-utils';
@@ -15,13 +17,21 @@ function ScheduleFilterList({
 }) {
 
   // Mes actual
-  const currentMonthIndex = new Date().getMonth();
+  const now = dayjs();
+    const currentYear = now.year();
+    const todayFormatted = now.format('YYYY-MM-DD');
   
-  // Mes actual + siguiente
-  const availableMonths = [
-    allMonths[currentMonthIndex],
-    allMonths[(currentMonthIndex - 1 + 12) % 12]
-  ];
+    // Añadir año correspondiente a los meses
+    const mapToMonthWithYear = (d) => {
+      const idx = d.month(); // 0-11
+      return { ...allMonths[idx], currentYear: d.year() };
+    };
+  
+    // Mes actual + anterior
+    const availableMonths = [
+      mapToMonthWithYear(now),
+      mapToMonthWithYear(now.subtract(1, 'month'))
+    ];
 
   // Manejador de cambios para actualizar el estado
   const handleChange = (e) => {
@@ -32,11 +42,12 @@ function ScheduleFilterList({
     }));
   };
 
-  // Escucha cuando 'filters' cambie y ejecuta automáticamente la búsqueda
+  // Escucha cuando 'filters' cambia y ejecuta automáticamente la búsqueda
   useEffect(() => {
-    if (onLoadSchedules) {
-      onLoadSchedules(filters); // Envía los valores frescos directamente a función contenedora (loadSchedules)
-    }
+    if (!onLoadSchedules) return;
+
+    const monthFound = filters?.month ? availableMonths.find(mes => Number(mes.value) === Number(filters.month)) : null;
+    onLoadSchedules({ ...filters, currentYear: monthFound?.currentYear });
   }, [filters, onLoadSchedules]);
 
   return (

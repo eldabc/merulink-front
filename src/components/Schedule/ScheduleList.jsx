@@ -39,7 +39,8 @@ export default function ScheduleList({ categoryKeys }) {
 
   const loadSchedulesData = useCallback((currentFilters) => {
     if (currentFilters.department) {
-      loadSchedules(currentFilters.department, currentFilters?.month);
+      const currentYear = currentFilters?.currentYear ? currentFilters?.currentYear : new Date().getFullYear();
+      loadSchedules(currentFilters.department, currentFilters?.month, currentFilters?.currentYear);
     } else {
       setScheduleData([]);
     }
