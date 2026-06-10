@@ -71,7 +71,7 @@ export default function ScheduleForm({ }) {
 
   useEffect(() => {
     const getScheduleData = async () => {
-      if(id && monthNumber && fortnight) {
+      if(departmentId && monthNumber && fortnight) {
 
         setValue('departmentId', departmentId);
         setValue('monthId', monthNumber);

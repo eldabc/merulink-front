@@ -46,8 +46,11 @@ function ScheduleFilterList({
   useEffect(() => {
     if (!onLoadSchedules) return;
 
-    const monthFound = filters?.month ? availableMonths.find(mes => Number(mes.value) === Number(filters.month)) : null;
-    onLoadSchedules({ ...filters, currentYear: monthFound?.currentYear });
+    const monthFound = availableMonths.find(mes => Number(mes.value) === Number(filters?.month));
+    onLoadSchedules({ 
+      ...filters, 
+      currentYear: monthFound?.currentYear ?? new Date().getFullYear() 
+    });
   }, [filters, onLoadSchedules]);
 
   return (

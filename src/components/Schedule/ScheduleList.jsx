@@ -11,7 +11,6 @@ import ScheduleRow from './ScheduleRow';
 import Pagination from '../Pagination';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
-import FilterByFields from '../Filters/FilterByFields';
 import SpanText from '../Shared/SpanText';
 import RowTableLoading from '../Shared/RowTableLoading';
 import ScheduleFilterList from './ScheduleFilterList';
@@ -39,7 +38,6 @@ export default function ScheduleList({ categoryKeys }) {
 
   const loadSchedulesData = useCallback((currentFilters) => {
     if (currentFilters.department) {
-      const currentYear = currentFilters?.currentYear ? currentFilters?.currentYear : new Date().getFullYear();
       loadSchedules(currentFilters.department, currentFilters?.month, currentFilters?.currentYear);
     } else {
       setScheduleData([]);
