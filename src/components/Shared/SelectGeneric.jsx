@@ -5,10 +5,8 @@ import ErrorMessage from './ErrorMessage';
 
 function SelectGeneric({ 
   name,
-  // register, 
   disabled, 
   dynamicClasses, 
-  // errors, 
   dataSelect,
   placeholder = "Seleccionar..." 
 }) {
@@ -23,8 +21,8 @@ function SelectGeneric({
         className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${dynamicClasses}`}
       >
         <OptionSelect text={placeholder} />
-        {dataSelect.map((item, index) => (
-          <OptionSelect key={`${name}-${index}`} value={item.value} text={item.label} />
+        {dataSelect?.map((item, index) => (
+          <OptionSelect key={`${name}-${index}`} value={item?.value} text={item?.label} />
         ))}
       </select>
       

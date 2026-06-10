@@ -14,7 +14,7 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
 
-export default function ScheduleRow({ schedule, statusInfo, departmentId }) {
+export default function ScheduleRow({ schedule, statusInfo, departmentId, monthSelectedJson }) {
 
   const navigate = useNavigate();
   const { deleteSchedule } = useSchedules();
@@ -33,7 +33,7 @@ export default function ScheduleRow({ schedule, statusInfo, departmentId }) {
     // console.log("Datos",id, monthNumber, fortnight);
 
     navigate(`/empleados/horarios/ver/${id}`, { 
-      state: { departmentId, monthNumber, fortnight } 
+      state: { departmentId, monthNumber, fortnight, monthSelectedJson } 
     }); 
   };
   const handleDeleteClick = (schedule) => {

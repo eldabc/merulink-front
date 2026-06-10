@@ -13,15 +13,7 @@ import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ScheduleFilter from './ScheduleFilter';
 import TitleHeader from '../Shared/TitleHeader';
-import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
-import RowTableResults from '../Shared/RowTableResults';
-import SpanText from '../Shared/SpanText';
-import InputGeneric from '../Shared/InputGeneric';
-import OptionSelect from '../Shared/OptionSelect';
-import ToggleGeneric from '../Shared/ToggleGeneric';
-import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
-import ShiftLegend from '../Shift/ShiftLegend';
 import ScheduleGrid from './ScheduleGrid';
 import '../../Tables.css';
 
@@ -30,7 +22,7 @@ export default function ScheduleForm({ }) {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { departmentId, monthNumber, fortnight } = location.state || {};
+  const { departmentId, monthNumber, fortnight, monthSelectedJson } = location.state || {};
 
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
@@ -54,7 +46,6 @@ export default function ScheduleForm({ }) {
 
   const now = dayjs();
   const currentYear = now.year();
-  // const todayFormatted = now.format('YYYY-MM-DD');
 
   // Añadir año correspondiente a los meses
   const mapToMonthWithYear = (d) => {
@@ -63,14 +54,20 @@ export default function ScheduleForm({ }) {
   };
 
   // Mes actual + siguiente
-  const availableMonths = [
+  let availableMonths = [
     mapToMonthWithYear(now),
     mapToMonthWithYear(now.add(1, 'month'))
   ];
-  // console.log('availableMonths', availableMonths);
+
+  const existsMonth = availableMonths?.some(m => m.value === monthSelectedJson?.value);
+
+  if (!existsMonth && monthSelectedJson?.value) {
+    availableMonths = [monthSelectedJson, ...availableMonths]; // añadir mes soliticado desde listado
+  } 
 
   useEffect(() => {
     const getScheduleData = async () => {
+
       if(departmentId && monthNumber && fortnight) {
 
         setValue('departmentId', departmentId);
@@ -89,7 +86,7 @@ export default function ScheduleForm({ }) {
         setLoading(true);
         try {
           // Determinar el año correcto para el mes seleccionado (tomado de availableMonths)
-          const monthYear = availableMonths.find(m => Number(m.value) === Number(selectedMonthId))?.currentYear ?? currentYear;
+          const monthYear = availableMonths?.find(m => Number(m.value) === Number(selectedMonthId))?.currentYear ?? currentYear;
           // Calcula los días que comprende la quincena elegida
           const days = getFortnightDays(monthYear, Number(selectedMonthId), selectedFortnight);
           setFortnightDays(days);
@@ -213,7 +210,7 @@ export default function ScheduleForm({ }) {
   };
   
   const disabledClasses = getDisabledClasses(mode === 'view');
-  // console.log("formData?.status", formData?.status)
+  // console.log("formData?.status", availableMonths)
 
   return (
     <FormProvider {...methods}>
@@ -225,7 +222,7 @@ export default function ScheduleForm({ }) {
             <div className='w-full mt-6'>
               <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
-               <ScheduleFilter departments={departments} months={availableMonths} globalLoading={globalLoading} /> {/* disabledClasses={disabledClasses} */}
+               <ScheduleFilter departments={departments} months={availableMonths} globalLoading={globalLoading} />
               
               <div className="div-border mt-2">
                 {Object.keys(formData ?? {}).length > 0 && ( //selectedDepartmentId && selectedMonthId && selectedFortnight

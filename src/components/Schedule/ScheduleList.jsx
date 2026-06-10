@@ -23,6 +23,7 @@ export default function ScheduleList({ categoryKeys }) {
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
   const [currentPage, setCurrentPage] = useState(1);
+  const [monthSelectedJson, setMonthSelectedJson] = useState(1);
   const [filters, setFilters] = useState({
     department: '',
     month: '',
@@ -37,10 +38,19 @@ export default function ScheduleList({ categoryKeys }) {
   }, []);
 
   const loadSchedulesData = useCallback((currentFilters) => {
+    // console.log("monthSelectedJson",currentFilters.monthSelectedJson);
     if (currentFilters.department) {
-      loadSchedules(currentFilters.department, currentFilters?.month, currentFilters?.currentYear);
+      
+      setMonthSelectedJson(currentFilters?.monthSelectedJson);
+      loadSchedules(
+        currentFilters.department, 
+        currentFilters?.month ?? '', 
+        currentFilters?.monthSelectedJson?.currentYear ?? new Date().getFullYear()
+      );
+
     } else {
       setScheduleData([]);
+      setMonthSelectedJson([]);
     }
   }, [loadSchedules]);
 
@@ -97,6 +107,7 @@ export default function ScheduleList({ categoryKeys }) {
                             schedule={item}
                             statusInfo={statusInfo}
                             departmentId={filters.department}
+                            monthSelectedJson={monthSelectedJson}
                           />
                         );
                       })}
