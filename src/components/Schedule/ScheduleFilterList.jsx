@@ -92,7 +92,7 @@ function ScheduleFilterList({
               {loading ? "Cargando..." : "Seleccionar..."} 
             </option>
             {availableMonths.map((item) => ( 
-              <option key={item.id} value={item.value} className='bg-[#3c4042]'> 
+              <option key={`${item.value}-${item.currentYear}`} value={item.value} className='bg-[#3c4042]'> 
                 {item.label} 
               </option>
             ))}

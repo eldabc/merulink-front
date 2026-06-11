@@ -77,50 +77,44 @@ export default function ScheduleList({ categoryKeys }) {
       <ScheduleFilterList departments={departments} loading={globalLoading} onLoadSchedules={loadSchedulesData} filters={filters} setFilters={setFilters} />
 
       {(dataToDisplay.length === 0) && !loading ? (
-        <SpanText text={`No se encontraron horarios registrados.`} />
+        <SpanText text={`No se encontraron horarios registrados.`} dinamicClasses="inline-block mt-5" />
       ) : (
-        <>
         <div className="rounded-lg shadow">
-            <table className="min-w-full border-collapse text-sm sm:text-base">
-            {!loading ? (
-                <>
-                <thead>
-                    <tr className="tr-thead-table">
-                      <th className="px-4 py-3 text-left font-semibold">Mes</th>
-                      <th className="px-4 py-3 text-left font-semibold">Quincena</th>
-                      <th className="px-4 py-3 text-left font-semibold">Observación</th>
-                      <th className="px-4 py-3 text-left font-semibold">Estado</th>
-                      <th className="px-4 py-3 text-left font-semibold">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                      {paginatedSchedules.map((item) => {
-                        const statusInfo = statusOptionsMap[item?.status] || { 
-                          value: item?.status || '', 
-                          label: 'Sin estado', 
-                          color: '#ffffff' 
-                        };
+          <table className="min-w-full border-collapse text-sm sm:text-base">
+            <thead>
+              <tr className="tr-thead-table">
+                <th className="px-4 py-3 text-left font-semibold">Mes</th>
+                <th className="px-4 py-3 text-left font-semibold">Quincena</th>
+                <th className="px-4 py-3 text-left font-semibold">Observación</th>
+                <th className="px-4 py-3 text-left font-semibold">Estado</th>
+                <th className="px-4 py-3 text-left font-semibold">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!loading ? (
+                paginatedSchedules.map((item) => {
+                  const statusInfo = statusOptionsMap[item?.status] || { 
+                    value: item?.status || '', 
+                    label: 'Sin estado', 
+                    color: '#ffffff' 
+                  };
 
-                        return (
-                          <ScheduleRow 
-                            key={item?.id} 
-                            schedule={item}
-                            statusInfo={statusInfo}
-                            departmentId={filters.department}
-                            monthSelectedJson={monthSelectedJson}
-                          />
-                        );
-                      })}
-                    </tbody>
-                </>
-                ) : (
-                <tbody>
-                    <RowTableLoading colSpan={6} />
-                </tbody>
-                )}
-            </table>
+                  return (
+                    <ScheduleRow 
+                      key={item?.id} 
+                      schedule={item}
+                      statusInfo={statusInfo}
+                      departmentId={filters.department}
+                      monthSelectedJson={monthSelectedJson}
+                    />
+                  );
+                })
+              ) : (
+                <RowTableLoading colSpan={6} />
+              )}
+            </tbody>
+          </table>
         </div>
-        </>
       )}
 
       <Pagination
