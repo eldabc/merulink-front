@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
 
@@ -14,6 +15,7 @@ import ButtonNavigate from '../Shared/ButtonNavigate';
 import SpanText from '../Shared/SpanText';
 import RowTableLoading from '../Shared/RowTableLoading';
 import ScheduleFilterList from './ScheduleFilterList';
+import { allMonths } from '../../utils/StaticData/months-utils';
 
 import '../../Tables.css';
 
@@ -31,6 +33,23 @@ export default function ScheduleList({ categoryKeys }) {
 
   const itemsPerPage = 10;
 
+  // Mes actual
+  const now = dayjs();
+  const currentYear = now.year();
+  const todayFormatted = now.format('YYYY-MM-DD');
+
+  // Añadir año correspondiente a los meses
+  const mapToMonthWithYear = (d) => {
+    const idx = d.month(); // 0-11
+    return { ...allMonths[idx], currentYear: d.year() };
+  };
+
+  // Mes actual + anterior
+  const availableMonths = [
+    mapToMonthWithYear(now),
+    mapToMonthWithYear(now.subtract(1, 'month'))
+  ];
+
   useEffect(() => {  
     if (departments.length === 0) {
       loadDepartments();
@@ -38,10 +57,9 @@ export default function ScheduleList({ categoryKeys }) {
   }, []);
 
   const loadSchedulesData = useCallback((currentFilters) => {
-    // console.log("monthSelectedJson",currentFilters.monthSelectedJson);
+    console.log("filters",currentFilters);
     if (currentFilters.department) {
-      
-      setMonthSelectedJson(currentFilters?.monthSelectedJson);
+     
       loadSchedules(
         currentFilters.department, 
         currentFilters?.month ?? '', 
@@ -50,7 +68,6 @@ export default function ScheduleList({ categoryKeys }) {
 
     } else {
       setScheduleData([]);
-      setMonthSelectedJson([]);
     }
   }, [loadSchedules]);
 
@@ -74,7 +91,14 @@ export default function ScheduleList({ categoryKeys }) {
         </div>
       </div>
 
-      <ScheduleFilterList departments={departments} loading={globalLoading} onLoadSchedules={loadSchedulesData} filters={filters} setFilters={setFilters} />
+      <ScheduleFilterList 
+        departments={departments} 
+        loading={globalLoading} 
+        onLoadSchedules={loadSchedulesData} 
+        filters={filters} 
+        setFilters={setFilters} 
+        availableMonths={availableMonths}
+      />
 
       {(dataToDisplay.length === 0) && !loading ? (
         <SpanText text={`No se encontraron horarios registrados.`} dinamicClasses="inline-block mt-5" />
@@ -106,6 +130,7 @@ export default function ScheduleList({ categoryKeys }) {
                       statusInfo={statusInfo}
                       departmentId={filters.department}
                       monthSelectedJson={monthSelectedJson}
+                      availableMonths={availableMonths}
                     />
                   );
                 })

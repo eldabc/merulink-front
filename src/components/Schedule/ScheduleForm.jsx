@@ -151,9 +151,9 @@ export default function ScheduleForm({ }) {
     }
 
     // Efecto cascada
-    setValue('is_reviewed',  ['reviewed', 'approved', 'closed'].includes(backendStatus) ?? '');
-    setValue('is_approved', ['approved', 'closed'].includes(backendStatus) ?? '');
-    setValue('is_closed', ['closed'].includes(backendStatus) ?? '');
+    setValue('isReviewed',  ['reviewed', 'approved', 'closed'].includes(backendStatus) ?? '');
+    setValue('isApproved', ['approved', 'closed'].includes(backendStatus) ?? '');
+    setValue('isClosed', ['closed'].includes(backendStatus) ?? '');
 
     setValue('observations', formData?.observations ?? '');
   }, [formData, setValue]);
@@ -171,11 +171,11 @@ export default function ScheduleForm({ }) {
 
     let finalStatus = 'created'; // Estado por defecto
 
-    if (data.is_closed) {
+    if (data.isClosed) {
       finalStatus = 'closed';
-    } else if (data.is_approved) {
+    } else if (data.isApproved) {
       finalStatus = 'approved';
-    } else if (data.is_reviewed) {
+    } else if (data.isReviewed) {
       finalStatus = 'reviewed';
     }
 

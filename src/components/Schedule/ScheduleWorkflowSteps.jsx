@@ -6,9 +6,9 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
 
   // Escuchamos los cambios de los tres estados en tiempo real
-  const isReviewed = watch('is_reviewed', false);
-  const isApproved = watch('is_approved', false);
-  const isClosed = watch('is_closed', false);
+  const isReviewed = watch('isReviewed', false);
+  const isApproved = watch('isApproved', false);
+  const isClosed = watch('isClosed', false);
 
   const isInitialized = useRef(false);
 
@@ -20,15 +20,15 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
   useEffect(() => {
     if (!isInitialized.current) return;
     if (!isReviewed) {
-      if (isApproved) setValue('is_approved', false);
-      if (isClosed) setValue('is_closed', false);
+      if (isApproved) setValue('isApproved', false);
+      if (isClosed) setValue('isClosed', false);
     }
   }, [isReviewed, isApproved, isClosed, setValue]);
 
   useEffect(() => {
     if (!isInitialized.current) return;
     if (!isApproved && isClosed) {
-      setValue('is_closed', false);
+      setValue('isClosed', false);
     }
   }, [isApproved, isClosed, setValue]);
 
@@ -48,7 +48,7 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           <input
             type="checkbox"
             disabled={viewMode}
-            {...register('is_reviewed')}
+            {...register('isReviewed')}
             className="w-4 h-4 rounded text-[#ffb900] focus:ring-[#ffb900] bg-[#3a3d40] border-[#555a5e]"
           />
           <div className="flex flex-col">
@@ -66,7 +66,7 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           <input
             type="checkbox"
             disabled={!isReviewed || viewMode} // Deshabilitado si no está revisado
-            {...register('is_approved')}
+            {...register('isApproved')}
             className="w-4 h-4 rounded text-green-500 focus:ring-green-500 bg-[#3a3d40] border-[#555a5e] disabled:opacity-30"
           />
           <div className="flex flex-col">
@@ -84,7 +84,7 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           <input
             type="checkbox"
             disabled={!isApproved || viewMode} // Deshabilitado si no está aprobado
-            {...register('is_closed')}
+            {...register('isClosed')}
             className="w-4 h-4 rounded text-red-500 focus:ring-red-500 bg-[#3a3d40] border-[#555a5e] disabled:opacity-30"
           />
           <div className="flex flex-col">
@@ -96,9 +96,9 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
       </div>
 
       {/* Renderizado de errores de validación de Yup */}
-      {(errors.is_reviewed || errors.is_approved || errors.is_closed) && (
+      {(errors.isReviewed || errors.isApproved || errors.isClosed) && (
         <div className="mt-1 text-xs text-red-400 font-semibold bg-red-500/10 p-2 rounded-md border border-red-500/20">
-          {errors.is_reviewed?.message || errors.is_approved?.message || errors.is_closed?.message}
+          {errors.isReviewed?.message || errors.isApproved?.message || errors.isClosed?.message}
         </div>
       )}
     </div>

@@ -302,12 +302,13 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                     localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
                     onGridReady={onGridReady}
                     tooltipShowDelay={0}
-                    // enableHtmlTooltips={true}
                   />
                 </div>
                 
               </div>
+              
               {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
+
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
                 
