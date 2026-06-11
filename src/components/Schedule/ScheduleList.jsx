@@ -47,7 +47,8 @@ export default function ScheduleList({ categoryKeys }) {
   // Mes actual + anterior
   const availableMonths = [
     mapToMonthWithYear(now),
-    mapToMonthWithYear(now.subtract(1, 'month'))
+    mapToMonthWithYear(now.subtract(1, 'month')),
+    mapToMonthWithYear(now.subtract(2, 'month'))
   ];
 
   useEffect(() => {  

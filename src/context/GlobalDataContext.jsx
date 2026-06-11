@@ -23,7 +23,7 @@ export const GlobalDataProvider = ({ children }) => {
 
       setDepartments(depRes);
     } catch (error) {
-      console.error("Error cargando maestros:", error);
+      console.error("Error cargando departamentos:", error);
     } finally {
       setGlobalLoading(false);
     }
