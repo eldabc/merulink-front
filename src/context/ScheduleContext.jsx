@@ -1,10 +1,11 @@
+import dayjs from 'dayjs';
 import axios from 'axios';
 import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
 import { allMonths } from '../utils/StaticData/months-utils';
-
+import { capitalizeFirstLetter } from '../utils/text-utils';
 
 import { mapScheduleToBackend } from '../utils/mappers/scheduleMapper';
 
@@ -116,20 +117,23 @@ export const ScheduleProvider = ({ children }) => {
   const deleteSchedule = async (schedule) => {
     try {
       const scheduleId = schedule.id;
+      const selectedMonth = dayjs(schedule.start).format('MMMM');
 
       if (!scheduleId) {
         showNotification('Error:', 'No se encontró ID de Horario', 'error');
         return false;
       }
-      await axios.delete(`${ENV.API_BACK_URL}schedules/${scheduleId}`);
 
-      setScheduleData(prevData => {
-        return prevData.filter(item => item.id !== scheduleId);
-      });
+      await axios.delete(`${ENV.API_BACK_URL}schedule-plannings/${scheduleId}`);
+      setScheduleData(prevData => { return prevData.filter(item => item.id !== scheduleId); });
 
-      showNotification(`Horario ${schedule.description} eliminado con éxito`);
+      showNotification(
+        `Horario ${capitalizeFirstLetter(selectedMonth)} 
+         quincena ${dayjs(schedule.start).format('DD-MM-YYYY')} - ${dayjs(schedule.end).format('DD-MM-YYYY')} eliminado con éxito`
+      );
       return true;
     } catch (error) {
+      console.log("error", error)
       showNotification('Error al eliminar Horario', error.response.data.message, 'error');
       return false;
     }

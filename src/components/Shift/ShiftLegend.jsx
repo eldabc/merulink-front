@@ -19,9 +19,9 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode 
     <div className="w-56 rounded-xl p-5 bg-[#2f3d44] hover:bg-[#535557]">
       <h3 className="text-gray-200 font-semibold mb-2"> Horarios: </h3>
       {shifts.map((shift) => {
-        if (shift.isNotShowShift) {
-          return null;
-        }
+        // if (shift.isNotShowShift) {
+        //   return null;
+        // }
         // Verifica si este turno específico es el que está activo en la brocha
         const isSelected = activeBrush && activeBrush.id === shift.id;
 

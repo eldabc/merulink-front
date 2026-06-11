@@ -11,3 +11,10 @@ export function truncateText(text = '', limit = 50) {
   if (text?.length <= limit) return text;
   return text?.substring(0, limit) + "...";
 };
+
+// Capitaliza la primera letra de un texto y pasa el resto a minúsculas.
+export const capitalizeFirstLetter = (text) => {
+  if (!text) return '';
+  const str = String(text);
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
