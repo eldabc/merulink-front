@@ -13,6 +13,7 @@ import ScheduleLegend from './ScheduleLegend';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
+import LiveAlerts from '../Shared/LiveAlerts';
 import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
 
 // Registrar los módulos de AG Grid
@@ -21,11 +22,10 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 // Componente personalizado para renderizar HTML en ToolTip
 const CustomTooltip = (params) => {
   if (!params.value) return null;
-
   return (
     <div 
       className="custom-grid-tooltip-container"
-      dangerouslySetInnerHTML={{ __html: params.value }} // Inyecta el HTML armado
+      dangerouslySetInnerHTML={{ __html: params.value }}
     />
   );
 };
@@ -35,12 +35,83 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
   const { register, formState: { errors } } = useFormContext();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
+  const [liveAlerts, setLiveAlerts] = useState([]); // Almacenar las alertas en vivo
+  
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
 
+  // Mapeo rápido de días quincenales indexados por fecha para agilizar lecturas de festivos
+  const daysMap = useMemo(() => {
+    return fortnightDays.reduce((acc, curr) => {
+      acc[curr.date] = curr;
+      return acc;
+    }, {});
+  }, [fortnightDays]);
+
   useEffect(() => {
     setBrushShift(null);
+    setLiveAlerts(null);
   }, [fortnightDays]);
+
+  // VALIDACIÓN EN VIVO
+  const runLiveValidation = useCallback((currentRows) => {
+    const alerts = [];
+
+    currentRows.forEach((employee) => {
+      const fortnightDates = Object.keys(employee.dates || {});
+
+      fortnightDates.forEach((dateStr, index) => {
+        const dayData = employee.dates[dateStr];
+        const currentShift = dayData?.shift;
+        
+        if (!currentShift || currentShift.id === 'S-0') return; // Saltamos días libres o vacíos
+
+        const hasNonWorkingHoliday = dayData?.events?.some(e => e.nonWorking === true);
+
+        // ALERTA: Trabajando en día feriado
+        if (hasNonWorkingHoliday) {
+          alerts.push({
+            id: `${employee.id}-${dateStr}-holiday`,
+            type: 'holiday',
+            message: `⚠️ Está asignando turno a **${employee.fullName}** el día **${dateStr}**, el cual es un feriado no laborable.`
+          });
+        }
+
+        // ALERTA: Descanso menor a 12 horas entre turnos consecutivos
+        if (index < fortnightDates.length - 1) {
+          const nextDateStr = fortnightDates[index + 1];
+          const nextShift = employee.dates[nextDateStr]?.shift;
+
+          // Si el día siguiente tiene un turno asignado no libre o del sistema especial
+          if (nextShift && !nextShift.isSystemShift) {
+            const currentCheckOut = currentShift.checkOutTime; // Esperado: "HH:mm:ss" o "HH:mm"
+            const nextCheckIn = nextShift.checkInTime;
+
+            if (currentCheckOut && nextCheckIn) {
+              // Crea objetos Date base ficticios consecutivos para medir la brecha horaria
+              const [h1, m1] = currentCheckOut.split(':').map(Number);
+              const [h2, m2] = nextCheckIn.split(':').map(Number);
+
+              const outDateTime = new Date(2000, 0, 1, h1, m1, 0);
+              const inDateTime = new Date(2000, 0, 2, h2, m2, 0); // Siguiente día
+
+              const diffInHours = (inDateTime - outDateTime) / (1000 * 60 * 60);
+
+              if (diffInHours < 12) {
+                alerts.push({
+                  id: `${employee.id}-${dateStr}-rest`,
+                  type: 'rest',
+                  message: `⏱️ **${employee.fullName}** termina su turno a las ${currentCheckOut} (${dateStr}) e inicia el siguiente a las ${nextCheckIn} (${nextDateStr}). ¡Descanso menor a 12 horas! (${diffInHours.toFixed(1)} hrs).`
+                });
+              }
+            }
+          }
+        }
+      });
+    });
+
+    setLiveAlerts(alerts);
+  }, [daysMap]);
 
   const onGridReady = (params) => {
     setGridApi(params.api);
@@ -59,9 +130,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
     // Extrae la fecha limpia quitando el prefijo 'date_'
     const rawDate = dateFieldName.replace('date_', '');
 
-    // DETECTAR SEGUNDO CLIC
     if (currentShiftId === brushShift.id) {
-      // Resetear turno al objeto Día Libre ('S-0')
       updatedData.dates[rawDate] = {
         ...updatedData.dates[rawDate],
         shift: {
@@ -72,41 +141,38 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
         }
       };
     } else {
-      // PRIMER CLIC
       updatedData.dates[rawDate] = {
         ...updatedData.dates[rawDate],
         shift: { ...brushShift }
       };
     }
 
-    // Notificar a AG Grid el cambio
     params.node.setData(updatedData);
-
-    // Refrescar celda para recalcular estilos de color
     params.api.refreshCells({ rowNodes: [params.node], columns: [dateFieldName], force: true });
+
+    // Disparar validación inmediatamente después de cambiar la celda activa
+    if (gridApi) {
+      const currentRows = [];
+      gridApi.forEachNode(node => currentRows.push(node.data));
+      runLiveValidation(currentRows);
+    }
   };
 
-  // RECOLECCIÓN DEL LOTE (Simplificado: Ya viene listo desde el backend)
   const collectGridPayload = useCallback(() => {
     if (!gridApi) return { shifts: shifts || [], schedules: [] };
 
     const schedulesBatch = [];
-
     gridApi.forEachNode((node) => {
       const row = node.data;
-      
       schedulesBatch.push({
         employeeId: row.id,
         subDepartmentId: row.subDepartment?.id || null,
         isVacation: !!row.vacation,
-        dates: row.dates // Directo: Ya mantiene la estructura JSON exacta
+        dates: row.dates
       });
     });
 
-  return {
-      shifts: shifts || [],
-      schedules: schedulesBatch
-    };
+    return { shifts: shifts || [], schedules: schedulesBatch };
   }, [gridApi, shifts]);
 
   useImperativeHandle(ref, () => ({
@@ -130,7 +196,6 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
     });
   }, []); 
   
-  // RENDERIZADO DE FILAS
   const rowData = useMemo(() => {
     if (!groupedEmployees) return [];
     
@@ -147,6 +212,13 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
     return flatRows;
   }, [groupedEmployees]);
 
+  // Ejecutar la validación al renderizar por primera vez
+  useEffect(() => {
+    if (rowData.length > 0) {
+      runLiveValidation(rowData);
+    }
+  }, [rowData, runLiveValidation]);
+
   const columnDefs = useMemo(() => {
     const baseCols = [
       { 
@@ -161,7 +233,6 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
       }
     ];
 
-    // Columnas de días dinámicas mapeadas directamente desde el objeto 'dates' enviado por el Back
     const dayCols = fortnightDays.map((day) => {
       return {        
         headerName: `${day.dayName} ${day.dayNumber}`, 
@@ -181,13 +252,11 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
         // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
         valueFormatter: (params) => {
           const shiftObj = params.data.dates?.[day.date]?.shift;
-          return shiftObj?.letterShift || 'L'; //|| shiftObj?.letterShift 
+          return shiftObj?.letterShift || 'L'; 
         },
 
-        // Estilos
         cellStyle: (params) => {
           const baseStyle = { textAlign: 'center' };
-          
           const dayData = params.data.dates?.[day.date];
           const shiftObj = dayData?.shift;
           const eventsList = dayData?.events || [];
@@ -218,7 +287,6 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
           if (!eventsList || eventsList.length === 0) return null;
 
           const titleHtml = `<div class="tooltip-title">Eventos Destacados</div>`;
-          
           const listHtml = eventsList
             .map((e, index) => `<div class="tooltip-item">${index + 1}. ${truncateText(e?.title ?? '', 25)}</div>`)
             .join('');
@@ -230,15 +298,11 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
         resizable: true,
         sortable: false,
         suppressMovable: true,
-        
         // Bloquea edición si es baja/vacaciones
         editable: (params) => params.value !== 'S-1' && params.value !== 'S-2',
-
-        // Clases utilitarias de AG Grid según el tipo de celda
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' , // pointer-events-none
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' ,
         },
-        
         cellClass: '!font-bold',
         headerClass: () => {
           const classes = [];
@@ -262,6 +326,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
 
   const isDataPending = loading || shifts === undefined;
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
+  
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-wrap gap-2 p-2 rounded-md text-sm">
@@ -270,12 +335,15 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
         ) : (
           hasShiftGrid ? ( 
             <>
-              <div className="div-border w-full flex flex-col md:flex-row gap-4 items-center justify-between p-4 rounded-lg">
+            <div className="div-border w-full flex flex-col md:flex-row gap-6 items-center justify-between p-4 rounded-lg transition-all duration-300">
+              <div className="w-full md:w-auto md:max-w-[40%] flex-shrink-0">
                 <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
               </div>
 
+              {liveAlerts.length > 0 && <LiveAlerts alerts={liveAlerts} /> }
+            </div>
+
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
-                
                 {isClosed && (
                   <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
                     <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
@@ -289,11 +357,11 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                     rowData={rowData}
                     columnDefs={columnDefs}
                     readOnlyEdit={viewMode} 
-                    suppressCellFocus={viewMode} // Evita el recuadro de enfoque en modo vista  
+                    suppressCellFocus={viewMode}
                     rowSelection={
                       viewMode 
-                        ? { mode: 'none' } // En modo vista, apaga por completo cualquier selección
-                        : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } // En modo edición, permite seleccionar filas normalmente
+                        ? { mode: 'none' } 
+                        : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } 
                     }
                     defaultColDef={defaultColDef}
                     animateRows={true}
@@ -304,26 +372,24 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
                     tooltipShowDelay={0}
                   />
                 </div>
-                
               </div>
               
               {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
 
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
-                
                 <div className="flex flex-col w-full md:flex-1"> 
                   <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
-                    <textarea
-                      readOnly={mode === 'view'}
-                      {...register('observations')}
-                      rows="5"                 
-                      cols="33"                 
-                      placeholder="Escribe aquí una observación..."
-                      className={`filter-input p-2 ${disabledClasses}`}
-                    />
-                    {errors?.observations && <ErrorMessage msg={errors.observations.message} />}  
-                  </div>  
+                  <textarea
+                    readOnly={mode === 'view'}
+                    {...register('observations')}
+                    rows="5"                 
+                    cols="33"                 
+                    placeholder="Escribe aquí una observación..."
+                    className={`filter-input p-2 ${disabledClasses}`}
+                  />
+                  {errors?.observations && <ErrorMessage msg={errors.observations.message} />}  
+                </div>  
               </div>
             </>
           ) : (
