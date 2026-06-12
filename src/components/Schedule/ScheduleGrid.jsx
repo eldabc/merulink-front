@@ -60,12 +60,31 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
 
     currentRows.forEach((employee) => {
       const fortnightDates = Object.keys(employee.dates || {});
+      let consecutiveWorkDays = 0;
 
       fortnightDates.forEach((dateStr, index) => {
         const dayData = employee.dates[dateStr];
         const currentShift = dayData?.shift;
-        
-        if (!currentShift || currentShift.id === 'S-0') return; // Saltamos días libres o vacíos
+
+        const isRestDay = !currentShift || currentShift.id === 'S-0' || currentShift.id === 'S-1' || currentShift.id === 'S-2';
+
+        if (isRestDay) {
+          consecutiveWorkDays = 0;
+        } else {
+          consecutiveWorkDays++;
+
+          // ALERTA: Más de 5 días seguidos trabajando
+          if (consecutiveWorkDays > 5) {
+            alerts.push({
+              id: `${employee.id}-${dateStr}-consecutive`,
+              type: 'consecutive-work',
+              message: `🚨 **${employee.fullName}** lleva **${consecutiveWorkDays} días seguidos** trabajando sin descanso al llegar al día **${dayjs(dateStr).format('DD/MM/YYYY')}**.`
+            });
+          }
+        }
+
+        // Si es día descanso, no ejecuta el resto de validaciones
+        if (isRestDay) return;
 
         const hasNonWorkingHoliday = dayData?.events?.some(e => e.nonWorking === true);
 
