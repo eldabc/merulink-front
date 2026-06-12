@@ -53,7 +53,10 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           />
           <div className="flex flex-col">
             <span className={`text-sm font-bold ${isReviewed ? 'text-[#ffb900]' : 'text-gray-300'}`}>1. Revisado</span>
-            <span className="text-xs text-gray-400">Verificación inicial</span>
+            <div className='flex flex-row'>
+              <span className="text-xs text-gray-400">Verificación inicial por:</span>
+              <span className="text-xs text-[#ffb900] pl-2"> Sistemas </span>
+            </div>
           </div>
         </label>
 
@@ -71,7 +74,10 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           />
           <div className="flex flex-col">
             <span className={`text-sm font-bold ${isApproved ? 'text-green-400' : 'text-gray-300'}`}>2. Aprobado</span>
-            <span className="text-xs text-gray-400">Validado por gerencia</span>
+            <div className='flex flex-row'>
+              <span className="text-xs text-gray-400">Validado por: </span>
+              <span className="text-xs text-green-400 pl-2"> Sistemas </span>
+            </div>
           </div>
         </label>
 
@@ -89,7 +95,10 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
           />
           <div className="flex flex-col">
             <span className={`text-sm font-bold ${isClosed ? 'text-red-400' : 'text-gray-300'}`}>3. Cerrado</span>
-            <span className="text-xs text-gray-400">Congelar Cambios</span>
+            <div className='flex flex-row'>
+              <span className="text-xs text-gray-400">Cambios Congelados por:</span>
+              <span className="text-xs text-red-400 pl-2"> Sistemas </span>
+            </div>
           </div>
         </label>
 
