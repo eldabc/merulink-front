@@ -2,6 +2,7 @@ import React, { forwardRef, useMemo, useState, useEffect, useCallback, useImpera
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useFormContext } from "react-hook-form";
+import dayjs from 'dayjs';
 
 import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
@@ -73,7 +74,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
           alerts.push({
             id: `${employee.id}-${dateStr}-holiday`,
             type: 'holiday',
-            message: `⚠️ Está asignando turno a **${employee.fullName}** el día **${dateStr}**, el cual es un feriado no laborable.`
+            message: `⚠️ Está asignando turno a **${employee.fullName}** el día **${dayjs(dateStr).format('DD-MM-YYYY')}**, el cual es un feriado no laborable.`
           });
         }
 
@@ -88,20 +89,21 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
             const nextCheckIn = nextShift.checkInTime;
 
             if (currentCheckOut && nextCheckIn) {
-              // Crea objetos Date base ficticios consecutivos para medir la brecha horaria
-              const [h1, m1] = currentCheckOut.split(':').map(Number);
-              const [h2, m2] = nextCheckIn.split(':').map(Number);
+              // Combina la fecha real con la hora para tener instancias exactas en el tiempo
+              const outDateTime = dayjs(`${dateStr} ${currentCheckOut}`);
+              const inDateTime = dayjs(`${nextDateStr} ${nextCheckIn}`);
 
-              const outDateTime = new Date(2000, 0, 1, h1, m1, 0);
-              const inDateTime = new Date(2000, 0, 2, h2, m2, 0); // Siguiente día
-
-              const diffInHours = (inDateTime - outDateTime) / (1000 * 60 * 60);
+              // .diff() calcula la diferencia ('hour' con decimales)
+              const diffInHours = inDateTime.diff(outDateTime, 'hour', true);
 
               if (diffInHours < 12) {
                 alerts.push({
                   id: `${employee.id}-${dateStr}-rest`,
                   type: 'rest',
-                  message: `⏱️ **${employee.fullName}** termina su turno a las ${currentCheckOut} (${dateStr}) e inicia el siguiente a las ${nextCheckIn} (${nextDateStr}). ¡Descanso menor a 12 horas! (${diffInHours.toFixed(1)} hrs).`
+                  message: `⏱️ **${employee.fullName}** termina su turno a las ${outDateTime.format('hh:mm A')} 
+                            (${dayjs(dateStr).format('DD-MM-YYYY')}) e inicia el siguiente a las 
+                            ${inDateTime.format('hh:mm A')} (${dayjs(nextDateStr).format('DD-MM-YYYY')}). 
+                            ¡Descanso menor a 12 horas! (${diffInHours.toFixed(1)} hrs).`
                 });
               }
             }
