@@ -33,14 +33,15 @@ const CustomTooltip = (params) => {
   );
 };
 
-const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
+const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
   
   const { register, formState: { errors } } = useFormContext();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); // Almacenar las alertas en vivo
   const [showPastFortnight, setShowPastFortnight] = useState(false);
-
+  // const endFortnightPosition = fortnightDays.length -1;
+  // console.log("fortnightDays", fortnightDays[endFortnightPosition].date);
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
 
@@ -432,7 +433,14 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
           )
         )}
       </div>
-      <PreviousFortnightViewer isOpen={showPastFortnight} onClose={() => setShowPastFortnight(false)} subDepartmentId="1" />
+      <PreviousFortnightViewer 
+        isOpen={showPastFortnight} 
+        onClose={() => setShowPastFortnight(false)} 
+        preFortnightParams={preFortnightParams}
+        // startFortnight={fortnightDays[0].date} 
+        // endFortnight={fortnightDays[endFortnightPosition].date}
+        // selectedDepartmentId={selectedDepartmentId} 
+      />
     </div>
   );
 });

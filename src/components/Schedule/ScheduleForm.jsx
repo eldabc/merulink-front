@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -42,6 +42,7 @@ export default function ScheduleForm({ }) {
   const [startEndFortnight, setStartEndFortnight] = useState({ start: [], end: [] });
   const [mode, setMode] = useState('create');
   const [formData, setFormData] = useState({});
+  const [preFortnightParams, setPreFortnightParams] = useState({});
   const scheduleGridRef = useRef(null);
 
   const now = dayjs();
@@ -113,6 +114,30 @@ export default function ScheduleForm({ }) {
             }
           }
           setFormData(schedule);
+
+          const currentStart = dayjs(startDate);
+
+          // El fin de la quincena pasada es exactamente 1 día antes del inicio de esta
+          const previousEnd = currentStart.subtract(1, 'day');
+
+          // Para saber el inicio de la pasada, miramos qué día cayó el fin
+          let previousStart;
+          if (previousEnd.date() === 15) {
+            // Si terminó el 15, significa que empezó el 1 del mismo mes
+            previousStart = previousEnd.date(1);
+          } else {
+            // Si terminó a fin de mes (ej. 30 o 31), empezó el 16 del mismo mes
+            previousStart = previousEnd.date(16);
+          }
+
+          // console.log("Quincena Pasada Inicio:", previousStart.format('YYYY-MM-DD'));
+          // console.log("Quincena Pasada Fin:", previousEnd.format('YYYY-MM-DD'));
+
+          setPreFortnightParams({
+            departmentId: selectedDepartmentId,
+            start: previousStart.format('YYYY-MM-DD'),
+            end: previousEnd.format('YYYY-MM-DD'),
+          });
 
         } catch (error) {
           console.error("Error procesando los modos del calendario", error);
@@ -210,7 +235,7 @@ export default function ScheduleForm({ }) {
   };
   
   const disabledClasses = getDisabledClasses(mode === 'view');
-  // console.log("formData?.status", availableMonths)
+  // console.log("formData", formData)
 
   return (
     <FormProvider {...methods}>
@@ -225,10 +250,12 @@ export default function ScheduleForm({ }) {
                <ScheduleFilter departments={departments} months={availableMonths} globalLoading={globalLoading} />
               
               <div className="div-border mt-2">
-                {Object.keys(formData ?? {}).length > 0 && ( //selectedDepartmentId && selectedMonthId && selectedFortnight
+                {Object.keys(formData ?? {}).length > 0 && (
                   <ScheduleGrid 
                     ref={scheduleGridRef}
                     isClosed={formData?.isClosed}
+                    // selectedDepartmentId={selectedDepartmentId}
+                    preFortnightParams={preFortnightParams}
                     scheduleSaved={!!formData?.id}
                     groupedEmployees={formData?.employees} 
                     fortnightDays={fortnightDays} 

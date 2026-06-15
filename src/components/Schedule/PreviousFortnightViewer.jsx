@@ -2,28 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import dayjs from 'dayjs';
 
-const PreviousFortnightViewer = ({ isOpen, onClose, subDepartmentId }) => {
+import { useSchedules } from '../../context/ScheduleContext';
+
+const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => { // departmentId, preFortnightParams.startFortnight, endFortnight
   const [historyData, setHistoryData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const { loading, setLoading, loadFormData } = useSchedules();
+
 
   // Solo busca la quincena pasada si el visor está abierto
   useEffect(() => {
-    if (isOpen) {
-      setLoading(true);
+    const loadPreFortninght = async () => {
+      if (!isOpen) return;
       
-      // axios.get(`/api/schedules/fortnight-preview/${subDepartmentId}`)
-      //   .then(res => setHistoryData(res.data))
-      //   .finally(() => setLoading(false));
-    }
-  }, [isOpen, subDepartmentId]);
+      const startDate = preFortnightParams.start;
+      const endDate = preFortnightParams.end;
+      const departmentId = preFortnightParams.departmentId;
+      // console.log("preFortnightParams", departmentId, startDate, endDate)
+
+        if (departmentId && startDate && endDate) {
+          console.log("aqui", departmentId , startDate, endDate)
+          setLoading(true);
+          try {
+  
+            const schedule = await loadFormData(departmentId, startDate, endDate);
+            console.log("Pre Scheduole", schedule)
+            setFormData(schedule);
+  
+          } catch (error) {
+            console.error("Error cargando quincena anterior", error);
+          } finally {
+            setLoading(false);
+          }
+        }
+      };
+  
+    loadPreFortninght();   
+    
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <Rnd
       default={{
-        x: 100,
-        y: 150,
+        x: 600,
+        y: 0,
         width: 500,
         height: 350,
       }}
