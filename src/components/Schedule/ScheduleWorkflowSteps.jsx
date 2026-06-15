@@ -82,7 +82,7 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
         </label>
 
         {/* PASO 3: CERRADO */}
-        <label className={`flex items-center gap-3 p-3 rounded-lg border transition-all
+        <label className={`hidden flex items-center gap-3 p-3 rounded-lg border transition-all
           ${!isApproved ? 'opacity-40 cursor-not-allowed bg-[#1b1c1e] border-transparent' : 'cursor-pointer'}
           ${isClosed ? 'border-red-500 bg-red-500/10' : isApproved ? 'border-[#43474a] bg-[#252729]' : ''}
           ${viewMode ? 'pointer-events-none' : ''}`}

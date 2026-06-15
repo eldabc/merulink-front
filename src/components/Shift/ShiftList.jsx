@@ -75,7 +75,7 @@ export default function ShiftList({ categoryKeys }) {
         <SpanText text={`No se encontraron turnos registrados.`} />
       ) : (
         <>
-        <div className="rounded-lg shadow">
+        <div className="rounded-lg shadow overflow-x-auto">
             <table className="min-w-full border-collapse text-sm sm:text-base">
             {!loading ? (
                 <>

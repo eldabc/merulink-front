@@ -153,7 +153,7 @@ export default function ShiftForm({ mode = 'create' }) {
           // console.log("codeData", codeDataByDepartment, selectedDepartmentId);
           
           if (codeDataByDepartment?.suggestedCode) {
-            setValue('code', codeDataByDepartment.suggestedCode);
+            if (createMode) setValue('code', codeDataByDepartment.suggestedCode);
             setExistingCodes(codeDataByDepartment.existingCodes);
           }
 

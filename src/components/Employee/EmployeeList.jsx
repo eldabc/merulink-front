@@ -79,7 +79,7 @@ return (
         placeholder='Ingrese nombre, apellido, cédula, departamento o sub-departamento'
       />
 
-      <div className="rounded-lg shadow">
+      <div className="rounded-lg shadow overflow-x-auto">
         <table className="min-w-full border-collapse text-sm sm:text-base">
           <thead>
             <tr className="tr-thead-table">
