@@ -16,6 +16,8 @@ import SelectGeneric from '../Shared/SelectGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
 import LiveAlerts from '../Shared/LiveAlerts';
 import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
+import PreviousFortnightViewer from './PreviousFortnightViewer';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 
 // Registrar los módulos de AG Grid
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -37,7 +39,8 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); // Almacenar las alertas en vivo
-  
+  const [showPastFortnight, setShowPastFortnight] = useState(false);
+
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
 
@@ -52,6 +55,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
   useEffect(() => {
     setBrushShift(null);
     setLiveAlerts(null);
+    setShowPastFortnight(false);
   }, [fortnightDays]);
 
   // VALIDACIÓN EN VIVO
@@ -360,8 +364,18 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
               <div className="w-full md:w-auto md:max-w-[40%] flex-shrink-0">
                 <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
               </div>
-
-              {liveAlerts.length > 0 && <LiveAlerts alerts={liveAlerts} /> }
+              <button type="button"
+                onClick={() => setShowPastFortnight(!showPastFortnight)}
+                title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
+                className={`flex items-end gap-2 px-4 py-2`}
+              >
+                {showPastFortnight ? ( 
+                  <EyeSlashIcon className='w-5 h-5 text-gray-300' />
+                ) : (
+                  <EyeIcon className='w-5 h-5 text-gray-300' />
+                )}
+              </button>
+              {liveAlerts?.length > 0 && <LiveAlerts alerts={liveAlerts} /> }
             </div>
 
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
@@ -418,6 +432,7 @@ const ScheduleGrid = forwardRef(({ isClosed, scheduleSaved, groupedEmployees, fo
           )
         )}
       </div>
+      <PreviousFortnightViewer isOpen={showPastFortnight} onClose={() => setShowPastFortnight(false)} subDepartmentId="1" />
     </div>
   );
 });

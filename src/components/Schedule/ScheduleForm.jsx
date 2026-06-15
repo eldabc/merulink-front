@@ -98,7 +98,7 @@ export default function ScheduleForm({ }) {
           const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
           
           // Si la quincena está cerrada
-          if (schedule.isClosed) {
+          if (schedule.isClosed || schedule.status === 'approved') {
             setMode('view');
             console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
           } else {
@@ -214,10 +214,10 @@ export default function ScheduleForm({ }) {
 
   return (
     <FormProvider {...methods}>
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <div className="md:min-w-7xl p-2 rounded-lg">
     
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
-        <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+        <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='w-full mt-6'>
               <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />

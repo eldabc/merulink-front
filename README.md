@@ -1,16 +1,28 @@
-# React + Vite
+MeruLink es una plataforma web integral de gestión hotelera. Este repositorio contiene el código fuente de la aplicación del lado del cliente (Frontend), construida con una arquitectura moderna, reactiva y optimizada para la administración de personal y flujos de trabajo.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 Características Principales
+Módulo de Planificación de Turnos (ScheduleGrid): Potente grilla interactiva impulsada por AG Grid Community que permite la asignación masiva de turnos a empleados mediante una herramienta de arrastre/brocha en tiempo real.
 
-Currently, two official plugins are available:
+Vigilante de Alertas en Vivo: Sistema inteligente en el cliente que analiza la quincena de manera reactiva mediante Day.js, arrojando advertencias visuales.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Gestión de Eventos y Calendarios: Integración visual completa mediante librerías como FullCalendar para la organización de eventos del hotel.
 
-## React Compiler
+Gestión de empleados: Ficha de empleados, asignación de lockers, integración con apis própias y de terceros.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Stack Tecnológico
+Core: React 18+ (con Hooks personalizados y Context API para la gestión del estado global por módulo).
 
-## Expanding the ESLint configuration
+Herramienta de Construcción: Vite.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Estilos: Tailwind CSS (diseño responsivo y soporte nativo para interfaces oscuras/claras).
+
+Tablas Complejas: AG Grid Community Module (Renderizado de alto rendimiento para matrices de empleados).
+
+Formularios: React Hook Form (validaciones eficientes sin re-renders innecesarios).
+
+Fechas: Day.js (manipulación, diferencias horarias y formateo internacional).
+
+
+/**
+* Todos los derechos reservados Hotel Plaza Meru. 2026
+*/
