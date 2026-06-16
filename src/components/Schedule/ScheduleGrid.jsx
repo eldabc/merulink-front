@@ -360,25 +360,33 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
         ) : (
           hasShiftGrid ? ( 
             <>
-            <div className="div-border w-full flex flex-col md:flex-row gap-6 items-center justify-between p-4 rounded-lg transition-all duration-300">
-              <div className="w-full md:w-auto md:max-w-[40%] flex-shrink-0">
-                <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
+              <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
+                <div className="min-w-0">
+                  <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
+                </div>
+                <div className="min-w-0">
+                  
+                  <div className='min-h-18'>
+                    {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
+                  </div>
+
+                  <div className="w-full flex flex-col items-end">
+                    <button 
+                      type="button"
+                      onClick={() => setShowPastFortnight(!showPastFortnight)}
+                      title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
+                      className={`flex gap-2 px-4 py-2 mt-2 skip-style-btn bg-[#525456] hover:bg-[#52545691] hover:border rounded-md`}
+                    >
+                      {showPastFortnight ? ( 
+                        <EyeSlashIcon className='w-5 h-5 text-gray-300' />
+                      ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button type="button"
-                onClick={() => setShowPastFortnight(!showPastFortnight)}
-                title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
-                className={`flex items-end gap-2 px-4 py-2`}
-              >
-                {showPastFortnight ? ( 
-                  <EyeSlashIcon className='w-5 h-5 text-gray-300' />
-                ) : (
-                  <EyeIcon className='w-5 h-5 text-gray-300' />
-                )}
-              </button>
-              {liveAlerts?.length > 0 && <LiveAlerts alerts={liveAlerts} /> }
-            </div>
 
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
+
                 {isClosed && (
                   <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
                     <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
@@ -393,11 +401,11 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
                     columnDefs={columnDefs}
                     readOnlyEdit={viewMode} 
                     suppressCellFocus={viewMode}
-                    rowSelection={
-                      viewMode 
-                        ? { mode: 'none' } 
-                        : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } 
-                    }
+                    // rowSelection={
+                    //   viewMode 
+                    //     ? { mode: 'none' } 
+                    //     : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } 
+                    // }
                     defaultColDef={defaultColDef}
                     animateRows={true}
                     theme={myTheme}
@@ -432,11 +440,13 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
           )
         )}
       </div>
+
       <PreviousFortnightViewer 
         isOpen={showPastFortnight} 
         onClose={() => setShowPastFortnight(false)} 
         preFortnightParams={preFortnightParams}
       />
+      
     </div>
   );
 });

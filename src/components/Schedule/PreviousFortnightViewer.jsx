@@ -23,6 +23,14 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   const [previousFortnightDays, setPreviousFortnightDays] = useState([]);
   const [liveAlerts, setLiveAlerts] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+
+  // Guarda el tamaño y las coordenadas exactas del visor
+  const [dimensions, setDimensions] = useState({
+    width: 500,
+    height: 350,
+    x: 600,
+    y: 40
+  });
   
   const viewMode = true;
   const startDate = preFortnightParams.start;
@@ -38,7 +46,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
     );
   };
 
-  // Mapeo rápido de días quincenales indexados por fecha para agilizar lecturas de festivos
   const daysMap = useMemo(() => {
     return previousFortnightDays.reduce((acc, curr) => {
       acc[curr.date] = curr;
@@ -77,9 +84,8 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
 
   useEffect(() => {
     if (rowData.length > 0) {
-      const alerts =runLiveValidation(rowData);
+      const alerts = runLiveValidation(rowData);
       setLiveAlerts(alerts);
-      console.log("alerts", alerts)
     }
   }, [rowData, runLiveValidation]);
   
@@ -109,12 +115,10 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
           return `${day.dayName} ${day.dayNumber}`;
         },
 
-        // Retorna el ID del shift asignado a esa fecha específica
         valueGetter: (params) => {
           return params.data.dates?.[day.date]?.shift?.id ?? 'S-0';
         },
 
-        // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
         valueFormatter: (params) => {
           const shiftObj = params.data.dates?.[day.date]?.shift;
           return shiftObj?.letterShift || 'L'; 
@@ -127,7 +131,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
           const eventsList = dayData?.events || [];
           const currentShiftId = shiftObj?.id;
 
-          // Si hay al menos un evento para colorear, pinta el borde
           const hasHighlightedEvent = eventsList.length > 0;
 
           if (hasHighlightedEvent) {
@@ -163,7 +166,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         resizable: true,
         sortable: false,
         suppressMovable: true,
-        // Bloquea edición si es baja/vacaciones
         editable: (params) => params.value !== 'S-1' && params.value !== 'S-2',
         cellClassRules: {
           'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' ,
@@ -189,123 +191,152 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
     tooltipComponent: CustomTooltip,
   }), []);
 
-  // Solo busca la quincena pasada si el visor está abierto
+  // Centrar automáticamente la primera vez que se abre en la pantalla del usuario
+  useEffect(() => {
+    if (isOpen) {
+      const windowWidth = window.innerWidth;
+      const calculatedWidth = windowWidth < 640 ? windowWidth - 32 : 650; // Ajusta ancho inicial
+      const calculatedHeight = 450; 
+
+      setDimensions({
+        width: calculatedWidth,
+        height: calculatedHeight,
+        x: (windowWidth / 2) - (calculatedWidth / 2),
+        y: 60
+      });
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     const loadPreFortninght = async () => {
       if (!isOpen) return;
       
       const departmentId = preFortnightParams.departmentId;
 
-        if (departmentId && startDate && endDate) {
-          // console.log("aqui", departmentId , startDate, endDate)
-          setLoadingPrevious(true);
-          try {
-            const date = dayjs(startDate);
-            const year = date.year();
-            const month = date.month() + 1;
+      if (departmentId && startDate && endDate) {
+        setLoadingPrevious(true);
+        try {
+          const date = dayjs(startDate);
+          const year = date.year();
+          const month = date.month() + 1;
 
-            // Determinar el número de quincena
-            const dayOfMonth = date.date();
-            const fortnightNumber = dayOfMonth <= 15 ? 1 : 2;
-            
-            const days = getFortnightDays(year, Number(month), fortnightNumber);
-            const previousSchedule = await loadFormData(departmentId, startDate, endDate);
+          const dayOfMonth = date.date();
+          const fortnightNumber = dayOfMonth <= 15 ? 1 : 2;
+          
+          const days = getFortnightDays(year, Number(month), fortnightNumber);
+          const previousSchedule = await loadFormData(departmentId, startDate, endDate);
 
-            setPreviousFortnightDays(days);
-            setPreviousData(previousSchedule);
-  
-          } catch (error) {
-            console.error("Error cargando quincena anterior", error);
-          } finally {
-            setLoadingPrevious(false);
-          }
+          setPreviousFortnightDays(days);
+          setPreviousData(previousSchedule);
+        } catch (error) {
+          console.error("Error cargando quincena anterior", error);
+        } finally {
+          setLoadingPrevious(false);
         }
-      };
+      }
+    };
   
     loadPreFortninght();   
-    
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
     <Rnd
-      default={{
-        x: 600,
-        y: 0,
-        width: 500,
-        height: 350,
+      size={{ width: dimensions.width, height: dimensions.height }}
+      position={{ x: dimensions.x, y: dimensions.y }}
+      onDragStop={(e, d) => {
+        setDimensions(prev => ({ ...prev, x: d.x, y: d.y }));
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        setDimensions({
+          width: parseInt(ref.style.width, 10),
+          height: parseInt(ref.style.height, 10),
+          ...position
+        });
       }}
       minWidth={400}
       minHeight={300}
-      bounds="window" // Evita que el usuario arrastre la ventana fuera de la pantalla
-      className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl overflow-hidden text-gray-200"
-      style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+      // bounds="window" 
+      
+      // Esto le dice a react-rnd que ignore el arrastre si tocan algo con la clase 'no-drag'
+      cancel=".no-drag"
+      
+      className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl overflow-hidden text-gray-200 flex flex-col"
+      style={{ position: 'fixed', display: 'flex', flexDirection: 'column' }}
     >
       {/* Barra de Arrastre */}
-      <div className="drag-handle bg-[#2f3132] px-4 py-2 flex items-center justify-between cursor-move select-none border-b border-gray-600">
+      <div className="bg-[#2f3132] px-4 py-2 flex items-center justify-between cursor-move select-none border-b border-gray-600 shrink-0">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
           <span>📋 Visor: Quincena Anterior</span>
         </div>
         <button 
           onClick={onClose}
-          className="text-gray-400 hover:text-red-400 text-sm font-bold p-1 transition-colors"
+          // onTouchStart para interceptar el toque en celulares al instante
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          // 'no-drag' para que react-rnd sepa que aquí NO se arrastra.
+          className="no-drag relative z-50 text-gray-400 hover:text-red-400 active:text-red-500 text-sm font-bold p-2 transition-colors cursor-pointer"
         >
           ✕
         </button>
       </div>
 
       {/* Contenido de la Tabla */}
-      <div className="flex-1 min-h-0 p-3 overflow-auto text-xs" style={{ minHeight: 0 }}>
+      <div className="flex-1 min-h-0 p-3 overflow-auto text-xs">
         {loadingPrevious ? (
           <div className="text-center py-8 text-gray-400">Cargando Quincena Anterior...</div>
         ) : (
-          <div className="w-full overflow-x-auto">
+          <div className="w-full flex flex-col gap-4">
             <div className='w-full text-center'>
-              <h2 className='text-lg font-bold mb-2'> {`Quincena ${dayjs(startDate).format('DD/MM/YYYY')} al ${dayjs(endDate).format('DD/MM/YYYY')} `} </h2>
+              <h2 className='text-base font-bold text-gray-100'> 
+                {`Quincena ${dayjs(startDate).format('DD/MM/YYYY')} al ${dayjs(endDate).format('DD/MM/YYYY')} `} 
+              </h2>
             </div>
 
-            <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-6 p-4 rounded-lg transition-all duration-300">
+            {/* Layout de Leyenda + Alertas */}
+            <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
               <div className="min-w-0">
-                <ShiftLegend shifts={previousData?.shifts} viewMode={true} dynamicClasses='pl-2 py-4' />
+                <ShiftLegend shifts={previousData?.shifts} viewMode={true} dynamicClasses='pl-2 py-2' />
               </div>
               <div className="min-w-0">
                 {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
               </div>
             </div>
-              <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden`}>
-                <AgGridReact
-                  rowData={rowData}
-                  columnDefs={columnDefs}
-                  readOnlyEdit={viewMode} 
-                  suppressCellFocus={viewMode}
-                  defaultColDef={defaultColDef}
-                  animateRows={true}
-                  theme={myTheme}
-                  localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
-                  onGridReady={onGridReady}
-                  tooltipShowDelay={0}
-                />
-              </div>
-              <div className="flex flex-col md:flex-row gap-3 w-full div-border">
-                <div className="flex flex-col w-full md:flex-1"> 
-                  <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
-                  <textarea
-                    readOnly={viewMode}
-                    value={previousData?.observations ?? ''}
-                    rows="5"                 
-                    cols="33"                 
-                    placeholder="Escribe aquí una observación..."
-                    className={`filter-input p-2 cursor-not-allowed opacity-50 select-none`}
-                  />
-                </div>  
-              </div>
+
+            <div className="ag-theme-quartz w-full h-80 shadow-sm rounded-lg overflow-hidden shrink-0">
+              <AgGridReact
+                rowData={rowData}
+                columnDefs={columnDefs}
+                readOnlyEdit={viewMode} 
+                suppressCellFocus={viewMode}
+                defaultColDef={defaultColDef}
+                animateRows={true}
+                theme={myTheme}
+                localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
+                onGridReady={onGridReady}
+                tooltipShowDelay={0}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 w-full div-border p-3">
+              <LabelFieldForm field="Observación" dinamicClasses="mb-1" />
+              <textarea
+                readOnly={viewMode}
+                value={previousData?.observations ?? ''}
+                rows="3"                 
+                placeholder="Sin observaciones en esta quincena..."
+                className="filter-input p-2 cursor-not-allowed opacity-60 select-none bg-[#2b2d2f] text-gray-300 rounded border border-gray-700 resize-none text-xs w-full"
+              />
+            </div>
           </div> 
         )}
       </div>   
 
       {/* ADVERTENCIA INFERIOR */}
-      <div className="bg-[#2f3132] px-3 py-1 text-[10px] text-gray-400 border-t border-gray-700 select-none text-center">
+      <div className="bg-[#2f3132] px-3 py-1 text-[10px] text-gray-400 border-t border-gray-700 select-none text-center flex-shrink-0">
         Ventana de Solo lectura • Estira los bordes para redimensionar
       </div>
     </Rnd>
