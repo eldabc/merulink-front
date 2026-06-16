@@ -3,11 +3,13 @@ import { Rnd } from 'react-rnd';
 import dayjs from 'dayjs';
 
 import { useSchedules } from '../../context/ScheduleContext';
+import ShiftLegend from '../Shift/ShiftLegend';
 
-const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => { // departmentId, preFortnightParams.startFortnight, endFortnight
+const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   const [historyData, setHistoryData] = useState([]);
-  // const [loading, setLoading] = useState(false);
-  const { loading, setLoading, loadFormData } = useSchedules();
+  const [loadingPrevious, setLoadingPrevious] = useState(false);
+  const [previousData, setPreviousData] = useState({});
+  const { loadFormData } = useSchedules();
 
 
   // Solo busca la quincena pasada si el visor está abierto
@@ -22,17 +24,17 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => { 
 
         if (departmentId && startDate && endDate) {
           console.log("aqui", departmentId , startDate, endDate)
-          setLoading(true);
+          setLoadingPrevious(true);
           try {
   
-            const schedule = await loadFormData(departmentId, startDate, endDate);
-            console.log("Pre Scheduole", schedule)
-            setFormData(schedule);
+            const previousSchedule = await loadFormData(departmentId, startDate, endDate);
+            console.log("Pre Scheduole", previousSchedule)
+            setPreviousData(previousSchedule);
   
           } catch (error) {
             console.error("Error cargando quincena anterior", error);
           } finally {
-            setLoading(false);
+            setLoadingPrevious(false);
           }
         }
       };
@@ -55,9 +57,10 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => { 
       minHeight={200}
       bounds="window" // Evita que el usuario arrastre la ventana fuera de la pantalla
       dragHandleClassName="drag-handle" // Solo se puede arrastrar desde la barra superior
-      className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl flex flex-col overflow-hidden text-gray-200"
+      className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl overflow-hidden text-gray-200"
+      style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
     >
-      {/* CABECERA (Barra de Arrastre) */}
+      {/* Barra de Arrastre */}
       <div className="drag-handle bg-[#2f3132] px-4 py-2 flex items-center justify-between cursor-move select-none border-b border-gray-600">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
           <span>📋 Visor: Quincena Anterior</span>
@@ -70,17 +73,17 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => { 
         </button>
       </div>
 
-      {/* CUERPO (Contenido de la Tabla Miniatura) */}
-      <div className="flex-1 p-3 overflow-auto text-xs">
-        {loading ? (
-          <div className="text-center py-8 text-gray-400">Cargando histórico...</div>
+      {/* Contenido de la Tabla */}
+      <div className="flex-1 min-h-0 p-3 overflow-auto text-xs" style={{ minHeight: 0 }}>
+        {loadingPrevious ? (
+          <div className="text-center py-8 text-gray-400">Cargando Quincena Anterior...</div>
         ) : (
           <div className="w-full overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <ShiftLegend shifts={previousData?.shifts} viewMode={true} />
+            <table className="w-full text-left border-collapse mt-5">
               <thead>
                 <tr className="border-b border-gray-700 bg-[#2b2d2f]">
                   <th className="p-2 sticky left-0 bg-[#2b2d2f] z-10 w-32">Empleado</th>
-                  {/* Renderizar dinámicamente cabeceras de días cortos (ej. L 01, M 02) */}
                   <th className="p-2 text-center">01</th>
                   <th className="p-2 text-center">02</th>
                   <th className="p-2 text-center">03</th>
@@ -117,9 +120,9 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => { 
         )}
       </div>
 
-      {/* 3. ADVERTENCIA INFERIOR */}
-      <div className="bg-[#2f3132] px-3 py-1 text-[10px] text-gray-400 border-t border-gray-700 text-right select-none">
-        Solo lectura • Estira los bordes para redimensionar
+      {/* ADVERTENCIA INFERIOR */}
+      <div className="bg-[#2f3132] px-3 py-1 text-[10px] text-gray-400 border-t border-gray-700 select-none text-center">
+        Ventana de Solo lectura • Estira los bordes para redimensionar
       </div>
     </Rnd>
   );
