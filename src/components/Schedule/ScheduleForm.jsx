@@ -83,7 +83,7 @@ export default function ScheduleForm({ }) {
   useEffect(() => {
     const loadData = async () => {
       if (selectedDepartmentId && selectedMonthId && selectedFortnight) {
-        console.log("selectedMonthId", selectedMonthId)
+
         setLoading(true);
         try {
           // Determinar el año correcto para el mes seleccionado (tomado de availableMonths)
@@ -100,15 +100,19 @@ export default function ScheduleForm({ }) {
           
           // Si la quincena está cerrada
           if (schedule.isClosed || schedule.status === 'approved') {
+            
             setMode('view');
             console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
+
           } else {
-            // Si ya hay horario guardado
-            if (schedule?.id) {
+            
+            if (schedule?.id) { // Si ya hay horario guardado
+              
               setMode('edit');
               console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)", schedule.employees);
-            } else {
-              // No hay nada en la BD para esta quincena
+
+            } else { // No hay nada en la BD para esta quincena
+              
               setMode('create');
               console.log("Formulario en Modo: CREATE (Nueva Planificación)",schedule);
             }
@@ -116,12 +120,9 @@ export default function ScheduleForm({ }) {
           setFormData(schedule);
 
           const currentStart = dayjs(startDate);
-
-          // El fin de la quincena pasada es exactamente 1 día antes del inicio de esta
-          const previousEnd = currentStart.subtract(1, 'day');
-
-          // Para saber el inicio de la pasada, miramos qué día cayó el fin
+          const previousEnd = currentStart.subtract(1, 'day'); // Fin de la quincena pasada
           let previousStart;
+
           if (previousEnd.date() === 15) {
             // Si terminó el 15, significa que empezó el 1 del mismo mes
             previousStart = previousEnd.date(1);
@@ -129,9 +130,6 @@ export default function ScheduleForm({ }) {
             // Si terminó a fin de mes (ej. 30 o 31), empezó el 16 del mismo mes
             previousStart = previousEnd.date(16);
           }
-
-          // console.log("Quincena Pasada Inicio:", previousStart.format('YYYY-MM-DD'));
-          // console.log("Quincena Pasada Fin:", previousEnd.format('YYYY-MM-DD'));
 
           setPreFortnightParams({
             departmentId: selectedDepartmentId,
@@ -254,7 +252,6 @@ export default function ScheduleForm({ }) {
                   <ScheduleGrid 
                     ref={scheduleGridRef}
                     isClosed={formData?.isClosed}
-                    // selectedDepartmentId={selectedDepartmentId}
                     preFortnightParams={preFortnightParams}
                     scheduleSaved={!!formData?.id}
                     groupedEmployees={formData?.employees} 

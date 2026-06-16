@@ -43,7 +43,7 @@ export const ScheduleProvider = ({ children }) => {
   }, []);
 
   const loadFormData = async (departmentId, start, end) => {
-    setLoading(true);
+    // setLoading(true);
     try {
 
       const responseData = await getEmployeesByDepartment(departmentId, start, end);
@@ -53,7 +53,7 @@ export const ScheduleProvider = ({ children }) => {
     } catch (error) {
       console.error("Error cargando datos del formulario", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 

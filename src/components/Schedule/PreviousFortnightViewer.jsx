@@ -1,34 +1,216 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo  } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import { themeQuartz } from 'ag-grid-community';
 import { Rnd } from 'react-rnd';
 import dayjs from 'dayjs';
 
 import { useSchedules } from '../../context/ScheduleContext';
+import { useScheduleValidation } from '../../hooks/useScheduleValidation';
 import ShiftLegend from '../Shift/ShiftLegend';
 
+import { getFortnightDays } from '../../utils/Schedule/schedule-utils';
+import { truncateText } from '../../utils/text-utils';
+
+import LabelFieldForm from '../Shared/LabelFieldForm';
+import LiveAlerts from '../Shared/LiveAlerts';
+
 const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
-  const [historyData, setHistoryData] = useState([]);
+  
   const [loadingPrevious, setLoadingPrevious] = useState(false);
   const [previousData, setPreviousData] = useState({});
   const { loadFormData } = useSchedules();
+  const { runLiveValidation } = useScheduleValidation();
+  const [previousFortnightDays, setPreviousFortnightDays] = useState([]);
+  const [liveAlerts, setLiveAlerts] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
+  
+  const viewMode = true;
+  const startDate = preFortnightParams.start;
+  const endDate = preFortnightParams.end;
+  
+  const CustomTooltip = (params) => {
+    if (!params.value) return null;
+    return (
+      <div 
+        className="custom-grid-tooltip-container"
+        dangerouslySetInnerHTML={{ __html: params.value }}
+      />
+    );
+  };
 
+  // Mapeo rápido de días quincenales indexados por fecha para agilizar lecturas de festivos
+  const daysMap = useMemo(() => {
+    return previousFortnightDays.reduce((acc, curr) => {
+      acc[curr.date] = curr;
+      return acc;
+    }, {});
+  }, [previousFortnightDays]);
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+  };
+
+  const myTheme = useMemo(() => {
+    return themeQuartz.withParams({
+      baseTheme: 'dark',
+      accentColor: '#00A4BC', 
+      backgroundColor: '#535557', 
+      textColor: '#E0E0E0',
+    });
+  }, []); 
+    
+  const rowData = useMemo(() => {
+    if (!previousData?.employees) return [];
+    
+    const flatRows = [];
+    Object.keys(previousData?.employees).forEach((subDeptName) => {
+      previousData?.employees[subDeptName].forEach((employee) => {
+        flatRows.push({
+          ...employee,
+          fullName: `${employee.firstName} ${employee.lastName || ''}`.trim()
+        });
+      });
+    });
+    
+    return flatRows;
+  }, [previousData]);
+
+  useEffect(() => {
+    if (rowData.length > 0) {
+      const alerts =runLiveValidation(rowData);
+      setLiveAlerts(alerts);
+      console.log("alerts", alerts)
+    }
+  }, [rowData, runLiveValidation]);
+  
+  const columnDefs = useMemo(() => {
+    const baseCols = [
+      { 
+        headerName: 'Empleado', 
+        field: 'fullName', 
+        pinned: 'left', 
+        width: 200,
+        cellRenderer: (params) => {
+          if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
+          return params.value;
+        }
+      }
+    ];
+
+    const dayCols = previousFortnightDays.map((day) => {
+      return {        
+        headerName: `${day.dayName} ${day.dayNumber}`, 
+        field: `date_${day.date}`, 
+        
+        headerValueGetter: (params) => {
+          const columnWidth = params.column.getActualWidth();
+          if (columnWidth < 65) return `${day.dayNumber}`;
+          return `${day.dayName} ${day.dayNumber}`;
+        },
+
+        // Retorna el ID del shift asignado a esa fecha específica
+        valueGetter: (params) => {
+          return params.data.dates?.[day.date]?.shift?.id ?? 'S-0';
+        },
+
+        // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
+        valueFormatter: (params) => {
+          const shiftObj = params.data.dates?.[day.date]?.shift;
+          return shiftObj?.letterShift || 'L'; 
+        },
+
+        cellStyle: (params) => {
+          const baseStyle = { textAlign: 'center' };
+          const dayData = params.data.dates?.[day.date];
+          const shiftObj = dayData?.shift;
+          const eventsList = dayData?.events || [];
+          const currentShiftId = shiftObj?.id;
+
+          // Si hay al menos un evento para colorear, pinta el borde
+          const hasHighlightedEvent = eventsList.length > 0;
+
+          if (hasHighlightedEvent) {
+            baseStyle.boxShadow = 'inset 0 0 0 2px #ef4444';
+          }
+
+          if (shiftObj?.color) {
+            if (currentShiftId === 'S-0' && day.isWeekend) {
+              return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
+            }
+            if (currentShiftId === 'S-0') {              
+              if (day.isToday) return { ...baseStyle, backgroundColor: '#3b82f6' };
+              if (day.isWeekend) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
+            }
+            return { ...baseStyle, backgroundColor: shiftObj.color };
+          }    
+
+          return baseStyle;
+        },
+        tooltipValueGetter: (params) => {
+          const eventsList = params.data.dates?.[day.date]?.events || [];
+          if (!eventsList || eventsList.length === 0) return null;
+
+          const titleHtml = `<div class="tooltip-title">Eventos Destacados</div>`;
+          const listHtml = eventsList
+            .map((e, index) => `<div class="tooltip-item">${index + 1}. ${truncateText(e?.title ?? '', 25)}</div>`)
+            .join('');
+
+          return `<div class="custom-grid-tooltip">${titleHtml}${listHtml}</div>`;
+        },
+        flex: 1,          
+        minWidth: 35,      
+        resizable: true,
+        sortable: false,
+        suppressMovable: true,
+        // Bloquea edición si es baja/vacaciones
+        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2',
+        cellClassRules: {
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' ,
+        },
+        cellClass: '!font-bold',
+        headerClass: () => {
+          const classes = [];
+          if (day.isToday) classes.push('header-today');
+          if (day.isWeekend) classes.push('header-weekend');
+          return classes.join(' ');
+        }
+      };
+    });
+
+    return [...baseCols, ...dayCols];
+  }, [previousFortnightDays]);
+
+  const defaultColDef = useMemo(() => ({
+    sortable: true,
+    filter: false,
+    resizable: true,
+    sortingOrder: ['asc', 'desc'],
+    tooltipComponent: CustomTooltip,
+  }), []);
 
   // Solo busca la quincena pasada si el visor está abierto
   useEffect(() => {
     const loadPreFortninght = async () => {
       if (!isOpen) return;
       
-      const startDate = preFortnightParams.start;
-      const endDate = preFortnightParams.end;
       const departmentId = preFortnightParams.departmentId;
-      // console.log("preFortnightParams", departmentId, startDate, endDate)
 
         if (departmentId && startDate && endDate) {
-          console.log("aqui", departmentId , startDate, endDate)
+          // console.log("aqui", departmentId , startDate, endDate)
           setLoadingPrevious(true);
           try {
-  
+            const date = dayjs(startDate);
+            const year = date.year();
+            const month = date.month() + 1;
+
+            // Determinar el número de quincena
+            const dayOfMonth = date.date();
+            const fortnightNumber = dayOfMonth <= 15 ? 1 : 2;
+            
+            const days = getFortnightDays(year, Number(month), fortnightNumber);
             const previousSchedule = await loadFormData(departmentId, startDate, endDate);
-            console.log("Pre Scheduole", previousSchedule)
+
+            setPreviousFortnightDays(days);
             setPreviousData(previousSchedule);
   
           } catch (error) {
@@ -56,7 +238,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
       minWidth={300}
       minHeight={200}
       bounds="window" // Evita que el usuario arrastre la ventana fuera de la pantalla
-      dragHandleClassName="drag-handle" // Solo se puede arrastrar desde la barra superior
       className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl overflow-hidden text-gray-200"
       style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
     >
@@ -79,46 +260,51 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
           <div className="text-center py-8 text-gray-400">Cargando Quincena Anterior...</div>
         ) : (
           <div className="w-full overflow-x-auto">
-            <ShiftLegend shifts={previousData?.shifts} viewMode={true} />
-            <table className="w-full text-left border-collapse mt-5">
-              <thead>
-                <tr className="border-b border-gray-700 bg-[#2b2d2f]">
-                  <th className="p-2 sticky left-0 bg-[#2b2d2f] z-10 w-32">Empleado</th>
-                  <th className="p-2 text-center">01</th>
-                  <th className="p-2 text-center">02</th>
-                  <th className="p-2 text-center">03</th>
-                  <th className="p-2 text-center">04</th>
-                  <th className="p-2 text-center">05</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Ejemplo de mapeo de filas compactas */}
-                <tr className="border-b border-gray-800 hover:bg-[#434547]/50">
-                  <td className="p-2 font-semibold sticky left-0 bg-[#3a3c3e] z-10 whitespace-nowrap border-r border-gray-700">
-                    Juan Pérez
-                  </td>
-                  {/* Micro-celdas pintadas con el color del turno */}
-                  <td className="p-2 text-center">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#00A4BC] text-white">M</span>
-                  </td>
-                  <td className="p-2 text-center">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#00A4BC] text-white">M</span>
-                  </td>
-                  <td className="p-2 text-center">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-600 text-white">T</span>
-                  </td>
-                  <td className="p-2 text-center">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-600 text-gray-400">L</span>
-                  </td>
-                  <td className="p-2 text-center">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#00A4BC] text-white">M</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-6 p-4 rounded-lg transition-all duration-300">
+              <div className="w-full">
+                <ShiftLegend shifts={previousData?.shifts} viewMode={true} />
+              </div>
+              {liveAlerts?.length > 0 && (
+                <div className="w-full">
+                  <LiveAlerts alerts={liveAlerts} />
+                </div>
+              )}
+            </div>
+              <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden`}>
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={columnDefs}
+                  readOnlyEdit={viewMode} 
+                  suppressCellFocus={viewMode}
+                  // rowSelection={
+                  //   viewMode 
+                  //     ? { mode: 'singleRow' } 
+                  //     : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } 
+                  // }
+                  defaultColDef={defaultColDef}
+                  animateRows={true}
+                  theme={myTheme}
+                  localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
+                  onGridReady={onGridReady}
+                  tooltipShowDelay={0}
+                />
+              </div>
+              <div className="flex flex-col md:flex-row gap-3 w-full div-border">
+                <div className="flex flex-col w-full md:flex-1"> 
+                  <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
+                  <textarea
+                    readOnly={viewMode}
+                    value={previousData?.observations ?? ''}
+                    rows="5"                 
+                    cols="33"                 
+                    placeholder="Escribe aquí una observación..."
+                    className={`filter-input p-2 cursor-not-allowed opacity-50 select-none`}
+                  />
+                </div>  
+              </div>
+          </div> 
         )}
-      </div>
+      </div>   
 
       {/* ADVERTENCIA INFERIOR */}
       <div className="bg-[#2f3132] px-3 py-1 text-[10px] text-gray-400 border-t border-gray-700 select-none text-center">

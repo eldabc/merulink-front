@@ -27,6 +27,7 @@ export const getStarEndFortnight = (year, monthId, fortnight) => {
     formatDate(year, monthId, endDay),
   ];
 };
+
 export const getFortnightDays = (year, monthId, fortnight) => {
   const days = [];
   const intFortnight = parseInt(fortnight, 10);

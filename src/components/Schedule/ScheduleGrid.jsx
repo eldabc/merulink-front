@@ -40,8 +40,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); // Almacenar las alertas en vivo
   const [showPastFortnight, setShowPastFortnight] = useState(false);
-  // const endFortnightPosition = fortnightDays.length -1;
-  // console.log("fortnightDays", fortnightDays[endFortnightPosition].date);
+
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
 
@@ -437,9 +436,6 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
         isOpen={showPastFortnight} 
         onClose={() => setShowPastFortnight(false)} 
         preFortnightParams={preFortnightParams}
-        // startFortnight={fortnightDays[0].date} 
-        // endFortnight={fortnightDays[endFortnightPosition].date}
-        // selectedDepartmentId={selectedDepartmentId} 
       />
     </div>
   );
