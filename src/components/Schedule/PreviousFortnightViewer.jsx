@@ -235,8 +235,8 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         width: 500,
         height: 350,
       }}
-      minWidth={300}
-      minHeight={200}
+      minWidth={400}
+      minHeight={300}
       bounds="window" // Evita que el usuario arrastre la ventana fuera de la pantalla
       className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl overflow-hidden text-gray-200"
       style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
@@ -260,15 +260,17 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
           <div className="text-center py-8 text-gray-400">Cargando Quincena Anterior...</div>
         ) : (
           <div className="w-full overflow-x-auto">
+            <div className='w-full text-center'>
+              <h2 className='text-xl font-bold mb-2'> {`Quincena ${dayjs(startDate).format('DD/MM/YYYY')} al ${dayjs(endDate).format('DD/MM/YYYY')} `} </h2>
+            </div>
+
             <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-6 p-4 rounded-lg transition-all duration-300">
-              <div className="w-full">
-                <ShiftLegend shifts={previousData?.shifts} viewMode={true} />
+              <div className="min-w-0">
+                <ShiftLegend shifts={previousData?.shifts} viewMode={true} dynamicClasses='pl-2 py-4' />
               </div>
-              {liveAlerts?.length > 0 && (
-                <div className="w-full">
-                  <LiveAlerts alerts={liveAlerts} />
-                </div>
-              )}
+              <div className="min-w-0">
+                {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
+              </div>
             </div>
               <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden`}>
                 <AgGridReact
@@ -276,11 +278,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
                   columnDefs={columnDefs}
                   readOnlyEdit={viewMode} 
                   suppressCellFocus={viewMode}
-                  // rowSelection={
-                  //   viewMode 
-                  //     ? { mode: 'singleRow' } 
-                  //     : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } 
-                  // }
                   defaultColDef={defaultColDef}
                   animateRows={true}
                   theme={myTheme}
