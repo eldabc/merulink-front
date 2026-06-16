@@ -3,6 +3,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useFormContext } from "react-hook-form";
 import dayjs from 'dayjs';
+import { useScheduleValidation } from '../../hooks/useScheduleValidation';
 
 import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
@@ -40,7 +41,8 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); // Almacenar las alertas en vivo
   const [showPastFortnight, setShowPastFortnight] = useState(false);
-
+  const { runLiveValidation } = useScheduleValidation();
+  
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
 
@@ -57,86 +59,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
     setLiveAlerts(null);
     setShowPastFortnight(false);
   }, [fortnightDays]);
-
-  // VALIDACIÓN EN VIVO
-  const runLiveValidation = useCallback((currentRows) => {
-    const alerts = [];
-
-    currentRows.forEach((employee) => {
-      const fortnightDates = Object.keys(employee.dates || {});
-      let consecutiveWorkDays = 0;
-
-      fortnightDates.forEach((dateStr, index) => {
-        const dayData = employee.dates[dateStr];
-        const currentShift = dayData?.shift;
-
-        const isRestDay = !currentShift || currentShift.id === 'S-0' || currentShift.id === 'S-1' || currentShift.id === 'S-2';
-
-        if (isRestDay) {
-          consecutiveWorkDays = 0;
-        } else {
-          consecutiveWorkDays++;
-
-          // ALERTA: Más de 5 días seguidos trabajando
-          if (consecutiveWorkDays > 5) {
-            alerts.push({
-              id: `${employee.id}-${dateStr}-consecutive`,
-              type: 'consecutive-work',
-              message: `🚨 **${employee.fullName}** lleva **${consecutiveWorkDays} días seguidos** trabajando sin descanso al llegar al día **${dayjs(dateStr).format('DD/MM/YYYY')}**.`
-            });
-          }
-        }
-
-        // Si es día descanso, no ejecuta el resto de validaciones
-        if (isRestDay) return;
-
-        const hasNonWorkingHoliday = dayData?.events?.some(e => e.nonWorking === true);
-
-        // ALERTA: Trabajando en día feriado
-        if (hasNonWorkingHoliday) {
-          alerts.push({
-            id: `${employee.id}-${dateStr}-holiday`,
-            type: 'holiday',
-            message: `⚠️ Está asignando turno a **${employee.fullName}** el día **${dayjs(dateStr).format('DD-MM-YYYY')}**, el cual es un feriado no laborable.`
-          });
-        }
-
-        // ALERTA: Descanso menor a 12 horas entre turnos consecutivos
-        if (index < fortnightDates.length - 1) {
-          const nextDateStr = fortnightDates[index + 1];
-          const nextShift = employee.dates[nextDateStr]?.shift;
-
-          // Si el día siguiente tiene un turno asignado no libre o del sistema especial
-          if (nextShift && !nextShift.isSystemShift) {
-            const currentCheckOut = currentShift.checkOutTime; // Esperado: "HH:mm:ss" o "HH:mm"
-            const nextCheckIn = nextShift.checkInTime;
-
-            if (currentCheckOut && nextCheckIn) {
-              // Combina la fecha real con la hora para tener instancias exactas en el tiempo
-              const outDateTime = dayjs(`${dateStr} ${currentCheckOut}`);
-              const inDateTime = dayjs(`${nextDateStr} ${nextCheckIn}`);
-
-              // .diff() calcula la diferencia ('hour' con decimales)
-              const diffInHours = inDateTime.diff(outDateTime, 'hour', true);
-
-              if (diffInHours < 12) {
-                alerts.push({
-                  id: `${employee.id}-${dateStr}-rest`,
-                  type: 'rest',
-                  message: `⏱️ **${employee.fullName}** termina su turno a las ${outDateTime.format('hh:mm A')} 
-                            (${dayjs(dateStr).format('DD-MM-YYYY')}) e inicia el siguiente a las 
-                            ${inDateTime.format('hh:mm A')} (${dayjs(nextDateStr).format('DD-MM-YYYY')}). 
-                            ¡Descanso menor a 12 horas! (${diffInHours.toFixed(1)} hrs).`
-                });
-              }
-            }
-          }
-        }
-      });
-    });
-
-    setLiveAlerts(alerts);
-  }, [daysMap]);
+  
 
   const onGridReady = (params) => {
     setGridApi(params.api);
@@ -179,7 +102,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
     if (gridApi) {
       const currentRows = [];
       gridApi.forEachNode(node => currentRows.push(node.data));
-      runLiveValidation(currentRows);
+      setLiveAlerts(runLiveValidation(currentRows));
     }
   };
 
@@ -240,7 +163,8 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
   // Ejecutar la validación al renderizar por primera vez
   useEffect(() => {
     if (rowData.length > 0) {
-      runLiveValidation(rowData);
+      const alerts = runLiveValidation(rowData);
+      setLiveAlerts(alerts);
     }
   }, [rowData, runLiveValidation]);
 
