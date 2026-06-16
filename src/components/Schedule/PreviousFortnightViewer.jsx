@@ -95,7 +95,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         headerName: 'Empleado', 
         field: 'fullName', 
         pinned: 'left', 
-        width: 140,
+        width: 120,
         cellClass: 'text-xs font-semibold',
         cellRenderer: (params) => {
           if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
@@ -191,11 +191,29 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
     tooltipComponent: CustomTooltip,
   }), []);
 
-  // Centrar automáticamente la primera vez que se abre en la pantalla del usuario
+  
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     const windowWidth = window.innerWidth;
+  //     const calculatedWidth = windowWidth < 640 ? windowWidth - 32 : 650; // Ajusta ancho inicial
+  //     const calculatedHeight = 450; 
+
+  //     setDimensions({
+  //       width: calculatedWidth,
+  //       height: calculatedHeight,
+  //       x: (windowWidth / 2) - (calculatedWidth / 2),
+  //       y: 60
+  //     });
+  //   }
+  // }, [isOpen]);
+
   useEffect(() => {
-    if (isOpen) {
+    const loadPreFortninght = async () => {
+      if (!isOpen) return;
+      
+      // Centrar automáticamente la primera vez que se abre en la pantalla del usuario
       const windowWidth = window.innerWidth;
-      const calculatedWidth = windowWidth < 640 ? windowWidth - 32 : 650; // Ajusta ancho inicial
+      const calculatedWidth = windowWidth < 640 ? windowWidth - -100 : 700; // Ajusta ancho inicial
       const calculatedHeight = 450; 
 
       setDimensions({
@@ -204,12 +222,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         x: (windowWidth / 2) - (calculatedWidth / 2),
         y: 60
       });
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const loadPreFortninght = async () => {
-      if (!isOpen) return;
       
       const departmentId = preFortnightParams.departmentId;
 
