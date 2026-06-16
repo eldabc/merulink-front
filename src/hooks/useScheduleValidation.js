@@ -9,6 +9,7 @@ export function useScheduleValidation() {
     currentRows.forEach((employee) => {
       const fortnightDates = Object.keys(employee.dates || {});
       let consecutiveWorkDays = 0;
+      let restDaysCount = 0;
 
       fortnightDates.forEach((dateStr, index) => {
         const dayData = employee.dates[dateStr];
@@ -18,6 +19,7 @@ export function useScheduleValidation() {
 
         if (isRestDay) {
           consecutiveWorkDays = 0;
+          restDaysCount++;
         } else {
           consecutiveWorkDays++;
 
@@ -66,9 +68,17 @@ export function useScheduleValidation() {
           }
         }
       });
+
+      // Se evalúa al terminar de revisar todos los días del empleado
+      if (restDaysCount < 3) {
+        alerts.push({
+          id: `${employee.id}-insufficient-rest`,
+          type: 'insufficient-rest',
+          message: `📊 **${employee.fullName}** solo tiene **${restDaysCount} ${restDaysCount === 1 ? 'día libre' : 'días libres'}** en toda la quincena. Requiere un mínimo de 3 días de descanso.`
+        });
+      }
     });
 
-    // RETORNA LAS ALERTAS: Ya no depende de un setLiveAlerts local
     return alerts;
   }, []);
 
