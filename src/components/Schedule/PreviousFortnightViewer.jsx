@@ -89,7 +89,8 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         headerName: 'Empleado', 
         field: 'fullName', 
         pinned: 'left', 
-        width: 200,
+        width: 140,
+        cellClass: 'text-xs font-semibold',
         cellRenderer: (params) => {
           if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
           return params.value;
@@ -261,7 +262,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         ) : (
           <div className="w-full overflow-x-auto">
             <div className='w-full text-center'>
-              <h2 className='text-xl font-bold mb-2'> {`Quincena ${dayjs(startDate).format('DD/MM/YYYY')} al ${dayjs(endDate).format('DD/MM/YYYY')} `} </h2>
+              <h2 className='text-lg font-bold mb-2'> {`Quincena ${dayjs(startDate).format('DD/MM/YYYY')} al ${dayjs(endDate).format('DD/MM/YYYY')} `} </h2>
             </div>
 
             <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-6 p-4 rounded-lg transition-all duration-300">
