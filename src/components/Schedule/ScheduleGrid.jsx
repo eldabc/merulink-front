@@ -78,13 +78,14 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
     // Ocultar botones de control para la foto
     // const actionButtons = element.querySelector('.pdf-actions-container');
     // if (actionButtons) actionButtons.style.display = 'none';
-
+    const start = scheduleData?.start;
     const department = departments.find(d => Number(d.id) === Number(scheduleData?.departmentId));
-    const fortnightInfo = getFortnightInfo(scheduleData?.start);
+    const fortnightInfo = getFortnightInfo(start);
 
-    const departmentName = `DEPARTAMENTO DE ${department?.departmentName}`;
+    const departmentName = `DEPARTAMENTO DE ${department?.departmentName.toUpperCase()}`;
     const fortnightNumber = fortnightInfo.number;
-    const montString = dayjs().month(scheduleData?.monthNumber - 1).format('MMMM');
+    const montString = dayjs().month(scheduleData?.monthNumber - 1).format('MMMM').toUpperCase();
+    const year = dayjs(start).year();
     
     // ENCABEZADO PDF
     const headerDiv = document.createElement('div');
@@ -100,7 +101,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
           <span class="text-xs bg-cyan-950 text--gray-400 font-bold px-2.5 py-1 rounded-md border border-gray-800">
             QUINCENA Nº ${fortnightInfo.number}
           </span>
-          <p class="text-xs font-semibold text-gray-400 mt-1.5">${montString} ${dayjs(scheduleData?.start).year()}</p>
+          <p class="text-xs font-semibold text-gray-400 mt-1.5">${montString} ${year}</p>
         </div>
       </div>
     `;
@@ -141,7 +142,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       
       // Guardado final
-      const fileName = `Horario_${departmentName.replace(/\s+/g, '_')}_Q${fortnightNumber}_${dayjs().format('MM_YYYY')}.pdf`;
+      const fileName = `Horario_${departmentName.replace(/\s+/g, '_')}_Q_N°${fortnightNumber}_${montString}_${year}.pdf`;
       pdf.save(fileName);
 
     } catch (error) {
