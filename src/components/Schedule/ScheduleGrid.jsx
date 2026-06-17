@@ -1,8 +1,10 @@
+import dayjs from 'dayjs';
+import * as htmlToImage from 'html-to-image';
+import { jsPDF } from 'jspdf';
 import React, { forwardRef, useMemo, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useFormContext } from "react-hook-form";
-import dayjs from 'dayjs';
 import { useScheduleValidation } from '../../hooks/useScheduleValidation';
 
 import { truncateText } from '../../utils/text-utils';
@@ -18,12 +20,9 @@ import ErrorMessage from '../Shared/ErrorMessage';
 import LiveAlerts from '../Shared/LiveAlerts';
 import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
 import PreviousFortnightViewer from './PreviousFortnightViewer';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
-
-// Registrar los módulos de AG Grid
+import { EyeIcon, EyeSlashIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// Componente personalizado para renderizar HTML en ToolTip
 const CustomTooltip = (params) => {
   if (!params.value) return null;
   return (
@@ -34,19 +33,19 @@ const CustomTooltip = (params) => {
   );
 };
 
-const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => {
+const ScheduleGrid = forwardRef(({ planningData, preFortnightParams, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => { // isClosed, 
   
   const { register, formState: { errors } } = useFormContext();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
-  const [liveAlerts, setLiveAlerts] = useState([]); // Almacenar las alertas en vivo
+  const [liveAlerts, setLiveAlerts] = useState([]); 
   const [showPastFortnight, setShowPastFortnight] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const { runLiveValidation } = useScheduleValidation();
   
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
 
-  // Mapeo rápido de días quincenales indexados por fecha para agilizar lecturas de festivos
   const daysMap = useMemo(() => {
     return fortnightDays.reduce((acc, curr) => {
       acc[curr.date] = curr;
@@ -60,9 +59,91 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
     setShowPastFortnight(false);
   }, [fortnightDays]);
   
-
   const onGridReady = (params) => {
     setGridApi(params.api);
+  };
+
+  const exportToPDF = async () => {
+    const element = document.getElementById('merulink-grid-container');
+    if (!element) return;
+
+    setIsExporting(true);
+
+    // Ocultar botones de control para la foto
+    // const actionButtons = element.querySelector('.pdf-actions-container');
+    // if (actionButtons) actionButtons.style.display = 'none';
+
+    const departmentName = `DEPARTAMENTO DE ${planningData?.departmentName.toUpperCase()}`;
+    const fortnightNumber = planningData?.fortnightNumber || "1";
+    const mesAño = dayjs(fortnightDays[0]?.date).format('MMMM YYYY').toUpperCase(); 
+
+    // ENCABEZADO PDF
+    const headerDiv = document.createElement('div');
+    headerDiv.id = 'pdf-dynamic-header';
+    headerDiv.className = 'w-full flex flex-col gap-1 pb-4 mb-4 border-b border-gray-600 text-white';
+    headerDiv.innerHTML = `
+      <div class="flex justify-between items-end mt-8">
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-gray-400 pl-8">MERULINK — CONTROL DE HORARIOS</h1>
+          <p class="text-sm font-bold text-gray-300 pl-8">${departmentName}</p>
+        </div>
+        <div class="text-right mr-5">
+          <span class="text-xs bg-cyan-950 text--gray-400 font-bold px-2.5 py-1 rounded-md border border-gray-800">
+            QUINCENA Nº ${fortnightNumber}
+          </span>
+          <p class="text-xs font-semibold text-gray-400 mt-1.5 uppercase">${dayjs().month(planningData?.month - 1).format('MMMM')} ${planningData?.year}</p>
+        </div>
+      </div>
+    `;
+
+    // Insertamos el título al principio de la grilla temporalmente
+    element.insertBefore(headerDiv, element.firstChild);
+
+    try {
+      // Breve pausa para asegurar el renderizado del título
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      // Genera el Canvas de alta definición
+      const canvas = await htmlToImage.toCanvas(element, {
+        quality: 1,
+        pixelRatio: 2, 
+        backgroundColor: '#535557', 
+      });
+
+      // LIMPIEZA INMEDIATA: Restaura la interfaz original en pantalla
+      // if (actionButtons) actionButtons.style.display = 'flex';
+      const addedHeader = element.querySelector('#pdf-dynamic-header');
+      if (addedHeader) element.removeChild(addedHeader);
+
+      // CÁLCULO DINÁMICO
+      // En lugar de usar mm fijos, adapta el PDF exacto a la relación de aspecto de la captura
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdfWidth = 297; // Ancho base de referencia (A4 Horizontal en mm)
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Alto proporcional exacto
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [pdfWidth, pdfHeight] // Crea la hoja a la medida de la tabla
+      });
+
+      // Coloca la imagen ocupando el 100% del espacio disponible
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      
+      // Guardado final
+      const fileName = `Horario_${departmentName.replace(/\s+/g, '_')}_Q${fortnightNumber}_${dayjs().format('MM_YYYY')}.pdf`;
+      pdf.save(fileName);
+
+    } catch (error) {
+      console.error("Error generando el reporte PDF:", error);
+
+      // if (actionButtons) actionButtons.style.display = 'flex';
+      const addedHeader = element.querySelector('#pdf-dynamic-header');
+      if (addedHeader) element.removeChild(addedHeader);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleCellClicked = (params) => {
@@ -75,6 +156,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
     if (currentShiftId === 'S-1' || currentShiftId === 'S-2') return;
 
     const updatedData = { ...params.data };
+
     // Extrae la fecha limpia quitando el prefijo 'date_'
     const rawDate = dateFieldName.replace('date_', '');
 
@@ -283,8 +365,33 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
   
   return (
-    <div className="w-full flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2 p-2 rounded-md text-sm">
+    <div className="w-full flex flex-col gap-4 p-2 bg-[#535557] rounded-lg">
+
+      <div className=" w-full flex items-center justify-end gap-2 mt-2">
+        <button
+          type="button"
+          onClick={exportToPDF}
+          disabled={isExporting}
+          title="Descargar copia impresa (PDF)"
+          className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-500 text-white font-semibold text-sm rounded-md transition-all shadow-md"
+        >
+          <ArrowDownTrayIcon className={`w-5 h-5 ${isExporting ? 'animate-bounce' : ''}`} />
+          {isExporting ? 'Generando...' : 'PDF'}
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setShowPastFortnight(!showPastFortnight)}
+          title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
+          className="flex gap-2 px-4 py-2 bg-[#525456] hover:bg-[#52545691] hover:border rounded-md"
+        >
+          {showPastFortnight ? ( 
+            <EyeSlashIcon className='w-5 h-5 text-gray-300' />
+          ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
+        </button>
+      </div>
+
+      <div id="merulink-grid-container" className="w-full flex flex-col gap-4">
         {isDataPending ? (
           <SpanText text="Cargando..." />
         ) : (
@@ -299,25 +406,11 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
                   <div className='min-h-18'>
                     {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
                   </div>
-
-                  <div className="w-full flex flex-col items-end">
-                    <button 
-                      type="button"
-                      onClick={() => setShowPastFortnight(!showPastFortnight)}
-                      title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
-                      className={`flex gap-2 px-4 py-2 mt-2 skip-style-btn bg-[#525456] hover:bg-[#52545691] hover:border rounded-md`}
-                    >
-                      {showPastFortnight ? ( 
-                        <EyeSlashIcon className='w-5 h-5 text-gray-300' />
-                      ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
-                    </button>
-                  </div>
                 </div>
               </div>
 
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
-
-                {isClosed && (
+                {planningData?.isClosed && (
                   <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
                     <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
                       Quincena cerrada
@@ -325,17 +418,12 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
                   </div>
                 )}
 
-                <div className={`ag-theme-quartz w-full h-[500px] shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+                <div className={`ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
                   <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
                     readOnlyEdit={viewMode} 
                     suppressCellFocus={viewMode}
-                    // rowSelection={
-                    //   viewMode 
-                    //     ? { mode: 'none' } 
-                    //     : { mode: 'multiRow', checkboxes: false, headerCheckbox: false, enableClickSelection: true } 
-                    // }
                     defaultColDef={defaultColDef}
                     animateRows={true}
                     theme={myTheme}
@@ -343,6 +431,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
                     localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
                     onGridReady={onGridReady}
                     tooltipShowDelay={0}
+                    domLayout="autoHeight"
                   />
                 </div>
               </div>
@@ -376,7 +465,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
         onClose={() => setShowPastFortnight(false)} 
         preFortnightParams={preFortnightParams}
       />
-      
+
     </div>
   );
 });

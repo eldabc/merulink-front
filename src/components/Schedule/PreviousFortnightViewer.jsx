@@ -27,7 +27,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   // Guarda el tamaño y las coordenadas exactas del visor
   const [dimensions, setDimensions] = useState({
     width: 500,
-    height: 350,
+    height: 300,
     x: 600,
     y: 40
   });
@@ -258,7 +258,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         });
       }}
       minWidth={400}
-      minHeight={300}
+      minHeight={250}
       // bounds="window" 
       
       // Esto le dice a react-rnd que ignore el arrastre si tocan algo con la clase 'no-drag'
@@ -299,16 +299,16 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
             </div>
 
             {/* Layout de Leyenda + Alertas */}
-            <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
+            {/* <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
               <div className="min-w-0">
                 <ShiftLegend shifts={previousData?.shifts} viewMode={true} dynamicClasses='pl-2 py-2' />
               </div>
               <div className="min-w-0">
                 {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
               </div>
-            </div>
+            </div> */}
 
-            <div className="ag-theme-quartz w-full h-80 shadow-sm rounded-lg overflow-hidden shrink-0">
+            <div className="ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden shrink-0">
               <AgGridReact
                 rowData={rowData}
                 columnDefs={columnDefs}
@@ -320,10 +320,11 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
                 localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
                 onGridReady={onGridReady}
                 tooltipShowDelay={0}
+                domLayout="autoHeight"
               />
             </div>
 
-            <div className="flex flex-col gap-2 w-full div-border p-3">
+            {/* <div className="flex flex-col gap-2 w-full div-border p-3">
               <LabelFieldForm field="Observación" dinamicClasses="mb-1" />
               <textarea
                 readOnly={viewMode}
@@ -332,7 +333,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
                 placeholder="Sin observaciones en esta quincena..."
                 className="filter-input p-2 cursor-not-allowed opacity-60 select-none bg-[#2b2d2f] text-gray-300 rounded border border-gray-700 resize-none text-xs w-full"
               />
-            </div>
+            </div> */}
           </div> 
         )}
       </div>   
