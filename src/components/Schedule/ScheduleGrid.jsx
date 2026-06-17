@@ -6,10 +6,12 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useFormContext } from "react-hook-form";
 import { useScheduleValidation } from '../../hooks/useScheduleValidation';
+import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
+import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 
 import SpanText from '../Shared/SpanText';
 import ShiftLegend from '../Shift/ShiftLegend';
@@ -33,9 +35,10 @@ const CustomTooltip = (params) => {
   );
 };
 
-const ScheduleGrid = forwardRef(({ planningData, preFortnightParams, scheduleSaved, groupedEmployees, fortnightDays, shifts, loading, onSave, mode }, ref) => { // isClosed, 
-  
+const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays,loading, onSave, mode }, ref) => {
+
   const { register, formState: { errors } } = useFormContext();
+  const { departments } = useGlobalData();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); 
@@ -45,6 +48,9 @@ const ScheduleGrid = forwardRef(({ planningData, preFortnightParams, scheduleSav
   
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
+  const scheduleSaved = !!scheduleData?.id;
+  const groupedEmployees = scheduleData?.employees;
+  const shifts = scheduleData?.shifts;
 
   const daysMap = useMemo(() => {
     return fortnightDays.reduce((acc, curr) => {
@@ -73,25 +79,28 @@ const ScheduleGrid = forwardRef(({ planningData, preFortnightParams, scheduleSav
     // const actionButtons = element.querySelector('.pdf-actions-container');
     // if (actionButtons) actionButtons.style.display = 'none';
 
-    const departmentName = `DEPARTAMENTO DE ${planningData?.departmentName.toUpperCase()}`;
-    const fortnightNumber = planningData?.fortnightNumber || "1";
-    const mesAño = dayjs(fortnightDays[0]?.date).format('MMMM YYYY').toUpperCase(); 
+    const department = departments.find(d => Number(d.id) === Number(scheduleData?.departmentId));
+    const fortnightInfo = getFortnightInfo(scheduleData?.start);
 
+    const departmentName = `DEPARTAMENTO DE ${department?.departmentName}`;
+    const fortnightNumber = fortnightInfo.number;
+    const montString = dayjs().month(scheduleData?.monthNumber - 1).format('MMMM');
+    
     // ENCABEZADO PDF
     const headerDiv = document.createElement('div');
     headerDiv.id = 'pdf-dynamic-header';
     headerDiv.className = 'w-full flex flex-col gap-1 pb-4 mb-4 border-b border-gray-600 text-white';
     headerDiv.innerHTML = `
-      <div class="flex justify-between items-end mt-8">
+      <div class="flex justify-between items-end mt-8 uppercase">
         <div>
           <h1 class="text-xl font-black tracking-tight text-gray-400 pl-8">MERULINK — CONTROL DE HORARIOS</h1>
           <p class="text-sm font-bold text-gray-300 pl-8">${departmentName}</p>
         </div>
         <div class="text-right mr-5">
           <span class="text-xs bg-cyan-950 text--gray-400 font-bold px-2.5 py-1 rounded-md border border-gray-800">
-            QUINCENA Nº ${fortnightNumber}
+            QUINCENA Nº ${fortnightInfo.number}
           </span>
-          <p class="text-xs font-semibold text-gray-400 mt-1.5 uppercase">${dayjs().month(planningData?.month - 1).format('MMMM')} ${planningData?.year}</p>
+          <p class="text-xs font-semibold text-gray-400 mt-1.5">${montString} ${dayjs(scheduleData?.start).year()}</p>
         </div>
       </div>
     `;
@@ -410,7 +419,7 @@ const ScheduleGrid = forwardRef(({ planningData, preFortnightParams, scheduleSav
               </div>
 
               <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
-                {planningData?.isClosed && (
+                {scheduleData?.isClosed && (
                   <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
                     <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
                       Quincena cerrada

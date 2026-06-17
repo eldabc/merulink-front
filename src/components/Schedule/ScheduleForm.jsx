@@ -233,20 +233,6 @@ export default function ScheduleForm({ }) {
   };
 
   const disabledClasses = getDisabledClasses(mode === 'view');
-  const date = dayjs(formData?.start);
-  const year = date.year(); 
-  const fortnightInfo = getFortnightInfo(date);
-
-  const department = departments.find(d => Number(d.id) === Number(formData?.departmentId));
-  const planningData = {
-      isClosed: formData?.isClosed,
-      departmentId: formData?.departmentId,
-      departmentName: department?.departmentName,
-      fortnight: fortnightInfo.number,
-      month: formData?.monthNumber,
-      year: date.year(),
-    };
-
   // console.log("formData", formData)
 
   return (
@@ -265,12 +251,9 @@ export default function ScheduleForm({ }) {
                 {Object.keys(formData ?? {}).length > 0 && (
                   <ScheduleGrid 
                     ref={scheduleGridRef}
-                    planningData={planningData}
+                    scheduleData={formData}
                     preFortnightParams={preFortnightParams}
-                    scheduleSaved={!!formData?.id}
-                    groupedEmployees={formData?.employees} 
                     fortnightDays={fortnightDays} 
-                    shifts={formData?.shifts} 
                     loading={loading} 
                     disabledClasses={disabledClasses} 
                     mode={mode} 
