@@ -109,11 +109,17 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
         
-        headerValueGetter: (params) => {
-          const columnWidth = params.column.getActualWidth();
-          if (columnWidth < 65) return `${day.dayNumber}`;
-          return `${day.dayName} ${day.dayNumber}`;
-        },
+        headerComponent: () => (
+          <div className="flex flex-col items-center justify-center py-1 w-full h-full text-center">
+            <span className="text-[13px] uppercase font-bold tracking-tighter opacity-80 block">
+              {day.dayName.substring(0, 3)} {/* Corta a 3 letras */}
+            </span>
+
+            <span className="text-xs font-bold block mt-0.5">
+              {day.dayNumber}
+            </span>
+          </div>
+        ),
 
         valueGetter: (params) => {
           return params.data.dates?.[day.date]?.shift?.id ?? 'S-0';
@@ -162,7 +168,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
           return `<div class="custom-grid-tooltip">${titleHtml}${listHtml}</div>`;
         },
         flex: 1,          
-        minWidth: 35,      
+        minWidth: 40,      
         resizable: true,
         sortable: false,
         suppressMovable: true,
@@ -190,22 +196,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
     sortingOrder: ['asc', 'desc'],
     tooltipComponent: CustomTooltip,
   }), []);
-
-  
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     const windowWidth = window.innerWidth;
-  //     const calculatedWidth = windowWidth < 640 ? windowWidth - 32 : 650; // Ajusta ancho inicial
-  //     const calculatedHeight = 450; 
-
-  //     setDimensions({
-  //       width: calculatedWidth,
-  //       height: calculatedHeight,
-  //       x: (windowWidth / 2) - (calculatedWidth / 2),
-  //       y: 60
-  //     });
-  //   }
-  // }, [isOpen]);
 
   useEffect(() => {
     const loadPreFortninght = async () => {

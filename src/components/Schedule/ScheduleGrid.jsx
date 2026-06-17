@@ -174,7 +174,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
         headerName: 'Empleado', 
         field: 'fullName', 
         pinned: 'left', 
-        width: 200,
+        width: window.innerWidth < 640 ? 110 : 180,
         cellRenderer: (params) => {
           if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
           return params.value;
@@ -187,11 +187,17 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
         
-        headerValueGetter: (params) => {
-          const columnWidth = params.column.getActualWidth();
-          if (columnWidth < 65) return `${day.dayNumber}`;
-          return `${day.dayName} ${day.dayNumber}`;
-        },
+        headerComponent: () => (
+          <div className="flex flex-col items-center justify-center py-1 w-full h-full text-center">
+            <span className="text-[13px] uppercase font-bold tracking-tighter opacity-80 block">
+              {day.dayName.substring(0, 3)} {/* Corta a 3 letras */}
+            </span>
+
+            <span className="text-xs font-bold block mt-0.5">
+              {day.dayNumber}
+            </span>
+          </div>
+        ),
 
         // Retorna el ID del shift asignado a esa fecha específica
         valueGetter: (params) => {
@@ -243,7 +249,7 @@ const ScheduleGrid = forwardRef(({ isClosed, preFortnightParams, scheduleSaved, 
           return `<div class="custom-grid-tooltip">${titleHtml}${listHtml}</div>`;
         },
         flex: 1,          
-        minWidth: 35,      
+        minWidth: 45,      
         resizable: true,
         sortable: false,
         suppressMovable: true,

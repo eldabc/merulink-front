@@ -301,11 +301,12 @@ footer {
 /* fondo fin de semana */
 .ag-theme-quartz .header-weekend {
   background-color: #f8d7da;
+  color: #81262e !important;
 }
 
 /* texto fin de semana */
 .ag-theme-quartz .header-weekend .ag-header-cell-text {
-  color: #81262e;
+  color: #81262e !important;
   font-weight: 700 !important;
 }
 
@@ -376,4 +377,31 @@ footer {
 /* Si tiene días libres con bordes rojos específicos del fin de semana de MeruLink */
 .ag-theme-quartz .ag-cell-hover[style*="box-shadow"] {
   transition: box-shadow 0.1s ease-in-out;
+}
+
+.ag-header-cell-label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  
+  /* Asegura que el '\n' rompa la línea de forma limpia */
+  white-space: pre-line !important; 
+  
+  /* Evita que las letras se achiquen o estiren lateralmente */
+  font-stretch: normal !important;
+  letter-spacing: normal !important;
+  
+  /* Da un respiro vertical para que el día arriba y número abajo no colapsen */
+  line-height: 1.3 !important; 
+  padding: 4px 0 !important;
+}
+
+/* Forzar a que el texto interno ocupe todo el ancho disponible sin colapsar */
+.ag-header-cell-text {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  display: block !important;
+  width: 100% !important;
 }
