@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 
 import { formatTimeTo12H } from '../../utils/date-utils';
 
+import AlertBadge from '../Shared/AlertBadge';
+
 function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode, dynamicClasses = 'p-5' }) {
 
   const handleShiftClick = (shift) => {
@@ -27,10 +29,10 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode,
           <div 
             key={shift.id} 
             onClick={() => !viewMode && handleShiftClick(shift)} // Activa el clic en toda la fila del turno
-            className={`flex items-center gap-2 p-1 rounded-lg cursor-pointer transition-all duration-200 ${
+            className={`relative flex items-center gap-2 p-1 rounded-lg cursor-pointer transition-all duration-200 ${
               isSelected 
-                ? 'bg-gray-700/50 scale-105 border border-cyan-500/50 shadow-md' // Estilo activo
-                : 'transition-all duration-200 cursor-pointer hover:bg-gray-800/30 hover:scale-105 hover:shadow-sm border border-transparent' // Estilo hover normal
+                ? 'bg-gray-700/50 scale-105 border border-cyan-500/50 shadow-md'
+                : `transition-all duration-200 cursor-pointer hover:bg-gray-800/30 hover:scale-105 hover:shadow-sm border border-transparent ${shift?.alert && 'bg-gray-900/30' }`
             }`}
           >
             <div
@@ -39,6 +41,7 @@ function ShiftLegend({ shifts = [], activeBrush = null, onSelectBrush, viewMode,
               style={{ backgroundColor: shift.color ?? 'red' }}
             >
               {shift.letterShift}
+              {shift?.alert && <AlertBadge alert={shift?.alert} />}
             </div>
 
             <span className={`text-sm select-none font-medium ${isSelected ? 'text-cyan-400' : 'text-gray-300'}`}>

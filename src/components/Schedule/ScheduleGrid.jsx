@@ -387,7 +387,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
           hasShiftGrid ? ( 
             <>
               <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
-                <div className="min-w-0">
+                <div className="min-w-0 flex justify-center md:justify-start">
                   <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
                 </div>
                 <div className="min-w-0">

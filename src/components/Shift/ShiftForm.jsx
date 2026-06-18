@@ -207,7 +207,7 @@ export default function ShiftForm({ mode = 'create' }) {
             <div className='mx-auto mt-6'>
               <div className="relative inline-block">                
                 <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
-                {shift?.alert && <AlertBadge alert={shift?.alert} />}
+                {shift?.alert && <AlertBadge alert={shift?.alert}  dynamicClasses="-top-3" />}
               </div>
               
                 {loading ? (

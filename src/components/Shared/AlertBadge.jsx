@@ -1,5 +1,5 @@
-function AlertBadge({ alert }) {
-  
+function AlertBadge({ alert, dynamicClasses }) {
+
   const ALERT_STYLES = {
     new_modification: "bg-cyan-950 text-cyan-400 border-cyan-800",
     warning: "bg-amber-950 text-amber-400 border-amber-800",
@@ -12,9 +12,8 @@ function AlertBadge({ alert }) {
     <span 
       title={alert?.tooltip}
       className={`
-        ${type_alert_style}
+        ${type_alert_style} ${dynamicClasses}
         absolute 
-        -top-3 
         -right-1 
         transform 
         translate-x-1/2 
@@ -22,7 +21,7 @@ function AlertBadge({ alert }) {
         text-[10px] 
         font-black 
         tracking-wider 
-        px-1.5 
+        px-1 
         py-0.5 
         rounded-lg
         shadow-md 

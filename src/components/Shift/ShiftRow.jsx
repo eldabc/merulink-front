@@ -51,7 +51,7 @@ export default function ShiftRow({ shift }) {
       <td className="px-4 py-3 text-white-700 font-medium">
         <div className="relative inline-block">
           {shift.code} 
-          {shift?.alert && <AlertBadge alert={shift?.alert} />}
+          {shift?.alert && <AlertBadge alert={shift?.alert} dynamicClasses="-top-3" />}
         </div>
       </td>
       <td className="px-4 py-3 text-white-700">{shift.description}</td>
