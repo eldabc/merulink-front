@@ -13,16 +13,18 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
 import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 
-import SpanText from '../Shared/SpanText';
-import ShiftLegend from '../Shift/ShiftLegend';
+import PreviousFortnightViewer from './PreviousFortnightViewer';
+import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
+import ScheduleHeader from './ScheduleHeader';
+import ScheduleTopBar from '../Shared/ScheduleTopBar';
 import ScheduleLegend from './ScheduleLegend';
+import ShiftLegend from '../Shift/ShiftLegend';
+import SpanText from '../Shared/SpanText';
+import LiveAlerts from '../Shared/LiveAlerts';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import SelectGeneric from '../Shared/SelectGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
-import LiveAlerts from '../Shared/LiveAlerts';
-import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
-import PreviousFortnightViewer from './PreviousFortnightViewer';
-import ScheduleTopBar from '../Shared/ScheduleTopBar';
+
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -398,32 +400,36 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
                 </div>
               </div>
 
-              <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
-                {scheduleData?.isClosed && (
-                  <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
-                    <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
-                      Quincena cerrada
+              {rowData.length === 0 ? (
+                <SpanText text="Sin quincena registrada." dinamicClasses="mt-10 text-center text-[16px] mb-5" />
+              ) : (
+                <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
+                  {scheduleData?.isClosed && (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
+                      <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
+                        Quincena cerrada
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <div className={`ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
-                  <AgGridReact
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    readOnlyEdit={viewMode} 
-                    suppressCellFocus={viewMode}
-                    defaultColDef={defaultColDef}
-                    animateRows={true}
-                    theme={myTheme}
-                    onCellClicked={handleCellClicked}
-                    localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
-                    onGridReady={onGridReady}
-                    tooltipShowDelay={0}
-                    domLayout="autoHeight"
-                  />
+                  <div className={`ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+                    <AgGridReact
+                      rowData={rowData}
+                      columnDefs={columnDefs}
+                      readOnlyEdit={viewMode} 
+                      suppressCellFocus={viewMode}
+                      defaultColDef={defaultColDef}
+                      animateRows={true}
+                      theme={myTheme}
+                      onCellClicked={handleCellClicked}
+                      localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
+                      onGridReady={onGridReady}
+                      tooltipShowDelay={0}
+                      domLayout="autoHeight"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
               
               {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
 
