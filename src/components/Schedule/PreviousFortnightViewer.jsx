@@ -13,6 +13,7 @@ import { truncateText } from '../../utils/text-utils';
 
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import LiveAlerts from '../Shared/LiveAlerts';
+import SpanText from '../Shared/SpanText';
 
 const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   
@@ -291,6 +292,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         {loadingPrevious ? (
           <div className="text-center py-8 text-gray-400">Cargando Quincena Anterior...</div>
         ) : (
+          
           <div className="w-full flex flex-col gap-4">
             <div className='w-full text-center'>
               <h2 className='text-base font-bold text-gray-100'> 
@@ -298,42 +300,48 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
               </h2>
             </div>
 
-            {/* Layout de Leyenda + Alertas */}
-            {/* <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
-              <div className="min-w-0">
-                <ShiftLegend shifts={previousData?.shifts} viewMode={true} dynamicClasses='pl-2 py-2' />
-              </div>
-              <div className="min-w-0">
-                {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
-              </div>
-            </div> */}
+            {rowData.length === 0 ? (
+              <SpanText text="Sin quincena anterior registrada." dinamicClasses="mt-10 text-center text-[16px]" />
+            ) : (
+              <>
+                {/* Layout de Leyenda + Alertas */}
+                {/* <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
+                  <div className="min-w-0">
+                    <ShiftLegend shifts={previousData?.shifts} viewMode={true} dynamicClasses='pl-2 py-2' />
+                  </div>
+                  <div className="min-w-0">
+                    {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
+                  </div>
+                </div> */}
 
-            <div className="ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden shrink-0">
-              <AgGridReact
-                rowData={rowData}
-                columnDefs={columnDefs}
-                readOnlyEdit={viewMode} 
-                suppressCellFocus={viewMode}
-                defaultColDef={defaultColDef}
-                animateRows={true}
-                theme={myTheme}
-                localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
-                onGridReady={onGridReady}
-                tooltipShowDelay={0}
-                domLayout="autoHeight"
-              />
-            </div>
+                <div className="ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden shrink-0">
+                  <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    readOnlyEdit={viewMode} 
+                    suppressCellFocus={viewMode}
+                    defaultColDef={defaultColDef}
+                    animateRows={true}
+                    theme={myTheme}
+                    localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
+                    onGridReady={onGridReady}
+                    tooltipShowDelay={0}
+                    domLayout="autoHeight"
+                  />
+                </div>
 
-            {/* <div className="flex flex-col gap-2 w-full div-border p-3">
-              <LabelFieldForm field="Observación" dinamicClasses="mb-1" />
-              <textarea
-                readOnly={viewMode}
-                value={previousData?.observations ?? ''}
-                rows="3"                 
-                placeholder="Sin observaciones en esta quincena..."
-                className="filter-input p-2 cursor-not-allowed opacity-60 select-none bg-[#2b2d2f] text-gray-300 rounded border border-gray-700 resize-none text-xs w-full"
-              />
-            </div> */}
+                {/* <div className="flex flex-col gap-2 w-full div-border p-3">
+                  <LabelFieldForm field="Observación" dinamicClasses="mb-1" />
+                  <textarea
+                    readOnly={viewMode}
+                    value={previousData?.observations ?? ''}
+                    rows="3"                 
+                    placeholder="Sin observaciones en esta quincena..."
+                    className="filter-input p-2 cursor-not-allowed opacity-60 select-none bg-[#2b2d2f] text-gray-300 rounded border border-gray-700 resize-none text-xs w-full"
+                  />
+                </div> */}
+              </>
+            )}
           </div> 
         )}
       </div>   
