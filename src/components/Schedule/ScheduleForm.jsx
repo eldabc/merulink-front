@@ -1,7 +1,7 @@
+import dayjs from 'dayjs';
 import { useEffect, useState, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import dayjs from 'dayjs';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
@@ -47,7 +47,7 @@ export default function ScheduleForm({ }) {
 
   const now = dayjs();
   const currentYear = now.year();
-
+  
   // Añadir año correspondiente a los meses
   const mapToMonthWithYear = (d) => {
     const idx = d.month(); // 0-11

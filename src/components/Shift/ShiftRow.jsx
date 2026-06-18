@@ -9,6 +9,7 @@ import { minHourOptions } from '../../utils/StaticData/shift-utils';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
+import AlertBadge from '../Shared/AlertBadge';
 
 export default function ShiftRow({ shift }) {
 
@@ -22,7 +23,9 @@ export default function ShiftRow({ shift }) {
   const deleteBtnTitle = blockBtn ? 'No se puede eliminar, turno tiene Horarios asociados' : 'Eliminar';
 
   const handleSelectedShift = (id) => {
-    navigate(`/empleados/turnos/ver/${id}`); 
+    navigate(`/empleados/turnos/ver/${id}`, {
+      state: { alert: shift?.alert }
+    }); 
   };
 
   const handleDeleteClick = (shift) => {
@@ -45,7 +48,12 @@ export default function ShiftRow({ shift }) {
       onClick={() => handleSelectedShift(shift.id)}
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
-      <td className="px-4 py-3 text-white-800 font-medium">{shift.code}</td>
+      <td className="px-4 py-3 text-white-700 font-medium">
+        <div className="relative inline-block">
+          {shift.code} 
+          {shift?.alert && <AlertBadge alert={shift?.alert} />}
+        </div>
+      </td>
       <td className="px-4 py-3 text-white-700">{shift.description}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(shift.checkInTime)}</td>
       <td className="px-4 py-3 text-white-700">{formatTimeTo12H(shift.checkOutTime)}</td>

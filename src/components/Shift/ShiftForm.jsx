@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { shiftValidationSchema  } from '../../utils/Validations/shiftValidationSchema';
@@ -24,12 +24,15 @@ import SelectGeneric from '../Shared/SelectGeneric';
 import ToggleGeneric from '../Shared/ToggleGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import CodesCircles from '../Shared/CodesCircles';
+import AlertBadge from '../Shared/AlertBadge';
 import '../../Tables.css';
 
 export default function ShiftForm({ mode = 'create' }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { alert } = location.state || {};
   const { shiftData, createShift, updateShift, getCodeDataByDepartment, loading } = useShifts();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
@@ -202,7 +205,10 @@ export default function ShiftForm({ mode = 'create' }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
+              <div className="relative inline-block">                
+                <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
+                {shift?.alert && <AlertBadge alert={shift?.alert} />}
+              </div>
               
                 {loading ? (
                   <SpanText text="Cargando..." />
