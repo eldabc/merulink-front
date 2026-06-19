@@ -76,3 +76,63 @@ export function getFortnightInfo(startDate) {
     label: `${fortnightNumber}ª Quincena`
   };
 }
+
+const monthNamesES = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
+
+export function getFortnightDetails(date, indicator = 'current') {
+  const referenceDate = dayjs(date);
+  if (!referenceDate.isValid()) {
+    return null;
+  }
+
+  const currentDay = referenceDate.date();
+  const currentFortnight = currentDay <= 15 ? 1 : 2;
+
+  let year = referenceDate.year();
+  let month = referenceDate.month() + 1; // dayjs months are 0-indexed
+  let fortnightNumber = currentFortnight;
+
+  if (indicator === 'next') {
+    if (currentFortnight === 1) {
+      fortnightNumber = 2;
+    } else {
+      fortnightNumber = 1;
+      month += 1;
+      if (month > 12) {
+        month = 1;
+        year += 1;
+      }
+    }
+  } else if (indicator === 'before') {
+    if (currentFortnight === 2) {
+      fortnightNumber = 1;
+    } else {
+      fortnightNumber = 2;
+      month -= 1;
+      if (month < 1) {
+        month = 12;
+        year -= 1;
+      }
+    }
+  }
+
+  const monthString = String(month).padStart(2, '0');
+  const startDay = fortnightNumber === 1 ? 1 : 16;
+  const endDay = fortnightNumber === 1
+    ? 15
+    : dayjs(`${year}-${monthString}-01`).endOf('month').date();
+
+  return {
+    year,
+    month,
+    monthName: monthNamesES[month - 1],
+    fortnightNumber,
+    fortnightLabel: `${fortnightNumber}ª Quincena`,
+    start: formatDate(year, month, startDay),
+    end: formatDate(year, month, endDay),
+  };
+}
+

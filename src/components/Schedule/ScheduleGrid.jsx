@@ -15,7 +15,6 @@ import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 
 import PreviousFortnightViewer from './PreviousFortnightViewer';
 import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
-import ScheduleHeader from './ScheduleHeader';
 import ScheduleTopBar from '../Shared/ScheduleTopBar';
 import ScheduleLegend from './ScheduleLegend';
 import ShiftLegend from '../Shift/ShiftLegend';
@@ -393,7 +392,6 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
                   <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
                 </div>
                 <div className="min-w-0">
-                  
                   <div className='min-h-18'>
                     {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
                   </div>
@@ -431,7 +429,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
                 </div>
               )}
               
-              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
+              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} title="Alertas de Planificación" /> )}
 
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />

@@ -2,7 +2,7 @@ import SpanText from "./SpanText";
 
 function CodesCircles({ codes = [] }) {
   return (
-    <div className="flex flex-wrap items-center gap-4 mb-2"> Códigos existentes:
+    <div className="flex flex-wrap items-center gap-4 mb-2 mt-2"> Códigos existentes:
       {codes.length === 0 ? (
         <SpanText text="Sin códigos registrados" />
       ) : (

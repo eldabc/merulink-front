@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useEffect, useState, useMemo } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { useGlobalData } from '../../context/GlobalDataContext';
 import { newCodePosition } from '../../utils/Positions/positions-utils';
 import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
 import { typeShiftOptions, minHourOptions, radioOptions, nigthShiftOptions } from '../../utils/StaticData/shift-utils';
+import { getFortnightDetails } from '../../utils/Schedule/schedule-utils';
 
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -25,6 +27,7 @@ import ToggleGeneric from '../Shared/ToggleGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import CodesCircles from '../Shared/CodesCircles';
 import AlertBadge from '../Shared/AlertBadge';
+import LiveAlerts from '../Shared/LiveAlerts';
 import '../../Tables.css';
 
 export default function ShiftForm({ mode = 'create' }) {
@@ -51,7 +54,9 @@ export default function ShiftForm({ mode = 'create' }) {
   const watchRestPeriod = watch('restPeriodTime');  
   const watchRestPeriodUnitTime = watch('restPeriodUnitTime');  
   const selectedTypeShift = watch('typeShift');  
-
+  const watchAvailable = watch('available');  
+  const [liveAlerts, setLiveAlerts] = useState([]); 
+  
   const shift = shiftData.find(e => e.id === Number(id));
   const createMode = mode === 'create';
   const viewMode = mode === 'view';
@@ -71,6 +76,23 @@ export default function ShiftForm({ mode = 'create' }) {
       setValue('restPeriodUnitTime', 'minutes', { shouldValidate: true });
     }
   },[selectedTypeShift]);
+
+  useEffect(() => {
+    
+    if (watchAvailable === 'yes') {
+      const today = dayjs().format('YYYY-MM-DD');
+      const nextFortnight = getFortnightDetails(today, 'next');
+
+      setLiveAlerts([{
+        id: 0,
+        type: 'apply-shift-changes',
+        message: `🚨 Esta editando un turno "EN VIVO" los cambios que realice hoy estarán vigentes a partir de la quincena ${nextFortnight.fortnightNumber} de ${nextFortnight.monthName}.`
+      }]);
+
+    } else {
+      setLiveAlerts([]);
+    }
+  }, [watchAvailable]);
 
   useEffect(() => {
 
@@ -209,6 +231,8 @@ export default function ShiftForm({ mode = 'create' }) {
                 <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
                 {shift?.alert && <AlertBadge alert={shift?.alert}  dynamicClasses="-top-3" />}
               </div>
+              
+                {(editMode && watchAvailable === 'yes') && (<LiveAlerts alerts={liveAlerts} title="Alerta modificación de turno" dynamicClasses="mt2" />)}
               
                 {loading ? (
                   <SpanText text="Cargando..." />
