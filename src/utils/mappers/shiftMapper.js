@@ -18,6 +18,7 @@ export const mapShiftToBackend = (formData) => {
     allow_exit: formData.allowExit,
     allow_re_scanned: formData.allowReScanned,
     available: formData.available,
+    available_from: formData.availableFrom,
     observation: formData.observation,
   };
 };

@@ -94,14 +94,8 @@ export default function ShiftList({ categoryKeys }) {
                     </thead>
                     <tbody>
                         {paginatedShifts.map((item) => (
-                          // item.id > 0 && (
-                            <ShiftRow 
-                            key={item.id} 
-                            shift={item} 
-                          />
-                          // )
+                          <ShiftRow key={item.id} shift={item} />
                         ))}
-                    
                     </tbody>
                 </>
                 ) : (

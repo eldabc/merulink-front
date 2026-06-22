@@ -56,8 +56,10 @@ export default function ShiftForm({ mode = 'create' }) {
   const selectedTypeShift = watch('typeShift');  
   const watchAvailable = watch('available');  
   const [liveAlerts, setLiveAlerts] = useState([]); 
+  const [nextFortnightData, setNextFortnightData] = useState([]);
   
   const shift = shiftData.find(e => e.id === Number(id));
+  // console.log("shift", shift)
   const createMode = mode === 'create';
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
@@ -79,20 +81,24 @@ export default function ShiftForm({ mode = 'create' }) {
 
   useEffect(() => {
     
-    if (watchAvailable === 'yes') {
+    if (editMode && watchAvailable === 'yes') {
+            console.log("hhhhh");
+
       const today = dayjs().format('YYYY-MM-DD');
       const nextFortnight = getFortnightDetails(today, 'next');
+      setNextFortnightData(nextFortnight);
+
 
       setLiveAlerts([{
         id: 0,
         type: 'apply-shift-changes',
-        message: `🚨 Esta editando un turno "EN VIVO" los cambios que realice hoy estarán vigentes a partir de la quincena ${nextFortnight.fortnightNumber} de ${nextFortnight.monthName}.`
+        message: `🚨 Esta editando un turno "HABILITADO" los cambios que realice hoy estarán vigentes a partir de la fecha seleccionada ${nextFortnight.monthName}.`
       }]);
 
     } else {
       setLiveAlerts([]);
     }
-  }, [watchAvailable]);
+  }, [watchAvailable, editMode]);
 
   useEffect(() => {
 
@@ -144,6 +150,21 @@ export default function ShiftForm({ mode = 'create' }) {
 
 
   useEffect(() => {
+      const today = dayjs().format('YYYY-MM-DD');
+      const dayInFortnight = today <= 15 ? today : today - 15;
+      let availableFromDate;
+      
+      // Evaluar regla de los primeros 3 días
+      if (dayInFortnight <= 3) {
+        // Caso A: Hoy esta dentro de los días 1, 2 o 3 de la quincena actual.
+        availableFromDate = today.format('YYYY-MM-DD');
+        console.log("aqui 2", today.format('YYYY-MM-DD'))
+      } else {
+        // Caso B: Ya pasó el día 3. Buscamos el inicio de la PRÓXIMA quincena.
+        const proximaQuincena = getFortnightDetails(today, 'next');
+        availableFromDate = proximaQuincena.start;
+        console.log("aqui 1", proximaQuincena.start);
+      }
 
       reset({
         code: shift?.code ?? '',
@@ -162,6 +183,7 @@ export default function ShiftForm({ mode = 'create' }) {
         allowExit: shift?.allowExit ?? false,
         allowReScanned: shift?.allowReScanned ?? false,
         available: shift?.available ?? false,
+        availableFrom: editMode ? availableFromDate : today,
         observation: shift?.observation ?? '',
       });
 
@@ -200,8 +222,9 @@ export default function ShiftForm({ mode = 'create' }) {
   const onSubmit = async (data) => {
     // console.log("data submit", data);
     let success = false;
+    const availableFrom = editMode ? nextFortnightData?.start : dayjs().format('YYYY-MM-DD');
     const dataChanges = { ...data, id: shift?.id };
-
+    console.log("dataChanges", dataChanges)
     if (editMode && shift) { 
       success = await updateShift(dataChanges);
     } else {
@@ -417,8 +440,21 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                   </div>
 
-                <LabelFieldForm field="Observación" />
-                 <div className="hidden md:block md:col-span-3"> 
+                {editMode && (
+                  <>
+                  <LabelFieldForm field="Disponible a partir de" simbol="*" />
+                    <div>
+                      <input 
+                        readOnly={viewMode} type='date'
+                        {...register('availableFrom', {onChange: (e) => guestNextDate(e) })}
+                        className={`w-full px-3 py-2 rounded-lg filter-input  ${disabledClasses}`} 
+                      />
+                      {errors?.availableFrom && <ErrorMessage msg={errors.availableFrom.message} /> }  
+                    </div>
+                  </>
+                )}
+
+                 <div className="hidden md:block md:col-span-3"> <LabelFieldForm field="Observación" dinamicClasses="mb-4" />
                     <textarea
                       readOnly={viewMode}
                       {...register('observation')}

@@ -101,6 +101,10 @@ checkOutTime: yup.string()
     .oneOf(["yes", "no"], 'Opción inválida')
     .required('Este campo es requerido'),
 
+  availableFrom: yup.date().nullable() // 🚀 Permite que acepte null sin lanzar error
+    .transform((curr, orig) => (orig === '' ? null : curr)) // Convierte "" de los inputs en null
+    .typeError('La fecha introducida no es válida'),
+
   observation: yup.string()
     .nullable()
     .max(200, 'Debe contener máximo 200 caracteres'),
