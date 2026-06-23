@@ -7,6 +7,7 @@ import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-communi
 import { useFormContext } from "react-hook-form";
 import { useScheduleValidation } from '../../hooks/useScheduleValidation';
 import { useGlobalData } from '../../context/GlobalDataContext';
+import { useSchedules } from '../../context/ScheduleContext';
 
 import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
@@ -40,6 +41,7 @@ const CustomTooltip = (params) => {
 const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays,loading, onSave, mode }, ref) => {
 
   const { register, formState: { errors } } = useFormContext();
+  const { autofillSchedule, setLoading } = useSchedules();
   const { departments } = useGlobalData();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
@@ -78,8 +80,6 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
     setIsExporting(true);
 
     // Ocultar botones de control para la foto
-    // const actionButtons = element.querySelector('.pdf-actions-container');
-    // if (actionButtons) actionButtons.style.display = 'none';
     const start = scheduleData?.start;
     const department = departments.find(d => Number(d.id) === Number(scheduleData?.departmentId));
     const fortnightInfo = getFortnightInfo(start);
@@ -123,7 +123,6 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       });
 
       // LIMPIEZA INMEDIATA: Restaura la interfaz original en pantalla
-      // if (actionButtons) actionButtons.style.display = 'flex';
       const addedHeader = element.querySelector('#pdf-dynamic-header');
       if (addedHeader) element.removeChild(addedHeader);
 
@@ -373,13 +372,38 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
     tooltipComponent: CustomTooltip,
   }), []);
 
+  const handleAutofillFortnight = async () => {
+    
+    const start = scheduleData?.start;
+    const end = scheduleData?.end;
+    const departmentId = scheduleData?.departmentId;
+
+    if (!start || !end || !departmentId) return;
+
+    try {
+      setLoading(true);
+      console.log("handleAutofillFortnight", start, end, departmentId);
+      
+      const response = await autofillSchedule({ start, end, department_id: departmentId });
+      console.log("Quincena rellenada con éxito:", response);
+      
+      // Llamar a tu función para refrescar la malla de turnos
+      // await fetchScheduleGrid(); 
+
+    } catch (error) {
+      console.error("Error al intentar rellenar la quincena:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const isDataPending = loading || shifts === undefined;
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
   
   return (
     <div className="w-full flex flex-col gap-4 p-2 bg-[#535557] rounded-lg">
 
-      <ScheduleTopBar exportToPDF={exportToPDF} isExporting={isExporting} setShowPastFortnight={setShowPastFortnight} showPastFortnight={showPastFortnight} shifts={shifts} />
+      <ScheduleTopBar exportToPDF={exportToPDF} isExporting={isExporting} setShowPastFortnight={setShowPastFortnight} showPastFortnight={showPastFortnight} shifts={shifts} onAutofillFortnight={handleAutofillFortnight} />
 
       <div id="merulink-grid-container" className="w-full flex flex-col gap-4">
         {isDataPending ? (

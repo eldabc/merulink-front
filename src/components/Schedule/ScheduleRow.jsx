@@ -37,6 +37,7 @@ export default function ScheduleRow({ schedule, statusInfo, departmentId, monthS
       state: { departmentId, monthNumber, fortnight, monthSelectedJson } 
     }); 
   };
+  
   const handleDeleteClick = (schedule) => {
     setSelectedSchedule(schedule);
     setIsModalOpen(true);

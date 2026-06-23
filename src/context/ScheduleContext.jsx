@@ -155,21 +155,6 @@ export const ScheduleProvider = ({ children }) => {
     }
   };
 
-  // const getSchedule = useCallback(async (selectedDepartmentId = null, start = null, end = null) => {
-  //   // setLoading(true);
-  //   try {
-
-  //     const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings?start=${start}&end=${end}&departmentId=${selectedDepartmentId}`);
-  //     console.log("getSchedule", response.data.data);
-  //     return response.data.data;
-
-  //   } catch (error) {
-  //     showNotification('Error al cargar Horario', error.message, 'error');
-  //   } finally {
-  //     // setLoading(false);
-  //   }
-  // }, []);
-
   const getScheduleById = useCallback(async (schedulePlanningId) => {
     setLoading(true); 
     try {
@@ -184,14 +169,27 @@ export const ScheduleProvider = ({ children }) => {
       setLoading(false);
     }
   }, []);
+
+  const autofillSchedule = async (payload) => {
+    try {
+
+      const response = await axios.post(`${ENV.API_BACK_URL}schedule-plannings/autofill`, payload);
+      console.log("loadFormData", response);
+      return response;
+
+    } catch (error) {
+      console.error("Error guardar datos de autofill", error);
+      showNotification('Error al guardar datos de autofill', error.message, 'error');
+    }
+  };
   
   const contextValue = {
     loading,
     setLoading,
     loadFormData,
     loadSchedules,
-    // getSchedule,
     getScheduleById,
+    autofillSchedule,
     createSchedule,
     updateSchedule,
     deleteSchedule,

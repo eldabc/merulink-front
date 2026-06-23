@@ -153,8 +153,8 @@ export default function ShiftForm({ mode = 'create' }) {
       const today = dayjs().format('YYYY-MM-DD');
       const createdAt = shift?.createdAt ?? null; 
       const dayInFortnight = today <= 15 ? today : today - 15;
-      let availableFromDate = today;
-      
+      let availableFromDate = shift?.availableFrom ?? today;
+
       if (editMode && !dayjs(createdAt).isSame(today, 'day')) {
 
         // Evaluar regla de los primeros 3 días

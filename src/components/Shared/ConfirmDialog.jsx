@@ -15,8 +15,6 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
         
         <div className="text-gray-400 text-sm mb-6">
           <p className='text-justify'>{message}</p>
-          {/* // || 'Esta acción no se puede deshacer. El evento será eliminado permanentemente.' */}
-
           <div className="text-center bg-gray-600 rounded-2xl ">
             {warningMessage ? (
               <WarningChangeStatusEmployee toggleStatusChangeList={toggleStatusChangeList} />
