@@ -1,6 +1,6 @@
 import * as yup from 'yup';
+import dayjs from 'dayjs';
 import { nigthShiftOptions } from '../../utils/StaticData/shift-utils';
-
 
 export const shiftValidationSchema = yup.object().shape({
   code: yup
@@ -101,9 +101,14 @@ checkOutTime: yup.string()
     .oneOf(["yes", "no"], 'Opción inválida')
     .required('Este campo es requerido'),
 
-  availableFrom: yup.date().nullable() // 🚀 Permite que acepte null sin lanzar error
+  availableFrom: yup.date()
+    .nullable() // Permite que acepte null sin lanzar error
     .transform((curr, orig) => (orig === '' ? null : curr)) // Convierte "" de los inputs en null
-    .typeError('La fecha introducida no es válida'),
+    .typeError('La fecha introducida no es válida')
+    .min(
+      dayjs().startOf('day').toDate(), 
+      'La fecha no puede ser menor al día de hoy'
+    ),
 
   observation: yup.string()
     .nullable()

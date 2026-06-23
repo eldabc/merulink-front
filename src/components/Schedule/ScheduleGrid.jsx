@@ -393,7 +393,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
                 </div>
                 <div className="min-w-0">
                   <div className='min-h-18'>
-                    {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} /> )}
+                    {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} title="Alertas Horario" /> )}
                   </div>
                 </div>
               </div>

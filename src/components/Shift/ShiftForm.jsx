@@ -55,6 +55,7 @@ export default function ShiftForm({ mode = 'create' }) {
   const watchRestPeriodUnitTime = watch('restPeriodUnitTime');  
   const selectedTypeShift = watch('typeShift');  
   const watchAvailable = watch('available');  
+  const watchAvailableFrom = watch('availableFrom');  
   const [liveAlerts, setLiveAlerts] = useState([]); 
   const [nextFortnightData, setNextFortnightData] = useState([]);
   
@@ -82,23 +83,22 @@ export default function ShiftForm({ mode = 'create' }) {
   useEffect(() => {
     
     if (editMode && watchAvailable === 'yes') {
-            console.log("hhhhh");
 
       const today = dayjs().format('YYYY-MM-DD');
       const nextFortnight = getFortnightDetails(today, 'next');
+      const nextDate = watchAvailableFrom ? dayjs(watchAvailableFrom).format('DD/MM/YYYY') : '';
       setNextFortnightData(nextFortnight);
 
-
       setLiveAlerts([{
-        id: 0,
+        id: 1,
         type: 'apply-shift-changes',
-        message: `🚨 Esta editando un turno "HABILITADO" los cambios que realice hoy estarán vigentes a partir de la fecha seleccionada ${nextFortnight.monthName}.`
+        message: `🚨 Esta editando un turno "HABILITADO" los cambios que realice hoy estarán vigentes a partir de la fecha seleccionada ${nextDate}.`
       }]);
 
     } else {
       setLiveAlerts([]);
     }
-  }, [watchAvailable, editMode]);
+  }, [watchAvailable, editMode, watchAvailableFrom]);
 
   useEffect(() => {
 
@@ -446,7 +446,7 @@ export default function ShiftForm({ mode = 'create' }) {
                     <div>
                       <input 
                         readOnly={viewMode} type='date'
-                        {...register('availableFrom', {onChange: (e) => guestNextDate(e) })}
+                        {...register('availableFrom')}
                         className={`w-full px-3 py-2 rounded-lg filter-input  ${disabledClasses}`} 
                       />
                       {errors?.availableFrom && <ErrorMessage msg={errors.availableFrom.message} /> }  
