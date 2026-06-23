@@ -12,7 +12,7 @@ import SpanText from '../Shared/SpanText';
 import AlertBadge from '../Shared/AlertBadge';
 
 export default function ShiftRow({ shift }) {
-console.log("shift", shift)
+
   const navigate = useNavigate();
   const { deleteShift } = useShifts();
   const [isModalOpen, setIsModalOpen] = useState(false);

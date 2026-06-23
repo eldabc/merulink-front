@@ -151,19 +151,21 @@ export default function ShiftForm({ mode = 'create' }) {
 
   useEffect(() => {
       const today = dayjs().format('YYYY-MM-DD');
+      const createdAt = shift?.createdAt ?? null; 
       const dayInFortnight = today <= 15 ? today : today - 15;
-      let availableFromDate;
+      let availableFromDate = today;
       
-      // Evaluar regla de los primeros 3 días
-      if (dayInFortnight <= 3) {
-        // Caso A: Hoy esta dentro de los días 1, 2 o 3 de la quincena actual.
-        availableFromDate = today.format('YYYY-MM-DD');
-        console.log("aqui 2", today.format('YYYY-MM-DD'))
-      } else {
-        // Caso B: Ya pasó el día 3. Buscamos el inicio de la PRÓXIMA quincena.
-        const proximaQuincena = getFortnightDetails(today, 'next');
-        availableFromDate = proximaQuincena.start;
-        console.log("aqui 1", proximaQuincena.start);
+      if (editMode && !dayjs(createdAt).isSame(today, 'day')) {
+
+        // Evaluar regla de los primeros 3 días
+        if (dayInFortnight <= 3) {
+          // Hoy esta dentro de los días 1, 2 o 3 de la quincena actual.
+          availableFromDate = today.format('YYYY-MM-DD');
+        } else {
+          // Ya pasó el día 3. Busca el inicio de la PRÓXIMA quincena.
+          const proximaQuincena = getFortnightDetails(today, 'next');
+          availableFromDate = proximaQuincena.start;
+        }
       }
 
       reset({
@@ -183,7 +185,7 @@ export default function ShiftForm({ mode = 'create' }) {
         allowExit: shift?.allowExit ?? false,
         allowReScanned: shift?.allowReScanned ?? false,
         available: shift?.available ?? false,
-        availableFrom: editMode ? availableFromDate : today,
+        availableFrom: availableFromDate,
         observation: shift?.observation ?? '',
       });
 
@@ -297,11 +299,9 @@ export default function ShiftForm({ mode = 'create' }) {
                 <div>                 
                   <SelectGeneric 
                     name="typeShift"
-                    // register={register} 
                     disabled={viewMode || !selectedDepartmentId} 
                     dynamicClasses={`${disabledClasses} ${disabledTypeShift}`} 
                     dataSelect={typeShiftOptions}
-                    // errors={errors}
                   />
                 </div>
 
@@ -362,11 +362,9 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     <SelectGeneric 
                       name="restPeriodUnitTime"
-                      // register={register} 
                       disabled={viewMode} 
                       dynamicClasses={`${disabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
-                      // errors={errors}
                     />
                     {errors?.restPeriodUnitTime && <ErrorMessage msg={errors.restPeriodUnitTime.message} />}  
                   </div>
@@ -380,11 +378,9 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     <SelectGeneric 
                       name="activePeriodUnitTime"
-                      // register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
-                      // errors={errors}
                     />
                     {errors?.activePeriodUnitTime && <ErrorMessage msg={errors.activePeriodUnitTime.message} />}  
                   </div>
@@ -398,11 +394,9 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                     <SelectGeneric 
                       name="totalPeriodUnitTime"
-                      // register={register} 
                       disabled={true} 
                       dynamicClasses={`${alwaysApplyDisabledClasses} w-40!`} 
                       dataSelect={minHourOptions}
-                      // errors={errors}
                     />
                     {errors?.totalPeriodUnitTime && <ErrorMessage msg={errors.totalPeriodUnitTime.message} />}  
                   </div>
@@ -440,9 +434,9 @@ export default function ShiftForm({ mode = 'create' }) {
                     />
                   </div>
 
-                {editMode && (
+                {(watchAvailable === 'yes') && (
                   <>
-                  <LabelFieldForm field="Disponible a partir de" simbol="*" />
+                  <LabelFieldForm field="Aplicar cambios a partir de" simbol="*" />
                     <div>
                       <input 
                         readOnly={viewMode} type='date'
