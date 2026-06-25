@@ -41,7 +41,7 @@ const CustomTooltip = (params) => {
 const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays,loading, onSave, mode }, ref) => {
 
   const { register, formState: { errors } } = useFormContext();
-  const { autofillSchedule, setLoading } = useSchedules();
+  const { autofillSchedule, setLoading, setScheduleData } = useSchedules();
   const { departments } = useGlobalData();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
@@ -49,12 +49,15 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
   const [showPastFortnight, setShowPastFortnight] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const { runLiveValidation } = useScheduleValidation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
   const scheduleSaved = !!scheduleData?.id;
   const groupedEmployees = scheduleData?.employees;
   const shifts = scheduleData?.shifts;
+  const cleanedShifts = shifts?.filter(s => s.letterShift !== 'L');
+  const isOneShift = cleanedShifts.length === 1;
 
   const daysMap = useMemo(() => {
     return fortnightDays.reduce((acc, curr) => {
@@ -372,23 +375,25 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
     tooltipComponent: CustomTooltip,
   }), []);
 
-  const handleAutofillFortnight = async () => {
+  const handleAutofillClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmAutofill = async () => {
     
     const start = scheduleData?.start;
     const end = scheduleData?.end;
     const departmentId = scheduleData?.departmentId;
 
-    if (!start || !end || !departmentId) return;
+    if (!start || !end || !departmentId || !isOneShift) return;
 
     try {
       setLoading(true);
-      console.log("handleAutofillFortnight", start, end, departmentId);
-      
-      const response = await autofillSchedule({ start, end, department_id: departmentId });
-      console.log("Quincena rellenada con éxito:", response);
-      
-      // Llamar a tu función para refrescar la malla de turnos
-      // await fetchScheduleGrid(); 
+      const shift = isOneShift ? cleanedShifts[0] : [];
+      const id = scheduleData?.id;
+
+      await autofillSchedule({ start, end, department_id: departmentId, shift, id });
+      setIsModalOpen(false);
 
     } catch (error) {
       console.error("Error al intentar rellenar la quincena:", error);
@@ -403,7 +408,18 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
   return (
     <div className="w-full flex flex-col gap-4 p-2 bg-[#535557] rounded-lg">
 
-      <ScheduleTopBar exportToPDF={exportToPDF} isExporting={isExporting} setShowPastFortnight={setShowPastFortnight} showPastFortnight={showPastFortnight} shifts={shifts} onAutofillFortnight={handleAutofillFortnight} />
+      <ScheduleTopBar 
+        exportToPDF={exportToPDF} 
+        isExporting={isExporting} 
+        setShowPastFortnight={setShowPastFortnight} 
+        showPastFortnight={showPastFortnight} 
+        shifts={shifts} 
+        onAutofillClick={handleAutofillClick} 
+        onConfirmAutofill={handleConfirmAutofill} 
+        isModalOpen={isModalOpen}
+        isOneShift={isOneShift}
+        setIsModalOpen ={setIsModalOpen}
+      />
 
       <div id="merulink-grid-container" className="w-full flex flex-col gap-4">
         {isDataPending ? (

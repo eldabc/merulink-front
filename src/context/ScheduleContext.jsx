@@ -129,7 +129,7 @@ export const ScheduleProvider = ({ children }) => {
 
       showNotification(
         `Horario ${capitalizeFirstLetter(selectedMonth)} 
-         quincena ${dayjs(schedule.start).format('DD-MM-YYYY')} - ${dayjs(schedule.end).format('DD-MM-YYYY')} eliminado con éxito`
+         quincena ${dayjs(schedule.start).format('DD/MM/YYYY')} - ${dayjs(schedule.end).format('DD/MM/YYYY')} eliminado con éxito`
       );
       return true;
     } catch (error) {
@@ -172,14 +172,18 @@ export const ScheduleProvider = ({ children }) => {
 
   const autofillSchedule = async (payload) => {
     try {
-
+      const selectedMonth = dayjs(payload.start).format('MMMM');
       const response = await axios.post(`${ENV.API_BACK_URL}schedule-plannings/autofill`, payload);
-      console.log("loadFormData", response);
-      return response;
+      // console.log("loadFormData", response);
+
+      showNotification(
+        `Horario ${capitalizeFirstLetter(selectedMonth)} 
+         quincena ${dayjs(payload.start).format('DD/MM/YYYY')} - ${dayjs(payload.end).format('DD/MM/YYYY')} cargado con éxito`
+      );
 
     } catch (error) {
       console.error("Error guardar datos de autofill", error);
-      showNotification('Error al guardar datos de autofill', error.message, 'error');
+      showNotification('Error al guardar datos quincena', error.message, 'error');
     }
   };
   
