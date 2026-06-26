@@ -392,7 +392,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       const shift = isOneShift ? cleanedShifts[0] : [];
       const id = scheduleData?.id;
 
-      const newData = await autofillSchedule({ start, end, department_id: departmentId, shift, id });
+      const newData = await autofillSchedule({ start, end, departmentId, shift, id });
       if (onAutofillSuccess && newData) {
         onAutofillSuccess(newData);
       }
@@ -411,12 +411,13 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
   return (
     <div className="w-full flex flex-col gap-4 p-2 bg-[#535557] rounded-lg">
 
-      <ScheduleTopBar 
+      <ScheduleTopBar
+        viewMode={viewMode}
+        disabledClasses={disabledClasses}
         exportToPDF={exportToPDF} 
         isExporting={isExporting} 
         setShowPastFortnight={setShowPastFortnight} 
         showPastFortnight={showPastFortnight} 
-        shifts={shifts} 
         onAutofillClick={handleAutofillClick} 
         onConfirmAutofill={handleConfirmAutofill} 
         isModalOpen={isModalOpen}

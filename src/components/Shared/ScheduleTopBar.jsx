@@ -4,7 +4,7 @@ import { useSchedules } from '../../context/ScheduleContext';
 import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 
-function ScheduleTopBar ({ exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, shifts, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen }) {
+function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen }) {
   
   return (
     <div className=" w-full flex items-center justify-end gap-2 mt-2">
@@ -22,12 +22,13 @@ function ScheduleTopBar ({ exportToPDF, isExporting, setShowPastFortnight, showP
       {isOneShift && (
         <button 
           type="button"
+          disabled={viewMode}
           onClick={(e) => {
             e.stopPropagation();
             onAutofillClick()
           }}
           title={'Rellenar Quincena'}
-          className="flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md"
+          className={`flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md ${disabledClasses}`}
         >
           <ClipboardDocumentListIcon className='w-5 h-5 text-gray-300' />
         </button>
@@ -51,6 +52,12 @@ function ScheduleTopBar ({ exportToPDF, isExporting, setShowPastFortnight, showP
         title="Rellenar Quincena"
         btnText="Rellenar Quincena Automáticamente"
         message={`¿Está seguro que desea Rellenar esta Quincena automáticamente?`}
+        changesList={[
+          "Se rellenarán los días con el turno activo.",
+          "Se excluirán automáticamente sábados, domingos y feriados (fijos y rotativos).",
+          "Los días de vacaciones que crucen la quincena no generan turnos.",
+          "Si desea revertir este paso más adelante, deberá editar los cambios manualmente."
+        ]}
       />
     </div>
   );

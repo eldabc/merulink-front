@@ -58,7 +58,7 @@ export default function ScheduleList({ categoryKeys }) {
   }, []);
 
   const loadSchedulesData = useCallback((currentFilters) => {
-    console.log("filters",currentFilters);
+    
     if (currentFilters.department) {
      
       loadSchedules(

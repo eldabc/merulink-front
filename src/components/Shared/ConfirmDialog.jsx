@@ -1,6 +1,6 @@
 import WarningChangeStatusEmployee from '../Shared/WarningChangeStatusEmployee';
 
-export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, btnText, warningMessage, toggleStatusChangeList }) {
+export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, btnText, warningMessage, toggleStatusChangeList, changesList = [] }) {
   if (!isOpen) return null;
 
   return (
@@ -19,9 +19,29 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
             {warningMessage ? (
               <WarningChangeStatusEmployee toggleStatusChangeList={toggleStatusChangeList} />
             ) : (
-              <span className="block justify-center mt-2 text-[14px] text-red-500 text-shadow-amber-50 p-2">
-                Esta acción no se puede deshacer.
-              </span>
+              
+              changesList.length > 0 ? (
+                <div className="mt-2 text-[14px] text-red-500 text-shadow-amber-50 p-2">
+                  <span className="block font-bold mb-1 text-center">
+                    Se realizará los siguientes cambios:
+                  </span>
+                  <ul className="list-disc list-inside space-y-1 mb-2 pl-1 text-left">
+                    {changesList.map((change, index) => (
+                      <li key={index} className="text-gray-700 dark:text-gray-300">
+                        {change}
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="block font-bold mt-2 text-red-600">
+                    ⚠️ Esta acción no se puede deshacer de forma automática.
+                  </span>
+                </div>
+              ) : (
+                <span className="block justify-center mt-2 text-[14px] text-red-500 text-shadow-amber-50 p-2">
+                  Esta acción no se puede deshacer.
+                </span>
+              )
+
             )}
           </div>
         </div>
