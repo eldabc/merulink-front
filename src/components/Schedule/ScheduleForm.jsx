@@ -124,11 +124,9 @@ export default function ScheduleForm({ }) {
           let previousStart;
 
           if (previousEnd.date() === 15) {
-            // Si terminó el 15, significa que empezó el 1 del mismo mes
-            previousStart = previousEnd.date(1);
+            previousStart = previousEnd.date(1); // Si terminó el 15, significa que empezó el 1 del mismo mes
           } else {
-            // Si terminó a fin de mes (ej. 30 o 31), empezó el 16 del mismo mes
-            previousStart = previousEnd.date(16);
+            previousStart = previousEnd.date(16); // Si terminó a fin de mes (ej. 30 o 31), empezó el 16 del mismo mes
           }
 
           setPreFortnightParams({

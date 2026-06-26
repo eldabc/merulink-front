@@ -50,6 +50,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
   const [isExporting, setIsExporting] = useState(false);
   const { runLiveValidation } = useScheduleValidation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [autofillAlways, setAutofillAlways] = useState(false);
   
   const viewMode = mode === 'view';
   const disabledClasses = getDisabledClasses(viewMode);
@@ -129,8 +130,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       const addedHeader = element.querySelector('#pdf-dynamic-header');
       if (addedHeader) element.removeChild(addedHeader);
 
-      // CÁLCULO DINÁMICO
-      // En lugar de usar mm fijos, adapta el PDF exacto a la relación de aspecto de la captura
+      // CÁLCULO DINÁMICO Adapta el PDF exacto a la relación de aspecto de la captura
       const imgData = canvas.toDataURL('image/png');
       
       const pdfWidth = 297; // Ancho base de referencia (A4 Horizontal en mm)
@@ -391,8 +391,9 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       setLoading(true);
       const shift = isOneShift ? cleanedShifts[0] : [];
       const id = scheduleData?.id;
+      // console.log("autofillAlways", autofillAlways)
 
-      const newData = await autofillSchedule({ start, end, departmentId, shift, id });
+      const newData = await autofillSchedule({ start, end, departmentId, shift, id, autofillAlways });
       if (onAutofillSuccess && newData) {
         onAutofillSuccess(newData);
       }
@@ -423,6 +424,8 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
         isModalOpen={isModalOpen}
         isOneShift={isOneShift}
         setIsModalOpen ={setIsModalOpen}
+        autofillAlways={autofillAlways}
+        onAutofillAlwaysChange={setAutofillAlways}
       />
 
       <div id="merulink-grid-container" className="w-full flex flex-col gap-4">

@@ -1,10 +1,7 @@
-import { useState } from 'react';
-import { useSchedules } from '../../context/ScheduleContext';
-
 import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
-import ConfirmDialog from '../Shared/ConfirmDialog';
+import ConfirmAutofill from '../Shared/ConfirmAutofill';
 
-function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen }) {
+function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen, autofillAlways, onAutofillAlwaysChange }) {
   
   return (
     <div className=" w-full flex items-center justify-end gap-2 mt-2">
@@ -45,19 +42,18 @@ function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, 
         ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
       </button>
 
-      <ConfirmDialog 
+      <ConfirmAutofill 
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); }}
         onConfirm={onConfirmAutofill}
-        title="Rellenar Quincena"
-        btnText="Rellenar Quincena Automáticamente"
-        message={`¿Está seguro que desea Rellenar esta Quincena automáticamente?`}
         changesList={[
           "Se rellenarán los días con el turno activo.",
           "Se excluirán automáticamente sábados, domingos y feriados (fijos y rotativos).",
           "Los días de vacaciones que crucen la quincena no generan turnos.",
           "Si desea revertir este paso más adelante, deberá editar los cambios manualmente."
         ]}
+        checkboxChecked={autofillAlways}
+        onCheckboxChange={onAutofillAlwaysChange}
       />
     </div>
   );
