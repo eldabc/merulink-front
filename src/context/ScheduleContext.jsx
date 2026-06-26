@@ -76,7 +76,7 @@ export const ScheduleProvider = ({ children }) => {
       return true;
     } catch (error) {
       console.log("error", error);
-      showNotification('Error al crear Horario', error.response.data.message, 'error');
+      showNotification('Error al crear Horario', error.response?.data?.message, 'error');
       return false;
     }
   };
@@ -96,10 +96,10 @@ export const ScheduleProvider = ({ children }) => {
       
       const response = await axios.put(`${ENV.API_BACK_URL}schedule-plannings/${scheduleId}`, updatedSchedule);
       
-      setScheduleData(prevData => {
-        const filteredData = prevData.filter(schedule => schedule.id !== scheduleId);
-        return [response.data.data, ...filteredData];
-      });
+      // setScheduleData(prevData => {
+      //   const filteredData = prevData.filter(schedule => schedule.id !== scheduleId);
+      //   return [response.data.data, ...filteredData];
+      // });
 
       const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
       showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} actualizado con éxito`); 
@@ -108,7 +108,7 @@ export const ScheduleProvider = ({ children }) => {
     } catch (error) {
       console.log("error:", error);
 
-      showNotification('Error al actualizar:', error.response.data.message, 'error');
+      showNotification('Error al actualizar:', error.response?.data?.message, 'error');
       return false;
     }
   };
@@ -134,7 +134,7 @@ export const ScheduleProvider = ({ children }) => {
       return true;
     } catch (error) {
       console.log("error", error)
-      showNotification('Error al eliminar Horario', error.response.data.message, 'error');
+      showNotification('Error al eliminar Horario', error.response?.data?.message, 'error');
       return false;
     }
   };
@@ -151,7 +151,7 @@ export const ScheduleProvider = ({ children }) => {
       return response.data.data;
 
     } catch (error) {
-        showNotification('Error al obtener datos de los Horarios', error.response.data.message, 'error');
+        showNotification('Error al obtener datos de los Horarios', error.response?.data?.message, 'error');
     }
   };
 
@@ -164,7 +164,7 @@ export const ScheduleProvider = ({ children }) => {
       return response.data;
     
     } catch (error) {
-      showNotification('Error al cargar el Horario por ID', error.message, 'error');
+      showNotification('Error al cargar el Horario por ID', error?.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -174,16 +174,16 @@ export const ScheduleProvider = ({ children }) => {
     try {
       const selectedMonth = dayjs(payload.start).format('MMMM');
       const response = await axios.post(`${ENV.API_BACK_URL}schedule-plannings/autofill`, payload);
-      // console.log("loadFormData", response);
 
       showNotification(
         `Horario ${capitalizeFirstLetter(selectedMonth)} 
          quincena ${dayjs(payload.start).format('DD/MM/YYYY')} - ${dayjs(payload.end).format('DD/MM/YYYY')} cargado con éxito`
       );
 
+      return response.data;
     } catch (error) {
       console.error("Error guardar datos de autofill", error);
-      showNotification('Error al guardar datos quincena', error.message, 'error');
+      showNotification('Error al guardar datos quincena', error.response?.data?.message || error.message, 'error');
     }
   };
   

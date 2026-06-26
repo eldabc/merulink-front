@@ -257,6 +257,16 @@ export default function ScheduleForm({ }) {
                     loading={loading} 
                     disabledClasses={disabledClasses} 
                     mode={mode} 
+                    onAutofillSuccess={(newData) => {
+                      setFormData(newData);
+                      if (newData?.isClosed || newData?.status === 'approved') {
+                        setMode('view');
+                      } else if (newData?.id) {
+                        setMode('edit');
+                      } else {
+                        setMode('create');
+                      }
+                    }}
                   />
                 )}
               </div>

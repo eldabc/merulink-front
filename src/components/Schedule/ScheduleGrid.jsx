@@ -38,7 +38,7 @@ const CustomTooltip = (params) => {
   );
 };
 
-const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays,loading, onSave, mode }, ref) => {
+const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays, loading, onSave, mode, onAutofillSuccess }, ref) => {
 
   const { register, formState: { errors } } = useFormContext();
   const { autofillSchedule, setLoading, setScheduleData } = useSchedules();
@@ -392,7 +392,10 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       const shift = isOneShift ? cleanedShifts[0] : [];
       const id = scheduleData?.id;
 
-      await autofillSchedule({ start, end, department_id: departmentId, shift, id });
+      const newData = await autofillSchedule({ start, end, department_id: departmentId, shift, id });
+      if (onAutofillSuccess && newData) {
+        onAutofillSuccess(newData);
+      }
       setIsModalOpen(false);
 
     } catch (error) {

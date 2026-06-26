@@ -73,10 +73,10 @@ export default function ScheduleList({ categoryKeys }) {
   }, [loadSchedules]);
 
   // Datos para mostrar
-  const dataToDisplay = scheduleData;
+  const dataToDisplay = scheduleData ?? [];
   const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedSchedules = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedSchedules = dataToDisplay?.slice(startIndex, startIndex + itemsPerPage);
 
   const statusOptionsMap = statusOptions.reduce((acc, option) => {
     acc[option.value] = option;
