@@ -1,10 +1,14 @@
 import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ConfirmAutofill from '../Shared/ConfirmAutofill';
+import ToggleAutofill from '../Shared/ToggleAutofill';
 
 function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen, autofillAlways, onAutofillAlwaysChange }) {
   
   return (
     <div className=" w-full flex items-center justify-end gap-2 mt-2">
+
+      <ToggleAutofill compact checkboxChecked={autofillAlways} onCheckboxChange={onAutofillAlwaysChange} />
+
       <button
         type="button"
         onClick={exportToPDF}

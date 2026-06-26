@@ -392,7 +392,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
       const id = scheduleData?.id;
       // console.log("autofillAlways", autofillAlways)
 
-      const newData = await autofillSchedule({ start, end, departmentId, shift, id, autofillAlways });
+      const newData = await autofillSchedule({ start, end, departmentId, shift, id, autofillFortnight: autofillAlways });
       if (onAutofillSuccess && newData) {
         onAutofillSuccess(newData);
       }

@@ -1,5 +1,6 @@
 import WarningChangeStatusEmployee from './WarningChangeStatusEmployee';
 import ButtonCancel from './ButtonCancel';
+import ToggleAutofill from './ToggleAutofill';
 
 export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList = [], checkboxChecked, onCheckboxChange }) {
   if (!isOpen) return null;
@@ -32,15 +33,9 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
               </div>
             )}
           </div>
-          <label className="mt-4 flex items-center gap-2 text-sm text-gray-200">
-            <input
-              type="checkbox"
-              checked={checkboxChecked}
-              onChange={(e) => onCheckboxChange?.(e.target.checked)}
-              className="w-5 h-5 rounded-lg bg-gray-700 border-gray-500 shrink-0"
-            />
-            <span className="leading-none">Rellenar siempre automáticamente</span>
-          </label>
+          
+          <ToggleAutofill isOpen={isOpen} checkboxChecked={checkboxChecked} onCheckboxChange={onCheckboxChange} />
+          
         </div>
 
         <div className="flex justify-end gap-3">

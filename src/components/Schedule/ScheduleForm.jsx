@@ -89,6 +89,7 @@ export default function ScheduleForm({ }) {
         try {
           // Determinar el año correcto para el mes seleccionado (tomado de availableMonths)
           const monthYear = availableMonths?.find(m => Number(m.value) === Number(selectedMonthId))?.currentYear ?? currentYear;
+
           // Calcula los días que comprende la quincena elegida
           const days = getFortnightDays(monthYear, Number(selectedMonthId), selectedFortnight);
           setFortnightDays(days);
