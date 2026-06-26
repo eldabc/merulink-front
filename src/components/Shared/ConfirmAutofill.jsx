@@ -1,4 +1,5 @@
 import WarningChangeStatusEmployee from './WarningChangeStatusEmployee';
+import ButtonCancel from './ButtonCancel';
 
 export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList = [], checkboxChecked, onCheckboxChange }) {
   if (!isOpen) return null;
@@ -22,12 +23,11 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
                 <span className="block font-bold mb-1 text-center">⚠️ Se realizará los siguientes cambios: </span>
                 <ul className="list-disc list-inside space-y-1 mb-2 pl-1 text-left">
                   {changesList.map((change, index) => (
-                    <li key={index} className="text-gray-700 dark:text-gray-300">
-                    {change}
-                    </li>
+                    <li key={index} className="text-gray-700 dark:text-gray-300"> {change} </li>
                   ))}
                 </ul>
-          <span className="block font-bold mt-2 text-red-600">Esta acción no se puede deshacer de forma automática. </span>
+                
+                <span className="block font-bold mt-2 text-red-600">Esta acción no se puede deshacer de forma automática. </span>
 
               </div>
             )}
@@ -44,12 +44,9 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
         </div>
 
         <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
-          >
-            Cancelar
-          </button>
+          
+          <ButtonCancel onClose={onClose} />
+
           <button
             onClick={() => {
               onConfirm();

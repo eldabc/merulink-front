@@ -43,6 +43,7 @@ export default function ScheduleForm({ }) {
   const [mode, setMode] = useState('create');
   const [formData, setFormData] = useState({});
   const [preFortnightParams, setPreFortnightParams] = useState({});
+  const [autofillAlways, setAutofillAlways] = useState(false);
   const scheduleGridRef = useRef(null);
 
   const now = dayjs();
@@ -118,6 +119,7 @@ export default function ScheduleForm({ }) {
             }
           }
           setFormData(schedule);
+          setAutofillAlways(!!(schedule?.autofillAlways));
 
           const currentStart = dayjs(startDate);
           const previousEnd = currentStart.subtract(1, 'day'); // Fin de la quincena pasada
@@ -255,8 +257,11 @@ export default function ScheduleForm({ }) {
                     loading={loading} 
                     disabledClasses={disabledClasses} 
                     mode={mode} 
+                    autofillAlways={autofillAlways}
+                    onAutofillAlwaysChange={setAutofillAlways}
                     onAutofillSuccess={(newData) => {
                       setFormData(newData);
+                      setAutofillAlways(!!(newData?.autofillAlways ?? autofillAlways));
                       if (newData?.isClosed || newData?.status === 'approved') {
                         setMode('view');
                       } else if (newData?.id) {
