@@ -40,7 +40,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
 
         <div className="flex justify-end gap-3">
           
-          <ButtonCancel onClose={onClose} />
+          <ButtonCancel onClose={onClose} text="Cerrar" />
 
           <button
             onClick={() => {

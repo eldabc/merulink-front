@@ -1,10 +1,10 @@
-function ButtonCancel({ onClose }) {
+function ButtonCancel({ onClose, text = 'Cancelar' }) {
   return (
     <button
       onClick={onClose}
       className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
     >
-      Cancelar
+      {text}
     </button>
   ); 
 }
