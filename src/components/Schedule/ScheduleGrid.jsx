@@ -1,6 +1,4 @@
 import dayjs from 'dayjs';
-import * as htmlToImage from 'html-to-image';
-import { jsPDF } from 'jspdf';
 import React, { forwardRef, useMemo, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
@@ -13,6 +11,7 @@ import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
 import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
+import { exportScheduleToPDF } from '../../utils/Schedule/exportPdf-utils';
 
 import PreviousFortnightViewer from './PreviousFortnightViewer';
 import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
@@ -38,7 +37,17 @@ const CustomTooltip = (params) => {
   );
 };
 
-const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays, loading, onSave, mode, autofillAlways, onAutofillAlwaysChange, onAutofillSuccess, onLoadingHandleAutofill }, ref) => {
+const ScheduleGrid = forwardRef(({ 
+  scheduleData, 
+  preFortnightParams, 
+  fortnightDays, 
+  loading, 
+  mode, 
+  autofillAlways, 
+  onAutofillAlwaysChange, 
+  onLoadingHandleAutofill,
+  onAutofillSuccess,
+}, ref) => {
 
   const { register, formState: { errors } } = useFormContext();
   const { autofillSchedule, setLoading, setScheduleData } = useSchedules();
@@ -77,86 +86,12 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
   };
 
   const exportToPDF = async () => {
-    const element = document.getElementById('merulink-grid-container');
-    if (!element) return;
-
-    setIsExporting(true);
-
-    // Ocultar botones de control para la foto
-    const start = scheduleData?.start;
-    const department = departments.find(d => Number(d.id) === Number(scheduleData?.departmentId));
-    const fortnightInfo = getFortnightInfo(start);
-
-    const departmentName = `DEPARTAMENTO DE ${department?.departmentName.toUpperCase()}`;
-    const fortnightNumber = fortnightInfo.number;
-    const montString = dayjs().month(scheduleData?.monthNumber - 1).format('MMMM').toUpperCase();
-    const year = dayjs(start).year();
-    
-    // ENCABEZADO PDF
-    const headerDiv = document.createElement('div');
-    headerDiv.id = 'pdf-dynamic-header';
-    headerDiv.className = 'w-full flex flex-col gap-1 pb-4 mb-4 border-b border-gray-600 text-white';
-    headerDiv.innerHTML = `
-      <div class="flex justify-between items-end mt-8 uppercase">
-        <div>
-          <h1 class="text-xl font-black tracking-tight text-gray-400 pl-8">MERULINK — CONTROL DE HORARIOS</h1>
-          <p class="text-sm font-bold text-gray-300 pl-8">${departmentName}</p>
-        </div>
-        <div class="text-right mr-5">
-          <span class="text-xs bg-cyan-950 text--gray-400 font-bold px-2.5 py-1 rounded-md border border-gray-800">
-            QUINCENA Nº ${fortnightInfo.number}
-          </span>
-          <p class="text-xs font-semibold text-gray-400 mt-1.5">${montString} ${year}</p>
-        </div>
-      </div>
-    `;
-
-    // Insertamos el título al principio de la grilla temporalmente
-    element.insertBefore(headerDiv, element.firstChild);
-
-    try {
-      // Breve pausa para asegurar el renderizado del título
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      // Genera el Canvas de alta definición
-      const canvas = await htmlToImage.toCanvas(element, {
-        quality: 1,
-        pixelRatio: 2, 
-        backgroundColor: '#535557', 
-      });
-
-      // LIMPIEZA INMEDIATA: Restaura la interfaz original en pantalla
-      const addedHeader = element.querySelector('#pdf-dynamic-header');
-      if (addedHeader) element.removeChild(addedHeader);
-
-      // CÁLCULO DINÁMICO Adapta el PDF exacto a la relación de aspecto de la captura
-      const imgData = canvas.toDataURL('image/png');
-      
-      const pdfWidth = 297; // Ancho base de referencia (A4 Horizontal en mm)
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Alto proporcional exacto
-
-      const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: [pdfWidth, pdfHeight] // Crea la hoja a la medida de la tabla
-      });
-
-      // Coloca la imagen ocupando el 100% del espacio disponible
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      
-      // Guardado final
-      const fileName = `Horario_${departmentName.replace(/\s+/g, '_')}_Q_N°${fortnightNumber}_${montString}_${year}.pdf`;
-      pdf.save(fileName);
-
-    } catch (error) {
-      console.error("Error generando el reporte PDF:", error);
-
-      // if (actionButtons) actionButtons.style.display = 'flex';
-      const addedHeader = element.querySelector('#pdf-dynamic-header');
-      if (addedHeader) element.removeChild(addedHeader);
-    } finally {
-      setIsExporting(false);
-    }
+    await exportScheduleToPDF({
+      elementId: 'merulink-grid-container',
+      scheduleData,
+      departments,
+      setIsExporting,
+    });
   };
 
   const handleCellClicked = (params) => {

@@ -253,6 +253,18 @@ export default function ScheduleForm({ }) {
 
   };
 
+  const handleAutofillSuccess = (newData) => {
+    setFormData(newData);
+    setAutofillAlways(!!(newData?.autofillAlways ?? autofillAlways));
+    if (newData?.isClosed || newData?.status === 'approved') {
+      setMode('view');
+    } else if (newData?.id) {
+      setMode('edit');
+    } else {
+      setMode('create');
+    }
+  };
+
   return (
     <FormProvider {...methods}>
     <div className="md:min-w-7xl p-2 rounded-lg">
@@ -272,23 +284,12 @@ export default function ScheduleForm({ }) {
                     scheduleData={formData}
                     preFortnightParams={preFortnightParams}
                     fortnightDays={fortnightDays} 
-                    loading={loading} 
-                    disabledClasses={disabledClasses} 
+                    loading={loading}
                     mode={mode} 
                     autofillAlways={autofillAlways}
-                    onLoadingHandleAutofill={loadingHandleAutofill}
                     onAutofillAlwaysChange={handleAutofillAlwaysChange}
-                    onAutofillSuccess={(newData) => {
-                      setFormData(newData);
-                      setAutofillAlways(!!(newData?.autofillAlways ?? autofillAlways));
-                      if (newData?.isClosed || newData?.status === 'approved') {
-                        setMode('view');
-                      } else if (newData?.id) {
-                        setMode('edit');
-                      } else {
-                        setMode('create');
-                      }
-                    }}
+                    onLoadingHandleAutofill={loadingHandleAutofill}
+                    onAutofillSuccess={handleAutofillSuccess}
                   />
                 )}
               </div>
