@@ -184,13 +184,6 @@ export default function ScheduleForm({ }) {
   }, [formData, setValue]);
 
   const onSubmit = async (data) => {
-    // console.log("Data:", data);
-    
-    // Bloqueo de seguridad
-    if (mode === 'view') {
-      console.warn("No puedes guardar una quincena en modo vista.");
-      return;
-    }
 
     const gridPayload = scheduleGridRef.current ? scheduleGridRef.current.collectGridPayload() : { shifts: [], schedules: [] };
 

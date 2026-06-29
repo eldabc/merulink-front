@@ -213,6 +213,10 @@ const ScheduleGrid = forwardRef(({
     ];
 
     const dayCols = fortnightDays.map((day) => {
+      const hasHighlightedEventsForDay = rowData.some((row) => {
+        return (row.dates?.[day.date]?.events || []).length > 0;
+      });
+
       return {        
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
@@ -293,13 +297,14 @@ const ScheduleGrid = forwardRef(({
           const classes = [];
           if (day.isToday) classes.push('header-today');
           if (day.isWeekend) classes.push('header-weekend');
+          if (hasHighlightedEventsForDay) classes.push('header-has-events');
           return classes.join(' ');
         }
       };
     });
 
     return [...baseCols, ...dayCols];
-  }, [fortnightDays]);
+  }, [fortnightDays, rowData]);
 
   const defaultColDef = useMemo(() => ({
     sortable: true,
@@ -411,7 +416,7 @@ const ScheduleGrid = forwardRef(({
                 </div>
               )}
               
-              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} title="Alertas de Planificación" /> )}
+              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
 
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
