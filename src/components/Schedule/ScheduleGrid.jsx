@@ -38,7 +38,7 @@ const CustomTooltip = (params) => {
   );
 };
 
-const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays, loading, onSave, mode, autofillAlways, onAutofillAlwaysChange, onAutofillSuccess }, ref) => {
+const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDays, loading, onSave, mode, autofillAlways, onAutofillAlwaysChange, onAutofillSuccess, onLoadingHandleAutofill }, ref) => {
 
   const { register, formState: { errors } } = useFormContext();
   const { autofillSchedule, setLoading, setScheduleData } = useSchedules();
@@ -425,6 +425,7 @@ const ScheduleGrid = forwardRef(({ scheduleData, preFortnightParams, fortnightDa
         setIsModalOpen ={setIsModalOpen}
         autofillAlways={autofillAlways}
         onAutofillAlwaysChange={onAutofillAlwaysChange}
+        onLoadingHandleAutofill={onLoadingHandleAutofill}
       />
 
       <div id="merulink-grid-container" className="w-full flex flex-col gap-4">

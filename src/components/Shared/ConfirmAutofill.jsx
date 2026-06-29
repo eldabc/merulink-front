@@ -16,7 +16,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
         </div>
         
         <div className="text-gray-400 text-sm mb-6">
-          <p className='text-justify'>¿Está seguro que desea Rellenar esta Quincena automáticamente?</p>
+          <p className='text-center'>¿Está seguro que desea Rellenar <span className='font-bold'>esta</span> Quincena?</p>
 
           <div className="text-center bg-gray-600 rounded-2xl ">
             {changesList.length > 0 && (
@@ -28,7 +28,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
                   ))}
                 </ul>
                 
-                <span className="block font-bold mt-2 text-red-600">Esta acción no se puede deshacer de forma automática. </span>
+                <span className="block font-bold mt-2 text-red-600">Si más adelante desea revertir este paso, deberá hacer los cambios manualmente.</span>
 
               </div>
             )}
@@ -49,7 +49,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, changesList 
             }}
             className="px-4 py-2 text-sm font-mediumtext-white rounded-lg transition-colors shadow-lg shadow-red-900/20"
           >
-           Rellenar Quincena Automáticamente
+            Aceptar
           </button>
         </div>
       </div>

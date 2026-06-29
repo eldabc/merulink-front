@@ -186,6 +186,23 @@ export const ScheduleProvider = ({ children }) => {
       showNotification('Error al guardar datos quincena', error.response?.data?.message || error.message, 'error');
     }
   };
+
+  const toggleAutofillAlways = async (autofillFortnight, departmentId) => {
+    try {
+      if (typeof autofillFortnight !== 'boolean' || !departmentId) {
+        showNotification('Error', 'Datos para automatización incorrectos', 'error');
+        return false;
+      }
+      await axios.post(`${ENV.API_BACK_URL}schedule-plannings/toggle-autofill`, { autofillFortnight, departmentId });
+
+      showNotification('Éxito', 'Configuración de automatización actualizada', 'success');
+      return true;
+    } catch (error) {
+      console.error('Error al guardar datos de autofill', error);
+      showNotification('Error al guardar datos quincena', error.response?.data?.message || error.message, 'error');
+      return false;
+    }
+  };
   
   const contextValue = {
     loading,
@@ -194,6 +211,7 @@ export const ScheduleProvider = ({ children }) => {
     loadSchedules,
     getScheduleById,
     autofillSchedule,
+    toggleAutofillAlways,
     createSchedule,
     updateSchedule,
     deleteSchedule,

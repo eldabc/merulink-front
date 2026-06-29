@@ -24,7 +24,7 @@ export default function ScheduleForm({ }) {
   const navigate = useNavigate();
   const { departmentId, monthNumber, fortnight, monthSelectedJson } = location.state || {};
 
-  const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading } = useSchedules();
+  const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -44,6 +44,7 @@ export default function ScheduleForm({ }) {
   const [formData, setFormData] = useState({});
   const [preFortnightParams, setPreFortnightParams] = useState({});
   const [autofillAlways, setAutofillAlways] = useState(false);
+  const [loadingHandleAutofill, setLoadingHandleAutofill] = useState(false);
   const scheduleGridRef = useRef(null);
 
   const now = dayjs();
@@ -234,7 +235,23 @@ export default function ScheduleForm({ }) {
   };
 
   const disabledClasses = getDisabledClasses(mode === 'view');
-  // console.log("formData", formData)
+
+  const handleAutofillAlwaysChange = async (checked) => {
+    const departmentId = formData?.departmentId;
+
+    if (!departmentId) {
+      return;
+    }
+
+    setLoadingHandleAutofill(true);
+
+    const success = await toggleAutofillAlways(checked, departmentId);
+    if (success) {
+      setAutofillAlways(checked);
+    }
+    setLoadingHandleAutofill(false);
+
+  };
 
   return (
     <FormProvider {...methods}>
@@ -259,7 +276,8 @@ export default function ScheduleForm({ }) {
                     disabledClasses={disabledClasses} 
                     mode={mode} 
                     autofillAlways={autofillAlways}
-                    onAutofillAlwaysChange={setAutofillAlways}
+                    onLoadingHandleAutofill={loadingHandleAutofill}
+                    onAutofillAlwaysChange={handleAutofillAlwaysChange}
                     onAutofillSuccess={(newData) => {
                       setFormData(newData);
                       setAutofillAlways(!!(newData?.autofillAlways ?? autofillAlways));
