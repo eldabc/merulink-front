@@ -7,7 +7,7 @@ const menuItems = [
   { id: "Roles", label: "Roles", path: "/empleados/roles", parentId: "RRHH" },
   { id: "Planificación", label: "Planificación", path: "#", parentId: "RRHH" },
   { id: "Turnos", label: "Turnos", path: "/empleados/turnos", parentId: "Planificación" },
-  { id: "Asignar", label: "Horarios", path: "/empleados/horarios", parentId: "Planificación" },
+  { id: "Horarios", label: "Horarios", path: "/empleados/horarios", parentId: "Planificación" },
   { id: "Vestuarios", label: "Vestuarios", path: "#", parentId: "RRHH" },
   { id: "Lockers", label: "Lockers", path: "/empleados/vestuarios/lockers", parentId: "Vestuarios" },
   { id: "Candados", label: "Candados", path: "/empleados/vestuarios/candados", parentId: "Vestuarios" },
@@ -63,6 +63,7 @@ export const menuTree = buildMenuTree(menuItems);
 export const topMenuItems = menuItems.filter((item) => !item.parentId).map((item) => item.id);
 
 export function findMenuContextByPath(pathname) {
+  console.log("pathname", pathname, menuItems)
   const lookup = new Map(menuItems.map((item) => [item.id, item]));
   const match = menuItems.find((item) => item.path === pathname);
 

@@ -6,21 +6,24 @@ import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 import { topMenuItems, findMenuContextByPath } from "./components/Menu/menuTree";
 import { NotificationProvider } from "./context/NotificationContext";
+import { AuthProvider } from './context/AuthContext';
 import { GlobalDataProvider } from "./context/GlobalDataContext";
 
 export default function App() {
   return (
     <div className="merulink-root">
-      <GlobalDataProvider>
-        <NotificationProvider>
-          <BrowserRouter>
-            <AppRouterSync />
-          </BrowserRouter>
+      <AuthProvider>
+        <GlobalDataProvider>
+          <NotificationProvider>
+            <BrowserRouter>
+              <AppRouterSync />
+            </BrowserRouter>
 
-          <ParticlesCanvas />
-          <Footer />
-        </NotificationProvider>
-      </GlobalDataProvider>
+            <ParticlesCanvas />
+            <Footer />
+          </NotificationProvider>
+        </GlobalDataProvider>
+      </AuthProvider>
     </div>
   );
 }

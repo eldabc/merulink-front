@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
-import { ENV } from '../config/env';
-
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading, authLogin } = useAuth();
+  const navigate = useNavigate();
   const [apiError, setApiError] = useState(null);
 
   const onSubmit = async (data) => {
@@ -14,22 +14,11 @@ const Login = () => {
     setApiError(null);
     try {
       // Petición a tu Laragon local
-      const response = await axios.post(`${ENV.API_BACK_URL}login`, data);
-      console.log("Respuesta del servidor:", response.data);
-      const { access_token, user } = response.data;
-
-      // 💾 Guardamos todo de forma segura en LocalStorage
-      localStorage.setItem('token', access_token);
-      localStorage.setItem('user_name', user.name);
-      localStorage.setItem('user_email', user.email);
-      localStorage.setItem('user_roles', JSON.stringify(user.roles));
-      localStorage.setItem('user_permissions', JSON.stringify(user.permissions));
-
-      // Configurar Axios de forma global para futuros requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-
-      console.log("¡Sesión iniciada con éxito!");
-      // 🧭 Aquí rediriges a tu vista de horarios (ej: window.location.href = '/horarios')
+      const response = await authLogin(data);
+      if (response) {
+        navigate('/empleados/horarios'); // Redirige a la vista de horarios después del login exitoso
+        console.log("¡Sesión iniciada con éxito!", response);
+      }
       
     } catch (error) {
       console.error(error);

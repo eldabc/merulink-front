@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import ErrorMessage from '../Shared/ErrorMessage'; // Tu componente de error existente
+import HasPermission from '../Shared/HasPermission';
 
 const ScheduleWorkflowSteps = ({ viewMode }) => {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
@@ -61,25 +62,27 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
         </label>
 
         {/* PASO 2: APROBADO */}
-        <label className={`flex items-center gap-3 p-3 rounded-lg border transition-all
-          ${!isReviewed ? 'opacity-40 cursor-not-allowed bg-[#1b1c1e] border-transparent' : 'cursor-pointer'}
-          ${isApproved ? 'border-green-500 bg-green-500/10' : isReviewed ? 'border-[#43474a] bg-[#252729]' : ''}
-          ${viewMode ? 'pointer-events-none' : ''}`}
-        >
-          <input
-            type="checkbox"
-            disabled={!isReviewed || viewMode} // Deshabilitado si no está revisado
-            {...register('isApproved')}
-            className="w-4 h-4 rounded text-green-500 focus:ring-green-500 bg-[#3a3d40] border-[#555a5e] disabled:opacity-30"
-          />
-          <div className="flex flex-col">
-            <span className={`text-sm font-bold ${isApproved ? 'text-green-400' : 'text-gray-300'}`}>2. Aprobado</span>
-            <div className='flex flex-row'>
-              <span className="text-xs text-gray-400">Validado por: </span>
-              <span className="text-xs text-green-400 pl-2"> Sistemas </span>
+        <HasPermission name="approve-schedules">
+          <label className={`flex items-center gap-3 p-3 rounded-lg border transition-all
+            ${!isReviewed ? 'opacity-40 cursor-not-allowed bg-[#1b1c1e] border-transparent' : 'cursor-pointer'}
+            ${isApproved ? 'border-green-500 bg-green-500/10' : isReviewed ? 'border-[#43474a] bg-[#252729]' : ''}
+            ${viewMode ? 'pointer-events-none' : ''}`}
+          >
+            <input
+              type="checkbox"
+              disabled={!isReviewed || viewMode} // Deshabilitado si no está revisado
+              {...register('isApproved')}
+              className="w-4 h-4 rounded text-green-500 focus:ring-green-500 bg-[#3a3d40] border-[#555a5e] disabled:opacity-30"
+            />
+            <div className="flex flex-col">
+              <span className={`text-sm font-bold ${isApproved ? 'text-green-400' : 'text-gray-300'}`}>2. Aprobado</span>
+              <div className='flex flex-row'>
+                <span className="text-xs text-gray-400">Validado por: </span>
+                <span className="text-xs text-green-400 pl-2"> Sistemas </span>
+              </div>
             </div>
-          </div>
-        </label>
+          </label>
+        </HasPermission>
 
         {/* PASO 3: CERRADO */}
         <label className={`hidden flex items-center gap-3 p-3 rounded-lg border transition-all

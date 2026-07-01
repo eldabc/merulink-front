@@ -28,6 +28,7 @@ import { PadlockPatternProvider } from '../context/PadlockPatternContext';
 import { ShiftProvider } from '../context/ShiftContext'; 
 import { ScheduleProvider } from '../context/ScheduleContext'; 
 import { useNotification } from "../context/NotificationContext";
+import ProtectedRoute from './Shared/ProtectedRoute';
 
 const EventLayout = ({ showNotification }) => (
   <EventProvider showNotification={showNotification}>
@@ -101,69 +102,75 @@ export default function Workspace({ activeMenu, activePath }) {
     <Suspense fallback={<div className="p-6">Cargando...</div>}>
       <Routes>
         <Route path="/login" element={<Login />} />
-        
-        <Route path="/ia" element={<div className="ia-workspace"><AssistantInput /></div>} />
 
-        {/* RRHH */}
-        <Route element={<EmployeeLayout />}>
-          <Route path="/empleados/*" element={<div className="main-workspace"><EmployeePage /></div>} />
-        </Route>
-
-        {/* Departamentos */}
-        <Route element={<DepartmentLayout />}>
-          <Route path="/empleados/departamentos/*" element={<div className="main-workspace"><DepartmentPage /></div>} />
-        </Route>
-        
-        {/* Sub-Departamentos */}
-        <Route element={<SubDepartmentLayout />}>
-          <Route path="/empleados/sub-departamentos/*" element={<div className="main-workspace"><SubDepartmentPage /></div>} />
-        </Route>
-        
-        {/* Cargos */}
-        <Route element={<PositionLayout />}>
-          <Route path="/empleados/cargos/*" element={<div className="main-workspace"><PositionPage /></div>} />
-        </Route>
-
-        {/* Turnos */}
-        <Route element={<ShiftLayout />}>
-          <Route path="/empleados/turnos/*" element={<div className="main-workspace"><ShiftPage /></div>} />
-        </Route>
-
-        {/* Horarios */}
-        <Route element={<ScheduleLayout />}>
-          <Route path="/empleados/horarios/*" element={<div className="main-workspace"><SchedulePage /></div>} />
-        </Route>
-        
-        
-        {/* Locker Room */}
-        <Route element={<LockerLayout />}>
-          <Route path="/empleados/vestuarios/lockers/*" element={<LockerRoomPage/> } />
-        </Route>
-
-        {/* Padlock */}
-        <Route element={<PadlockLayout />}>
-          <Route path="/empleados/vestuarios/candados/*" element={<PadlockPage/> } />
-        </Route>
-
-        {/* Padlock Pattern */}
-        <Route element={<PadlockPatternLayout />}>
-          <Route path="/empleados/vestuarios/candados/patrones/*" element={<PadlockPatternPage/> } />
-        </Route>
-
-
-        {/* LockerAssign */}
-        <Route element={<LockerAssignLayout />}>
-          <Route path="/empleados/vestuarios/casilleros/*" element={<LockerAssignPage/> } />
-        </Route>
-
-        {/* Calendario - Eventos */}
         <Route element={<EventLayout showNotification={showNotification} />}>
           <Route path="/" element={<div className="content-center"><Calendar /></div>} />
-          <Route path="/eventos/*" element={<EventsPage />} />
         </Route>
 
-        {/* Fallback to existing behavior when route not matched */}
-        <Route path="*" element={<DefaultWorkspace activeMenu={activeMenu} />} />
+        <Route element={<ProtectedRoute />}>
+        
+          <Route path="/ia" element={<div className="ia-workspace"><AssistantInput /></div>} />
+
+          {/* RRHH */}
+          <Route element={<EmployeeLayout />}>
+            <Route path="/empleados/*" element={<div className="main-workspace"><EmployeePage /></div>} />
+          </Route>
+
+          {/* Departamentos */}
+          <Route element={<DepartmentLayout />}>
+            <Route path="/empleados/departamentos/*" element={<div className="main-workspace"><DepartmentPage /></div>} />
+          </Route>
+          
+          {/* Sub-Departamentos */}
+          <Route element={<SubDepartmentLayout />}>
+            <Route path="/empleados/sub-departamentos/*" element={<div className="main-workspace"><SubDepartmentPage /></div>} />
+          </Route>
+          
+          {/* Cargos */}
+          <Route element={<PositionLayout />}>
+            <Route path="/empleados/cargos/*" element={<div className="main-workspace"><PositionPage /></div>} />
+          </Route>
+
+          {/* Turnos */}
+          <Route element={<ShiftLayout />}>
+            <Route path="/empleados/turnos/*" element={<div className="main-workspace"><ShiftPage /></div>} />
+          </Route>
+
+          {/* Horarios */}
+          <Route element={<ScheduleLayout />}>
+            <Route path="/empleados/horarios/*" element={<div className="main-workspace"><SchedulePage /></div>} />
+          </Route>
+          
+          
+          {/* Locker Room */}
+          <Route element={<LockerLayout />}>
+            <Route path="/empleados/vestuarios/lockers/*" element={<LockerRoomPage/> } />
+          </Route>
+
+          {/* Padlock */}
+          <Route element={<PadlockLayout />}>
+            <Route path="/empleados/vestuarios/candados/*" element={<PadlockPage/> } />
+          </Route>
+
+          {/* Padlock Pattern */}
+          <Route element={<PadlockPatternLayout />}>
+            <Route path="/empleados/vestuarios/candados/patrones/*" element={<PadlockPatternPage/> } />
+          </Route>
+
+
+          {/* LockerAssign */}
+          <Route element={<LockerAssignLayout />}>
+            <Route path="/empleados/vestuarios/casilleros/*" element={<LockerAssignPage/> } />
+          </Route>
+
+          {/* Calendario - Eventos */}
+          <Route element={<EventLayout showNotification={showNotification} />}>
+            <Route path="/eventos/*" element={<EventsPage />} />
+          </Route>
+
+          {/* Fallback to existing behavior when route not matched */}
+          <Route path="*" element={<DefaultWorkspace activeMenu={activeMenu} />} />
+        </Route>
       </Routes>
     </Suspense>
   );
