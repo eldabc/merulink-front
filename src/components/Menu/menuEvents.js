@@ -1,20 +1,8 @@
-export const menuEvents = {
-  Events: {
-    _meta: { label: 'Eventos Merú', path: '/eventos/eventos-meru' },
-  },
-  EventWeddingAndDinnerHeights: {
-    _meta: { label: 'Noches Bodas / Cena en Alturas', path: '/eventos/noche-bodas-cena-alturas' },
-  },
-  VeHolidaysGoogleCalendar: {
-    _meta: { label: 'Festivos VE / Calendario Google', path: '/eventos/festivos-venezolanos-calendario-google' },
-  },
-   MeruBirthDays: {
-    _meta: { label: 'Cumpleaños Merú', path: '/eventos/cumpleaños-merú' },
-  },
-   ExecutiveMod: {
-    _meta: { label: 'Ejecutivos MOD', path: '/eventos/ejecutivo-mod' },
-  },
-   BankingMondays: {
-    _meta: { label: 'Lunes Bancarios', path: '/eventos/lunes-bancarios' },
-  },
-};
+export const menuEvents = [
+  { id: "Events", label: "Eventos Merú", path: "/eventos/eventos-meru" },
+  { id: "EventWeddingAndDinnerHeights", label: "Noches Bodas / Cena en Alturas", path: "/eventos/noche-bodas-cena-alturas" },
+  { id: "VeHolidaysGoogleCalendar", label: "Festivos VE / Calendario Google", path: "/eventos/festivos-venezolanos-calendario-google" },
+  { id: "MeruBirthDays", label: "Cumpleaños Merú", path: "/eventos/cumpleaños-merú" },
+  { id: "ExecutiveMod", label: "Ejecutivos MOD", path: "/eventos/ejecutivo-mod" },
+  { id: "BankingMondays", label: "Lunes Bancarios", path: "/eventos/lunes-bancarios" }
+];

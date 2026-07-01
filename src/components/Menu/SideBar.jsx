@@ -3,78 +3,68 @@ import { menuTree } from "./menuTree";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
 import { NavLink } from 'react-router-dom';
 
-function renderNode(node, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
-  return Object.keys(node)
-    .filter(key => key !== "_meta") // Skip metadata
-    .map((key) => {
-      const child = node[key];
-      const childMeta = child._meta || {};
-      const hasChildren = Object.keys(child).some(k => k !== "_meta");
-      const currentPath = [...path, key];
-      const isActive = JSON.stringify(activePath) === JSON.stringify(currentPath);
-      const isCollapsed = collapsed[JSON.stringify(currentPath)] !== false;
+function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
+  return (nodes || []).map((node) => {
+    const hasChildren = Boolean(node.children?.length);
+    const currentPath = [...path, node.id];
+    const isActive = JSON.stringify(activePath) === JSON.stringify(currentPath);
+    const isCollapsed = collapsed[JSON.stringify(currentPath)] !== false;
 
-      // When a node has children, clicking the label should toggle collapse
-      // (single-click expand). If the node also has a path, show a small
-      // navigation link next to the label so users can navigate to the
-      // parent's page without interfering with expand/collapse.
-      return (
-        <div key={key} style={{ marginBottom: 6 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            {hasChildren ? (
-              <>
-                <button className="skip-style-btn arrow-btn" onClick={() => toggleCollapse(JSON.stringify(currentPath))}>
-                  {isCollapsed ? "▶" : "▼"}
-                </button>
+    return (
+      <div key={node.id} style={{ marginBottom: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {hasChildren ? (
+            <>
+              <button className="skip-style-btn arrow-btn" onClick={() => toggleCollapse(JSON.stringify(currentPath))}>
+                {isCollapsed ? "▶" : "▼"}
+              </button>
 
-                <button
-                  onClick={() => toggleCollapse(JSON.stringify(currentPath))}
-                  className={`submenu-btn ${isActive ? 'active' : ''}`}
-                  style={{
-                    textAlign: 'left',
-                    background: 'transparent',
-                    paddingLeft: 8,
-                    color: isActive ? '#fff' : 'inherit',
-                    fontWeight: isActive ? 'bold' : 'normal'
-                  }}
-                >
-                  {childMeta.label || key}
-                </button>
-              </>
-            ) : (
-              <>
-                <div style={{ width: 20 }} />
-                <NavLink
-                  to={childMeta.path || '#'}
-                  className={({ isActive: navActive }) => `submenu-btn ${navActive ? 'active' : ''}`}
-                  style={({ isActive: navActive }) => ({
-                    color: (isActive || navActive) ? "#fff" : "inherit",
-                    fontWeight: (isActive || navActive) ? "bold" : "normal",
-                    paddingLeft: 8
-                  })}
-                >
-                  {childMeta.label || key}
-                </NavLink>
-              </>
-            )}
-          </div>
-
-          {hasChildren && !isCollapsed && (
-            <div style={{ marginLeft: 20 }}>
-              {renderNode(child, currentPath, onItemClick, activePath, toggleCollapse, collapsed)}
-            </div>
+              <button
+                onClick={() => toggleCollapse(JSON.stringify(currentPath))}
+                className={`submenu-btn ${isActive ? 'active' : ''}`}
+                style={{
+                  textAlign: 'left',
+                  background: 'transparent',
+                  paddingLeft: 8,
+                  color: isActive ? '#fff' : 'inherit',
+                  fontWeight: isActive ? 'bold' : 'normal'
+                }}
+              >
+                {node.label || node.id}
+              </button>
+            </>
+          ) : (
+            <>
+              <div style={{ width: 20 }} />
+              <NavLink
+                to={node.path || '#'}
+                className={({ isActive: navActive }) => `submenu-btn ${navActive ? 'active' : ''}`}
+                style={({ isActive: navActive }) => ({
+                  color: (isActive || navActive) ? "#fff" : "inherit",
+                  fontWeight: (isActive || navActive) ? "bold" : "normal",
+                  paddingLeft: 8
+                })}
+              >
+                {node.label || node.id}
+              </NavLink>
+            </>
           )}
         </div>
-      );
-    });
+
+        {hasChildren && !isCollapsed && (
+          <div style={{ marginLeft: 20 }}>
+            {renderNode(node.children, currentPath, onItemClick, activePath, toggleCollapse, collapsed)}
+          </div>
+        )}
+      </div>
+    );
+  });
 }
 
 export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen, menu, toggleSidebar }) {
-  // Allow passing a custom `menu` object (useful for modules with their own sidebar)
-  const node = menu ? menu : (menuTree[activeMenu] || {});
-  
-  // Memoize the initial collapsed state — recompute when `node` changes
-  const initialCollapsed = useMemo(() => buildAllPaths(node), [node]);
+  const branch = Array.isArray(menu) ? menu : (menuTree.find((item) => item.id === activeMenu)?.children || []);
+
+  const initialCollapsed = useMemo(() => buildAllPaths(branch), [branch]);
   const [collapsed, setCollapsed] = useState(initialCollapsed);
 
   // Reset collapsed state when the computed initialCollapsed actually changes.
@@ -92,9 +82,8 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
     }
     if (different) setCollapsed(initialCollapsed);
   }, [initialCollapsed]);
-  // console.log('SideBar render:', { activeMenu, activePath, isSidebarOpen, toggleSidebar, node });
-  // If no sections for this menu, hide the sidebar
-  if ((!activeMenu || Object.keys(node).length === 0 || activeMenu === "404" || activeMenu === "IA") && !toggleSidebar) {
+
+  if ((!activeMenu || branch.length === 0 || activeMenu === "404" || activeMenu === "IA") && !toggleSidebar) {
     return <aside className="sidebar hidden" />;
   }
 
@@ -153,7 +142,7 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
           'Inicio'
         )}
       </div>
-      <div>{renderNode(node, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
+      <div>{renderNode(branch, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
     </aside>
   );
 }

@@ -4,7 +4,7 @@ import ParticlesCanvas from "./components/Shared/ParticlesCanvas";
 import TopBar from "./components/Menu/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
-import { menuTree } from "./components/Menu/menuTree";
+import { topMenuItems, findMenuContextByPath } from "./components/Menu/menuTree";
 import { NotificationProvider } from "./context/NotificationContext";
 import { GlobalDataProvider } from "./context/GlobalDataContext";
 
@@ -26,62 +26,22 @@ export default function App() {
 }
 
 function AppRouterSync() {
-  // This component lives inside the Router so it can use hooks
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState("404");
   const [activePath, setActivePath] = useState([]);
 
-  // derive menu state from current location.pathname
   useEffect(() => {
     const pathname = location.pathname || '/';
+    const context = findMenuContextByPath(pathname);
 
-    // find matching node in menuTree
-    const findInNode = (node, pathSoFar = []) => {
-      for (const key of Object.keys(node)) {
-        if (key === '_meta') continue;
-        const child = node[key];
-        const meta = child._meta || {};
-        if (meta.path === pathname) {
-          return [...pathSoFar, key];
-        }
-        const hasChildren = Object.keys(child).some(k => k !== '_meta');
-        if (hasChildren) {
-          const res = findInNode(child, [...pathSoFar, key]);
-          if (res) return res;
-        }
-      }
-      return null;
-    };
-
-    // search top-level menus
-    let matchedTop = null;
-    let matchedPath = null;
-    for (const topKey of Object.keys(menuTree)) {
-      const topNode = menuTree[topKey];
-      if (topNode && topNode._meta && pathname === topNode._meta.path) {
-        matchedTop = topKey;
-        matchedPath = [];
-        break;
-      }
-      const res = findInNode(topNode, []);
-      if (res) {
-        matchedTop = topKey;
-        matchedPath = res;
-        break;
-      }
-    }
-
-    if (matchedTop) {
-      setActiveMenu(matchedTop);
-      setActivePath(matchedPath || []);
+    if (context) {
+      setActiveMenu(context.activeMenu);
+      setActivePath(context.activePath || []);
     } else {
-      // default to 404 if nothing matches
       setActiveMenu('404');
       setActivePath([]);
     }
   }, [location.pathname]);
-
-  const topMenuItems = Object.keys(menuTree);
 
   const handleMenuClick = useCallback((menuItem) => {
     setActiveMenu(menuItem);

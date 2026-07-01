@@ -9,6 +9,8 @@ export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const navigate = useNavigate();
+  const menuById = Object.fromEntries(menuTree.map((item) => [item.id, item]));
+
   return (
     <header className="topbar">
       <div className="brand-area">
@@ -19,7 +21,7 @@ export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
               key={item} 
               onClick={() => {
                 setActiveMenu(item);
-                const path = menuTree[item]?._meta?.path || '/';
+                const path = menuById[item]?.path || '/';
                 navigate(path);
               }}
               className={activeMenu === item ? 'active' : ''}
@@ -38,7 +40,6 @@ export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
             `}
           >
             <BellIcon className='w-7 h-7 text-white' />
-            {/* Indicador de notificación */}
             <span className="absolute top-1 right-1 block h-2.5 w-2.5 rounded-full bg-[#9fd8ff] border-2 border-[#2f3d44]"></span>
           </div>
 

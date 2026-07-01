@@ -1,65 +1,86 @@
-export const menuTree = {
-    IA: {
-      _meta: { label: "IA", path: "/ia" }
-    },
-    RRHH: {
-      _meta: { label: "Empleados", path: "/empleados" },
-      Departamentos: { _meta: { label: "Departamentos", path: "/empleados/departamentos" } },
-      "Sub-Departamentos": { _meta: { label: "Sub-Departamentos", path: "/empleados/sub-departamentos" } },
-      Cargos: { _meta: { label: "Cargos", path: "/empleados/cargos" } },
-      Roles: { _meta: { label: "Roles", path: "/empleados/roles" } },
-      Planificación: {
-        _meta: { label: "Planificación", path: "#" },
-        Turnos: { _meta: { label: "Turnos", path: "/empleados/turnos" } },
-        Asignar: { _meta: { label: "Horarios", path: "/empleados/horarios" } }
-      },
-      Vestuarios: {
-        _meta: { label: "Vestuarios", path: "#" },
-        Lockers: { _meta: { label: "Lockers", path: "/empleados/vestuarios/lockers" } },
-        Candados: { _meta: { label: "Candados", path: "/empleados/vestuarios/candados" } },
-        "Patrones Candados": { _meta: { label: "Patrones", path: "/empleados/vestuarios/candados/patrones" } },
-        Casilleros: { _meta: { label: "Asignaciones", path: "/empleados/vestuarios/casilleros" } },
-      }
-    },
-    Sistemas: {
-      _meta: { label: "Sistemas", path: "/sistemas" },
-      "APs Internet": { _meta: { label: "APs Internet", path: "/sistemas/aps-internet" } },
-      Domotica: { _meta: { label: "Domotica", path: "/sistemas/domotica" } },
-      Mantenimiento: { _meta: { label: "Mantenimiento", path: "/sistemas/mantenimiento" } }
-    },
-    Inventario: {
-      _meta: { label: "Inventario", path: "/inventario" },
-      Stock: { _meta: { label: "Stock", path: "/inventario/stock" } },
-      Entradas: { _meta: { label: "Entradas", path: "/inventario/entradas" } },
-      Salidas: { _meta: { label: "Salidas", path: "/inventario/salidas" } }
-    },
-    Recepcion: {
-      _meta: { label: "Whatsapp", path: "/whatsapp" },
-      // Recepcion: { _meta: { label: "Recepcion", path: "/whatsapp/recepcion" } },
-      Ventas: { _meta: { label: "Ventas", path: "/whatsapp/ventas" } },
-      AyB: { _meta: { label: "AyB", path: "/whatsapp/ayb" } }
-    },
-    Ventas: {
-      _meta: { label: "Ventas", path: "/ventas" },
-      Productos: { _meta: { label: "Productos", path: "/ventas/productos" } },
-    },
-    "Alimentos y Bebidas": {
-      _meta: { label: "Alimentos y Bebidas", path: "/ayb" },
-      Menu: { _meta: { label: "Menú", path: "/ayb/menu" } },
-    },
-    Mantenimiento: {
-      _meta: { label: "Mantenimiento", path: "/mantenimiento" },
-    },
-    Configuración: {
-      _meta: { label: "Configuración", path: "/configuracion" },
-      Sistema: { _meta: { label: "Sistema", path: "/configuracion/sistema" } },
-      Seguridad: { _meta: { label: "Seguridad", path: "/configuracion/seguridad" } },
-      Notificaciones: { _meta: { label: "Notificaciones", path: "/configuracion/notificaciones" } }
-    },
-    Documentos: {
-      _meta: { label: "Documentos", path: "/documentos" },
-      Memos: { _meta: { label: "Memos", path: "/documentos/memos" } },
-      Reglamento: { _meta: { label: "Reglamento", path: "/documentos/reglamento" } }
+const menuItems = [
+  { id: "IA", label: "IA", path: "/ia" },
+  { id: "RRHH", label: "Empleados", path: "/empleados" },
+  { id: "Departamentos", label: "Departamentos", path: "/empleados/departamentos", parentId: "RRHH" },
+  { id: "Sub-Departamentos", label: "Sub-Departamentos", path: "/empleados/sub-departamentos", parentId: "RRHH" },
+  { id: "Cargos", label: "Cargos", path: "/empleados/cargos", parentId: "RRHH" },
+  { id: "Roles", label: "Roles", path: "/empleados/roles", parentId: "RRHH" },
+  { id: "Planificación", label: "Planificación", path: "#", parentId: "RRHH" },
+  { id: "Turnos", label: "Turnos", path: "/empleados/turnos", parentId: "Planificación" },
+  { id: "Asignar", label: "Horarios", path: "/empleados/horarios", parentId: "Planificación" },
+  { id: "Vestuarios", label: "Vestuarios", path: "#", parentId: "RRHH" },
+  { id: "Lockers", label: "Lockers", path: "/empleados/vestuarios/lockers", parentId: "Vestuarios" },
+  { id: "Candados", label: "Candados", path: "/empleados/vestuarios/candados", parentId: "Vestuarios" },
+  { id: "Patrones Candados", label: "Patrones", path: "/empleados/vestuarios/candados/patrones", parentId: "Vestuarios" },
+  { id: "Casilleros", label: "Asignaciones", path: "/empleados/vestuarios/casilleros", parentId: "Vestuarios" },
+  { id: "Sistemas", label: "Sistemas", path: "/sistemas" },
+  { id: "APs Internet", label: "APs Internet", path: "/sistemas/aps-internet", parentId: "Sistemas" },
+  { id: "Domotica", label: "Domotica", path: "/sistemas/domotica", parentId: "Sistemas" },
+  { id: "Mantenimiento", label: "Mantenimiento", path: "/sistemas/mantenimiento", parentId: "Sistemas" },
+  { id: "Inventario", label: "Inventario", path: "/inventario" },
+  { id: "Stock", label: "Stock", path: "/inventario/stock", parentId: "Inventario" },
+  { id: "Entradas", label: "Entradas", path: "/inventario/entradas", parentId: "Inventario" },
+  { id: "Salidas", label: "Salidas", path: "/inventario/salidas", parentId: "Inventario" },
+  { id: "Recepcion", label: "Whatsapp", path: "/whatsapp" },
+  { id: "Ventas", label: "Ventas", path: "/whatsapp/ventas", parentId: "Recepcion" },
+  { id: "AyB", label: "AyB", path: "/whatsapp/ayb", parentId: "Recepcion" },
+  { id: "Ventas-Top", label: "Ventas", path: "/ventas" },
+  { id: "Productos", label: "Productos", path: "/ventas/productos", parentId: "Ventas-Top" },
+  { id: "Alimentos y Bebidas", label: "Alimentos y Bebidas", path: "/ayb" },
+  { id: "Menu", label: "Menú", path: "/ayb/menu", parentId: "Alimentos y Bebidas" },
+  { id: "Mantenimiento-Top", label: "Mantenimiento", path: "/mantenimiento" },
+  { id: "Configuración", label: "Configuración", path: "/configuracion" },
+  { id: "Sistema", label: "Sistema", path: "/configuracion/sistema", parentId: "Configuración" },
+  { id: "Seguridad", label: "Seguridad", path: "/configuracion/seguridad", parentId: "Configuración" },
+  { id: "Notificaciones", label: "Notificaciones", path: "/configuracion/notificaciones", parentId: "Configuración" },
+  { id: "Documentos", label: "Documentos", path: "/documentos" },
+  { id: "Memos", label: "Memos", path: "/documentos/memos", parentId: "Documentos" },
+  { id: "Reglamento", label: "Reglamento", path: "/documentos/reglamento", parentId: "Documentos" }
+];
+
+function buildMenuTree(items) {
+  const nodes = items.map((item) => ({ ...item, children: [] }));
+  const nodeById = new Map(nodes.map((item) => [item.id, item]));
+
+  const roots = [];
+  for (const item of items) {
+    const node = nodeById.get(item.id);
+    if (!item.parentId) {
+      roots.push(node);
+      continue;
     }
+
+    const parent = nodeById.get(item.parentId);
+    if (parent) {
+      parent.children.push(node);
+    }
+  }
+
+  return roots;
+}
+
+export const menuTree = buildMenuTree(menuItems);
+export const topMenuItems = menuItems.filter((item) => !item.parentId).map((item) => item.id);
+
+export function findMenuContextByPath(pathname) {
+  const lookup = new Map(menuItems.map((item) => [item.id, item]));
+  const match = menuItems.find((item) => item.path === pathname);
+
+  if (!match) {
+    return null;
+  }
+
+  const activePath = [];
+  let current = match;
+
+  while (current?.parentId && lookup.has(current.parentId)) {
+    activePath.unshift(current.id);
+    current = lookup.get(current.parentId);
+  }
+
+  return {
+    activeMenu: current?.id || match.id,
+    activePath
   };
+}
   
