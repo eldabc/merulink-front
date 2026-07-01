@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { BrowserRouter, useLocation } from 'react-router-dom';
-import ParticlesCanvas from "./components/ParticlesCanvas";
+import ParticlesCanvas from "./components/Shared/ParticlesCanvas";
 import TopBar from "./components/Menu/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"

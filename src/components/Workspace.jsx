@@ -14,6 +14,7 @@ const ShiftPage = lazy(() => import("./Shift/ShiftPage"));
 const SchedulePage = lazy(() => import("./Schedule/SchedulePage"));
 const LockerAssignPage = lazy(() => import("./LockerAssign/LockerAssignPage"));
 const EmployeePage = lazy(() => import("./Employee/EmployeePage"));
+const Login = lazy(() => import("./Login"));
 
 import { EventProvider } from "../context/EventContext";
 import { LockerRoomProvider } from "../context/LockerRoomContext";
@@ -99,6 +100,7 @@ export default function Workspace({ activeMenu, activePath }) {
   return (
     <Suspense fallback={<div className="p-6">Cargando...</div>}>
       <Routes>
+        <Route path="/login" element={<Login />} />
         
         <Route path="/ia" element={<div className="ia-workspace"><AssistantInput /></div>} />
 
