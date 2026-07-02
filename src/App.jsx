@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { BrowserRouter, useLocation } from 'react-router-dom';
-import ParticlesCanvas from "./components/Shared/ParticlesCanvas";
+import { NotificationProvider } from "./context/NotificationContext";
+import { AuthProvider } from './context/AuthContext';
+import { GlobalDataProvider } from "./context/GlobalDataContext";
+
 import TopBar from "./components/Menu/TopBar";
 import MainArea from "./components/MainArea";
 import Footer from "./components/Footer"
 import { topMenuItems, findMenuContextByPath } from "./components/Menu/menuTree";
-import { NotificationProvider } from "./context/NotificationContext";
-import { AuthProvider } from './context/AuthContext';
-import { GlobalDataProvider } from "./context/GlobalDataContext";
+import ParticlesCanvas from "./components/Shared/ParticlesCanvas";
 
 export default function App() {
   return (
@@ -19,8 +20,7 @@ export default function App() {
               <AppRouterSync />
             </BrowserRouter>
 
-            <ParticlesCanvas />
-            <Footer />
+            <ParticlesCanvas />  
           </NotificationProvider>
         </GlobalDataProvider>
       </AuthProvider>
@@ -68,6 +68,8 @@ function AppRouterSync() {
         activePath={activePath}
         onSidebarClick={handleSidebarItemClick}
       />
+
+      <Footer />
     </>
   );
 }
