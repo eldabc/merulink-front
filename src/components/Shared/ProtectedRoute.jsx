@@ -3,10 +3,10 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const ProtectedRoute = ({ allowedRoles = [], allowedPermissions = [] }) => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, authLoading } = useAuth();
 
   // Si el contexto aún está cargando la sesión del localStorage, mostramos un spinner gris
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-[#1e2022] flex items-center justify-center text-gray-400 font-bold">
         Cargando seguridad...

@@ -15,10 +15,10 @@ const Calendar = lazy(() => import('./Calendar/Calendar'));
  * - If guest: shows Calendar with login/register links, no app chrome.
  */
 export default function HomePage() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, authLoading } = useAuth();
   const { showNotification } = useNotification();
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-[#1e2022] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>

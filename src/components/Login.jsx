@@ -7,30 +7,28 @@ import NameApp from './Shared/NameApp';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { loading, setLoading, authLogin } = useAuth();
+  const { authLogin, setAuthLoading } = useAuth();
   const navigate = useNavigate();
   const [apiError, setApiError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (data) => {
-    setLoading(true);
+    setSubmitting(true);
     setApiError(null);
     try {
-      // Petición a tu Laragon local
       const response = await authLogin(data);
       if (response) {
-        navigate('/empleados/horarios'); // Redirige a la vista de horarios después del login exitoso
-        console.log("¡Sesión iniciada con éxito!", response);
+        navigate('/empleados/horarios');
       }
-      
     } catch (error) {
       console.error(error);
-      if (error.response && error.response.data.message) {
+      if (error.response?.data?.message) {
         setApiError(error.response.data.message);
       } else {
         setApiError('Error de conexión con el servidor. Inténtalo de nuevo.');
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -63,13 +61,13 @@ const Login = () => {
                 Correo Electrónico
               </label>
               <input
-                type="email"
-                placeholder="nombre@plazameru.com"
-                {...register('email', { required: 'El correo es obligatorio' })}
+                type="text"
+                placeholder="Nombre usuario Ejem: nombre.apellido"
+                {...register('username', { required: 'El nombre de usuario es obligatorio' })}
                 className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
               />
-              {errors.email && (
-                <span className="text-[11px] text-red-400 font-medium">{errors.email.message}</span>
+              {errors.username && (
+                <span className="text-[11px] text-red-400 font-medium">{errors.username.message}</span>
               )}
             </div>
 
@@ -92,14 +90,14 @@ const Login = () => {
             {/* Botón de Ingreso */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className={`w-full mt-2 p-2.5 rounded-lg text-sm font-bold text-white uppercase tracking-wider transition-all shadow-md
-                ${loading 
+                ${submitting 
                   ? 'bg-[#00A4BC]/50 cursor-not-allowed text-gray-300' 
                   : 'bg-[#00A4BC] hover:bg-[#008b9f] active:scale-[0.98]'
                 }`}
             >
-              {loading ? 'Verificando...' : 'Iniciar Sesión'}
+              {submitting ? 'Verificando...' : 'Iniciar Sesión'}
             </button>
 
           </form>

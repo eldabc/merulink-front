@@ -51,34 +51,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const authLogin = async (data) => {
-    try {
-      console.log("data", typeof data);
+    const response = await axios.post(`${ENV.API_BACK_URL}login`, data);
+    const { access_token, user } = response.data;
 
-      const response = await axios.post(`${ENV.API_BACK_URL}login`, data);
-      const { access_token, user } = response.data;
+    // Le pasas los datos limpios al contexto y él hace todo el trabajo sucio
+    loginContext(access_token, user);
+    // Configurar Axios de forma global para futuros requests
+    axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
-      // Le pasas los datos limpios al contexto y él hace todo el trabajo sucio
-      loginContext(access_token, user);
-      // Configurar Axios de forma global para futuros requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      return true;
-
-    } catch (error) {
-      console.error("Error guardar datos", error);
-      showNotification('Error al hacer login', error.response?.data?.message || error.message, 'error');
-    }
+    return true;
   };
 
   const contextValue = {
-    loading,
-    setLoading,
-    user, 
-    loading, 
-    loginContext, 
-    logoutContext, 
+    authLoading: loading,
+    user,
+    loginContext,
+    logoutContext,
     isAuthenticated: !!user,
-    authLogin
+    authLogin,
   };
 
   return (
