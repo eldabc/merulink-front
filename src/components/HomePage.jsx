@@ -5,6 +5,7 @@ import { useNotification } from '../context/NotificationContext';
 import { EventProvider } from '../context/EventContext';
 import MainLayout from './Shared/MainLayout';
 import NameApp from './Shared/NameApp';
+import GuestBar from './Shared/GuestBar';
 
 const Calendar = lazy(() => import('./Calendar/Calendar'));
 
@@ -48,23 +49,7 @@ export default function HomePage() {
     <EventProvider showNotification={showNotification}>
       <div className="min-h-screen bg-[#1e2022] flex flex-col">
         {/* Guest header with auth links */}
-        <header className="w-full bg-[#2f3d44] border-b border-[#43474a] px-6 py-3 flex items-center justify-between">
-          <NameApp />
-          <div className="flex items-center gap-4">
-            <Link
-              to="/login"
-              className="text-sm text-gray-300 hover:text-white transition-colors font-medium"
-            >
-              Iniciar sesión
-            </Link>
-            <Link
-              to="/register"
-              className="text-sm bg-[#008a9e] hover:bg-[#9fd8ff] [text-shadow:_0_2px_2px_rgba(0,0,0,0.8)] !text-gray-200 px-4 py-1.5 rounded-md transition-colors font-medium"
-            >
-              Registrarse
-            </Link>
-          </div>
-        </header>
+        <GuestBar />
 
         {/* Calendar content */}
         <main className="workspace flex-1">

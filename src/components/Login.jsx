@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-
+import GuestBar from './Shared/GuestBar';
 import NameApp from './Shared/NameApp';
 
 const Login = () => {
@@ -35,71 +35,75 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen min-w-screen bg-[#1e2022] flex items-center justify-center p-4">
-      <div className="w-full max-w-md p-6 bg-[#2f3235] rounded-xl border border-[#43474a] shadow-2xl">
+    <div>
+      <GuestBar />
+      <div className="min-h-screen min-w-screen bg-[#1e2022] flex items-center justify-center p-4">
         
-        {/* Encabezado */}
-        <div className="flex flex-col items-center mb-6">
-          <NameApp dynamicClasses="text-2xl uppercase"/>
-          <p className="text-xs text-gray-400 mt-1">Gestión de Empleados</p>
-        </div>
-
-        {/* Alerta de Error de la API */}
-        {apiError && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-semibold">
-            {apiError}
-          </div>
-        )}
-
-        {/* Formulario */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <div className="w-full max-w-md p-6 bg-[#2f3235] rounded-xl border border-[#43474a] shadow-2xl">
           
-          {/* Email */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-              Correo Electrónico
-            </label>
-            <input
-              type="email"
-              placeholder="nombre@plazameru.com"
-              {...register('email', { required: 'El correo es obligatorio' })}
-              className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
-            />
-            {errors.email && (
-              <span className="text-[11px] text-red-400 font-medium">{errors.email.message}</span>
-            )}
+          {/* Encabezado */}
+          <div className="flex flex-col items-center mb-6">
+            <NameApp dynamicClasses="text-2xl uppercase"/>
+            <p className="text-xs text-gray-400 mt-1">Gestión de Empleados</p>
           </div>
 
-          {/* Contraseña */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              {...register('password', { required: 'La contraseña es obligatoria' })}
-              className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
-            />
-            {errors.password && (
-              <span className="text-[11px] text-red-400 font-medium">{errors.password.message}</span>
-            )}
-          </div>
+          {/* Alerta de Error de la API */}
+          {apiError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-semibold">
+              {apiError}
+            </div>
+          )}
 
-          {/* Botón de Ingreso */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full mt-2 p-2.5 rounded-lg text-sm font-bold text-white uppercase tracking-wider transition-all shadow-md
-              ${loading 
-                ? 'bg-[#00A4BC]/50 cursor-not-allowed text-gray-300' 
-                : 'bg-[#00A4BC] hover:bg-[#008b9f] active:scale-[0.98]'
-              }`}
-          >
-            {loading ? 'Verificando...' : 'Iniciar Sesión'}
-          </button>
+          {/* Formulario */}
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            
+            {/* Email */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                Correo Electrónico
+              </label>
+              <input
+                type="email"
+                placeholder="nombre@plazameru.com"
+                {...register('email', { required: 'El correo es obligatorio' })}
+                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
+              />
+              {errors.email && (
+                <span className="text-[11px] text-red-400 font-medium">{errors.email.message}</span>
+              )}
+            </div>
 
-        </form>
+            {/* Contraseña */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                {...register('password', { required: 'La contraseña es obligatoria' })}
+                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
+              />
+              {errors.password && (
+                <span className="text-[11px] text-red-400 font-medium">{errors.password.message}</span>
+              )}
+            </div>
+
+            {/* Botón de Ingreso */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full mt-2 p-2.5 rounded-lg text-sm font-bold text-white uppercase tracking-wider transition-all shadow-md
+                ${loading 
+                  ? 'bg-[#00A4BC]/50 cursor-not-allowed text-gray-300' 
+                  : 'bg-[#00A4BC] hover:bg-[#008b9f] active:scale-[0.98]'
+                }`}
+            >
+              {loading ? 'Verificando...' : 'Iniciar Sesión'}
+            </button>
+
+          </form>
+        </div>
       </div>
     </div>
   );
