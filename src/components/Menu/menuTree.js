@@ -62,17 +62,39 @@ function buildMenuTree(items) {
 export const menuTree = buildMenuTree(menuItems);
 export const topMenuItems = menuItems.filter((item) => !item.parentId).map((item) => item.id);
 
+/**
+ * Find the menu context for a given pathname using longest-prefix matching.
+ * This allows nested routes like /empleados/123/edit to match the /empleados menu item.
+ *
+ * @param {string} pathname - The current URL pathname (e.g., "/empleados/123/edit")
+ * @returns {{ activeMenu: string, activePath: string[] } | null}
+ */
 export function findMenuContextByPath(pathname) {
-  console.log("pathname", pathname, menuItems)
   const lookup = new Map(menuItems.map((item) => [item.id, item]));
-  const match = menuItems.find((item) => item.path === pathname);
 
-  if (!match) {
+  // Find the best matching menu item: the one whose path is the longest
+  // prefix of the current pathname. E.g., /empleados/123/edit matches /empleados.
+  let bestMatch = null;
+  let bestMatchLen = 0;
+
+  for (const item of menuItems) {
+    if (item.path === '#' || !item.path) continue;
+    // Match if pathname equals item.path OR pathname starts with item.path followed by /
+    if (pathname === item.path || pathname.startsWith(item.path + '/')) {
+      if (item.path.length > bestMatchLen) {
+        bestMatch = item;
+        bestMatchLen = item.path.length;
+      }
+    }
+  }
+
+  if (!bestMatch) {
     return null;
   }
 
+  // Build activePath by walking up the parent chain
   const activePath = [];
-  let current = match;
+  let current = bestMatch;
 
   while (current?.parentId && lookup.has(current.parentId)) {
     activePath.unshift(current.id);
@@ -80,8 +102,8 @@ export function findMenuContextByPath(pathname) {
   }
 
   return {
-    activeMenu: current?.id || match.id,
-    activePath
+    activeMenu: current?.id || bestMatch.id,
+    activePath,
   };
 }
   

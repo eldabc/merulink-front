@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { menuTree } from "./menuTree";
+import { useLocation } from 'react-router-dom';
+import { menuTree, findMenuContextByPath } from "./menuTree";
+import { menuEvents } from "./menuEvents";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
 import { NavLink } from 'react-router-dom';
 
@@ -61,15 +63,30 @@ function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, c
   });
 }
 
-export default function SideBar({ activeMenu, activePath = [], onItemClick, isSidebarOpen, menu, toggleSidebar }) {
-  const branch = Array.isArray(menu) ? menu : (menuTree.find((item) => item.id === activeMenu)?.children || []);
+export default function SideBar({ isSidebarOpen }) {
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  // Detect if we're on an /eventos/* path to use the events menu tree
+  const isEventPath = pathname.startsWith('/eventos');
+
+  // Derive menu context from the URL
+  const context = isEventPath
+    ? null // event paths don't need the main menu context
+    : findMenuContextByPath(pathname);
+
+  const activeMenu = context?.activeMenu || null;
+  const activePath = context?.activePath || [];
+
+  // Determine which branch to render
+  const branch = isEventPath
+    ? menuEvents
+    : (menuTree.find((item) => item.id === activeMenu)?.children || []);
 
   const initialCollapsed = useMemo(() => buildAllPaths(branch), [branch]);
   const [collapsed, setCollapsed] = useState(initialCollapsed);
 
-  // Reset collapsed state when the computed initialCollapsed actually changes.
-  // Avoid blindly calling setCollapsed every render (which can happen when
-  // callers pass a fresh `menu` object each render) to prevent update loops.
+  // Reset collapsed state when the computed initialCollapsed actually changes
   useEffect(() => {
     const currKeys = Object.keys(collapsed);
     const initKeys = Object.keys(initialCollapsed);
@@ -83,7 +100,12 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
     if (different) setCollapsed(initialCollapsed);
   }, [initialCollapsed]);
 
-  if ((!activeMenu || branch.length === 0 || activeMenu === "404" || activeMenu === "IA") && !toggleSidebar) {
+  // Show sidebar when:
+  // - On event paths (always show events sidebar)
+  // - activeMenu is set, has children, and is not IA
+  const shouldShow = isEventPath || (activeMenu && branch.length > 0 && activeMenu !== 'IA');
+
+  if (!shouldShow) {
     return <aside className="sidebar hidden" />;
   }
 
@@ -94,6 +116,11 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
     }));
   };
 
+  // Breadcrumb building helper
+  const breadcrumbSegments = isEventPath
+    ? ['Eventos']
+    : (activeMenu ? [activeMenu, ...activePath] : []);
+
   return (
     <aside className={` sidebar
         bg-gray-800 text-white h-full transition-transform duration-300
@@ -102,47 +129,31 @@ export default function SideBar({ activeMenu, activePath = [], onItemClick, isSi
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}  text-sm sm:text-base
       `}>
       <div className="submenu-title">Secciones</div>
-      {/* Para poder clickar los breadcrumbs */}
+      {/* Breadcrumbs */}
       <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
-        {activeMenu !== '404' ? (
-          (() => {
-            const safeActivePath = Array.isArray(activePath) ? activePath : [];
-            const segments = [activeMenu, ...safeActivePath];
-            return segments.map((seg, idx) => {
-              const isLast = idx === segments.length - 1;
-              const handleClick = () => {
-                if (!onItemClick) return;
-                if (idx === 0) {
-                  // top-level clicked -> clear activePath
-                  onItemClick([]);
-                } else {
-                  // build subpath inside activeMenu
-                  const subpath = segments.slice(1, idx + 1);
-                  onItemClick(subpath);
-                }
-              };
-
-              return (
-                <span key={idx} style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  <button className="breadcrumb-btn-link"
-                    onClick={handleClick}
-                    style={{
-                      color: isLast ? '#666' : '#cfeeff',
-                      textDecoration: isLast ? 'none' : 'underline',
-                    }}
-                  >
-                    {seg}
-                  </button>
-                  {!isLast && <span style={{ margin: '0 6px', color: '#666' }}>/</span>}
+        {breadcrumbSegments.length > 0 ? (
+          breadcrumbSegments.map((seg, idx) => {
+            const isLast = idx === breadcrumbSegments.length - 1;
+            return (
+              <span key={idx} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <span
+                  style={{
+                    color: isLast ? '#666' : '#cfeeff',
+                    textDecoration: isLast ? 'none' : 'underline',
+                    cursor: isLast ? 'default' : 'pointer',
+                  }}
+                >
+                  {seg}
                 </span>
-              );
-            });
-          })()
+                {!isLast && <span style={{ margin: '0 6px', color: '#666' }}>/</span>}
+              </span>
+            );
+          })
         ) : (
           'Inicio'
         )}
       </div>
-      <div>{renderNode(branch, [], onItemClick, activePath, toggleCollapse, collapsed)}</div>
+      <div>{renderNode(branch, [], null, activePath, toggleCollapse, collapsed)}</div>
     </aside>
   );
 }

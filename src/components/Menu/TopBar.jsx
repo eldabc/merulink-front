@@ -1,29 +1,32 @@
 import { useState } from "react";
 import logo from './../../assets/logo.png';
-import { useNavigate } from 'react-router-dom';
-import { menuTree } from './menuTree';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { menuTree, topMenuItems, findMenuContextByPath } from './menuTree';
 import { BellIcon } from '@heroicons/react/24/solid';
 import NotificationPanel from "../Shared/NotificationPanel";
 
-export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
+export default function TopBar() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Derive active menu from the current URL
+  const context = findMenuContextByPath(location.pathname);
+  const activeMenu = context?.activeMenu || null;
+
   const menuById = Object.fromEntries(menuTree.map((item) => [item.id, item]));
 
   return (
     <header className="topbar">
       <div className="brand-area">
-        <div onClick={() => { setActiveMenu('404'); navigate('/'); }}><img  className="logo-img" src={logo} alt="MeruLink Logo" /></div>
+        <div onClick={() => navigate('/')}>
+          <img className="logo-img" src={logo} alt="MeruLink Logo" />
+        </div>
         <nav className="top-menu" aria-label="Main menu">
           {topMenuItems.map(item => (
-            <button 
-              key={item} 
-              onClick={() => {
-                setActiveMenu(item);
-                const path = menuById[item]?.path || '/';
-                navigate(path);
-              }}
+            <button
+              key={item}
+              onClick={() => navigate(menuById[item]?.path || '/')}
               className={activeMenu === item ? 'active' : ''}
             >
               {item}
@@ -33,7 +36,7 @@ export default function TopBar({ activeMenu, topMenuItems, setActiveMenu }) {
       </div>
       <div className="user-block flex items-center gap-5 ">
         <div className="relative">
-          <div 
+          <div
             onClick={() => setIsNotifOpen(!isNotifOpen)}
             className={`shrink-0 rounded-full bg-[#2f3d44] border p-2 transition-all duration-200
               ${isNotifOpen ? 'border-[#63bffd] shadow-[0_0_10px_#9fd8ff44]' : 'border-[#ffffff21] hover:border-[#9fd8ff]'}
