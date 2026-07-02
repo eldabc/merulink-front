@@ -1,14 +1,19 @@
 import { useState } from "react";
-import logo from './../../assets/logo.png';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
+import logo from './../../assets/logo.png';
 import { menuTree, topMenuItems, findMenuContextByPath } from './menuTree';
 import { BellIcon } from '@heroicons/react/24/solid';
 import NotificationPanel from "../Shared/NotificationPanel";
+import NameApp from "../Shared/NameApp";
 
 export default function TopBar() {
+
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   // Derive active menu from the current URL
   const context = findMenuContextByPath(location.pathname);
@@ -20,7 +25,8 @@ export default function TopBar() {
     <header className="topbar">
       <div className="brand-area">
         <div onClick={() => navigate('/')}>
-          <img className="logo-img" src={logo} alt="MeruLink Logo" />
+          {/* <img className="logo-img" src={logo} alt="MeruLink Logo" /> */}
+          <NameApp />
         </div>
         <nav className="top-menu" aria-label="Main menu">
           {topMenuItems.map(item => (
@@ -49,8 +55,8 @@ export default function TopBar() {
           <NotificationPanel isOpen={isNotifOpen} />
         </div>
         <div className="flex flex-col">
-          <div className="name">Riad Abdo</div>
-          <div className="dept">Sistemas y Tecnología</div>
+          <div className="name">{user?.name}</div>
+          <div className="dept">{user?.department}</div>
         </div>
       </div>
     </header>

@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from "react";
 import { Routes, Route, Outlet } from 'react-router-dom';
-const Calendar = lazy(() => import("./Calendar/Calendar"));
 const AssistantInput = lazy(() => import("./AssistantInput"));
 const DepartmentPage = lazy(() => import("./Department/DepartmentPage"));
 const SubDepartmentPage = lazy(() => import("./SubDepartment/SubDepartmentPage"));
@@ -30,6 +29,7 @@ import { ScheduleProvider } from '../context/ScheduleContext';
 import { useNotification } from "../context/NotificationContext";
 import ProtectedRoute from './Shared/ProtectedRoute';
 import MainLayout from './Shared/MainLayout';
+import HomePage from "./HomePage";
 
 const EventLayout = ({ showNotification }) => (
   <EventProvider showNotification={showNotification}>
@@ -104,9 +104,7 @@ export default function Workspace() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route element={<EventLayout showNotification={showNotification} />}>
-          <Route path="/" element={<div className="content-center"><Calendar /></div>} />
-        </Route>
+        <Route path="/" element={<HomePage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>

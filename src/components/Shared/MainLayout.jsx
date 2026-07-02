@@ -8,9 +8,13 @@ import Footer from '../Footer';
  * MainLayout — wraps all authenticated pages with the global chrome:
  * TopBar (auto-detects active menu from URL),
  * SideBar (auto-detects which branch to show from URL),
- * Footer, and the routed page content via <Outlet />.
+ * Footer, and the routed page content.
+ *
+ * Can be used in two ways:
+ * 1. As a route layout (with <Outlet />) — when nested inside <Routes>
+ * 2. As a direct wrapper (with children) — for programmatic use
  */
-export default function MainLayout() {
+export default function MainLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -29,7 +33,7 @@ export default function MainLayout() {
         <SideBar isSidebarOpen={isSidebarOpen} />
 
         <main className="workspace flex-1">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
 

@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
+import NameApp from './Shared/NameApp';
+
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { loading, setLoading, authLogin } = useAuth();
@@ -38,9 +40,7 @@ const Login = () => {
         
         {/* Encabezado */}
         <div className="flex flex-col items-center mb-6">
-          <h2 className="text-2xl font-black text-white uppercase tracking-wider">
-            Meru<span className="text-[#00A4BC]">Link</span>
-          </h2>
+          <NameApp dynamicClasses="text-2xl uppercase"/>
           <p className="text-xs text-gray-400 mt-1">Gestión de Empleados</p>
         </div>
 

@@ -181,7 +181,7 @@ export default function Calendar() {
 
 
   return (
-    <div className='container'>
+    <div className='w-full mt-5'>
       <div className='calendar-container'>
         <div className='demo-app-main relative'>
           
