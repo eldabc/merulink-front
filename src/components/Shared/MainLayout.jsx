@@ -25,7 +25,7 @@ export default function MainLayout({ children }) {
         {/* Mobile sidebar toggle */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="sidebar-button lg:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white px-3 py-2 rounded-md shadow-md"
+          className="sidebar-button lg:hidden fixed top-4 left-4 z-50 text-white px-3 py-2 rounded-md shadow-md"
         >
           MENÚ ☰
         </button>

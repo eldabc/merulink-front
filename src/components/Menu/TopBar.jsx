@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+
 import { useAuth } from '../../context/AuthContext';
 
 import logo from './../../assets/logo.png';
@@ -10,16 +11,29 @@ import NameApp from "../Shared/NameApp";
 
 export default function TopBar() {
 
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const { user, logoutContext } = useAuth();
 
   // Derive active menu from the current URL
   const context = findMenuContextByPath(location.pathname);
   const activeMenu = context?.activeMenu || null;
 
   const menuById = Object.fromEntries(menuTree.map((item) => [item.id, item]));
+
+  const handleLogout = async (e) => {
+    // Detener la redirección
+    e.preventDefault(); 
+    const data = await logoutContext();
+
+    if (data.status === 'success') {
+      console.log("¡Éxito!", data.message);
+      console.log("🔑 Mi Token de Sanctum actual:", localStorage.getItem('token'));
+      navigate('/');
+    }
+
+  };
 
   return (
     <header className="topbar">
@@ -57,6 +71,15 @@ export default function TopBar() {
         <div className="flex flex-col">
           <div className="name">{user?.name}</div>
           <div className="dept">{user?.department}</div>
+          <div className="sesion">
+            <Link
+              to="/"
+              onClick={ (e) => handleLogout(e)}
+              className="text-sm !text-[#9fd8ff] hover:!text-white transition-colors font-medium"
+            >
+              Cerrar sesión
+            </Link>
+          </div>
         </div>
       </div>
     </header>

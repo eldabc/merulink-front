@@ -10,17 +10,18 @@ import ParticlesCanvas from "./components/Shared/ParticlesCanvas";
 export default function App() {
   return (
     <div className="merulink-root">
-      <AuthProvider>
-        <GlobalDataProvider>
-          <NotificationProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <GlobalDataProvider>
+            
             <BrowserRouter>
               <Workspace />
             </BrowserRouter>
 
             <ParticlesCanvas />  
-          </NotificationProvider>
-        </GlobalDataProvider>
-      </AuthProvider>
+          </GlobalDataProvider>
+        </AuthProvider>
+      </NotificationProvider>
     </div>
   );
 }

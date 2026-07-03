@@ -18,7 +18,7 @@ const Login = () => {
     try {
       const response = await authLogin(data);
       if (response) {
-        navigate('/empleados/horarios');
+        navigate('/calendario');
       }
     } catch (error) {
       console.error(error);
@@ -58,7 +58,7 @@ const Login = () => {
             {/* Email */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                Correo Electrónico
+                Nombre Usuario
               </label>
               <input
                 type="text"

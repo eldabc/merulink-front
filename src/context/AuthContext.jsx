@@ -1,12 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { ENV } from '../config/env';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNotification } from "./NotificationContext";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showNotification } = useNotification();
 
   // Al montar la app, verificamos si ya había una sesión guardada en LocalStorage
   useEffect(() => {
@@ -31,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Función para iniciar sesión desde el componente Login
+  // Iniciar sesión desde Login
   const loginContext = (token, userData) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user_name', userData.name);
@@ -43,11 +45,21 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  // Función para cerrar sesión limpiando todo
-  const logoutContext = () => {
-    localStorage.clear(); // O remueves uno por uno con removeItem
-    delete axios.defaults.headers.common['Authorization'];
-    setUser(null);
+  // Cerrar sesión
+  const logoutContext = async () => {
+
+    try {
+      const response = await axios.post(`${ENV.API_BACK_URL}logout`);
+      
+      localStorage.clear();
+      delete axios.defaults.headers.common['Authorization'];
+      setUser(null);
+
+      return response.data; 
+    } catch (error) {
+      console.error("Error al revocar el token en el backend:", error);
+      showNotification('Error al cerrar sesión', error?.response?.data?.message, 'error');
+    }
   };
 
   const authLogin = async (data) => {

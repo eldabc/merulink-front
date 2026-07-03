@@ -13,6 +13,7 @@ const ShiftPage = lazy(() => import("./Shift/ShiftPage"));
 const SchedulePage = lazy(() => import("./Schedule/SchedulePage"));
 const LockerAssignPage = lazy(() => import("./LockerAssign/LockerAssignPage"));
 const EmployeePage = lazy(() => import("./Employee/EmployeePage"));
+const Calendar = lazy(() => import("./Calendar/Calendar"));
 const Login = lazy(() => import("./Login"));
 
 import { EventProvider } from "../context/EventContext";
@@ -29,7 +30,7 @@ import { ScheduleProvider } from '../context/ScheduleContext';
 import { useNotification } from "../context/NotificationContext";
 import ProtectedRoute from './Shared/ProtectedRoute';
 import MainLayout from './Shared/MainLayout';
-import HomePage from "./HomePage";
+// import HomePage from "./HomePage";
 
 const EventLayout = ({ showNotification }) => (
   <EventProvider showNotification={showNotification}>
@@ -102,9 +103,9 @@ export default function Workspace() {
   return (
     <Suspense fallback={<div className="p-6">Cargando...</div>}>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        {/* <Route path="/login" element={<Login />} /> */}
 
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Login />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
@@ -163,6 +164,7 @@ export default function Workspace() {
 
             {/* Calendario - Eventos */}
             <Route element={<EventLayout showNotification={showNotification} />}>
+              <Route path="/calendario" element={<div className="content-center"><Calendar /></div>} />
               <Route path="/eventos/*" element={<EventsPage />} />
             </Route>
 
