@@ -18,7 +18,7 @@ const Login = () => {
     try {
       const response = await authLogin(data);
       if (response) {
-        navigate('/calendario');
+        navigate('/');
       }
     } catch (error) {
       console.error(error);

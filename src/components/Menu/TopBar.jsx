@@ -14,6 +14,7 @@ export default function TopBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
   const { user, logoutContext } = useAuth();
 
   // Derive active menu from the current URL
@@ -25,6 +26,7 @@ export default function TopBar() {
   const handleLogout = async (e) => {
     // Detener la redirección
     e.preventDefault(); 
+    setLoadingLogout(true);
     const data = await logoutContext();
 
     if (data.status === 'success') {
@@ -32,7 +34,7 @@ export default function TopBar() {
       console.log("🔑 Mi Token de Sanctum actual:", localStorage.getItem('token'));
       navigate('/');
     }
-
+    setLoadingLogout(false);
   };
 
   return (
@@ -77,7 +79,7 @@ export default function TopBar() {
               onClick={ (e) => handleLogout(e)}
               className="text-sm !text-[#9fd8ff] hover:!text-white transition-colors font-medium"
             >
-              Cerrar sesión
+              {loadingLogout ? 'Cerrando Sesión...' : 'Cerrar sesión'}
             </Link>
           </div>
         </div>

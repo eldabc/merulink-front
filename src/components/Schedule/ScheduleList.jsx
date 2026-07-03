@@ -14,6 +14,7 @@ import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import SpanText from '../Shared/SpanText';
 import RowTableLoading from '../Shared/RowTableLoading';
+import HasPermission from '../Shared/HasPermission';
 import ScheduleFilterList from './ScheduleFilterList';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
@@ -88,7 +89,9 @@ export default function ScheduleList({ categoryKeys }) {
       <div className="titles-table">
         <TitleHeader title="Horarios" />
         <div className="text-sm">
-          <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
+          <HasPermission name="create-schedules">
+            <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
+          </HasPermission>
         </div>
       </div>
 

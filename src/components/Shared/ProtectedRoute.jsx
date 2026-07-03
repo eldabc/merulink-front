@@ -22,13 +22,13 @@ const ProtectedRoute = ({ allowedRoles = [], allowedPermissions = [] }) => {
   // Si se exigen roles específicos y el usuario no tiene NINGUNO de ellos
   if (allowedRoles.length > 0) {
     const hasRole = user.roles.some(role => allowedRoles.includes(role));
-    if (!hasRole) return <Navigate to="/horarios" replace />; // O a una página 403
+    if (!hasRole) return <Navigate to="/login" replace />; // O a una página 403
   }
 
   // Si se exigen permisos específicos y el usuario no tiene NINGUNO de ellos
   if (allowedPermissions.length > 0) {
     const hasPermission = user.permissions.some(perm => allowedPermissions.includes(perm));
-    if (!hasPermission) return <Navigate to="/horarios" replace />;
+    if (!hasPermission) return <Navigate to="/login" replace />;
   }
 
   // Si pasa todas las vacunas, renderiza la ruta hija mediante el <Outlet /> de React Router
