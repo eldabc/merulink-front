@@ -1,15 +1,23 @@
-import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-const HasPermission = ({ name, children, fallback = null }) => {
+/**
+ * Muestra children solo si el usuario posee AL MENOS UNO de los permisos indicados.
+ * @param {string[]}    [permissions] - Array de permisos.
+ * @param {boolean}     [requireAll]  - Si es true, el usuario debe tener TODOS los permisos en vez de al menos uno.
+ * @param {ReactNode}   [fallback]    - Contenido a mostrar si no tiene los permisos (default: null).
+ */
+const HasPermission = ({ permissions = [], children, fallback = null, requireAll = false }) => {
+  
   const { user } = useAuth();
+  const list = permissions;
 
-  // Si el usuario tiene el permiso, mostramos lo que envuelve. Si no, mostramos el fallback (o nada)
-  const hasPermission = user?.permissions?.includes(name);
+  if (list.length === 0) return <>{children}</>;
 
-  if (!hasPermission) {
-    return fallback;
-  }
+  const hasPermission = requireAll
+    ? list.every(p => user?.permissions?.includes(p))
+    : list.some(p => user?.permissions?.includes(p));
+
+  if (!hasPermission) return fallback;
 
   return <>{children}</>;
 };

@@ -1,6 +1,8 @@
 import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ConfirmAutofill from '../Shared/ConfirmAutofill';
 import ToggleAutofill from '../Shared/ToggleAutofill';
+import HasRole from '../Shared/HasRole';
+import HasPermission from '../Shared/HasPermission';
 
 function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen, autofillAlways, onAutofillAlwaysChange, onLoadingHandleAutofill }) {
   
@@ -9,21 +11,22 @@ function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, 
       
       {isOneShift && (
         <>
-      
-        {autofillAlways && <ToggleAutofill compact checkboxChecked={autofillAlways} onCheckboxChange={onAutofillAlwaysChange} onLoadingHandleAutofill={onLoadingHandleAutofill} />}
+        <HasPermission permissions={["autofill-schedules"]}>    
+          {autofillAlways && <ToggleAutofill compact checkboxChecked={autofillAlways} onCheckboxChange={onAutofillAlwaysChange} onLoadingHandleAutofill={onLoadingHandleAutofill} />}
 
-        <button 
-          type="button"
-          disabled={viewMode}
-          onClick={(e) => {
-            e.stopPropagation();
-            onAutofillClick()
-          }}
-          title={'Rellenar Quincena'}
-          className={`flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md ${disabledClasses}`}
-        >
-          <ClipboardDocumentListIcon className='w-5 h-5 text-gray-300' />
-        </button>
+          <button 
+            type="button"
+            disabled={viewMode}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAutofillClick()
+            }}
+            title={'Rellenar Quincena'}
+            className={`flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md ${disabledClasses}`}
+          >
+            <ClipboardDocumentListIcon className='w-5 h-5 text-gray-300' />
+          </button>
+        </HasPermission>
         </>
       )}
       
@@ -38,16 +41,18 @@ function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, 
         {isExporting ? 'Generando...' : 'PDF'}
       </button>
 
-      <button 
-        type="button"
-        onClick={() => setShowPastFortnight(!showPastFortnight)}
-        title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
-        className="flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md"
-      >
-        {showPastFortnight ? ( 
-          <EyeSlashIcon className='w-5 h-5 text-gray-300' />
-        ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
-      </button>
+      <HasRole roles={['admin', 'supervisor']}>
+        <button 
+          type="button"
+          onClick={() => setShowPastFortnight(!showPastFortnight)}
+          title={showPastFortnight ? 'Ocultar Visor' : 'Ver Quincena Pasada'}
+          className="flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md"
+        >
+          {showPastFortnight ? ( 
+            <EyeSlashIcon className='w-5 h-5 text-gray-300' />
+          ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
+        </button>
+      </HasRole>
 
       <ConfirmAutofill 
         isOpen={isModalOpen}

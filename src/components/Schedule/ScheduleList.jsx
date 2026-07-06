@@ -89,7 +89,7 @@ export default function ScheduleList({ categoryKeys }) {
       <div className="titles-table">
         <TitleHeader title="Horarios" />
         <div className="text-sm">
-          <HasPermission name="create-schedules">
+          <HasPermission permissions={["create-schedules", "edit-schedules"]}>
             <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
           </HasPermission>
         </div>
