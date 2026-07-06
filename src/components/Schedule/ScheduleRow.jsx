@@ -13,6 +13,7 @@ import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
+import HasPermission from '../Shared/HasPermission';
 
 export default function ScheduleRow({ schedule, statusInfo, departmentId, monthSelectedJson, availableMonths }) {
 
@@ -31,7 +32,6 @@ export default function ScheduleRow({ schedule, statusInfo, departmentId, monthS
 
   const handleSelectedSchedule = (id, monthNumber, fortnight) => {
     const monthSelectedJson = availableMonths.find(mes => Number(mes.value) === Number(monthNumber));
-    console.log("Datos en ROW",monthSelectedJson);
 
     navigate(`/empleados/horarios/ver/${id}`, { 
       state: { departmentId, monthNumber, fortnight, monthSelectedJson } 
@@ -69,12 +69,14 @@ export default function ScheduleRow({ schedule, statusInfo, departmentId, monthS
         </td>
 
         <td className="px-4 py-3">
-          <ButtonDelete 
-            setIsModalOpen={() => handleDeleteClick(schedule)} 
-            title={deleteBtnTitle}
-            dinamicClasses={disabledClasses}
-            disabled={blockBtn} 
-          />
+          <HasPermission permissions={["delete-schedules"]} fallback={<SpanText text="Sin Acciones" />}>
+            <ButtonDelete 
+              setIsModalOpen={() => handleDeleteClick(schedule)} 
+              title={deleteBtnTitle}
+              dinamicClasses={disabledClasses}
+              disabled={blockBtn} 
+            />
+          </HasPermission>
         </td>
       </tr>
       <tr>

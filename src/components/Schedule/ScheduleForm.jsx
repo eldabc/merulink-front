@@ -7,6 +7,7 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
 import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
+import { useAuth } from '../../context/AuthContext';
 
 import { getStarEndFortnight, getFortnightDays, getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
@@ -26,6 +27,7 @@ export default function ScheduleForm({ }) {
 
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
+  const { user } = useAuth();
   const [existingCodes, setExistingCodes] = useState([]);
   
   const methods = useForm({ resolver: yupResolver(scheduleValidationSchema), });
@@ -101,8 +103,12 @@ export default function ScheduleForm({ }) {
 
           const schedule = await loadFormData(selectedDepartmentId, startDate, endDate);
           
-          // Si la quincena está cerrada
-          if (schedule.isClosed || schedule.status === 'approved') {
+          // Si usuario no es admin ni supervisor, forzar modo view
+          const isAdminOrSupervisor = user?.roles?.some(role => ['admin', 'supervisor'].includes(role));
+          if (!isAdminOrSupervisor) {
+            
+            setMode('view');
+          } else if (schedule.isClosed || schedule.status === 'approved') {
             
             setMode('view');
             console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
@@ -120,6 +126,7 @@ export default function ScheduleForm({ }) {
               console.log("Formulario en Modo: CREATE (Nueva Planificación)",schedule);
             }
           }
+
           setFormData(schedule);
           setAutofillAlways(!!(schedule?.autofillAlways));
 
