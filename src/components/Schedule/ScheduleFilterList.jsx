@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { useAuth } from '../../context/AuthContext';
 
 import { radioOptions } from '../../utils/StaticData/schedule-utils';
 import LabelFieldForm from '../Shared/LabelFieldForm';
@@ -16,7 +17,12 @@ function ScheduleFilterList({
   setFilters,
   availableMonths
 }) {
+//     const { user } = useAuth();
+//     if(!user.roles.includes('admin')) {
+//       departments = departments.filter(dept => dept.id === user.department_id);
+// console.log("departments", departments)
 
+//     }
     // Mes actual
     // const now = dayjs();
     // const currentYear = now.year();

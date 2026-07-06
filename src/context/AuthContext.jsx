@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // 🛡️ Interceptor global de Axios: detecta 401 y cierra sesión automáticamente
+  // Interceptor global de Axios: detecta 401 y cierra sesión automáticamente
   useEffect(() => {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
           isCleaningUp.current = true;
           clearSession();
           showNotification('Sesión expirada', 'Tu sesión ha sido cerrada. Vuelve a iniciar sesión.', 'warning');
-          // Redirigir al login — usamos window.location para forzar recarga limpia
+          // Redirigir al login
           setTimeout(() => {
             window.location.href = '/login';
           }, 300);
@@ -66,10 +66,12 @@ export const AuthProvider = ({ children }) => {
 
   // Iniciar sesión desde Login
   const loginContext = (token, userData) => {
+    console.log("userData", userData)
     isCleaningUp.current = false; // resetear flag al hacer login nuevo
     localStorage.setItem('token', token);
     localStorage.setItem('user_name', userData.name);
     localStorage.setItem('user_email', userData.email);
+    localStorage.setItem('department_id', userData.departmentId);
     localStorage.setItem('user_roles', JSON.stringify(userData.roles));
     localStorage.setItem('user_permissions', JSON.stringify(userData.permissions));
 

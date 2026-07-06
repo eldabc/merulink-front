@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
+import { useAuth } from '../../context/AuthContext';
 
 import { normalizeText } from '../../utils/text-utils.js';
 import { filterData } from '../../utils/filter-utils.js';
@@ -21,7 +22,7 @@ import { allMonths } from '../../utils/StaticData/months-utils';
 import '../../Tables.css';
 
 export default function ScheduleList({ categoryKeys }) {
-  
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { globalLoading, departments, loadDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
@@ -53,8 +54,16 @@ export default function ScheduleList({ categoryKeys }) {
   ];
 
   useEffect(() => {  
-    if (departments.length === 0) {
+    let localDepartments = departments;
+    if (localDepartments.length === 0) {
       loadDepartments();
+    } else {
+      console.log("AQUI", user);
+      if(!user.roles.includes('admin')) {
+        localDepartments = localDepartments?.filter(dept => dept.id === user.department_id);
+  console.log("localDepartments", localDepartments)
+  
+      }
     }
   }, []);
 
