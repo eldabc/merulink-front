@@ -10,6 +10,7 @@ import FilterByFields from '../Filters/FilterByFields';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import RowTableLoading from '../Shared/RowTableLoading';
+import HasPermission from '../Shared/HasPermission';
 import '../../Tables.css';
 
 // Componente wrapper que proporciona el contexto
@@ -62,11 +63,13 @@ export default function EmployeeList() {
   const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
 return (
-    <div className="main-data-cont table-container">
-
+  <HasPermission permissions={['view-employees']} >
+    <div className="main-data-cont table-container">    
       <div className="titles-table">
         <TitleHeader title='Listado de Empleados' />
-        <ButtonNavigate url={`/empleados/nuevo`} navigate={navigate} />
+        <HasPermission permissions={["create-employees", "edit-employees"]}>
+          <ButtonNavigate url={`/empleados/nuevo`} navigate={navigate} />
+        </HasPermission>
       </div>
 
       <FilterByFields
@@ -106,17 +109,18 @@ return (
       </div>
 
       <Pagination
-				paginatedData={paginatedData}
-				startIndex={startIndex}
-				itemsPerPage={itemsPerPage}
-				dataToDisplay={dataToDisplay}
-				hasSearched={hasSearched}
-				data={employeeData}
-				setCurrentPage={setCurrentPage}
-				currentPage={currentPage}
-				totalPages={totalPages}
-				moduleName={'Empleado'}
-			/>
+        paginatedData={paginatedData}
+        startIndex={startIndex}
+        itemsPerPage={itemsPerPage}
+        dataToDisplay={dataToDisplay}
+        hasSearched={hasSearched}
+        data={employeeData}
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        moduleName={'Empleado'}
+      />
     </div>
+  </HasPermission>
 );
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useNotification } from "./NotificationContext";
 
 const AuthContext = createContext(null);
@@ -9,6 +9,14 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
+  const isCleaningUp = useRef(false); // evita múltiples cierres por 401
+
+  // Limpiar estado de sesión (sin llamar al backend)
+  const clearSession = useCallback(() => {
+    localStorage.clear();
+    delete axios.defaults.headers.common['Authorization'];
+    setUser(null);
+  }, []);
 
   // Al montar la app, verificamos si ya había una sesión guardada en LocalStorage
   useEffect(() => {
@@ -33,8 +41,32 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // 🛡️ Interceptor global de Axios: detecta 401 y cierra sesión automáticamente
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error?.response?.status === 401 && !isCleaningUp.current) {
+          isCleaningUp.current = true;
+          clearSession();
+          showNotification('Sesión expirada', 'Tu sesión ha sido cerrada. Vuelve a iniciar sesión.', 'warning');
+          // Redirigir al login — usamos window.location para forzar recarga limpia
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 300);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, [clearSession, showNotification]);
+
   // Iniciar sesión desde Login
   const loginContext = (token, userData) => {
+    isCleaningUp.current = false; // resetear flag al hacer login nuevo
     localStorage.setItem('token', token);
     localStorage.setItem('user_name', userData.name);
     localStorage.setItem('user_email', userData.email);
@@ -45,21 +77,22 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  // Cerrar sesión
+  // Cerrar sesión (manual o por inactividad)
   const logoutContext = async () => {
-
     try {
-      const response = await axios.post(`${ENV.API_BACK_URL}logout`);
-      
-      localStorage.clear();
-      delete axios.defaults.headers.common['Authorization'];
-      setUser(null);
-
-      return response.data; 
+      await axios.post(`${ENV.API_BACK_URL}logout`);
     } catch (error) {
+      // Si el token ya no es válido, el 401 se maneja con el interceptor y limpia igual
       console.error("Error al revocar el token en el backend:", error);
-      showNotification('Error al cerrar sesión', error?.response?.data?.message, 'error');
+    } finally {
+      clearSession();
+      showNotification('Sesión cerrada', 'Has cerrado sesión correctamente.', 'success');
     }
+  };
+
+  const logoutDueToInactivity = () => {
+    clearSession();
+    showNotification('Sesión cerrada', 'Tu sesión fue cerrada por inactividad.', 'warning');
   };
 
   const authLogin = async (data) => {
@@ -79,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     user,
     loginContext,
     logoutContext,
+    logoutDueToInactivity,
     isAuthenticated: !!user,
     authLogin,
   };

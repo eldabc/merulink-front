@@ -4,6 +4,7 @@ import { useEmployees } from '../../context/EmployeeContext';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import ConfirmDialog  from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
+import HasPermission from '../Shared/HasPermission';
 
 export default function EmployeeRow({ emp }) {
 
@@ -52,13 +53,17 @@ export default function EmployeeRow({ emp }) {
       <td className="px-4 py-3 text-white-700">{subDepartmentName}</td>
       <td className="px-4 py-3 text-white-700">{emp.position.name}</td>
       <td className="px-4 py-3">
-        <span 
-          className={getStatusColor(emp.status)}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleChangeStatusClick(emp);
-          }}
-        >{getStatusName(emp.status)}</span>
+        <HasPermission permissions={["change-status-employees"]} fallback={<SpanText text={getStatusName(emp.status)} />}>
+          <span 
+            className={getStatusColor(emp.status)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleChangeStatusClick(emp);
+            }}
+          >
+            {getStatusName(emp.status)}
+          </span>
+        </HasPermission>
       </td>
     </tr>
     <tr>

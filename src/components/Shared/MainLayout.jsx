@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import TopBar from '../Menu/TopBar';
 import SideBar from '../Menu/SideBar';
 import Footer from '../Footer';
+import { useInactivityTimer } from '../../hooks/useInactivityTimer';
+import { useAuth } from '../../context/AuthContext';
+import InactivityWarning from './InactivityWarning';
 
 /**
  * MainLayout — wraps all authenticated pages with the global chrome:
@@ -16,6 +19,28 @@ import Footer from '../Footer';
  */
 export default function MainLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { logoutDueToInactivity, logoutContext } = useAuth();
+  const location = useLocation();
+
+  // Timer de inactividad — 15 min timeout, muestra advertencia 2 min antes
+  const { showWarning, remainingSeconds, resetTimer } = useInactivityTimer({
+    timeoutMinutes: 15,
+    warningMinutes: 2,
+    onExpire: logoutDueToInactivity,
+  });
+
+  // Resetear el timer en cada navegación (cambio de ruta SPA)
+  useEffect(() => {
+    resetTimer();
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleExtendSession = () => {
+    resetTimer();
+  };
+
+  const handleCloseSession = () => {
+    logoutContext();
+  };
 
   return (
     <div className="min-h-screen bg-[#1e2022] flex flex-col">
@@ -38,6 +63,15 @@ export default function MainLayout({ children }) {
       </div>
 
       <Footer />
+
+      {/* Modal de advertencia por inactividad */}
+      {showWarning && (
+        <InactivityWarning
+          remainingSeconds={remainingSeconds}
+          onExtend={handleExtendSession}
+          onClose={handleCloseSession}
+        />
+      )}
     </div>
   );
 }
