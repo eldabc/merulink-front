@@ -68,8 +68,7 @@ export const AuthProvider = ({ children }) => {
 
   // Iniciar sesión desde Login
   const loginContext = (token, userData) => {
-    console.log("userData", userData)
-    isCleaningUp.current = false; // resetear flag al hacer login nuevo
+    isCleaningUp.current = false;
     localStorage.setItem('token', token);
     localStorage.setItem('user_name', userData.name);
     localStorage.setItem('user_email', userData.email);
@@ -84,9 +83,9 @@ export const AuthProvider = ({ children }) => {
   // Cerrar sesión (manual o por inactividad)
   const logoutContext = async () => {
     try {
-      await axios.post(`${ENV.API_BACK_URL}logout`);
+      const response = await axios.post(`${ENV.API_BACK_URL}logout`);
+      return response.data; 
     } catch (error) {
-      // Si el token ya no es válido, el 401 se maneja con el interceptor y limpia igual
       console.error("Error al revocar el token en el backend:", error);
     } finally {
       clearSession();

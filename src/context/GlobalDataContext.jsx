@@ -18,7 +18,7 @@ export const GlobalDataProvider = ({ children }) => {
 
   // Filtrar departamentos según el rol del usuario (fuente única de verdad)
   useEffect(() => {
-    if (!user?.roles?.includes('admin')) {
+    if (user && !user?.roles?.includes('admin')) {
       setFilteredDepartments(
         departments.filter(dept => Number(dept.id) === Number(user.department_id))
       );

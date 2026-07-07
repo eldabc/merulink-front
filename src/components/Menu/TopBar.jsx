@@ -24,15 +24,13 @@ export default function TopBar() {
   const menuById = Object.fromEntries(menuTree.map((item) => [item.id, item]));
 
   const handleLogout = async (e) => {
-    // Detener la redirección
+
     e.preventDefault(); 
     setLoadingLogout(true);
     const data = await logoutContext();
 
     if (data.status === 'success') {
-      console.log("¡Éxito!", data.message);
-      console.log("🔑 Mi Token de Sanctum actual:", localStorage.getItem('token'));
-      navigate('/');
+      navigate('/login');
     }
     setLoadingLogout(false);
   };
@@ -41,7 +39,6 @@ export default function TopBar() {
     <header className="topbar">
       <div className="brand-area">
         <div onClick={() => navigate('/')}>
-          {/* <img className="logo-img" src={logo} alt="MeruLink Logo" /> */}
           <NameApp />
         </div>
         <nav className="top-menu" aria-label="Main menu">
