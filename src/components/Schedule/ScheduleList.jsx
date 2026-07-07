@@ -25,7 +25,7 @@ import '../../Tables.css';
 export default function ScheduleList({ categoryKeys }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { globalLoading, departments, loadDepartments } = useGlobalData();
+  const { globalLoading, departments, loadDepartments, filteredDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
   const [currentPage, setCurrentPage] = useState(1);
   const [monthSelectedJson, setMonthSelectedJson] = useState(1);
@@ -54,22 +54,12 @@ export default function ScheduleList({ categoryKeys }) {
     mapToMonthWithYear(now.subtract(2, 'month'))
   ];
 
-  // Cargar departamentos si vienen vacíos
-  useEffect(() => {
-    if (departments.length === 0) {
-      loadDepartments();
-    }
-  }, []);
-
-  // Filtrar departamentos según el rol del usuario
-  const filteredDepartments = useMemo(() => {
-    if (departments.length === 0 || !user) return [];
-
-    if (!user?.roles?.includes('admin')) {
-      return departments.filter(dept => Number(dept.id) === Number(user.departmentId));
-    }
-    return departments;
-  }, [departments, user]);
+  // Cargar departamentos si vienen vacíos (el contexto ya los carga automáticamente)
+  // useEffect(() => {
+  //   if (departments.length === 0 && !globalLoading) {
+  //     loadDepartments();
+  //   }
+  // }, []);
 
   const loadSchedulesData = useCallback((currentFilters) => {
     

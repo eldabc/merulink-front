@@ -11,7 +11,7 @@ function SelectDepartment({ disabled, dynamicClasses, departments = [], loading 
         {...register('departmentId')} 
         className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${dynamicClasses}`}>
 
-          <OptionSelect text={ loading ? "Cargando..." : "Seleccionar..."} />
+          <OptionSelect text={ loading || departments.length === 0 ? "Cargando..." : "Seleccionar..."} />
 
           {departments.map((dep, index) => (
             <OptionSelect key={`departmentId-${dep.id}-${index}`} value={dep.id} text={dep.departmentName} />

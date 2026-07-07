@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -27,7 +27,7 @@ export default function ScheduleForm({ }) {
   const { departmentId, monthNumber, fortnight, monthSelectedJson } = location.state || {};
 
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
-  const { globalLoading, departments, loadDepartments } = useGlobalData();
+  const { globalLoading, loadDepartments, filteredDepartments, departmentsLoaded } = useGlobalData();
   const { user } = useAuth();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -71,17 +71,6 @@ export default function ScheduleForm({ }) {
     availableMonths = [monthSelectedJson, ...availableMonths]; // añadir mes soliticado desde listado
   } 
 
-  // Filtrar departamentos según el rol del usuario
-  const filteredDepartments = useMemo(() => {
-    if (departments.length === 0 || !user) return [];
-      console.log("aqui 1")
-    if (!user?.roles?.includes('admin')) {
-      console.log("aqui 2", departments)
-      return departments.filter(dept => Number(dept.id) === Number(user.departmentId));
-    }
-    console.log("aqui 3")
-    return departments;
-  }, [departments, user]);
 
   useEffect(() => {
     const getScheduleData = async () => {
@@ -94,7 +83,7 @@ export default function ScheduleForm({ }) {
       }
     };
     getScheduleData();
-  }, [filteredDepartments.length]);
+  }, [departmentsLoaded]);
 
   
   useEffect(() => {
@@ -169,13 +158,6 @@ export default function ScheduleForm({ }) {
 
     loadData();    
   }, [selectedDepartmentId, selectedMonthId, selectedFortnight]);
-
-
-  useEffect(() => {  
-    if (departments.length === 0) {
-      loadDepartments();
-    }
-  }, [mode]);
 
 
   useEffect(() => {
