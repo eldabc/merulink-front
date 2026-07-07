@@ -21,11 +21,11 @@ export const AuthProvider = ({ children }) => {
   // Al montar la app, verifica si ya había una sesión en LocalStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const name = localStorage.getItem('user_name');
-    const email = localStorage.getItem('user_email');
-    const roles = localStorage.getItem('user_roles');
-    const permissions = localStorage.getItem('user_permissions');
-    const departmentId = localStorage.getItem('department_id');
+    const name = localStorage.getItem('userName');
+    const email = localStorage.getItem('userEmail');
+    const roles = localStorage.getItem('userRoles');
+    const permissions = localStorage.getItem('userPermissions');
+    const departmentId = localStorage.getItem('departmentId');
 
     if (token && name) {
       // Rehidrata el estado global en memoria
@@ -70,11 +70,11 @@ export const AuthProvider = ({ children }) => {
   const loginContext = (token, userData) => {
     isCleaningUp.current = false;
     localStorage.setItem('token', token);
-    localStorage.setItem('user_name', userData.name);
-    localStorage.setItem('user_email', userData.email);
-    localStorage.setItem('department_id', userData.departmentId);
-    localStorage.setItem('user_roles', JSON.stringify(userData.roles));
-    localStorage.setItem('user_permissions', JSON.stringify(userData.permissions));
+    localStorage.setItem('userName', userData.name);
+    localStorage.setItem('userEmail', userData.email);
+    localStorage.setItem('departmentId', userData.departmentId);
+    localStorage.setItem('userRoles', JSON.stringify(userData.roles));
+    localStorage.setItem('userPermissions', JSON.stringify(userData.permissions));
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(userData);
