@@ -18,7 +18,10 @@ export const GlobalDataProvider = ({ children }) => {
 
   // Cargar departamentos automáticamente al montar el provider
   useEffect(() => {
-    loadDepartments();
+    const token = localStorage.getItem('token');
+    if (token) {
+      loadDepartments();
+    }
   }, []);
 
   const loadDepartments = useCallback(async () => {

@@ -52,10 +52,12 @@ export const AuthProvider = ({ children }) => {
           isCleaningUp.current = true;
           clearSession();
           showNotification('Sesión expirada', 'Tu sesión ha sido cerrada. Vuelve a iniciar sesión.', 'warning');
-          // Redirigir al login
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 300);
+          // Redirigir al login si no estamos en él
+          if (window.location.pathname !== '/login') {
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 300);
+          }
         }
         return Promise.reject(error);
       }
