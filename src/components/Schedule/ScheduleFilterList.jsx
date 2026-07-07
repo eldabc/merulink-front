@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 import { radioOptions } from '../../utils/StaticData/schedule-utils';
@@ -17,28 +17,6 @@ function ScheduleFilterList({
   setFilters,
   availableMonths
 }) {
-//     const { user } = useAuth();
-//     if(!user.roles.includes('admin')) {
-//       departments = departments.filter(dept => dept.id === user.department_id);
-// console.log("departments", departments)
-
-//     }
-    // Mes actual
-    // const now = dayjs();
-    // const currentYear = now.year();
-    // const todayFormatted = now.format('YYYY-MM-DD');
-  
-    // // Añadir año correspondiente a los meses
-    // const mapToMonthWithYear = (d) => {
-    //   const idx = d.month(); // 0-11
-    //   return { ...allMonths[idx], currentYear: d.year() };
-    // };
-  
-    // // Mes actual + anterior
-    // const availableMonths = [
-    //   mapToMonthWithYear(now),
-    //   mapToMonthWithYear(now.subtract(1, 'month'))
-    // ];
 
   // Manejador de cambios para actualizar el estado
   const handleChange = (e) => {
@@ -49,14 +27,22 @@ function ScheduleFilterList({
     }));
   };
 
+  // Auto-seleccionar departamento cuando solo hay uno disponible
+  useEffect(() => {
+    if (departments.length === 1 && !filters.department) {
+      setFilters((prev) => ({
+        ...prev,
+        department: departments[0].id
+      }));
+    }
+  }, [departments, filters.department]);
+
   // Escucha cuando 'filters' cambia y ejecuta automáticamente la búsqueda
   useEffect(() => {
     if (!onLoadSchedules) return;
 
-    // const monthSelectedJson = availableMonths.find(mes => Number(mes.value) === Number(filters?.month));
     onLoadSchedules({ 
-      ...filters, 
-      // monthSelectedJson
+      ...filters,
     });
   }, [filters, onLoadSchedules]);
 
@@ -70,13 +56,11 @@ function ScheduleFilterList({
           <select 
             disabled={viewMode || loading} 
             name='department'
-            value={filters.department} // Controlado por el estado
+            value={filters.department}
             onChange={handleChange}
             className={`w-full text-xl px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
           >
-            <option className="bg-[#3c4042]" value=""> 
-              {loading ? "Cargando..." : "Seleccionar..."} 
-            </option>
+            <option className="bg-[#3c4042]" value=""> {loading ? "Cargando..." : "Seleccionar..."} </option>
             {departments.map((item) => ( 
               <option key={item.id} value={item.id} className='bg-[#3c4042]'> 
                 {item.departmentName} 

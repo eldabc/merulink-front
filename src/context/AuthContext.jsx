@@ -18,21 +18,23 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   }, []);
 
-  // Al montar la app, verificamos si ya había una sesión guardada en LocalStorage
+  // Al montar la app, verifica si ya había una sesión en LocalStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
     const name = localStorage.getItem('user_name');
     const email = localStorage.getItem('user_email');
     const roles = localStorage.getItem('user_roles');
     const permissions = localStorage.getItem('user_permissions');
+    const departmentId = localStorage.getItem('department_id');
 
     if (token && name) {
-      // Rehidratamos el estado global en memoria
+      // Rehidrata el estado global en memoria
       setUser({
         name,
         email,
         roles: roles ? JSON.parse(roles) : [],
-        permissions: permissions ? JSON.parse(permissions) : []
+        permissions: permissions ? JSON.parse(permissions) : [],
+        department_id: departmentId ? Number(departmentId) : null
       });
 
       // Configuramos axios con el token por defecto para todas las peticiones a Laragon

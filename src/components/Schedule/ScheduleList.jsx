@@ -1,6 +1,6 @@
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
 import { useAuth } from '../../context/AuthContext';
@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { normalizeText } from '../../utils/text-utils.js';
 import { filterData } from '../../utils/filter-utils.js';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
+import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ScheduleRow from './ScheduleRow';
 import Pagination from '../Pagination';
@@ -17,7 +18,6 @@ import SpanText from '../Shared/SpanText';
 import RowTableLoading from '../Shared/RowTableLoading';
 import HasPermission from '../Shared/HasPermission';
 import ScheduleFilterList from './ScheduleFilterList';
-import { allMonths } from '../../utils/StaticData/months-utils';
 
 import '../../Tables.css';
 
@@ -53,19 +53,20 @@ export default function ScheduleList({ categoryKeys }) {
     mapToMonthWithYear(now.subtract(2, 'month'))
   ];
 
-  useEffect(() => {  
-    let localDepartments = departments;
-    if (localDepartments.length === 0) {
+  // Cargar departamentos si vienen vacíos
+  useEffect(() => {
+    if (departments.length === 0) {
       loadDepartments();
-    } else {
-      console.log("AQUI", user);
-      if(!user.roles.includes('admin')) {
-        localDepartments = localDepartments?.filter(dept => dept.id === user.department_id);
-  console.log("localDepartments", localDepartments)
-  
-      }
     }
   }, []);
+
+  // Filtrar departamentos según el rol del usuario
+  const filteredDepartments = useMemo(() => {
+    if (!user?.roles?.includes('admin')) {
+      return departments.filter(dept => Number(dept.id) === Number(user.department_id));
+    }
+    return departments;
+  }, [departments, user]);
 
   const loadSchedulesData = useCallback((currentFilters) => {
     
@@ -105,7 +106,7 @@ export default function ScheduleList({ categoryKeys }) {
       </div>
 
       <ScheduleFilterList 
-        departments={departments} 
+        departments={filteredDepartments} 
         loading={globalLoading} 
         onLoadSchedules={loadSchedulesData} 
         filters={filters} 
