@@ -51,7 +51,7 @@ const ScheduleGrid = forwardRef(({
 
   const { register, formState: { errors } } = useFormContext();
   const { autofillSchedule, setLoading, setScheduleData } = useSchedules();
-  const { departments } = useGlobalData();
+  const { departments, filteredDepartments } = useGlobalData();
   const [brushShift, setBrushShift] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); 
@@ -347,99 +347,102 @@ const ScheduleGrid = forwardRef(({
 
   const isDataPending = loading || shifts === undefined;
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
-  
+
   return (
     <div className="w-full flex flex-col gap-4 p-2 bg-[#535557] rounded-lg">
+      {isDataPending ? (
+        <SpanText text="Cargando..." />
+      ) : (
+        <>
+          <ScheduleTopBar
+            viewMode={viewMode}
+            disabledClasses={disabledClasses}
+            exportToPDF={exportToPDF} 
+            isExporting={isExporting} 
+            setShowPastFortnight={setShowPastFortnight} 
+            showPastFortnight={showPastFortnight} 
+            onAutofillClick={handleAutofillClick} 
+            onConfirmAutofill={handleConfirmAutofill} 
+            isModalOpen={isModalOpen}
+            isOneShift={isOneShift}
+            setIsModalOpen ={setIsModalOpen}
+            autofillAlways={autofillAlways}
+            onAutofillAlwaysChange={onAutofillAlwaysChange}
+            onLoadingHandleAutofill={onLoadingHandleAutofill}
+          />
 
-      <ScheduleTopBar
-        viewMode={viewMode}
-        disabledClasses={disabledClasses}
-        exportToPDF={exportToPDF} 
-        isExporting={isExporting} 
-        setShowPastFortnight={setShowPastFortnight} 
-        showPastFortnight={showPastFortnight} 
-        onAutofillClick={handleAutofillClick} 
-        onConfirmAutofill={handleConfirmAutofill} 
-        isModalOpen={isModalOpen}
-        isOneShift={isOneShift}
-        setIsModalOpen ={setIsModalOpen}
-        autofillAlways={autofillAlways}
-        onAutofillAlwaysChange={onAutofillAlwaysChange}
-        onLoadingHandleAutofill={onLoadingHandleAutofill}
-      />
-
-      <div id="merulink-grid-container" className="w-full flex flex-col gap-4">
-        {isDataPending ? (
-          <SpanText text="Cargando..." />
-        ) : (
-          hasShiftGrid ? ( 
-            <>
-              <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
-                <div className="min-w-0 flex justify-center md:justify-start">
-                  <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
-                </div>
-                <div className="min-w-0">
-                  <div className='min-h-18'>
-                    {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} title="Alertas Horario" /> )}
+          <div id="merulink-grid-container" className="w-full flex flex-col gap-4">
+            
+              {hasShiftGrid ? ( 
+                <>
+                  <div className="div-border w-full grid grid-cols-1 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-4 p-3 rounded-lg transition-all duration-300">
+                    <div className="min-w-0 flex justify-center md:justify-start">
+                      <ShiftLegend shifts={shifts} activeBrush={brushShift} onSelectBrush={setBrushShift} viewMode={viewMode} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className='min-h-18'>
+                        {liveAlerts?.length > 0 && (<LiveAlerts alerts={liveAlerts} title="Alertas Horario" /> )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {rowData.length === 0 ? (
-                <SpanText text="Sin quincena registrada." dinamicClasses="mt-10 text-center text-[16px] mb-5" />
-              ) : (
-                <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
-                  {scheduleData?.isClosed && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
-                      <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
-                        Quincena cerrada
+                  {rowData.length === 0 ? (
+                    <SpanText text="Sin quincena registrada." dinamicClasses="mt-10 text-center text-[16px] mb-5" />
+                  ) : (
+                    <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
+                      {scheduleData?.isClosed && (
+                        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
+                          <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
+                            Quincena cerrada
+                          </div>
+                        </div>
+                      )}
+
+                      <div className={`ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+                        <AgGridReact
+                          rowData={rowData}
+                          columnDefs={columnDefs}
+                          readOnlyEdit={viewMode} 
+                          suppressCellFocus={viewMode}
+                          defaultColDef={defaultColDef}
+                          animateRows={true}
+                          theme={myTheme}
+                          onCellClicked={handleCellClicked}
+                          localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
+                          onGridReady={onGridReady}
+                          tooltipShowDelay={0}
+                          domLayout="autoHeight"
+                        />
                       </div>
                     </div>
                   )}
+                  
+                  {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
 
-                  <div className={`ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
-                    <AgGridReact
-                      rowData={rowData}
-                      columnDefs={columnDefs}
-                      readOnlyEdit={viewMode} 
-                      suppressCellFocus={viewMode}
-                      defaultColDef={defaultColDef}
-                      animateRows={true}
-                      theme={myTheme}
-                      onCellClicked={handleCellClicked}
-                      localeText={{ noRowsToShow: 'No hay registros para mostrar', loadingOoo: 'Cargando datos...' }}
-                      onGridReady={onGridReady}
-                      tooltipShowDelay={0}
-                      domLayout="autoHeight"
-                    />
+                  <div className="flex flex-col md:flex-row gap-3 w-full div-border">
+                    <ScheduleLegend />
+                    <div className="flex flex-col w-full md:flex-1"> 
+                      <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
+                      <textarea
+                        readOnly={mode === 'view'}
+                        {...register('observations')}
+                        rows="5"                 
+                        cols="33"                 
+                        placeholder="Escribe aquí una observación..."
+                        className={`filter-input p-2 ${disabledClasses}`}
+                      />
+                      {errors?.observations && <ErrorMessage msg={errors.observations.message} />}  
+                    </div>  
                   </div>
-                </div>
+                </>
+              ) : (
+                <SpanText text="Sin turnos disponibles para este departamento" />
               )}
-              
-              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
-
-              <div className="flex flex-col md:flex-row gap-3 w-full div-border">
-                <ScheduleLegend />
-                <div className="flex flex-col w-full md:flex-1"> 
-                  <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
-                  <textarea
-                    readOnly={mode === 'view'}
-                    {...register('observations')}
-                    rows="5"                 
-                    cols="33"                 
-                    placeholder="Escribe aquí una observación..."
-                    className={`filter-input p-2 ${disabledClasses}`}
-                  />
-                  {errors?.observations && <ErrorMessage msg={errors.observations.message} />}  
-                </div>  
-              </div>
-            </>
-          ) : (
-            <SpanText text="Sin turnos disponibles para este departamento" />
-          )
-        )}
-      </div>
-
+            
+          </div>
+        </>
+      )}
+      
       <PreviousFortnightViewer 
         isOpen={showPastFortnight} 
         onClose={() => setShowPastFortnight(false)} 

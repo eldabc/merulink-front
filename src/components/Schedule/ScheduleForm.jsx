@@ -26,7 +26,7 @@ export default function ScheduleForm({ }) {
   const { departmentId, monthNumber, fortnight, monthSelectedJson } = location.state || {};
 
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
-  const { globalLoading, departments, loadDepartments } = useGlobalData();
+  const { globalLoading, departments, loadDepartments, filteredDepartments } = useGlobalData();
   const { user } = useAuth();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -81,7 +81,7 @@ export default function ScheduleForm({ }) {
       }
     };
     getScheduleData();
-  }, []);
+  }, [filteredDepartments.length]);
 
   
   useEffect(() => {
@@ -275,7 +275,7 @@ export default function ScheduleForm({ }) {
             <div className='w-full mt-6'>
               <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
               
-               <ScheduleFilter departments={departments} months={availableMonths} globalLoading={globalLoading} />
+               <ScheduleFilter departments={filteredDepartments} months={availableMonths} globalLoading={globalLoading} />
               
               <div className="div-border mt-2">
                 {Object.keys(formData ?? {}).length > 0 && (

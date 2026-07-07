@@ -1,17 +1,31 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getDepartments, getEventCategories, getEventLocations, getEmployeesByDept } from '../services/masterDataService';
 import { useNotification } from "../context/NotificationContext"; 
+import { useAuth } from '../context/AuthContext';
 
 const GlobalDataContext = createContext();
 
 export const GlobalDataProvider = ({ children }) => {
   
   const [departments, setDepartments] = useState([]);
+  const [filteredDepartments, setFilteredDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
   const [categoryEvents, setCategoryEvents] = useState([]);
   const [locations, setLocations] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
-  // const { showNotification } = useNotification();
+  const { user } = useAuth();
+  
+
+  // Filtrar departamentos según el rol del usuario (fuente única de verdad)
+  useEffect(() => {
+    if (!user?.roles?.includes('admin')) {
+      setFilteredDepartments(
+        departments.filter(dept => Number(dept.id) === Number(user.department_id))
+      );
+    } else {
+      setFilteredDepartments(departments);
+    }
+  }, [departments, user]);
 
   const loadDepartments = async () => {
     setGlobalLoading(true);
@@ -182,6 +196,8 @@ export const GlobalDataProvider = ({ children }) => {
   const contextValue = {
     departments, 
     setDepartments,
+    filteredDepartments,
+    setFilteredDepartments,
     subDepartments, 
     globalLoading, 
     loadDepartments, 
