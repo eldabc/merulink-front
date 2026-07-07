@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         email,
         roles: roles ? JSON.parse(roles) : [],
         permissions: permissions ? JSON.parse(permissions) : [],
-        department_id: departmentId ? Number(departmentId) : null
+        departmentId: departmentId ? Number(departmentId) : null
       });
 
       // Configuramos axios con el token por defecto para todas las peticiones a Laragon

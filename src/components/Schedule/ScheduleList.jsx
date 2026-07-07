@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
+import { useAuth } from '../../context/AuthContext';
+
 
 import { normalizeText } from '../../utils/text-utils.js';
 import { filterData } from '../../utils/filter-utils.js';
@@ -21,8 +23,9 @@ import ScheduleFilterList from './ScheduleFilterList';
 import '../../Tables.css';
 
 export default function ScheduleList({ categoryKeys }) {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { globalLoading, departments, loadDepartments, filteredDepartments } = useGlobalData();
+  const { globalLoading, departments, loadDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
   const [currentPage, setCurrentPage] = useState(1);
   const [monthSelectedJson, setMonthSelectedJson] = useState(1);
@@ -57,6 +60,16 @@ export default function ScheduleList({ categoryKeys }) {
       loadDepartments();
     }
   }, []);
+
+  // Filtrar departamentos según el rol del usuario
+  const filteredDepartments = useMemo(() => {
+    if (departments.length === 0 || !user) return [];
+
+    if (!user?.roles?.includes('admin')) {
+      return departments.filter(dept => Number(dept.id) === Number(user.departmentId));
+    }
+    return departments;
+  }, [departments, user]);
 
   const loadSchedulesData = useCallback((currentFilters) => {
     

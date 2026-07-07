@@ -2,8 +2,8 @@ import { useFormContext } from "react-hook-form";
 import OptionSelect from './OptionSelect';
 
 function SelectDepartment({ disabled, dynamicClasses, departments = [], loading }) {
-    const { register, formState: { errors } } = useFormContext();
- 
+  const { register, formState: { errors } } = useFormContext();
+
   return (
     <div>
       <select 

@@ -8,35 +8,18 @@ const GlobalDataContext = createContext();
 export const GlobalDataProvider = ({ children }) => {
   
   const [departments, setDepartments] = useState([]);
-  const [filteredDepartments, setFilteredDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
   const [categoryEvents, setCategoryEvents] = useState([]);
   const [locations, setLocations] = useState([]);
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [filteredDepartments, setFilteredDepartments] = useState([]);
   const { user } = useAuth();
   
-
-  // Filtrar departamentos según el rol del usuario (fuente única de verdad)
-  useEffect(() => {
-    // if (!user) return;
-
-    if (!user?.roles?.includes('admin')) {
-      setFilteredDepartments(
-        departments.filter(dept => Number(dept.id) === Number(user.departmentId))
-      );
-    } else {
-      setFilteredDepartments(departments);
-    }
-  }, [departments, user]);
-
   const loadDepartments = async () => {
     setGlobalLoading(true);
     try {
       
-      const [depRes] = await Promise.all([
-        getDepartments(),
-      ]);
-
+      const depRes =  await getDepartments();
       setDepartments(depRes);
     } catch (error) {
       console.error("Error cargando departamentos:", error);
@@ -199,7 +182,6 @@ export const GlobalDataProvider = ({ children }) => {
     departments, 
     setDepartments,
     filteredDepartments,
-    setFilteredDepartments,
     subDepartments, 
     globalLoading, 
     loadDepartments, 

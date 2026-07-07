@@ -41,7 +41,7 @@ const ScheduleGrid = forwardRef(({
   scheduleData, 
   preFortnightParams, 
   fortnightDays, 
-  loading, 
+  // loading, 
   mode, 
   autofillAlways, 
   onAutofillAlwaysChange, 
@@ -345,15 +345,15 @@ const ScheduleGrid = forwardRef(({
     }
   };
 
-  const isDataPending = loading || shifts === undefined;
+  const isDataPending = shifts === undefined;
   const hasShiftGrid = !isDataPending && shifts?.length > 0;
 
   return (
     <div className="w-full flex flex-col gap-4 p-2 bg-[#535557] rounded-lg">
-      {isDataPending ? (
-        <SpanText text="Cargando..." />
-      ) : (
-        <>
+      {/* {isDataPending ? (
+        <SpanText text="Cargando Turnos..." />
+      ) : ( 
+        <>*/}
           <ScheduleTopBar
             viewMode={viewMode}
             disabledClasses={disabledClasses}
@@ -440,8 +440,8 @@ const ScheduleGrid = forwardRef(({
               )}
             
           </div>
-        </>
-      )}
+        {/* </>
+      )} */}
       
       <PreviousFortnightViewer 
         isOpen={showPastFortnight} 

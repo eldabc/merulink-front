@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,6 +16,7 @@ import ScheduleFilter from './ScheduleFilter';
 import TitleHeader from '../Shared/TitleHeader';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import ScheduleGrid from './ScheduleGrid';
+import SpanText from '../Shared/SpanText';
 import '../../Tables.css';
 
 export default function ScheduleForm({ }) {
@@ -26,7 +27,7 @@ export default function ScheduleForm({ }) {
   const { departmentId, monthNumber, fortnight, monthSelectedJson } = location.state || {};
 
   const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
-  const { globalLoading, departments, loadDepartments, filteredDepartments } = useGlobalData();
+  const { globalLoading, departments, loadDepartments } = useGlobalData();
   const { user } = useAuth();
   const [existingCodes, setExistingCodes] = useState([]);
   
@@ -69,6 +70,18 @@ export default function ScheduleForm({ }) {
   if (!existsMonth && monthSelectedJson?.value) {
     availableMonths = [monthSelectedJson, ...availableMonths]; // añadir mes soliticado desde listado
   } 
+
+  // Filtrar departamentos según el rol del usuario
+  const filteredDepartments = useMemo(() => {
+    if (departments.length === 0 || !user) return [];
+      console.log("aqui 1")
+    if (!user?.roles?.includes('admin')) {
+      console.log("aqui 2", departments)
+      return departments.filter(dept => Number(dept.id) === Number(user.departmentId));
+    }
+    console.log("aqui 3")
+    return departments;
+  }, [departments, user]);
 
   useEffect(() => {
     const getScheduleData = async () => {
@@ -278,20 +291,23 @@ export default function ScheduleForm({ }) {
                <ScheduleFilter departments={filteredDepartments} months={availableMonths} globalLoading={globalLoading} />
               
               <div className="div-border mt-2">
-                {Object.keys(formData ?? {}).length > 0 && (
-                  <ScheduleGrid 
-                    ref={scheduleGridRef}
-                    scheduleData={formData}
-                    preFortnightParams={preFortnightParams}
-                    fortnightDays={fortnightDays} 
-                    loading={loading}
-                    mode={mode} 
-                    autofillAlways={autofillAlways}
-                    onAutofillAlwaysChange={handleAutofillAlwaysChange}
-                    onLoadingHandleAutofill={loadingHandleAutofill}
-                    onAutofillSuccess={handleAutofillSuccess}
-                  />
-                )}
+                {loading || globalLoading ? (
+                  <SpanText text={`Cargando datos del horario...`} dinamicClasses="inline-block mt-5" />
+                ) : (
+                  Object.keys(formData ?? {}).length > 0 && (
+                    <ScheduleGrid 
+                      ref={scheduleGridRef}
+                      scheduleData={formData}
+                      preFortnightParams={preFortnightParams}
+                      fortnightDays={fortnightDays} 
+                      mode={mode} 
+                      autofillAlways={autofillAlways}
+                      onAutofillAlwaysChange={handleAutofillAlwaysChange}
+                      onLoadingHandleAutofill={loadingHandleAutofill}
+                      onAutofillSuccess={handleAutofillSuccess}
+                    />
+                  )
+                )}   
               </div>
             </div>
           </div>
