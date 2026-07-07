@@ -18,6 +18,7 @@ function ScheduleFilterList({
   availableMonths
 }) {
 
+  const { user } = useAuth();
   // Manejador de cambios para actualizar el estado
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,9 +28,9 @@ function ScheduleFilterList({
     }));
   };
 
-  // Auto-seleccionar departamento cuando solo hay uno disponible
+  // Auto-seleccionar departamento para mostrar horarios segun el rol o departamento del usuario
   useEffect(() => {
-    if (departments.length === 1 && !filters.department) {
+    if (departments.length === 1 && !filters.department || user?.roles?.includes('admin')) {
       setFilters((prev) => ({
         ...prev,
         department: departments[0].id
