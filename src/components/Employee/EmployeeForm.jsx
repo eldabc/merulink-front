@@ -24,6 +24,7 @@ import HeadFormButtons from '../Shared/HeadFormButtons';
 import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
 import ConfirmDialog from '../Shared/ConfirmDialog';
+import EmployeeScraperModal from './EmployeeScraperModal';
 import { User } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
@@ -65,7 +66,8 @@ export default function EmployeeForm({ mode = 'create' }) {
   const editMode = mode === 'edit';
   const viewMode = mode === 'view';
   const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
-
+// Control del modal de scraping
+  const [showScraperModal, setShowScraperModal] = useState(createMode);
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);
@@ -339,6 +341,25 @@ export default function EmployeeForm({ mode = 'create' }) {
     setIsModalOpen(false);
     setSelectedEmployee(null);
   };
+
+  const handleScraperDataFound = (data) => {
+    if (data.first_name) setValue('firstName', data.first_name);
+    if (data.second_name) setValue('secondName', data.second_name);
+    if (data.last_name) setValue('lastName', data.last_name);
+    if (data.second_last_name) setValue('secondLastName', data.second_last_name);
+    if (data.ci) setValue('ci', data.ci);
+    if (data.birthdate) setValue('birthdate', data.birthdate);
+    if (data.nationality) setValue('nationality', data.nationality);
+    if (data.sex) {
+      const s = data.sex.toUpperCase();
+      if (s === 'FEMENINO' || s === 'F') setValue('sex', 'M');
+      else if (s === 'MASCULINO' || s === 'M') setValue('sex', 'H');
+    }
+    setShowScraperModal(false);
+  };
+
+  const handleScraperSkip = () => setShowScraperModal(false);
+
   // console.log("EMPLOYEES", employee);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
@@ -411,6 +432,14 @@ export default function EmployeeForm({ mode = 'create' }) {
       <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
 
      </form>
+
+      {createMode && (
+        <EmployeeScraperModal
+          isOpen={showScraperModal}
+          onDataFound={handleScraperDataFound}
+          onSkip={handleScraperSkip}
+        />
+      )}
     </div>
   );
 }
