@@ -347,7 +347,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     if (data.second_name) setValue('secondName', data.second_name);
     if (data.last_name) setValue('lastName', data.last_name);
     if (data.second_last_name) setValue('secondLastName', data.second_last_name);
-    if (data.ci) setValue('ci', data.ci);
+    if (data.ci) setValue('ci', data.ci.replace("V-", ""));
     if (data.birthdate) setValue('birthdate', data.birthdate);
     if (data.nationality) setValue('nationality', data.nationality);
     if (data.sex) {

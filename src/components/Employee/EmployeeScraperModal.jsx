@@ -71,7 +71,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
             <div className="flex flex-col items-center py-10 gap-4">
               <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />
               <p className="text-gray-300 text-lg font-medium">Buscando...</p>
-              <p className="text-gray-500 text-sm">Consultando IVSS. Puede tardar hasta 30 segundos.</p>
+              <p className="text-gray-500 text-sm">Consultando IVSS. Puede tardar un máximo de 30 segundos.</p>
             </div>
           )}
 
@@ -91,15 +91,14 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <DataRow label="Segundo Apellido" value={result.data.second_last_name} />
                 <DataRow label="Fecha Nac." value={result.data.birthdate} />
                 <DataRow label="Sexo" value={mapSex(result.data.sex)} />
-                {result.data.company_name && <DataRow label="Empresa" value={result.data.company_name} />}
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button onClick={handleAcceptData} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
-                  <CheckCircle className="w-4 h-4" /> Usar estos datos
-                </button>
                 <button onClick={onSkip} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <SkipForward className="w-4 h-4" /> Llenar manualmente
+                </button>
+                <button onClick={handleAcceptData} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                  <CheckCircle className="w-4 h-4" /> Usar estos datos
                 </button>
               </div>
             </div>
@@ -141,11 +140,11 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               </div>
               {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
               <div className="flex gap-3 pt-2">
-                <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
-                  <Search className="w-4 h-4" /> Buscar
-                </button>
                 <button type="button" onClick={onSkip} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <SkipForward className="w-4 h-4" /> Omitir
+                </button>
+                <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                  <Search className="w-4 h-4" /> Buscar
                 </button>
               </div>
             </form>
