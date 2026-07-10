@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
@@ -25,7 +25,7 @@ import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import EmployeeScraperModal from './EmployeeScraperModal';
-import { User } from "lucide-react";
+import { User, Search } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import '../../Tables.css';
 
@@ -370,7 +370,7 @@ export default function EmployeeForm({ mode = 'create' }) {
       </div>
 
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
-        <div className="md:justify-center flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
+        <div className="md:justify-center flex gap-x-34 items-center gap-6 relative  pb-6  flex-wrap">
           <div className="w-full md:w-auto shrink-0 flex justify-center md:justify-start mb-2 md:mb-0">
             <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center md:ml-2.5">
               <User className="w-20 h-20 text-white" />
@@ -380,11 +380,20 @@ export default function EmployeeForm({ mode = 'create' }) {
             <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-3 text-center md:text-left" />
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
-          <div>
+        </div>
+
+          <div className="w-full md:w-auto flex flex-wrap justify-center md:justify-end items-center gap-3 mt-3 md:mt-0 border-b border-[#ffffff21] pb-3">
+            {createMode && (
+              <Link
+                onClick={ (e) => setShowScraperModal(true)}
+                className="flex items-center gap-1 text-sm !text-[#9fd8ff] hover:!text-white transition-colors font-medium mr-5"
+              >
+               <Search className="w-4 h-4 text-[#9fd8ff]" /> Traer Datos
+              </Link>
+            )}
             {(editMode || viewMode) && (
               <>
-              
-                <label className="font-semibold">Estatus: </label>
+                <span className="text-sm text-gray-400">Estatus:</span>
                   {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
                     <span className="text-xs text-gray-500 italic">Cargando...</span>
                   ) : (
@@ -414,14 +423,12 @@ export default function EmployeeForm({ mode = 'create' }) {
               </>
             )}
           </div>
-        </div>
       
         <TabButtonsManager 
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 
           employee={employee}
           errors={errors}
-          // tempFlags={tempFlags}
         />
 
         <div className="mt-6">
