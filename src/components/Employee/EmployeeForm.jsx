@@ -323,7 +323,6 @@ export default function EmployeeForm({ mode = 'create' }) {
                 isEmployeeActive={isEmployeeActive}
                 watch={watch}
                 disabledClasses={disabledClasses}
-                // unlockSequence={employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence}
               />;
     }
   };
