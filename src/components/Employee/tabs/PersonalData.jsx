@@ -3,6 +3,7 @@ import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from "../../Shared/ErrorMessage";
 import InputEmail from "../../Shared/InputEmail";
 import PhoneNumber from "../../Shared/PhoneNumber";
+import { ciOption } from "../../../utils/text-utils";
 
 export default function PersonalData({ viewMode, register, errors, disabledClasses, setValue }) {
 
@@ -39,7 +40,7 @@ export default function PersonalData({ viewMode, register, errors, disabledClass
 
         <div>
           <LabelFieldForm field="Cédula" simbol="*"/>
-             <input readOnly={viewMode} {...register('ci')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
+             <input readOnly={viewMode} {...register('ci', ciOption)} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
           {errors?.ci && <ErrorMessage msg={errors.ci.message} />}
         </div>
 

@@ -11,6 +11,7 @@ import { employeeValidationSchema } from '../../utils/Validations/employeeValida
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { splitPhone } from '../../utils/global-utils';
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
+import { formatCI } from '../../utils/text-utils';
 
 import PersonalData from "./tabs/PersonalData";
 import WorkData from "./tabs/WorkData";
@@ -228,7 +229,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     const birthdate = employee?.birthdate ? new Date(employee.birthdate).toISOString().split('T')[0] : null;
 
     const employeeDataForm = {
-        ci: employee?.ci ?? '',
+        ci: formatCI(employee?.ci) ?? '',
         firstName: employee?.firstName ?? '',
         secondName: employee?.secondName ?? '',
         lastName: employee?.lastName ?? '',
@@ -348,7 +349,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     if (data.second_name) setValue('secondName', data.second_name);
     if (data.last_name) setValue('lastName', data.last_name);
     if (data.second_last_name) setValue('secondLastName', data.second_last_name);
-    if (data.ci) setValue('ci', data.ci.replace("V-", ""));
+    if (data.ci) setValue('ci', formatCI(data.ci.replace("V-", "")));
     if (data.birthdate) {
       const [d, m, y] = data.birthdate.split('/');
       setValue('birthdate', `${y}-${m}-${d}`);

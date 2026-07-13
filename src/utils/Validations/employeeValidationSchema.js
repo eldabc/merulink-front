@@ -12,9 +12,10 @@ export const employeeValidationSchema = yup.object().shape({
   ci: yup
     .string()
     .required('Cédula es requerida')
+    .transform((value) => (value || '').replace(/\./g, ''))
     .matches(/^[0-9]+$/, 'Solo se permiten números.')
-    .min(8, 'Debe contener 8 dígitos')
-    .max(8, 'Debe contener 8 dígitos'), 
+    .min(7, 'Debe contener entre 7 y 8 dígitos')
+    .max(8, 'Debe contener entre 7 y 8 dígitos'), 
     
   firstName: yup
     .string()

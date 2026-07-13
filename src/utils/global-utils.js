@@ -8,7 +8,7 @@ export const getDisabledClasses = (...conditions) => {
 export const formatPhone = (value, type) => {
   if (!value) return value;
   
-  // Limpiamos todo lo que no sea número
+  // Limpia todo lo que no sea número
   const digits = value.replace(/\D/g, '');
 
   if (type === 'mobilePhone') {
