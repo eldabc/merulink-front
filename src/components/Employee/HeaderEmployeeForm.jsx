@@ -1,9 +1,8 @@
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import ErrorMessage from '../Shared/ErrorMessage';
-import { useEmployees } from '../../context/EmployeeContext';
+import { upperOption } from '../../utils/text-utils';
 
 function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
-  // const { loadingEmployeeData } = useEmployees();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full">
@@ -13,8 +12,9 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('firstName')}
-          className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
+          {...register('firstName', upperOption)}
+          placeholder='Ingrese primer nombre'
+          className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
         {errors?.firstName && <ErrorMessage msg={errors.firstName.message} />}  
       </div>
@@ -25,8 +25,9 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('secondName')}
-          className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
+          {...register('secondName', upperOption)}
+          placeholder='Ingrese segundo nombre'
+          className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
         {errors?.secondName && <ErrorMessage msg={errors.secondName.message} />}
       </div>
@@ -37,8 +38,9 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('lastName')}
-          className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
+          {...register('lastName', upperOption)}
+          placeholder='Ingrese primer apellido'
+          className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
         {errors?.lastName && <ErrorMessage msg={errors.lastName.message} />}
       </div>
@@ -49,8 +51,9 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('secondLastName')}
-          className={`w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
+          {...register('secondLastName', upperOption)}
+          placeholder='Ingrese segundo apellido'
+          className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
         {errors?.secondLastName && <ErrorMessage msg={errors.secondLastName.message} />}
       </div>
@@ -61,6 +64,7 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
         <input
           disabled={true}
           {...register('numEmployee')}
+          placeholder='Código'
           className={`w-20 px-2 py-1 text-sm rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
         />
         {errors?.numEmployee && <ErrorMessage msg={errors.numEmployee.message} />}

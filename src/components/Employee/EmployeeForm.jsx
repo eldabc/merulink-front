@@ -344,8 +344,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   };
 
   const handleScraperDataFound = (data) => {
-  console.log("dayjs(data.birthdate).format('YYYY-MM-DD')", dayjs(data.birthdate, 'DD/MM/YYYY').format('YYYY-MM-DD'));
-
     if (data.first_name) setValue('firstName', data.first_name);
     if (data.second_name) setValue('secondName', data.second_name);
     if (data.last_name) setValue('lastName', data.last_name);

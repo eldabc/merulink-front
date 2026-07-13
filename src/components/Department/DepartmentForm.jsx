@@ -97,7 +97,8 @@ export default function DepartmentForm({ mode = 'create' }) {
                 <input
                   readOnly={viewMode}
                   {...register('departmentName')}
-                  className={`md:w-full px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                  placeholder='Ingrese nombre departamento'
+                  className={`md:w-full text-xl rounded-lg filter-input ${disabledClasses}`}
                 />
                 {errors?.departmentName && <ErrorMessage msg={errors.departmentName.message} /> }  
               </div>

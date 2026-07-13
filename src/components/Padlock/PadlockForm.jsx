@@ -116,7 +116,7 @@ function PadlockForm ({ mode = 'create' }) {
                           <input 
                               readOnly={viewMode}
                               {...register('serial')} 
-                              className={`px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic ${disabledClasses}`}
+                              className={`rounded-lg filter-input borde ${disabledClasses}`}
                               placeholder='Ingrese serial'
                               maxLength={40}
                             />
@@ -128,7 +128,7 @@ function PadlockForm ({ mode = 'create' }) {
                               {...register('pass')}
                               onChange={handlePassChange} 
                               type='text' 
-                              className={`px-3 py-2 rounded-lg filter-input border placeholder:text-gray-500 placeholder:italic ${disabledClasses}`}
+                              className={`rounded-lg filter-input borde ${disabledClasses}`}
                               placeholder='Ejemplo: 55-44-23'
                             />
                             {errors?.pass && <ErrorMessage msg={errors.pass.message} /> }  
@@ -138,7 +138,7 @@ function PadlockForm ({ mode = 'create' }) {
                             <select 
                               {...register('status')}
                               disabled={true}
-                              className={`w-full px-3 py-2 rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
+                              className={`w-full rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
                             >
                               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
                               <option className='bg-[#3c4042]' value="Disponible">Disponible</option>

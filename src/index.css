@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@layer base {
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-gray-500 text-sm italic;
+  }
+}
+
 @layer components {
   .div-border {
     @apply border border-[#ffffff21] md:[&>*:nth-child(2n)]:border-l md:[&>*:nth-child(2n)]:border-[#ffffff21] md:[&>*:nth-child(2n)]:pl-4 p-7;

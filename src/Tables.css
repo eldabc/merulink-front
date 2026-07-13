@@ -22,6 +22,7 @@
   border: 1px solid rgba(255,255,255,0.1);
   background: transparent;
   color: inherit;
+  padding: 0.5rem 0.75rem;
 }
 .filter-input:focus {
   border-color: #d1d5db;
