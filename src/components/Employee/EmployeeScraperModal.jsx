@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Search, X, CheckCircle, AlertTriangle, Loader2, SkipForward, Shield } from 'lucide-react';
-import { scrapeEmployeeData, getSeniatCaptcha } from '../../services/scraperService';
+import { scrapeIvss, scrapeSeniat, getSeniatCaptcha } from '../../services/scraperService';
 
 export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   const [ci, setCi] = useState('');
@@ -33,9 +33,11 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     try {
       const [y, m, d] = birthdate.split('-');
       const formattedDate = `${d}/${m}/${y}`;
-      const response = await scrapeEmployeeData(ci.trim(), formattedDate);
+      const response = await scrapeIvss(ci.trim(), formattedDate);
       setResult(response);
     } catch (err) {
+      console.log("error ivss", err);
+
       const msg = err.response?.data?.error || err.message || 'Error de conexión.';
       setErrorMsg(msg);
       setResult({ success: false, data: null, source: 'error', error: msg });
@@ -77,12 +79,14 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCaptchaError('');
 
     try {
-      const [y, m, d] = birthdate.split('-');
-      const formattedDate = `${d}/${m}/${y}`;
-      const response = await scrapeEmployeeData(ci.trim(), formattedDate, captchaCode.trim());
+      console.log("ci.trim(), captchaCode.trim()", ci.trim(), captchaCode.trim());
+      const response = await scrapeSeniat(ci.trim(), captchaCode.trim());
+      console.log("response seniat", response);
+
       setResult(response);
       setShowCaptcha(false);
     } catch (err) {
+      console.log("error seniat", err);
       const msg = err.response?.data?.error || 'Código incorrecto o error de conexión.';
       setCaptchaError(msg);
       setShowCaptcha(false);
