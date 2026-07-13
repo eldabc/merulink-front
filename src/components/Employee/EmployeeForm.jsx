@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -343,12 +344,17 @@ export default function EmployeeForm({ mode = 'create' }) {
   };
 
   const handleScraperDataFound = (data) => {
+  console.log("dayjs(data.birthdate).format('YYYY-MM-DD')", dayjs(data.birthdate, 'DD/MM/YYYY').format('YYYY-MM-DD'));
+
     if (data.first_name) setValue('firstName', data.first_name);
     if (data.second_name) setValue('secondName', data.second_name);
     if (data.last_name) setValue('lastName', data.last_name);
     if (data.second_last_name) setValue('secondLastName', data.second_last_name);
     if (data.ci) setValue('ci', data.ci.replace("V-", ""));
-    if (data.birthdate) setValue('birthdate', data.birthdate);
+    if (data.birthdate) {
+      const [d, m, y] = data.birthdate.split('/');
+      setValue('birthdate', `${y}-${m}-${d}`);
+    }
     if (data.nationality) setValue('nationality', data.nationality);
     if (data.sex) {
       const s = data.sex.toUpperCase();

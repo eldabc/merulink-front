@@ -51,7 +51,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
       setResult(response);
     } catch (err) {
       console.log("error ivss", err);
-      const msg = err.response?.data?.error || err.message || 'Error de conexión.';
+      const msg = err?.response?.data?.error || err?.response?.data?.message || 'Error de conexión.';
       setErrorMsg(msg);
       setResult({ success: false, data: null, source: 'error', error: msg });
     } finally {
@@ -123,7 +123,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     if (x === 'MASCULINO' || x === 'M') return 'Masculino';
     return s;
   };
-// console.log("result", !loading && !result)
+// console.log("result", result)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="bg-[#1e1e2e] border border-[#ffffff21] rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
@@ -160,7 +160,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-green-400 bg-green-400/10 rounded-lg p-3">
                 <CheckCircle className="w-5 h-5" />
-                <span className="text-sm font-medium">Datos encontrados enn {result.source.toUpperCase()}</span>
+                <span className="text-sm font-medium">Datos encontrados en {result.source.toUpperCase()}</span>
               </div>
 
               <div className="bg-[#2a2a3a] rounded-lg p-4 space-y-2 text-sm">
@@ -169,15 +169,15 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <DataRow label="Segundo Nombre" value={result.data.second_name} />
                 <DataRow label="Primer Apellido" value={result.data.last_name} />
                 <DataRow label="Segundo Apellido" value={result.data.second_last_name} />
-                <DataRow label="Fecha Nacc." value={result.data.birthdate} />
+                <DataRow label="Fecha Nac." value={result.data.birthdate} />
                 <DataRow label="Sexo" value={mapSex(result.data.sex)} />
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button onClick={onSkip} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                <button onClick={onSkip} className="flex-1 text-gray-300 font-medium py-2.5 px-4 flex items-center justify-center gap-2">
                   <SkipForward className="w-4 h-4" /> Llenar manualmente
                 </button>
-                <button onClick={handleAcceptData} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                <button onClick={handleAcceptData} className="flex-1 text-white font-medium py-2.5 px-4 flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" /> Usar estos datos
                 </button>
               </div>
@@ -191,7 +191,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium">No se encontraron datos en IVSS</p>
-                  <p className="text-xs text-gray-400 mt-1">{result.error || errorMsg}</p>
+                  <p className="text-xs text-gray-400 mt-1">{errorMsg}</p>
                 </div>
               </div>
 
