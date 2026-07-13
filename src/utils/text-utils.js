@@ -18,3 +18,9 @@ export const capitalizeFirstLetter = (text) => {
   const str = String(text);
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
+
+// Helper para react-hook-form: convierte el valor a mayúsculas en tiempo real
+export const upperOption = { onChange: (e) => { e.target.value = e.target.value.toUpperCase(); } };
+
+// Helper para react-hook-form: convierte el valor a minúsculas en tiempo real
+export const lowerOption = { onChange: (e) => { e.target.value = e.target.value.toLowerCase(); } };
