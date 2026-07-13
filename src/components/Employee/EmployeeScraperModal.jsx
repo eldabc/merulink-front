@@ -37,7 +37,6 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
       setResult(response);
     } catch (err) {
       console.log("error ivss", err);
-
       const msg = err.response?.data?.error || err.message || 'Error de conexión.';
       setErrorMsg(msg);
       setResult({ success: false, data: null, source: 'error', error: msg });
@@ -50,6 +49,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   const handleLoadCaptcha = async () => {
     setCaptchaLoading(true);
     setCaptchaError('');
+    setCaptchaCode('');
     try {
       const data = await getSeniatCaptcha();
       if (data.success) {
@@ -109,7 +109,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     if (x === 'MASCULINO' || x === 'M') return 'Masculino';
     return s;
   };
-
+// console.log("result", !loading && !result)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="bg-[#1e1e2e] border border-[#ffffff21] rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
@@ -131,7 +131,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
             <div className="flex flex-col items-center py-10 gap-4">
               <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />
               <p className="text-gray-300 text-lg font-medium">Buscando...</p>
-              <p className="text-gray-500 text-sm">Consultando IVSS. Puede tardar un máximo de 30 segundos.</p>
+              <p className="text-gray-500 text-sm">Consultando. Puede tardar un máximo de 30 segundos.</p>
             </div>
           )}
 
@@ -232,7 +232,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
           )}
 
           {/* Formulario inicial */}
-          {!loading && !result && (
+          {!loading && !result && !showCaptcha && (
             <form onSubmit={handleSearch} className="space-y-4">
               <p className="text-sm text-gray-400">
                 Ingrese cédula y fecha de nacimiento para buscar en el IVSS.
