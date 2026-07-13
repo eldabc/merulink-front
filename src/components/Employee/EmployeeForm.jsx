@@ -68,6 +68,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
 // Control del modal de scraping
   const [showScraperModal, setShowScraperModal] = useState(createMode);
+  const [scraperKey, setScraperKey] = useState(0);
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);
@@ -384,7 +385,7 @@ export default function EmployeeForm({ mode = 'create' }) {
           <div className="w-full md:w-auto flex flex-wrap justify-center md:justify-end items-center gap-3 mt-3 md:mt-0 border-b border-[#ffffff21] pb-3">
             {createMode && (
               <Link
-                onClick={ (e) => setShowScraperModal(true)}
+                onClick={ (e) => { setShowScraperModal(true); setScraperKey(k => k + 1); }}
                 className="flex items-center gap-1 text-sm !text-[#9fd8ff] hover:!text-white transition-colors font-medium mr-5"
               >
                <Search className="w-4 h-4 text-[#9fd8ff]" /> Traer Datos
@@ -441,6 +442,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
       {createMode && (
         <EmployeeScraperModal
+          key={scraperKey}
           isOpen={showScraperModal}
           onDataFound={handleScraperDataFound}
           onSkip={handleScraperSkip}

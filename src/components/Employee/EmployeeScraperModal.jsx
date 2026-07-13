@@ -18,6 +18,20 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
 
   if (!isOpen) return null;
 
+  /** Reinicia todos los estados al formulario inicial (IVSS). */
+  const handleReset = () => {
+    setCi('');
+    setBirthdate('');
+    setLoading(false);
+    setResult(null);
+    setErrorMsg('');
+    setCaptchaImage(null);
+    setCaptchaCode('');
+    setShowCaptcha(false);
+    setCaptchaLoading(false);
+    setCaptchaError('');
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!ci.trim() || !birthdate.trim()) {
@@ -118,7 +132,13 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
         <div className="flex items-center justify-between p-5 border-b border-[#ffffff15]">
           <div className="flex items-center gap-3">
             <Search className="w-5 h-5 text-blue-400" />
-            <h2 className="text-lg font-semibold text-gray-100">Buscar Datos del Empleado</h2>
+            <h2
+              onClick={handleReset}
+              className="text-lg font-semibold text-gray-100 cursor-pointer hover:text-[#9fd8ff] transition-colors select-none"
+              title="Click para volver al inicio"
+            >
+              Buscar Datos del Empleado
+            </h2>
           </div>
           <button onClick={onSkip} className="text-gray-500 hover:text-gray-300">
             <X className="w-5 h-5" />
