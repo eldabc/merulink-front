@@ -37,9 +37,9 @@ export default function EmployeeForm({ mode = 'create' }) {
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
-
+  const editMode = mode === 'edit';
   const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
-    resolver: yupResolver(employeeValidationSchema),
+    resolver: yupResolver(employeeValidationSchema({ isEditMode: editMode })),
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -65,12 +65,14 @@ export default function EmployeeForm({ mode = 'create' }) {
   const selectedDepartmentId = watch('department');
   const selectedSubDepartmentId = watch('subDepartment');
   const createMode = mode === 'create';
-  const editMode = mode === 'edit';
+  
   const viewMode = mode === 'view';
   const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
-// Control del modal de scraping
+  
+  // Control del modal de scraping
   const [showScraperModal, setShowScraperModal] = useState(createMode);
   const [scraperKey, setScraperKey] = useState(0);
+  
   let isEmployeeActive;
   (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
   const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);

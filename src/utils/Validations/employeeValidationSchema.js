@@ -1,7 +1,12 @@
 import * as yup from 'yup';
 
 // Validation schema for Employee form
-export const employeeValidationSchema = yup.object().shape({
+// @param {Object} options - Options object
+// @param {boolean} options.isEditMode - Whether the form is in edit mode
+export const employeeValidationSchema = (options = {}) => {
+  const { isEditMode = false } = options;
+
+  return yup.object().shape({
   numEmployee: yup
     .string()
     .required('No. Empleado es requerido')
@@ -113,12 +118,15 @@ export const employeeValidationSchema = yup.object().shape({
     .optional()
     .when('useMeruLink', {
       is: true,
-      then: (schema) => 
-        schema
+      then: (schema) => {
+        if (isEditMode) {
+          return schema.notRequired().nullable();
+        }
+        return schema
           .required('Contraseña es requerida.')
           .min(10, 'Mínimo 10 caracteres entre números y letras')
-          .max(20, 'Máximo 20 caracteres entre números y letras'),
-      
+          .max(20, 'Máximo 20 caracteres entre números y letras');
+      },
       otherwise: (schema) => 
         schema.notRequired().nullable()
       
@@ -166,4 +174,5 @@ export const employeeValidationSchema = yup.object().shape({
       address: yup.string().required('Dirección es requerida'),
     })
   ),
-});
+  });
+};
