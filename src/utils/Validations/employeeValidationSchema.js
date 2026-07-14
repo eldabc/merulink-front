@@ -124,7 +124,7 @@ export const employeeValidationSchema = (options = {}) => {
           }
           return schema
             .required('Contraseña es requerida.')
-            .min(10, 'Mínimo 10 caracteres entre números y letras')
+            .min(7, 'Mínimo 7 caracteres entre números y letras')
             .max(20, 'Máximo 20 caracteres entre números y letras');
         },
         otherwise: (schema) => 

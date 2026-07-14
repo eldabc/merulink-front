@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'; 
 
-export function PasswordInputEye({ register, errors, viewMode }) {
+export function PasswordInputEye({ register, errors, viewMode, hasUserCreated }) {
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -15,6 +15,7 @@ export function PasswordInputEye({ register, errors, viewMode }) {
         <div className="relative w-full md:w-64">
           <input
             readOnly={viewMode }
+            placeholder={hasUserCreated ? 'La ingresada ••••••••' : 'Ingrese contraseña'}
             type={showPassword ? 'text' : 'password'}
             {...register('userPass')}
             className={`w-full px-3 py-2 pr-10 rounded-lg filter-input 

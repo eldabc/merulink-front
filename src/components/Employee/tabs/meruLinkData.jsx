@@ -3,21 +3,26 @@ import { useEmployees } from '../../../context/EmployeeContext';
 import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
-
  
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
 
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const useMeruLinkWatch = watch('useMeruLink');
-  // const useMerulink = employee?.useMeruLink ? employee?.useMeruLink : false;
+  const firstNameWatch = watch('firstName');
+  const lastNameWatch = watch('lastName');
+  const ciWatch = watch('ci');
 
   useEffect (() => {
-    if(!useMeruLinkWatch) {
-      // setValue('userName', '');
-      // setValue('userPass', '');
+    if (createMode && useMeruLinkWatch) {
+      if (!firstNameWatch || !lastNameWatch) return;
+
+      const firstName = (firstNameWatch || '').toLowerCase().trim();
+      const lastName = (lastNameWatch || '').toLowerCase().trim();
+      setValue('userName', `${firstName}.${lastName}`);
+      setValue('userPass', (ciWatch || '').replace(/\./g, ''));
     }
-  }, [useMeruLinkWatch]);
-  
+  }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
+
     return (
       <>
         <div className="flex items-center gap-4 mb-4 pl-4">
@@ -46,6 +51,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                     <div className='w-full md:w-auto md:flex-1'>
                         <input 
                           readOnly={viewMode}
+                          placeholder='Ingrese nombre usuario'
                           {...register('userName')} className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${disabledClasses}`} 
                         />
                       {errors.userName && <ErrorMessage msg={errors.userName.message} />}
@@ -54,7 +60,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   <div className='flex flex-col md:flex-row md:items-center gap-2'>
                     <LabelFieldForm field="Contraseña" simbol="*" />
                     <div className='md:ml-10 w-full md:flex-1'>
-                      <PasswordInputEye register={register} errors={errors} viewMode={viewMode} />
+                      <PasswordInputEye register={register} errors={errors} viewMode={viewMode} hasUserCreated={!!employee?.userName} />
                     </div>
                   </div>
                   <div className="flex items-start mt-3 gap-2">
