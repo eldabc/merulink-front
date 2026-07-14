@@ -167,7 +167,6 @@ export default function Workspace() {
 
             {/* Calendario - Eventos */}
             <Route element={<EventLayout showNotification={showNotification} />}>
-              {/* <Route path="/calendario" element={<div className="content-center"><Calendar /></div>} /> */}
               <Route path="/eventos/*" element={<EventsPage />} />
             </Route>
 

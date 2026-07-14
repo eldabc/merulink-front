@@ -12,7 +12,7 @@ export default function EmployeePage() {
           <Route path="/" element={<EmployeeList />} />
           <Route path="nuevo" element={<ProtectedElement permission="create-employees" element={<EmployeeForm />} />} />
           <Route path="ver/:id" element={<ProtectedElement permission="view-employees" element={<EmployeeForm mode="view" />} />} />
-          <Route path="editar/:id" element={<ProtectedElement permission="update-employees" element={<EmployeeForm mode="edit" />} />} />
+          <Route path="editar/:id" element={<ProtectedElement permission="edit-employees" element={<EmployeeForm mode="edit" />} />} />
         </Routes>
       </main>
     </>

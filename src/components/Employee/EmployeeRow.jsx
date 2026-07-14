@@ -1,7 +1,10 @@
 import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
+
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
+import { formatCI } from '../../utils/text-utils';
+
 import ConfirmDialog  from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
 import HasPermission from '../Shared/HasPermission';
@@ -46,7 +49,7 @@ export default function EmployeeRow({ emp }) {
       className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
     >
       <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
-      <td className="px-4 py-3 text-white-700">{emp.ci}</td>
+      <td className="px-4 py-3 text-white-700">{formatCI(emp.ci)}</td>
       <td className="px-4 py-3 text-white-700">{emp.firstName}</td>
       <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
       <td className="px-4 py-3 text-white-700">{emp.department.departmentName}</td>

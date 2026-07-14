@@ -33,7 +33,7 @@ export function formatCI(value) {
   const right = digits.slice(-3);
   const middle = digits.slice(-6, -3);
   const left = digits.slice(0, -6);
-  return middle ? `${left}.${middle}.${right}` : `${left}${right ? '.' + right : ''}`;
+  return left ? `${left}.${middle}.${right}` : `${middle}.${right}`;
 }
 
 // Helper para react-hook-form: formatea la cédula en tiempo real
