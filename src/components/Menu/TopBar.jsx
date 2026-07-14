@@ -34,7 +34,7 @@ export default function TopBar() {
     }
     setLoadingLogout(false);
   };
-
+console.log("user", user)
   return (
     <header className="topbar">
       <div className="brand-area">
@@ -69,12 +69,12 @@ export default function TopBar() {
         </div>
         <div className="flex flex-col">
           <div className="name">{user?.name}</div>
-          <div className="dept">{user?.department}</div>
+          <div className="dept">{user?.departmentName}</div>
           <div className="sesion">
             <Link
               to="/"
               onClick={ (e) => handleLogout(e)}
-              className="text-sm !text-[#9fd8ff] hover:!text-white transition-colors font-medium"
+              className="text-sm text-[#9fd8ff]! hover:text-white! transition-colors font-medium"
             >
               {loadingLogout ? 'Cerrando Sesión...' : 'Cerrar sesión'}
             </Link>
