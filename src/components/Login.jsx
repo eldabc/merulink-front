@@ -17,7 +17,9 @@ const Login = () => {
     setApiError(null);
     try {
       const response = await authLogin(data);
-      if (response) {
+      if (response.requiresPasswordChange) {
+        navigate('/cambiar-contrasena');
+      } else if (response) {
         navigate('/');
       }
     } catch (error) {

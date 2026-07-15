@@ -15,6 +15,7 @@ const LockerAssignPage = lazy(() => import("./LockerAssign/LockerAssignPage"));
 const EmployeePage = lazy(() => import("./Employee/EmployeePage"));
 const Calendar = lazy(() => import("./Calendar/Calendar"));
 const Login = lazy(() => import("./Login"));
+const ChangePassword = lazy(() => import("./ChangePassword"));
 const ForbiddenPage = lazy(() => import("./Shared/ForbiddenPage"));
 
 import { EventProvider } from "../context/EventContext";
@@ -105,6 +106,7 @@ export default function Workspace() {
     <Suspense fallback={<div className="p-6">Cargando...</div>}>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/cambiar-contrasena" element={<ChangePassword />} />
 
         <Route path="/" element={<HomePage />} />
 

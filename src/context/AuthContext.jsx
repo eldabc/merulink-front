@@ -102,14 +102,43 @@ export const AuthProvider = ({ children }) => {
 
   const authLogin = async (data) => {
     const response = await axios.post(`${ENV.API_BACK_URL}login`, data);
-    const { access_token, user } = response.data;
+    const { access_token, temp_token, requires_password_change, user } = response.data;
 
-    // Le pasas los datos limpios al contexto y él hace todo el trabajo sucio
+    // Si el usuario debe cambiar contraseña, guardar token temporal y redirigir
+    if (requires_password_change && temp_token) {
+      localStorage.setItem('tempToken', temp_token);
+      localStorage.setItem('tempUser', JSON.stringify(user));
+      axios.defaults.headers.common['Authorization'] = `Bearer ${temp_token}`;
+      return { requiresPasswordChange: true };
+    }
+
     loginContext(access_token, user);
     // Configurar Axios de forma global para futuros requests
     axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
-    return true;
+    return { requiresPasswordChange: false };
+  };
+
+  // Cambiar contraseña
+  const changePasswordContext = async (data) => {
+    try {
+      const response = await axios.post(`${ENV.API_BACK_URL}change-password`, data);
+      const { access_token, user } = response.data;
+
+      // Limpiar datos temporales
+      localStorage.removeItem('tempToken');
+      localStorage.removeItem('tempUser');
+
+      // Iniciar sesión normal con nuevo token
+      loginContext(access_token, user);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+
+      return true;
+    } catch (error) {
+      // Si falla, el token temporal se conserva para que el usuario pueda reintentar
+      console.error('Error al cambiar contraseña:', error);
+      throw error;
+    }
   };
 
   const contextValue = {
@@ -120,6 +149,7 @@ export const AuthProvider = ({ children }) => {
     logoutDueToInactivity,
     isAuthenticated: !!user,
     authLogin,
+    changePasswordContext,
   };
 
   return (
