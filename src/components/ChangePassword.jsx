@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+
+import { changePasswordValidationSchema } from '../utils/Validations/changePasswordValidationSchema';
 
 import GuestBar from './Shared/GuestBar';
 import NameApp from './Shared/NameApp';
 
 const ChangePassword = () => {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(changePasswordValidationSchema),
+  });
   const { changePasswordContext } = useAuth();
   const navigate = useNavigate();
   const [apiError, setApiError] = useState(null);
@@ -71,22 +76,6 @@ const ChangePassword = () => {
 
           {/* Formulario */}
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            
-            {/* Contraseña Actual */}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                Contraseña Actual
-              </label>
-              <input
-                type="password"
-                placeholder="Ingresa tu contraseña actual"
-                {...register('current_password', { required: 'La contraseña actual es obligatoria' })}
-                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
-              />
-              {errors.current_password && (
-                <span className="text-[11px] text-red-400 font-medium">{errors.current_password.message}</span>
-              )}
-            </div>
 
             {/* Nueva Contraseña */}
             <div className="flex flex-col gap-1">
@@ -96,10 +85,7 @@ const ChangePassword = () => {
               <input
                 type="password"
                 placeholder="Ingresa tu nueva contraseña"
-                {...register('new_password', { 
-                  required: 'La nueva contraseña es obligatoria',
-                  minLength: { value: 6, message: 'Mínimo 6 caracteres' }
-                })}
+                {...register('new_password')}
                 className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
               />
               {errors.new_password && (
@@ -115,10 +101,7 @@ const ChangePassword = () => {
               <input
                 type="password"
                 placeholder="Confirma tu nueva contraseña"
-                {...register('new_password_confirmation', { 
-                  required: 'Debes confirmar la nueva contraseña',
-                  validate: (value) => value === watch('new_password') || 'Las contraseñas no coinciden'
-                })}
+                {...register('new_password_confirmation')}
                 className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
               />
               {errors.new_password_confirmation && (
