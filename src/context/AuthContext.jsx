@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }) => {
       loginContext(access_token, user);
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
-      return true;
+      return response.data;
     } catch (error) {
       // Si falla, el token temporal se conserva para que el usuario pueda reintentar
       console.error('Error al cambiar contraseña:', error);

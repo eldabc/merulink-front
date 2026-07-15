@@ -16,6 +16,7 @@ const ChangePassword = () => {
   const { changePasswordContext } = useAuth();
   const navigate = useNavigate();
   const [apiError, setApiError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   // Si no hay token temporal, redirigir al login
@@ -31,8 +32,11 @@ const ChangePassword = () => {
     setApiError(null);
     try {
 
-      await changePasswordContext(data);
-      navigate('/');
+      const response = await changePasswordContext(data);
+      setSuccessMessage(response.message);
+
+      // Pausa para mostrar mensaje de éxito
+      setTimeout(() => { navigate('/'); }, 1500);
 
     } catch (error) {
       if (error.response?.data?.message) {
@@ -71,6 +75,13 @@ const ChangePassword = () => {
           {apiError && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-semibold">
               {apiError}
+            </div>
+          )}
+
+          {/* Alerta de Éxito */}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-xs font-semibold">
+              {successMessage}
             </div>
           )}
 
