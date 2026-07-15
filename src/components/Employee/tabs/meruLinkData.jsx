@@ -18,7 +18,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
       const firstName = (firstNameWatch || '').toLowerCase().trim();
       const lastName = (lastNameWatch || '').toLowerCase().trim();
-      setValue('userName', `${firstName}.${lastName}`);
+      setValue('userName', `${firstName.charAt(0)}.${lastName}`);
       setValue('userPass', (ciWatch || '').replace(/\./g, ''));
     }
   }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
