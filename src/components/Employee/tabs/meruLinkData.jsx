@@ -1,46 +1,14 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { Check, X } from 'lucide-react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
 
-const CRUD_ACTIONS = ['create', 'view', 'edit', 'delete'];
-// const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
-
-/**
- * Parsea un array de nombres de permisos (ej: "create-schedules")
- * y devuelve un objeto agrupado por módulo con columnas CRUD + especiales.
- */
-function parsePermissions(permissionNames = []) {
-  const modules = {};
-
-  for (const perm of permissionNames) {
-    // Todo lo que va después del último guion es el módulo
-    const lastDash = perm.lastIndexOf('-');
-    if (lastDash === -1) continue;
-
-    const action = perm.substring(0, lastDash);
-    const module = perm.substring(lastDash + 1);
-
-    if (!modules[module]) {
-      modules[module] = { create: false, view: false, edit: false, delete: false, specials: [] };
-    }
-
-    if (CRUD_ACTIONS.includes(action)) {
-      modules[module][action] = true;
-    } else {
-      modules[module].specials.push(perm);
-    }
-  }
-
-  return modules;
-}
-
-// Iconos para check / cross (aceptan className)
+// Iconos para check / cross
 const CheckIcon = ({ className = "w-5 h-5 text-green-400" }) => <Check className={className} />;
 const CrossIcon = ({ className = "w-5 h-5 text-gray-600" }) => <X className={className} />;
- 
+
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
   console.log("employee", employee)
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
@@ -49,27 +17,10 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const lastNameWatch = watch('lastName');
   const ciWatch = watch('ci');
 
-  // Labels traducidos desde el backend
-  const moduleLabels = employee?.moduleLabels || {};
-  const specialLabels = employee?.specialLabels || {};
-  const permissionLabels = employee?.permissionLabels || {};
-
-  // Parsear permisos: agrupar por módulo con columnas CRUD + especiales
-  const permissionModules = useMemo(() => {
-    return parsePermissions(employee?.permissions || []);
-  }, [employee?.permissions]);
-
-  // Recolectar todos los permisos especiales de todos los módulos
-  const allSpecials = useMemo(() => {
-    const specials = [];
-    for (const mod of Object.values(permissionModules)) {
-      specials.push(...mod.specials);
-    }
-    return specials;
-  }, [permissionModules]);
-
-  const moduleEntries = Object.entries(permissionModules);
-  const hasData = moduleEntries.length > 0;
+  // Datos ya estructurados por el backend
+  const modules = employee?.permissionModules || [];
+  const specials = employee?.permissionSpecials || [];
+  const hasData = modules.length > 0 || specials.length > 0;
 
   useEffect (() => {
     if (createMode && useMeruLinkWatch) {
@@ -157,18 +108,31 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                           </tr>
                         </thead>
                         <tbody>
-                          {moduleEntries.map(([module, cols]) => (
-                            <tr key={module} className="border-b tr-table">
+                          {modules.map((mod) => (
+                            <tr key={mod.key} className="border-b tr-table">
                               <td className="px-4 py-3 text-white font-medium">
-                                {moduleLabels[module] || module}
+                                {mod.label}
                               </td>
-                              {CRUD_ACTIONS.map((action) => (
-                                <td key={action} className="px-4 py-3">
-                                  <div className="flex justify-center items-center">
-                                    {cols[action] ? <CheckIcon /> : <CrossIcon />}
-                                  </div>
-                                </td>
-                              ))}
+                              <td className="px-4 py-3">
+                                <div className="flex justify-center items-center">
+                                  {mod.create ? <CheckIcon /> : <CrossIcon />}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <div className="flex justify-center items-center">
+                                  {mod.view ? <CheckIcon /> : <CrossIcon />}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <div className="flex justify-center items-center">
+                                  {mod.edit ? <CheckIcon /> : <CrossIcon />}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <div className="flex justify-center items-center">
+                                  {mod.delete ? <CheckIcon /> : <CrossIcon />}
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -176,17 +140,17 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                     </div>
 
                     {/* Permisos especiales */}
-                    {allSpecials.length > 0 && (
+                    {specials.length > 0 && (
                       <div className="mt-6">
                         <h3 className="text-sm font-bold text-gray-300 uppercase tracking-wide mb-2 px-1">
                           Permisos especiales
                         </h3>
                         <div className="bg-[#ffffff0a] rounded-lg border border-[#ffffff21] p-3">
                           <ul className="list-none space-y-1">
-                            {allSpecials.map((perm) => (
-                              <li key={perm} className="flex items-center gap-2 text-sm text-gray-300">
+                            {specials.map((spec) => (
+                              <li key={spec.key} className="flex items-center gap-2 text-sm text-gray-300">
                                 <CheckIcon />
-                                <span>{permissionLabels[perm] || specialLabels[perm] || perm}</span>
+                                <span>{spec.label}</span>
                               </li>
                             ))}
                           </ul>
