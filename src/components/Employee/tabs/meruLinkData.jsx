@@ -5,22 +5,8 @@ import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
 
-// Nombres legibles de módulos
-const MODULE_LABELS = {
-  schedules: 'Horarios',
-  employees: 'Empleados',
-  calendar: 'Calendario',
-};
-
-// Nombres legibles de permisos especiales
-const SPECIAL_LABELS = {
-  'reviewed-schedules': 'Revisar horarios',
-  'approve-schedules': 'Aprobar horarios',
-  'autofill-schedules': 'Autocompletar horarios',
-  'change-status-employees': 'Cambiar estado de empleados',
-};
-
 const CRUD_ACTIONS = ['create', 'view', 'edit', 'delete'];
+// const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
 
 /**
  * Parsea un array de nombres de permisos (ej: "create-schedules")
@@ -56,12 +42,17 @@ const CheckIcon = ({ className = "w-5 h-5 text-green-400" }) => <Check className
 const CrossIcon = ({ className = "w-5 h-5 text-gray-600" }) => <X className={className} />;
  
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
-
+  console.log("employee", employee)
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const useMeruLinkWatch = watch('useMeruLink');
   const firstNameWatch = watch('firstName');
   const lastNameWatch = watch('lastName');
   const ciWatch = watch('ci');
+
+  // Labels traducidos desde el backend
+  const moduleLabels = employee?.moduleLabels || {};
+  const specialLabels = employee?.specialLabels || {};
+  const permissionLabels = employee?.permissionLabels || {};
 
   // Parsear permisos: agrupar por módulo con columnas CRUD + especiales
   const permissionModules = useMemo(() => {
@@ -169,7 +160,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                           {moduleEntries.map(([module, cols]) => (
                             <tr key={module} className="border-b tr-table">
                               <td className="px-4 py-3 text-white font-medium">
-                                {MODULE_LABELS[module] || module}
+                                {moduleLabels[module] || module}
                               </td>
                               {CRUD_ACTIONS.map((action) => (
                                 <td key={action} className="px-4 py-3">
@@ -195,7 +186,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                             {allSpecials.map((perm) => (
                               <li key={perm} className="flex items-center gap-2 text-sm text-gray-300">
                                 <CheckIcon />
-                                <span>{SPECIAL_LABELS[perm] || perm}</span>
+                                <span>{permissionLabels[perm] || specialLabels[perm] || perm}</span>
                               </li>
                             ))}
                           </ul>
