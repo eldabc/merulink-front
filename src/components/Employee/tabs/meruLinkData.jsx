@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { PasswordInputEye } from '../../togglePasswordVisibility.jsx';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
+import OptionSelect from '../../Shared/OptionSelect';
+import { getRoles } from '../../../services/masterDataService';
 
 // Iconos para check / cross
 const CheckIcon = ({ className = "w-5 h-5 text-green-400" }) => <Check className={className} />;
@@ -16,6 +18,27 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const firstNameWatch = watch('firstName');
   const lastNameWatch = watch('lastName');
   const ciWatch = watch('ci');
+
+  const [roles, setRoles] = useState([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+
+  // Cargar roles disponibles al montar
+  useEffect(() => {
+    if (useMeruLinkWatch) {
+      setLoadingRoles(true);
+      getRoles()
+        .then(setRoles)
+        .catch(() => console.error('Error al cargar roles'))
+        .finally(() => setLoadingRoles(false));
+    }
+  }, [useMeruLinkWatch]);
+
+  // En modo edit, precargar el rol del empleado
+  useEffect(() => {
+    if (!createMode && employee?.roleId) {
+      setValue('roleId', employee.roleId);
+    }
+  }, [employee?.roleId]);
 
   // Datos ya estructurados por el backend
   const modules = employee?.permissionModules || [];
@@ -73,6 +96,27 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                       <PasswordInputEye register={register} errors={errors} viewMode={viewMode} hasUserCreated={!!employee?.userName} />
                     </div>
                   </div>
+
+                  <div className='flex flex-col md:flex-row md:items-center gap-2 mt-3'>
+                    <LabelFieldForm field="Rol" simbol="*" />
+                    <div className='md:ml-10 w-full md:flex-1'>
+                      <select
+                        disabled={viewMode || !isEmployeeActive}
+                        {...register('roleId', { valueAsNumber: true })}
+                        className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+                      >
+                        <option className="bg-[#3c4042]" value="">{loadingRoles ? 'Cargando...' : 'Seleccionar'}</option>
+                          {roles.map((role) => (
+                            <option className="bg-[#3c4042]" key={role.value} value={role.value}>
+                              {role.label}
+                            </option>
+                          ))
+                        }
+                      </select>
+                      {errors.roleId && <ErrorMessage msg={errors.roleId.message} />}
+                    </div>
+                  </div>
+
                   <div className="flex items-start mt-3 gap-2">
                     <input
                       disabled={viewMode}

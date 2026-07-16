@@ -257,6 +257,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         changePassNextLogin: !!employee?.changePassNextLogin,
         status: createMode ? true : !!employee?.status,
         useMeruLink: !!employee?.useMeruLink,
+        roleId: employee?.roleId ?? '',
         useHidCard: !!employee?.useHidCard,
         useLocker: !!employee?.useLocker,
         useTransport: !!employee?.useTransport,
