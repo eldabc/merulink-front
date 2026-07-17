@@ -20,9 +20,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
-  const [selectedRoleId, setSelectedRoleId] = useState(null);
 
   const checkedPerms = watch('permissions') || [];
+  const roleIdWatch = watch('roleId');
   const isBlocked = viewMode || !isEmployeeActive;
 
   // Cargar roles + todos los permisos disponibles al activar useMeruLink
@@ -46,13 +46,11 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
     setValue('roleId', snapshot.roleId);
     setValue('permissions', snapshot.permissions);
-    setSelectedRoleId(snapshot.roleId);
   }, [employee?.roleSnapshot]);
 
   // Al cambiar el select de rol, precargar sus permisos
   const handleRoleChange = useCallback((e) => {
     const roleId = Number(e.target.value);
-    setSelectedRoleId(roleId);
     setValue('roleId', roleId);
 
     const role = roles.find((r) => r.value === roleId);
@@ -81,8 +79,8 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
 
   // Rol seleccionado para mostrar texto en edit/view
-  const selectedRole = roles.find((r) => r.value === selectedRoleId);
-  const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName || '';
+  const selectedRole = roles.find((r) => r.value === Number(roleIdWatch));
+  const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName;
 
   const CRUD_HEADERS = ['create', 'view', 'edit', 'delete'];
   const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
@@ -139,7 +137,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                     <select
                       {...register('roleId')}
                       disabled={!isEmployeeActive || viewMode}
-                      value={selectedRoleId || ''}
+                      value={roleIdWatch || ''}
                       onChange={handleRoleChange}
                       className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                     >
@@ -170,7 +168,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
               </div>
             </div>
 
-            {selectedRoleId && useMeruLinkWatch && (
+            {roleIdWatch && useMeruLinkWatch && (
               <div className='w-full mt-2.5'>
                 <h2 className='text-center p-2.5 text-xl font-bold'>
                   Permisos - {roleNameText}
