@@ -4,6 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
+import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
@@ -33,7 +34,8 @@ import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create' }) {
   
-  const { employeeData, toggleEmployeeField, getDepartments, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingFieldChange } = useEmployees();
+  const { employeeData, toggleEmployeeField, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingFieldChange } = useEmployees();
+  const { departments, loadDepartments } = useGlobalData();
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
@@ -53,7 +55,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const [positions, setPositions] = useState([]);
-  const [availableDepartments, setAvailableDepartments] = useState([]);
+  // const [availableDepartments, setAvailableDepartments] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
   const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
@@ -95,12 +97,9 @@ export default function EmployeeForm({ mode = 'create' }) {
     const loadFormData = async () => {
       setLoadingData(true);
       try {
-        const [departmentsData, lockerAssignsData] = await Promise.all([
-          getDepartments(),
-          getLockerAssigns(),
-        ]);
+        const lockerAssignsData = await getLockerAssigns();
 
-        setAvailableDepartments(departmentsData);
+        // setAvailableDepartments(departments);
         setLockerAssigns(lockerAssignsData);
           
       } catch (error) {
@@ -131,7 +130,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     setPositions([]);
 
     if(selectedDepartmentId) {  
-      const selectedDepartment = availableDepartments.find( d => d.id === Number(selectedDepartmentId) );
+      const selectedDepartment = departments.find( d => d.id === Number(selectedDepartmentId) );
       
       // Cargos por Departamento
       const positionsByDepartment = selectedDepartment?.positions.filter(
@@ -258,6 +257,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         status: createMode ? true : !!employee?.status,
         useMeruLink: !!employee?.useMeruLink,
         roleId: employee?.roleId ?? '',
+        permissions: employee?.roleSnapshot?.permissions ?? [],
         useHidCard: !!employee?.useHidCard,
         useLocker: !!employee?.useLocker,
         useTransport: !!employee?.useTransport,
@@ -286,7 +286,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                   register={register} 
                   errors={errors} 
                   employee={employee}  
-                  availableDepartments={availableDepartments} 
+                  availableDepartments={departments} 
                   loadingData={loadingData}
                   selectedDepartmentId={selectedDepartmentId}
                   subDepartments={subDepartments}

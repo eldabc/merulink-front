@@ -28,6 +28,7 @@ export const mapEmployeeToBackend = (formData) => ({
   status: formData.status,
   use_meru_link: formData.useMeruLink,
   role_id: formData.roleId || null,
+  permissions: formData.permissions || [],
   use_hid_card: formData.useHidCard,
   use_locker: formData.useLocker,
   use_transport: formData.useTransport,
