@@ -21,7 +21,11 @@ export const getEmployeesByDept = async (departmentId, start, end) => {
   return await response.data;
 };
 
+const rolesCache = { data: null };
+
 export const getRoles = async () => {
+  if (rolesCache.data) return rolesCache.data;
   const response = await axios.get(`${ENV.API_BACK_URL}roles`);
+  rolesCache.data = response.data;
   return response.data;
 };
