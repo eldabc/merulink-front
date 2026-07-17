@@ -1,17 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Check, X } from 'lucide-react';
+
 import { useEmployees } from '../../../context/EmployeeContext';
+import { getRoles } from '../../../services/masterDataService';
+
 import { PasswordInputEye } from '../../togglePasswordVisibility';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
 import OptionSelect from '../../Shared/OptionSelect';
-import { getRoles } from '../../../services/masterDataService';
-
-// Iconos para check / cross (solo para modo view)
-const CheckIcon = ({ className = "w-5 h-5 text-green-400" }) => <Check className={className} />;
-const CrossIcon = ({ className = "w-5 h-5 text-gray-600" }) => <X className={className} />;
 
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
+  
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const useMeruLinkWatch = watch('useMeruLink');
   const firstNameWatch = watch('firstName');
@@ -39,10 +38,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
       .finally(() => setLoadingRoles(false));
   }, [useMeruLinkWatch]);
 
-  // Precargar roleSnapshot en modo edición
-  useEffect(() => {
-    
-    if (createMode || viewMode) return;
+  // Precargar roleSnapshot en modo edit/view
+  useEffect(() => { 
+    if (createMode) return;
     const snapshot = employee?.roleSnapshot;
     if (!snapshot) return;
 
@@ -82,7 +80,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     }
   }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
 
-  // Rol seleccionado (para mostrar texto en edit/view)
+  // Rol seleccionado para mostrar texto en edit/view
   const selectedRole = roles.find((r) => r.value === selectedRoleId);
   const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName || '';
 
@@ -155,14 +153,6 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                     {errors.roleId && <ErrorMessage msg={errors.roleId.message} />}
                   </div>
                 </div>
-
-                {/* Texto informativo del rol */}
-                {/* {!createMode && roleNameText && (
-                  <div className="flex items-center md:justify-end gap-2 mt-3 text-sm text-gray-400">
-                    <span className="font-medium text-gray-300">Rol asignado:</span>
-                    <span className="text-[#9fd8ff]">{roleNameText}</span>
-                  </div>
-                )} */}
 
                 {/* Checkbox */}
                 <div className="flex items-start md:justify-end mt-3 gap-2">

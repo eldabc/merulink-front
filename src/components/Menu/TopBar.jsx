@@ -34,7 +34,7 @@ export default function TopBar() {
     }
     setLoadingLogout(false);
   };
-console.log("user", user)
+// console.log("user", user)
   return (
     <header className="topbar">
       <div className="brand-area">
