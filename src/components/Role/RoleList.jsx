@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Shield, Key, ChevronRight, Loader } from 'lucide-react';
+import { Users, Shield, Key, ChevronRight } from 'lucide-react';
 import { getRoles, getEmployeesByPermission } from '../../services/masterDataService';
 import TitleHeader from '../Shared/TitleHeader';
+import LoadingSpinner from '../Shared/LoadingSpinner';
 
 // Columnas CRUD estándar
 const CRUD_ACTIONS = ['create', 'view', 'edit', 'delete'];
@@ -12,11 +13,25 @@ export default function RoleList() {
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedPermission, setSelectedPermission] = useState(null);
+  const [selectedPermissionLabel, setSelectedPermissionLabel] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [loadingEmployees, setLoadingEmployees] = useState(false);
-
+  const [loadingData, setLoadingData] = useState(true);
+  
+  console.log("selectedPermissionLabel", selectedPermissionLabel)
   useEffect(() => {
-    getRoles().then((res) => setRoles(res.data || []));
+    const loadRolesData = async () => {
+      try {
+        const res = await getRoles();
+        setRoles(res.data || []);
+      } catch (error) {
+        console.error("Error cargando Roles", error);
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+     loadRolesData();
   }, []);
 
   const handleRoleClick = (role) => {
@@ -25,16 +40,18 @@ export default function RoleList() {
     setEmployees([]);
   };
 
-  const handlePermissionClick = async (permName) => {
-    if (selectedPermission === permName) {
+  const handlePermissionClick = async (perKey, permName) => {
+    // console.log("permName ff", perKey)
+    if (selectedPermission === perKey) {
       setSelectedPermission(null);
       setEmployees([]);
       return;
     }
-    setSelectedPermission(permName);
+    setSelectedPermission(perKey);
+    setSelectedPermissionLabel(permName);
     setLoadingEmployees(true);
     try {
-      const data = await getEmployeesByPermission(permName);
+      const data = await getEmployeesByPermission(perKey, selectedRole);
       setEmployees(data);
     } catch {
       setEmployees([]);
@@ -42,21 +59,6 @@ export default function RoleList() {
       setLoadingEmployees(false);
     }
   };
-
-  // Aplanar permisos del rol: CRUD por módulo + especiales
-  const flatPermissions = selectedRole
-    ? [
-        ...(selectedRole.permissionModules || []).flatMap((mod) =>
-          CRUD_ACTIONS
-            .filter((a) => mod[a])
-            .map((a) => ({
-              key: `${a}-${mod.key}`,
-              label: `${CRUD_LABELS[a]} ${mod.label}`,
-            }))
-        ),
-        ...(selectedRole.permissionSpecials || []),
-      ]
-    : [];
 
   return (
     <div className="p-4">
@@ -73,7 +75,9 @@ export default function RoleList() {
             </div>
 
             <ul className="space-y-1">
-              {roles.map((role) => (
+              {loadingData ? (
+                <LoadingSpinner />
+              ) : roles.map((role) => (
                 <li key={role.value}>
                   <button
                     onClick={() => handleRoleClick(role)}
@@ -114,10 +118,50 @@ export default function RoleList() {
               </div>
 
               <div className="space-y-0.5">
-                {flatPermissions.map((perm) => (
+                {/* Permisos CRUD por módulo */}
+                {selectedRole.permissionModules?.length > 0 && (
+                  <>
+                    {(selectedRole.permissionModules).flatMap((mod) =>
+                      CRUD_ACTIONS
+                        .filter((a) => mod[a])
+                        .map((a) => (
+                          <button
+                            key={`${a}-${mod.key}`}
+                            onClick={() => handlePermissionClick(`${a}-${mod.key}`, `${CRUD_LABELS[a]} ${mod.label}`)}
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors duration-200 ${
+                              selectedPermission === `${a}-${mod.key}`
+                                ? 'bg-[#9fd8ff15] border border-[#9fd8ff40]'
+                                : 'hover:bg-[#ffffff0f] border border-transparent'
+                            }`}
+                          >
+                            <Users className="w-4 h-4 text-green-400/70 shrink-0" />
+                            <span className="text-gray-200 truncate flex-1">
+                              {CRUD_LABELS[a]} {mod.label}
+                            </span>
+                            <ChevronRight
+                              className={`w-4 h-4 text-gray-500 transition-transform duration-300 shrink-0 ${
+                                selectedPermission === `${a}-${mod.key}` ? 'rotate-90' : ''
+                              }`}
+                            />
+                          </button>
+                        ))
+                    )}
+
+                    {selectedRole.permissionSpecials?.length > 0 && (
+                      <div className="pt-3 mt-3 border-t border-[#ffffff15]">
+                        <p className="text-[12px] uppercase tracking-wider text-gray-500 px-3 mb-1">
+                          Especiales
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* Permisos especiales */}
+                {(selectedRole.permissionSpecials || []).map((perm) => (
                   <button
                     key={perm.key}
-                    onClick={() => handlePermissionClick(perm.key)}
+                    onClick={() => handlePermissionClick(perm.key, perm.label)}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm transition-colors duration-200 ${
                       selectedPermission === perm.key
                         ? 'bg-[#9fd8ff15] border border-[#9fd8ff40]'
@@ -149,7 +193,7 @@ export default function RoleList() {
               <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[#ffffff21]">
                 <Users className="w-5 h-5 text-amber-400" />
                 <h2 className="text-lg font-bold text-white truncate">
-                  {flatPermissions.find((p) => p.key === selectedPermission)?.label || selectedPermission}
+                  {selectedPermissionLabel}
                 </h2>
                 <span className="ml-auto text-xs text-gray-500">
                   {!loadingEmployees && employees.length}
@@ -157,9 +201,7 @@ export default function RoleList() {
               </div>
 
               {loadingEmployees ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader className="w-6 h-6 text-gray-400 animate-spin" />
-                </div>
+                <LoadingSpinner />
               ) : employees.length === 0 ? (
                 <p className="text-sm text-gray-500 text-center py-8">
                   Sin empleados asignados
