@@ -193,7 +193,7 @@ export default function RoleList() {
                 <h2 className="text-lg font-bold text-white truncate">
                   {selectedPermissionLabel}
                 </h2>
-                <span className="ml-auto text-xs text-gray-500">
+                <span className="ml-auto text-xs text-[#9fd8ff] bg-[#fffdfd21] px-2 py-0.5 rounded-full">
                   {!loadingEmployees && employees.length}
                 </span>
               </div>
