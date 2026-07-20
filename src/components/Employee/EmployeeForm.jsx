@@ -51,11 +51,9 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
-  
   const [lockerAssigns, setLockerAssigns] = useState([]);
   const [empLockerAssign, setEmpLockerAssign] = useState([]);
   const [positions, setPositions] = useState([]);
-  // const [availableDepartments, setAvailableDepartments] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
   const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
@@ -98,8 +96,6 @@ export default function EmployeeForm({ mode = 'create' }) {
       setLoadingData(true);
       try {
         const lockerAssignsData = await getLockerAssigns();
-
-        // setAvailableDepartments(departments);
         setLockerAssigns(lockerAssignsData);
           
       } catch (error) {
@@ -435,7 +431,6 @@ export default function EmployeeForm({ mode = 'create' }) {
         <TabButtonsManager 
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 
-          employee={employee}
           errors={errors}
         />
 
