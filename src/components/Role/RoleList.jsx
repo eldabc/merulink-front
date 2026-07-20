@@ -91,7 +91,7 @@ export default function RoleList() {
                   >
                     <Key className="w-4 h-4 text-[#9fd8ff] shrink-0" />
                     <span className="text-sm text-gray-200 truncate flex-1">{role.label}</span>
-                    <span className="text-xs text-gray-500 bg-[#ffffff15] px-2 py-0.5 rounded-full shrink-0">
+                    <span className="text-xs text-[#9fd8ff] bg-[#fffdfd21] px-2 py-0.5 rounded-full shrink-0">
                       {role.employeeCount}
                     </span>
                     <ChevronRight
@@ -135,7 +135,7 @@ export default function RoleList() {
                       <span className="text-sm text-gray-200 truncate flex-1 font-medium">
                         {group.label}
                       </span>
-                      <span className="text-xs text-gray-500 bg-[#ffffff15] px-2 py-0.5 rounded-full shrink-0">
+                      <span className="text-xs text-[#9fd8ff] bg-[#fffdfd21] px-2 py-0.5 rounded-full shrink-0">
                         {group.permissions.length}
                       </span>
                       <ChevronDown
@@ -213,7 +213,8 @@ export default function RoleList() {
                         className="flex flex-col gap-0.5 px-3 py-2 rounded-lg hover:bg-[#ffffff0f] transition-colors duration-200 border border-transparent"
                       >
                         <span className="text-sm text-gray-200">{emp.name}</span>
-                        <span className="text-xs text-gray-500">{emp.department} — {emp.position}</span>
+                        <span className="text-xs text-gray-500">Dep. {emp.department} — {emp.position}</span>
+                        <span className="text-xs text-gray-500">Rol. {emp.roleName}</span>
                       </Link>
                     </li>
                   ))}
