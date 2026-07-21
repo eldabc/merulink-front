@@ -18,17 +18,6 @@
 .search-container {
   border: 1px solid rgba(255,255,255,0.1);
 }
-.filter-input {
-  border: 1px solid rgba(255,255,255,0.1);
-  background: transparent;
-  color: inherit;
-  padding: 0.5rem 0.75rem;
-}
-.filter-input:focus {
-  border-color: #d1d5db;
-  box-shadow: none;
-  outline: none;
-}
 
 /* Botones de estado (Activos / Inactivos) */
 .status-btn {

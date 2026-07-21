@@ -59,7 +59,7 @@ export const EmployeeProvider = ({ children }) => {
       showNotification("Éxito", `${readableField} actualizado.`);  
 
      } catch (error) {
-      showNotification('Error al actualizar Empleado', error.response.data.message, 'error');
+      showNotification('Error al actualizar Empleado', error.response?.data?.message, 'error');
       return false;
     } finally {
       setLoadingFieldChange({ loading: false, field: null });
@@ -84,10 +84,9 @@ export const EmployeeProvider = ({ children }) => {
         });
       }
       showNotification('Contraseña restablecida', message, 'success');
-      return message;
+
     } catch (error) {
-      const msg = error.response?.data?.message || 'Error al resetear la contraseña';
-      throw new Error(msg);
+      showNotification('Error al resetear la contraseña', error.response?.data?.message, 'error');
     }
   };
 
@@ -109,7 +108,7 @@ export const EmployeeProvider = ({ children }) => {
       
       return true;
     } catch (error) {
-      showNotification('Error al crear el Empleado', error.response.data.message, 'error');
+      showNotification('Error al crear el Empleado', error.response?.data?.message, 'error');
       return false;
     }
   };
@@ -139,7 +138,7 @@ export const EmployeeProvider = ({ children }) => {
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar:', error.response.data.message, 'error');
+      showNotification('Error al actualizar:', error.response?.data?.message, 'error');
       return false;
     }
   };

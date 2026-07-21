@@ -91,16 +91,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
   const handleResetPass = async () => {
     setLoadingResetPass(true);
-    try {
-      await toggleResetPass(employee);
-    } catch (error) {
-      console.error("error", error)
-    } finally {
-      setLoadingResetPass(false);
-    }
+    await toggleResetPass(employee);
+    setLoadingResetPass(false);
   };
-
-  
   
   // console.log("hasUserCreated", hasUserCreated)
   return (
@@ -177,9 +170,8 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                       <SpanText text="Cargando..." />
                     ) : (
                       <Link 
-                        onClick={() => handleResetPass()} 
-                        disabled={viewMode}
-                        title='Reestabler contraseña con cédula de empleado'
+                        onClick={(e) => { if (viewMode) e.preventDefault(); else handleResetPass(); }} 
+                        title='Restablecer contraseña con cédula del empleado'
                         className="text-gray-300! text-[14px] hover:text-[#9fd8ff]! transition-colors duration-300"
                       >
                         Resetear contraseña

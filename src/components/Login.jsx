@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '../context/AuthContext.jsx';
 
 import GuestBar from './Shared/GuestBar';
@@ -62,7 +62,6 @@ const Login = () => {
             </div>
           )}
 
-          {/* Formulario */}
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             
             {/* Email */}
@@ -86,6 +85,7 @@ const Login = () => {
                 name="password"
                 placeholder="••••••••"
                 hasUserCreated={false}
+                dynamicClasses="!bg-[#252729]"
               />
             </div>
 

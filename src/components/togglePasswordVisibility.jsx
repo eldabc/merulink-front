@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'; 
 import ErrorMessage from './Shared/ErrorMessage';
 
-export function PasswordInputEye({ register, errors, viewMode, hasUserCreated, name = 'userPass', placeholder }) {
+export function PasswordInputEye({ register, errors, viewMode, hasUserCreated, name = 'userPass', placeholder, dynamicClasses }) {
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -20,7 +20,7 @@ export function PasswordInputEye({ register, errors, viewMode, hasUserCreated, n
             placeholder={placeholder ?? defaultPlaceholder}
             type={showPassword ? 'text' : 'password'}
             {...register(name)}
-            className={`w-full px-3 py-2 pr-10 rounded-lg filter-input 
+            className={`w-full px-3 py-2 pr-10 rounded-lg filter-input ${dynamicClasses} 
               ${viewMode ? 'cursor-not-allowed opacity-50' : ''}`}
           />
 
