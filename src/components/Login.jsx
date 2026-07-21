@@ -9,6 +9,7 @@ import NameApp from './Shared/NameApp';
 import ErrorMessage from './Shared/ErrorMessage';
 import { PasswordInputEye } from './togglePasswordVisibility';
 import { loginValidationSchema } from '../utils/Validations/loginValidationSchema';
+import LabelUppercase from './Shared/LabelUppercase';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -66,9 +67,7 @@ const Login = () => {
             
             {/* Email */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                Nombre Usuario
-              </label>
+              <LabelUppercase text="Nombre Usuario" />
               <input
                 type="text"
                 placeholder="Nombre usuario Ejem: nombre.apellido"
@@ -80,9 +79,7 @@ const Login = () => {
 
             {/* Contraseña */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                Contraseña
-              </label>
+              <LabelUppercase text="Contraseña" />
               <PasswordInputEye
                 register={register}
                 errors={errors}

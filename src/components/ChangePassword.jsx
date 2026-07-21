@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '../context/AuthContext.jsx';
 
 import { changePasswordValidationSchema } from '../utils/Validations/changePasswordValidationSchema';
 
 import GuestBar from './Shared/GuestBar';
 import NameApp from './Shared/NameApp';
+import LabelUppercase from './Shared/LabelUppercase';
+import ErrorMessage from './Shared/ErrorMessage';
+import { PasswordInputEye } from './togglePasswordVisibility';
 
 const ChangePassword = () => {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -85,42 +88,32 @@ const ChangePassword = () => {
             </div>
           )}
 
-          {/* Formulario */}
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
             {/* Nueva Contraseña */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                Nueva Contraseña
-              </label>
-              <input
-                type="password"
+              <LabelUppercase text="Nueva Contraseña" />
+              <PasswordInputEye
+                register={register}
+                errors={errors}
+                name="new_password"
                 placeholder="Ingresa tu nueva contraseña"
-                {...register('new_password')}
-                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
+                hasUserCreated={false}
               />
-              {errors.new_password && (
-                <span className="text-[11px] text-red-400 font-medium">{errors.new_password.message}</span>
-              )}
             </div>
 
             {/* Confirmar Nueva Contraseña */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
-                Confirmar Contraseña
-              </label>
-              <input
-                type="password"
+              <LabelUppercase text="Confirmar Contraseña" />
+              <PasswordInputEye
+                register={register}
+                errors={errors}
+                name="new_password_confirmation"
                 placeholder="Confirma tu nueva contraseña"
-                {...register('new_password_confirmation')}
-                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
+                hasUserCreated={false}
               />
-              {errors.new_password_confirmation && (
-                <span className="text-[11px] text-red-400 font-medium">{errors.new_password_confirmation.message}</span>
-              )}
             </div>
 
-            {/* Botón */}
             <button
               type="submit"
               disabled={submitting}
