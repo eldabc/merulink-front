@@ -4,6 +4,7 @@ const AssistantInput = lazy(() => import("./AssistantInput"));
 const DepartmentPage = lazy(() => import("./Department/DepartmentPage"));
 const SubDepartmentPage = lazy(() => import("./SubDepartment/SubDepartmentPage"));
 const PositionPage = lazy(() => import("./Positions/PositionPage"));
+const RolePage = lazy(() => import("./Role/RolePage"));
 const LockerRoomPage = lazy(() => import("./LockerRoom/LockerRoomPage"));
 const PadlockPage = lazy(() => import("./Padlock/PadlockPage"));
 const EventsPage = lazy(() => import("./Events/EventsPage"));
@@ -26,6 +27,7 @@ import { EmployeeProvider } from '../context/EmployeeContext';
 import { DepartmentProvider } from '../context/DepartmentContext'; 
 import { SubDepartmentProvider } from '../context/SubDepartmentContext'; 
 import { PositionProvider } from '../context/PositionContext'; 
+import { RoleProvider } from '../context/RoleContext'; 
 import { PadlockPatternProvider } from '../context/PadlockPatternContext'; 
 import { ShiftProvider } from '../context/ShiftContext'; 
 import { ScheduleProvider } from '../context/ScheduleContext'; 
@@ -82,6 +84,12 @@ const PositionLayout = () => (
   </PositionProvider>
 );
 
+const RoleLayout = () => (
+  <RoleProvider>
+    <Outlet />
+  </RoleProvider>
+);
+
 const PadlockPatternLayout = () => (
   <PadlockPatternProvider>
     <Outlet />
@@ -135,6 +143,11 @@ export default function Workspace() {
             {/* Cargos */}
             <Route element={<PositionLayout />}>
               <Route path="/empleados/cargos/*" element={<div className="main-workspace"><PositionPage /></div>} />
+            </Route>
+
+            {/* Roles */}
+            <Route element={<RoleLayout />}>
+              <Route path="/empleados/roles/*" element={<div className="main-workspace"><RolePage /></div>} />
             </Route>
 
             {/* Turnos */}
