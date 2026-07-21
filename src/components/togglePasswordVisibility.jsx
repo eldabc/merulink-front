@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'; 
+import ErrorMessage from './Shared/ErrorMessage';
 
-export function PasswordInputEye({ register, errors, viewMode, hasUserCreated }) {
+export function PasswordInputEye({ register, errors, viewMode, hasUserCreated, name = 'userPass', placeholder }) {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // Función para alternar el estado
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
   };
 
+  const defaultPlaceholder = hasUserCreated ? 'La ingresada ••••••••' : 'Ingrese contraseña';
+
   return (
     <div>
-        <div className="relative w-full md:w-64">
+        <div className="relative w-full ">
           <input
-            readOnly={viewMode }
-            placeholder={hasUserCreated ? 'La ingresada ••••••••' : 'Ingrese contraseña'}
+            readOnly={viewMode}
+            placeholder={placeholder ?? defaultPlaceholder}
             type={showPassword ? 'text' : 'password'}
-            {...register('userPass')}
+            {...register(name)}
             className={`w-full px-3 py-2 pr-10 rounded-lg filter-input 
               ${viewMode ? 'cursor-not-allowed opacity-50' : ''}`}
           />
@@ -36,11 +38,7 @@ export function PasswordInputEye({ register, errors, viewMode, hasUserCreated })
           </button>
         </div>
 
-        {errors.userPass && (
-          <p className="items-start text-red-500 text-xs mt-1 ml-5 -bottom-6 w-full">
-              {errors.userPass.message}
-          </p>
-        )}
+        {errors[name] && ( <ErrorMessage msg={errors[name].message} /> )}
     </div>
   );
 }

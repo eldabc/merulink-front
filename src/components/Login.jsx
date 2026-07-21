@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+
 import GuestBar from './Shared/GuestBar';
 import NameApp from './Shared/NameApp';
+import ErrorMessage from './Shared/ErrorMessage';
+import { PasswordInputEye } from './togglePasswordVisibility';
+import { loginValidationSchema } from '../utils/Validations/loginValidationSchema';
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(loginValidationSchema),
+  });
   const { authLogin, setAuthLoading } = useAuth();
   const navigate = useNavigate();
   const [apiError, setApiError] = useState(null);
@@ -65,12 +72,10 @@ const Login = () => {
               <input
                 type="text"
                 placeholder="Nombre usuario Ejem: nombre.apellido"
-                {...register('username', { required: 'El nombre de usuario es obligatorio' })}
+                {...register('username')}
                 className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
               />
-              {errors.username && (
-                <span className="text-[11px] text-red-400 font-medium">{errors.username.message}</span>
-              )}
+              {errors.username && ( <ErrorMessage msg={errors.username.message} /> )}
             </div>
 
             {/* Contraseña */}
@@ -78,15 +83,13 @@ const Login = () => {
               <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
                 Contraseña
               </label>
-              <input
-                type="password"
+              <PasswordInputEye
+                register={register}
+                errors={errors}
+                name="password"
                 placeholder="••••••••"
-                {...register('password', { required: 'La contraseña es obligatoria' })}
-                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
+                hasUserCreated={false}
               />
-              {errors.password && (
-                <span className="text-[11px] text-red-400 font-medium">{errors.password.message}</span>
-              )}
             </div>
 
             {/* Botón de Ingreso */}
