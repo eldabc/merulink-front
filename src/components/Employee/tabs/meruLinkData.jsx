@@ -8,22 +8,32 @@ import { PasswordInputEye } from '../../togglePasswordVisibility';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
 import OptionSelect from '../../Shared/OptionSelect';
+import SpanText from '../../Shared/SpanText';
 
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
   
-  const { loadingFieldChange, toggleEmployeeField } = useEmployees();
-  const useMeruLinkWatch = watch('useMeruLink');
-  const firstNameWatch = watch('firstName');
-  const lastNameWatch = watch('lastName');
-  const ciWatch = watch('ci');
-
+  const { loadingFieldChange, toggleEmployeeField, toggleResetPass } = useEmployees();
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
-
+  const [loadingResetPass, setLoadingResetPass] = useState(false);
+  
+  const useMeruLinkWatch = watch('useMeruLink');
+  const firstNameWatch = watch('firstName');
+  const lastNameWatch = watch('lastName');
   const checkedPerms = watch('permissions') || [];
   const roleIdWatch = watch('roleId');
+  const ciWatch = watch('ci');
+
   const isBlocked = viewMode || !isEmployeeActive;
+  const hasUserCreated = !!employee?.userName;
+
+  const CRUD_HEADERS = ['create', 'view', 'edit', 'delete'];
+  const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
+  
+  // Rol seleccionado para mostrar texto en edit/view
+  const selectedRole = roles.find((r) => r.value === Number(roleIdWatch));
+  const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName;
 
   // Cargar roles + todos los permisos disponibles al activar useMeruLink
   useEffect(() => {
@@ -48,6 +58,17 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     setValue('permissions', snapshot.permissions);
   }, [employee?.roleSnapshot]);
 
+  // Autocompletar username/password
+  useEffect(() => {
+    if (createMode && useMeruLinkWatch) {
+      if (!firstNameWatch || !lastNameWatch) return;
+      const firstName = (firstNameWatch || '').toLowerCase().trim();
+      const lastName = (lastNameWatch || '').toLowerCase().trim();
+      setValue('userName', `${firstName.charAt(0)}.${lastName}`);
+      setValue('userPass', (ciWatch || '').replace(/\./g, ''));
+    }
+  }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
+
   // Al cambiar el select de rol, precargar sus permisos
   const handleRoleChange = useCallback((e) => {
     const roleId = Number(e.target.value);
@@ -67,31 +88,27 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     setValue('permissions', next);
   }, [checkedPerms, setValue, isBlocked]);
 
-  // Autocompletar username/password
-  useEffect(() => {
-    if (createMode && useMeruLinkWatch) {
-      if (!firstNameWatch || !lastNameWatch) return;
-      const firstName = (firstNameWatch || '').toLowerCase().trim();
-      const lastName = (lastNameWatch || '').toLowerCase().trim();
-      setValue('userName', `${firstName.charAt(0)}.${lastName}`);
-      setValue('userPass', (ciWatch || '').replace(/\./g, ''));
+  const handleResetPass = async () => {
+    setLoadingResetPass(true);
+    try {
+      await toggleResetPass(employee);
+    } catch (error) {
+      console.error("error", error)
+    } finally {
+      setLoadingResetPass(false);
     }
-  }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
+  };
 
-  // Rol seleccionado para mostrar texto en edit/view
-  const selectedRole = roles.find((r) => r.value === Number(roleIdWatch));
-  const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName;
-
-  const CRUD_HEADERS = ['create', 'view', 'edit', 'delete'];
-  const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
-  console.log("Employee", employee)
+  
+  
+  // console.log("hasUserCreated", hasUserCreated)
   return (
     <>
       <div className="flex items-center gap-4 mb-4 pl-4">
         <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
           <span className="text-sm">¿Usa MeruLink?</span>
             {loadingFieldChange.loading && loadingFieldChange.field === 'use_meru_link' ? (
-              <span className="text-xs text-gray-500 italic">Cargando...</span>
+              <SpanText text="Cargando..." />
             ) : (
               <input 
                 disabled={!isEmployeeActive}
@@ -127,7 +144,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                 <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-2'>
                   <LabelFieldForm field="Contraseña" simbol="*" />
                   <div className='w-full md:w-64 md:ml-auto'>
-                    <PasswordInputEye register={register} errors={errors} viewMode={viewMode} hasUserCreated={!!employee?.userName} />
+                    <PasswordInputEye register={register} errors={errors} viewMode={viewMode} hasUserCreated={hasUserCreated} />
                   </div>
                 </div>
 
@@ -154,17 +171,30 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
                 {/* Checkbox */}
                 <div className="flex items-start md:justify-end mt-3 gap-2">
-                  <input
-                    disabled={viewMode}
-                    type="checkbox"
-                    {...register('changePassNextLogin')}
-                    className={`w-4 mt-1 ${disabledClasses}`}
-                  />
-                  <label className="text-sm text-gray-300">
-                    Cambia la contraseña al próximo inicio.
+                  {hasUserCreated ? (
+                    loadingResetPass ? (
+                      <SpanText text="Cargando..." />
+                    ) : (
+                      <input
+                        disabled={viewMode}
+                        type="checkbox"
+                        // {...register('resetPass')}
+                        className={`w-5 h-5 ${disabledClasses}`}
+                        onChange={ () => handleResetPass()}
+                      />
+                    )
+                  ) : (
+                    <input
+                      disabled={viewMode}
+                      type="checkbox"
+                      {...register('changePassNextLogin')}
+                      className={`w-5 h-5 ${disabledClasses}`}
+                    />
+                  )}
+                  <label className="text-sm text-gray-300 hover:text-[#9fd8ff]">
+                    {hasUserCreated ? 'Resetear contraseña.' : 'Cambia la contraseña al próximo inicio.'}
                   </label>
                 </div>
-
               </div>
             </div>
 

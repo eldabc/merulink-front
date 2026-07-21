@@ -2,10 +2,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { useEmployees } from '../../context/EmployeeContext'; 
 import { useNavigate } from 'react-router-dom';
 
-import EmployeeRow from './EmployeeRow';
-import Pagination from '../Pagination';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
+
+import EmployeeRow from './EmployeeRow';
+import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
@@ -13,17 +14,14 @@ import RowTableLoading from '../Shared/RowTableLoading';
 import HasPermission from '../Shared/HasPermission';
 import '../../Tables.css';
 
-// Componente wrapper que proporciona el contexto
 export default function EmployeeList() {
+  const { loadingEmployeeData, employeeData } = useEmployees();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
   const navigate = useNavigate();
   const itemsPerPage = 10;
-  
-  // Leer del contexto (fuente única de verdad)
-  const { loadingEmployeeData, employeeData } = useEmployees();
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {
@@ -98,12 +96,12 @@ return (
           </thead>
           <tbody>
             {loadingEmployeeData ? (
-                <RowTableLoading colSpan={8} />
-              ) : (
-                paginatedData.map((emp) => (
-                  <EmployeeRow key={emp.id} emp={emp} />
-                ))
-              )}
+              <RowTableLoading colSpan={8} />
+            ) : (
+              paginatedData.map((emp) => (
+                <EmployeeRow key={emp.id} emp={emp} />
+              ))
+            )}
           </tbody>
         </table>
       </div>

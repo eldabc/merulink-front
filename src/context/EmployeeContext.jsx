@@ -66,6 +66,31 @@ export const EmployeeProvider = ({ children }) => {
     }
   };
 
+  // Resetear contraseña de un empleado
+  const toggleResetPass = async (employee) => {
+    try {
+      if (!employee) return;
+
+      const response = await axios.put(
+        `${ENV.API_BACK_URL}employees/${employee.id}/resetPass`
+      );
+
+      const { message, data } = response.data;
+
+      if (data) {
+        setEmployeeData(prevData => {
+          const filteredData = prevData.filter(emp => emp.id !== employee.id);
+          return [data, ...filteredData];
+        });
+      }
+      showNotification('Contraseña restablecida', message, 'success');
+      return message;
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Error al resetear la contraseña';
+      throw new Error(msg);
+    }
+  };
+
 
   // *** Crear
   const createEmployee = async (formData) => {
@@ -146,6 +171,7 @@ export const EmployeeProvider = ({ children }) => {
     employeeData,
     setEmployeeData,
     toggleEmployeeField,
+    toggleResetPass,
     createEmployee,
     updateEmployee,
     getDepartments,
