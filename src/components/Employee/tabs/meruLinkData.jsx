@@ -3,6 +3,7 @@ import { Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useEmployees } from '../../../context/EmployeeContext';
+import { useAuth } from '../../../context/AuthContext';
 import { getRoles } from '../../../services/masterDataService';
 
 import { PasswordInputEye } from '../../togglePasswordVisibility';
@@ -14,6 +15,7 @@ import SpanText from '../../Shared/SpanText';
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
   
   const { loadingFieldChange, toggleEmployeeField, toggleResetPass } = useEmployees();
+  const { user } = useAuth();
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
@@ -163,14 +165,14 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   </div>
                 </div>
 
-                {/* Checkbox */}
+                {/* Reset */}
                 <div className="flex items-start md:justify-end mt-3 gap-2">
                   {hasUserCreated ? (
                     loadingResetPass ? (
                       <SpanText text="Cargando..." />
                     ) : (
                       <Link 
-                        onClick={(e) => { if (viewMode) e.preventDefault(); else handleResetPass(); }} 
+                        onClick={(e) => { if (user.isAdmin) handleResetPass(); else e.preventDefault(); }} 
                         title='Restablecer contraseña con cédula del empleado'
                         className="text-gray-300! text-[14px] hover:text-[#9fd8ff]! transition-colors duration-300"
                       >

@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
     const roles = localStorage.getItem('userRoles');
     const permissions = localStorage.getItem('userPermissions');
     const departmentId = localStorage.getItem('departmentId');
+    const isAdmin = localStorage.getItem('userIsAdmin');
 
     if (token && name) {
       // Rehidrata el estado global en memoria
@@ -34,7 +35,8 @@ export const AuthProvider = ({ children }) => {
         email,
         roles: roles ? JSON.parse(roles) : [],
         permissions: permissions ? JSON.parse(permissions) : [],
-        departmentId: departmentId ? Number(departmentId) : null
+        departmentId: departmentId ? Number(departmentId) : null,
+        isAdmin
       });
 
       // Configuramos axios con el token por defecto para todas las peticiones a Laragon
@@ -77,9 +79,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('departmentId', userData.departmentId);
     localStorage.setItem('userRoles', JSON.stringify(userData.roles));
     localStorage.setItem('userPermissions', JSON.stringify(userData.permissions));
+    localStorage.setItem('userIsAdmin', userData.roles.includes('admin'));
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    setUser(userData);
+    setUser({ ...userData, isAdmin: userData.roles.includes('admin') });
   };
 
   // Cerrar sesión (manual o por inactividad)
