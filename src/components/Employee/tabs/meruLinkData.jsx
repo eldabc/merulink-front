@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Check, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { useEmployees } from '../../../context/EmployeeContext';
 import { getRoles } from '../../../services/masterDataService';
@@ -175,25 +176,28 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                     loadingResetPass ? (
                       <SpanText text="Cargando..." />
                     ) : (
+                      <Link 
+                        onClick={() => handleResetPass()} 
+                        disabled={viewMode}
+                        title='Reestabler contraseña con cédula de empleado'
+                        className="text-gray-300! text-[14px] hover:text-[#9fd8ff]! transition-colors duration-300"
+                      >
+                        Resetear contraseña
+                      </Link>
+                    )
+                  ) : (
+                    <>
                       <input
                         disabled={viewMode}
                         type="checkbox"
-                        // {...register('resetPass')}
+                        {...register('changePassNextLogin')}
                         className={`w-5 h-5 ${disabledClasses}`}
-                        onChange={ () => handleResetPass()}
                       />
-                    )
-                  ) : (
-                    <input
-                      disabled={viewMode}
-                      type="checkbox"
-                      {...register('changePassNextLogin')}
-                      className={`w-5 h-5 ${disabledClasses}`}
-                    />
-                  )}
-                  <label className="text-sm text-gray-300 hover:text-[#9fd8ff]">
-                    {hasUserCreated ? 'Resetear contraseña.' : 'Cambia la contraseña al próximo inicio.'}
-                  </label>
+                      <label className="text-sm text-gray-300 hover:text-[#9fd8ff]">
+                        {hasUserCreated ? '' : 'Cambia la contraseña al próximo inicio.'}
+                      </label>
+                    </>
+                  )}      
                 </div>
               </div>
             </div>
