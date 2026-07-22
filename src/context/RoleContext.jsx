@@ -32,7 +32,7 @@ export const RoleProvider = ({ children }) => {
   const allPermissions = async () => {
     try {
       const response = await axios.get(`${ENV.API_BACK_URL}permissions`);
-      return response;
+      return response.data;
     } catch (error) {
       showNotification('Error al cargar permisos', error?.response?.data?.message, 'error');
     }

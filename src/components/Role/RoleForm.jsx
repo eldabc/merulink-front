@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Shield, ChevronDown, Check } from 'lucide-react';
 import { useRoles } from '../../context/RoleContext';
 
 import { roleValidationSchema } from '../../utils/Validations/roleValidationSchema';
@@ -23,6 +24,9 @@ function RoleForm ({ mode = 'create', role }) {
   } = methods;
 
   const [loading, setLoading] = useState(true);
+  const [modules, setModules] = useState([]);
+  const [expandedModule, setExpandedModule] = useState(null);
+  const [selectedPermissions, setSelectedPermissions] = useState(new Set());
 
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
@@ -30,27 +34,43 @@ function RoleForm ({ mode = 'create', role }) {
   useEffect(() => {
     const getPermissions = async () => {
       const response = await allPermissions();
-      console.log("response", response);
+      setModules(response || []);
       setLoading(false);
     };
 
     getPermissions();
   }, [])
 
+  const toggleModule = (moduleKey) => {
+    setExpandedModule(expandedModule === moduleKey ? null : moduleKey);
+  };
+
+  const togglePermission = (permKey) => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      if (next.has(permKey)) {
+        next.delete(permKey);
+      } else {
+        next.add(permKey);
+      }
+      return next;
+    });
+  };
+
   const onSubmit = async (data) => {
     // console.log("data submit", data);
     let success = false;
-    const availableFrom = editMode ? nextFortnightData?.start : dayjs().format('YYYY-MM-DD');
-    const dataChanges = { ...data, id: shift?.id };
+    const dataChanges = { ...data, permissions: [...selectedPermissions] };
     console.log("dataChanges", dataChanges)
-    if (editMode && shift) { 
-      success = await updateShift(dataChanges);
-    } else {
-      success = await createShift(dataChanges);
-    }
+    // TODO: implementar createRole / updateRole
+    // if (editMode && shift) { 
+    //   success = await updateShift(dataChanges);
+    // } else {
+    //   success = await createShift(dataChanges);
+    // }
 
     if (success) {
-      navigate(`/empleados/turnos`);
+      navigate(`/empleados/roles`);
     }
   };
 
@@ -62,7 +82,7 @@ function RoleForm ({ mode = 'create', role }) {
       <form onSubmit={handleSubmit(onSubmit)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
-            <div className='mx-auto mt-6'>
+            <div className='mx-auto mt-6 w-full max-w-3xl'>
               <TitleHeader title={editMode ? ( 'Editar Rol' ):( 'Datos del Rol')} dinamicClasses="!mb-5" />
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
@@ -73,10 +93,99 @@ function RoleForm ({ mode = 'create', role }) {
                     <input
                       readOnly={viewMode}
                       {...register('roleName')}
+                      placeholder='Ingrese nombre del Rol'
                       className={`md:w-full px-1 py-1 rounded-lg filter-input`}
                     />
                     {errors?.roleName?.message && <ErrorMessage msg={errors?.roleName?.message} />}
                   </div>
+                </div>
+              </div>
+
+              {/* === Sección de Permisos === */}
+              <div className="div-border mt-6">
+                <div className="bg-[#2a2e30] rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[#ffffff21]">
+                    <Shield className="w-5 h-5 text-[#9fd8ff]" />
+                    <h3 className="text-base font-bold text-white">Permisos</h3>
+                    <span className="ml-auto text-xs text-gray-400 bg-[#ffffff0d] px-2 py-0.5 rounded-full">
+                      {selectedPermissions.size} seleccionados
+                    </span>
+                  </div>
+
+                  {loading ? (
+                    <p className="text-sm text-gray-500 text-center py-4">Cargando permisos...</p>
+                  ) : modules.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">No hay permisos disponibles</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {modules.map((mod) => (
+                        <div key={mod.key}>
+                          {/* Encabezado del módulo (acordeón) */}
+                          <button
+                            type="button"
+                            onClick={() => toggleModule(mod.key)}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-200 ${
+                              expandedModule === mod.key
+                                ? 'bg-[#9fd8ff15] border border-[#9fd8ff40]'
+                                : 'hover:bg-[#ffffff0f] border border-transparent'
+                            }`}
+                          >
+                            <Shield className="w-4 h-4 text-green-400/70 shrink-0" />
+                            <span className="text-sm text-gray-200 truncate flex-1 font-medium">
+                              {mod.label}
+                            </span>
+                            <span className="text-xs text-gray-400 bg-[#ffffff0d] px-2 py-0.5 rounded-full">
+                              {mod.permissions.length}
+                            </span>
+                            <ChevronDown
+                              className={`w-4 h-4 text-gray-500 transition-transform duration-300 shrink-0 ${
+                                expandedModule === mod.key ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </button>
+
+                          {/* Permisos del módulo (expandible con animación) */}
+                          <div
+                            className={`overflow-hidden transition-all duration-500 ease-out ${
+                              expandedModule === mod.key
+                                ? 'max-h-96 opacity-100 translate-y-0 mt-1'
+                                : 'max-h-0 opacity-0 -translate-y-2'
+                            }`}
+                          >
+                            <div className="ml-4 border-l border-[#ffffff15] pl-2 space-y-0.5">
+                              {mod.permissions.map((perm) => {
+                                const isChecked = selectedPermissions.has(perm.key);
+                                return (
+                                  <label
+                                    key={perm.key}
+                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm cursor-pointer transition-colors duration-200 border ${
+                                      isChecked
+                                        ? 'bg-[#9fd8ff15] border-[#9fd8ff40]'
+                                        : 'hover:bg-[#ffffff0f] border-transparent'
+                                    }`}
+                                  >
+                                    <div
+                                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 shrink-0 ${
+                                        isChecked
+                                          ? 'bg-[#9fd8ff] border-[#9fd8ff]'
+                                          : 'border-gray-500 bg-transparent'
+                                      }`}
+                                      onClick={() => togglePermission(perm.key)}
+                                    >
+                                      {isChecked && <Check className="w-3.5 h-3.5 text-gray-900" />}
+                                    </div>
+                                    <span className={`text-sm ${isChecked ? 'text-gray-200' : 'text-gray-400'}`}>
+                                      {perm.label}
+                                    </span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

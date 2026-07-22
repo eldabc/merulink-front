@@ -157,10 +157,12 @@ export default function RoleList() {
                         />
                       </button>
 
-                      {/* Permisos del módulo (expandible) */}
+                      {/* Permisos del módulo (expandible con animación) */}
                       <div
-                        className={`overflow-hidden transition-all duration-300 ${
-                          expandedModule === group.key ? 'max-h-96 opacity-100 mt-1' : 'max-h-0 opacity-0'
+                        className={`overflow-hidden transition-all duration-500 ease-out ${
+                          expandedModule === group.key
+                            ? 'max-h-96 opacity-100 translate-y-0 mt-1'
+                            : 'max-h-0 opacity-0 -translate-y-2'
                         }`}
                       >
                         <div className="ml-4 border-l border-[#ffffff15] pl-2 space-y-0.5">
