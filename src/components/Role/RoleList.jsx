@@ -1,7 +1,8 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Users, Shield, Key, ChevronRight, ChevronDown } from 'lucide-react';
-import { getRolesPermissions, getEmployeesByPermission } from '../../services/masterDataService';
+import { getEmployeesByPermission } from '../../services/masterDataService';
+import { useRoles } from '../../context/RoleContext';
 
 import TitleHeader from '../Shared/TitleHeader';
 import LoadingSpinner from '../Shared/LoadingSpinner';
@@ -11,6 +12,7 @@ import ButtonNavigate from '../Shared/ButtonNavigate';
 
 export default function RoleList() {
   const navigate = useNavigate();
+  const { loadRoles } =  useRoles();
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
   const [expandedModule, setExpandedModule] = useState(null);
@@ -19,11 +21,11 @@ export default function RoleList() {
   const [employees, setEmployees] = useState([]);
   const [loadingEmployees, setLoadingEmployees] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-
+  
   useEffect(() => {
     const loadRolesData = async () => {
       try {
-        const res = await getRolesPermissions();
+        const res = await loadRoles();
         setRoles(res.data || []);
       } catch (error) {
         console.error('Error cargando Roles', error);
@@ -73,8 +75,8 @@ export default function RoleList() {
         <div className="titles-table">
           <TitleHeader title="Roles y Permisos" dinamicClasses="mb-6" />
 
-          <HasPermission permissions={["create-roles", "edit-roles"]}>
-            <ButtonNavigate url={`/roles/nuevo`} navigate={navigate} />
+          <HasPermission permissions={["create-roles"]}>
+            <ButtonNavigate url={`/empleados/roles/nuevo`} navigate={navigate} />
           </HasPermission>
         </div>
 

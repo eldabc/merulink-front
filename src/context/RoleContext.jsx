@@ -20,25 +20,25 @@ export const RoleProvider = ({ children }) => {
   const [roleData, setRoleData] = useState([]);
   const { departments, addRoleGlobalState, updateRoleGlobalState } = useGlobalData();
 
-  const loadRoles = useCallback(async () => {
-    setLoading(true);
-    try {
-
-      const response = await axios.get(`${ENV.API_BACK_URL}roles`);
-      // console.log("response.data.data", response.data.data);
-      setRoleData(response.data.data);
-
-    } catch (error) {
-      showNotification('Error al cargar Cargos', error.message, 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadRoles = async () => {
+    const response = await axios.get(`${ENV.API_BACK_URL}roles/permissions`);
+    return response.data;
+  };
   
-  useEffect(() => {
-    loadRoles();
-  }, [loadRoles]);
+  // useEffect(() => {
+  //   loadRoles();
+  // }, [loadRoles]);
 
+  const allPermissions = async () => {
+    try {
+      const response = await axios.get(`${ENV.API_BACK_URL}permissions`);
+      return response;
+    } catch (error) {
+      showNotification('Error al cargar permisos', error?.response?.data?.message, 'error');
+    }
+  };
+
+  
 
   // *** Crear
   const createRole = async (formData) => {
@@ -65,7 +65,7 @@ export const RoleProvider = ({ children }) => {
     //   return true;
     } catch (error) {
       console.log("error", error);
-      showNotification('Error al crear cargo', error.response.data.message, 'error');
+      showNotification('Error al crear cargo', error?.response?.data?.message, 'error');
       return false;
     }
   };
@@ -102,43 +102,45 @@ export const RoleProvider = ({ children }) => {
     } catch (error) {
       console.log("error:", error);
 
-      showNotification('Error al actualizar:', error.response.data.message, 'error');
+      showNotification('Error al actualizar:', error?.response?.data?.message, 'error');
       return false;
     }
   };
 
   // *** Eliminar
   const deleteRole = async (role) => {
-    try {
-      await axios.delete(`${ENV.API_BACK_URL}roles/${role.id}`);
+    // try {
+    //   await axios.delete(`${ENV.API_BACK_URL}roles/${role.id}`);
 
-      setRoleData(prevData => {
-        return prevData.filter(item => item.id !== role.id);
-      });
+    //   setRoleData(prevData => {
+    //     return prevData.filter(item => item.id !== role.id);
+    //   });
 
-      showNotification(`Cargo ${role.name} eliminado con éxito`);
-      return true;
-    } catch (error) {
-      showNotification('Error al eliminar Cargo', error.response.data.message, 'error');
-      return false;
-    }
+    //   showNotification(`Cargo ${role.name} eliminado con éxito`);
+    //   return true;
+    // } catch (error) {
+    //   showNotification('Error al eliminar Cargo', error?.response?.data?.message, 'error');
+    //   return false;
+    // }
   };
 
-  const updateGlobalStage = (roleData) => {
-    return {
-      id: roleData.id,
-      code: roleData.code,
-      name: roleData.name,
-      department: { ...roleData.department },
-      employees: [ 
-        ...roleData.employees
-      ],
-      subDepartment: { ...roleData.subDepartment }
-    };
-  };
+  // const updateGlobalStage = (roleData) => {
+  //   return {
+  //     id: roleData.id,
+  //     code: roleData.code,
+  //     name: roleData.name,
+  //     department: { ...roleData.department },
+  //     employees: [ 
+  //       ...roleData.employees
+  //     ],
+  //     subDepartment: { ...roleData.subDepartment }
+  //   };
+  // };
   
   const contextValue = {
     loading,
+    allPermissions,
+    loadRoles,
     createRole,
     updateRole,
     deleteRole,
