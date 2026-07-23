@@ -24,11 +24,8 @@ export const RoleProvider = ({ children }) => {
     const response = await axios.get(`${ENV.API_BACK_URL}roles/permissions`);
     return response.data;
   };
-  
-  // useEffect(() => {
-  //   loadRoles();
-  // }, [loadRoles]);
 
+  
   const allPermissions = async () => {
     try {
       const response = await axios.get(`${ENV.API_BACK_URL}permissions`);
@@ -38,22 +35,19 @@ export const RoleProvider = ({ children }) => {
     }
   };
 
-  
 
   // *** Crear
   const createRole = async (formData) => {
-
     try {
 
       const newRole = mapRoleToBackend(formData);
 
       console.log("Creado", newRole);
       const response = await axios.post(`${ENV.API_BACK_URL}roles`, newRole);
-      console.log("response.data.data,", response.data.data,);
-
-      showNotification(`Rol ${newRole.roleName} creado con éxito`);
-      
+      // console.log("response.data.data,", response.data);
+      showNotification(`Rol ${newRole.role_name} creado con éxito`);
       return true;
+      
     } catch (error) {
       console.log("error", error);
       showNotification('Error al crear cargo', error?.response?.data?.message, 'error');
