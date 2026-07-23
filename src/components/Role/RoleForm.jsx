@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Shield, ChevronDown, Check } from 'lucide-react';
+import { Shield, ChevronRight, Check } from 'lucide-react';
 import { useRoles } from '../../context/RoleContext';
 
 import { roleValidationSchema } from '../../utils/Validations/roleValidationSchema';
@@ -25,7 +25,7 @@ function RoleForm ({ mode = 'create', role }) {
 
   const [loading, setLoading] = useState(true);
   const [modules, setModules] = useState([]);
-  const [expandedModule, setExpandedModule] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
   const [selectedPermissions, setSelectedPermissions] = useState(new Set());
 
   const viewMode = mode === 'view';
@@ -41,8 +41,8 @@ function RoleForm ({ mode = 'create', role }) {
     getPermissions();
   }, [])
 
-  const toggleModule = (moduleKey) => {
-    setExpandedModule(expandedModule === moduleKey ? null : moduleKey);
+  const handleModuleClick = (moduleKey) => {
+    setSelectedModule(selectedModule?.key === moduleKey ? null : modules.find(m => m.key === moduleKey));
   };
 
   const togglePermission = (permKey) => {
@@ -82,7 +82,7 @@ function RoleForm ({ mode = 'create', role }) {
       <form onSubmit={handleSubmit(onSubmit)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
-            <div className='mx-auto mt-6 w-full max-w-3xl'>
+            <div className='mx-auto mt-6 w-full max-w-5xl'>
               <TitleHeader title={editMode ? ( 'Editar Rol' ):( 'Datos del Rol')} dinamicClasses="!mb-5" />
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
@@ -103,7 +103,7 @@ function RoleForm ({ mode = 'create', role }) {
 
               {/* === Sección de Permisos === */}
               <div className="div-border mt-6">
-                <div className="bg-[#2a2e30] rounded-lg p-4">
+                <div className="bg-[#2a2e30] rounded-lg p-2">
                   <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[#ffffff21]">
                     <Shield className="w-5 h-5 text-[#9fd8ff]" />
                     <h3 className="text-base font-bold text-white">Permisos</h3>
@@ -117,43 +117,65 @@ function RoleForm ({ mode = 'create', role }) {
                   ) : modules.length === 0 ? (
                     <p className="text-sm text-gray-500 text-center py-4">No hay permisos disponibles</p>
                   ) : (
-                    <div className="space-y-1">
-                      {modules.map((mod) => (
-                        <div key={mod.key}>
-                          {/* Encabezado del módulo (acordeón) */}
-                          <button
-                            type="button"
-                            onClick={() => toggleModule(mod.key)}
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-200 ${
-                              expandedModule === mod.key
-                                ? 'bg-[#9fd8ff15] border border-[#9fd8ff40]'
-                                : 'hover:bg-[#ffffff0f] border border-transparent'
-                            }`}
-                          >
-                            <Shield className="w-4 h-4 text-green-400/70 shrink-0" />
-                            <span className="text-sm text-gray-200 truncate flex-1 font-medium">
-                              {mod.label}
-                            </span>
-                            <span className="text-xs text-gray-400 bg-[#ffffff0d] px-2 py-0.5 rounded-full">
-                              {mod.permissions.length}
-                            </span>
-                            <ChevronDown
-                              className={`w-4 h-4 text-gray-500 transition-transform duration-300 shrink-0 ${
-                                expandedModule === mod.key ? 'rotate-180' : ''
-                              }`}
-                            />
-                          </button>
+                    <div className="flex gap-4 items-center min-h-[300px] justify-center">
+                      {/* === Columna 1: Lista de Módulos === */}
+                      <div className="shrink-0 w-64">
+                        <div className="bg-[#ffffff08] border border-[#ffffff15] rounded-lg p-3 h-full">
+                          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[#ffffff15]">
+                            <Shield className="w-4 h-4 text-green-400/70" />
+                            <h4 className="text-sm font-semibold text-gray-300">Módulos</h4>
+                          </div>
+                          <div className="space-y-0.5">
+                            {modules.map((mod) => {
+                              const isSelected = selectedModule?.key === mod.key;
+                              return (
+                                <button
+                                  key={mod.key}
+                                  type="button"
+                                  onClick={() => handleModuleClick(mod.key)}
+                                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-200 ${
+                                    isSelected
+                                      ? 'bg-[#9fd8ff15] border border-[#9fd8ff40]'
+                                      : 'hover:bg-[#ffffff0f] border border-transparent'
+                                  }`}
+                                >
+                                  <Shield className="w-4 h-4 text-green-400/70 shrink-0" />
+                                  <span className="text-sm text-gray-200 truncate flex-1 font-medium">
+                                    {mod.label}
+                                  </span>
+                                  <span className="text-xs text-gray-400 bg-[#ffffff0d] px-2 py-0.5 rounded-full">
+                                    {mod.permissions.length}
+                                  </span>
+                                  <ChevronRight
+                                    className={`w-4 h-4 text-gray-500 transition-transform duration-300 shrink-0 ${
+                                      isSelected ? 'rotate-180' : ''
+                                    }`}
+                                  />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
 
-                          {/* Permisos del módulo (expandible con animación) */}
-                          <div
-                            className={`overflow-hidden transition-all duration-500 ease-out ${
-                              expandedModule === mod.key
-                                ? 'max-h-96 opacity-100 translate-y-0 mt-1'
-                                : 'max-h-0 opacity-0 -translate-y-2'
-                            }`}
-                          >
-                            <div className="ml-4 border-l border-[#ffffff15] pl-2 space-y-0.5">
-                              {mod.permissions.map((perm) => {
+                      {/* === Columna 2: Permisos del módulo seleccionado === */}
+                      <div
+                        className={`transition-all duration-500 ease-out overflow-hidden ${
+                          selectedModule
+                            ? 'w-80 opacity-100 ml-0'
+                            : 'w-0 opacity-0 -ml-4'
+                        }`}
+                      >
+                        {selectedModule && (
+                          <div className="bg-[#ffffff08] border border-[#ffffff15] rounded-lg p-3 h-full min-w-[280px] overflow-y-auto">
+                            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[#ffffff15]">
+                              <Shield className="w-4 h-5 text-[#9fd8ff]" />
+                              <h4 className="text-sm font-semibold text-gray-300 truncate">
+                                {selectedModule.label}
+                              </h4>
+                            </div>
+                            <div className="space-y-0.5">
+                              {selectedModule.permissions.map((perm) => {
                                 const isChecked = selectedPermissions.has(perm.key);
                                 return (
                                   <label
@@ -182,8 +204,8 @@ function RoleForm ({ mode = 'create', role }) {
                               })}
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
