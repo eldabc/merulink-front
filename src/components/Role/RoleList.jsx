@@ -9,6 +9,7 @@ import LoadingSpinner from '../Shared/LoadingSpinner';
 import Counter from '../Shared/Counter';
 import HasPermission from '../Shared/HasPermission';
 import ButtonNavigate from '../Shared/ButtonNavigate';
+import RoleBarLinks from '../Shared/RoleBarLinks';
 
 export default function RoleList() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function RoleList() {
   }, []);
 
   const handleRoleClick = (role) => {
-    setSelectedRole(role.value === selectedRole?.value ? null : role);
+    setSelectedRole(role.id === selectedRole?.id ? null : role);
     setExpandedModule(null);
     setSelectedPermission(null);
     setEmployees([]);
@@ -94,7 +95,7 @@ export default function RoleList() {
                 {loadingData ? (
                   <LoadingSpinner />
                 ) : roles.map((role) => (
-                  <li key={role.value}>
+                  <li key={role.id}>
                     <button
                       onClick={() => handleRoleClick(role)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-200 ${
@@ -110,10 +111,13 @@ export default function RoleList() {
                       </span>
                       <ChevronRight
                         className={`w-4 h-4 text-gray-500 transition-transform duration-300 shrink-0 ${
-                          selectedRole?.value === role.value ? 'rotate-90' : ''
+                          selectedRole?.id === role.id ? 'rotate-90' : ''
                         }`}
                       />
                     </button>
+                    
+                    <RoleBarLinks id={role?.id} />
+                    
                   </li>
                 ))}
               </ul>

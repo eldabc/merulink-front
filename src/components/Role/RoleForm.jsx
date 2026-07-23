@@ -7,12 +7,13 @@ import { useRoles } from '../../context/RoleContext';
 
 import { roleValidationSchema } from '../../utils/Validations/roleValidationSchema';
 
+import Counter from '../Shared/Counter';
 import TitleHeader from '../Shared/TitleHeader';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import InputGeneric from '../Shared/InputGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
-import Counter from '../Shared/Counter';
 import FooterFormButtons from '../Shared/FooterFormButtons';
+import HeadFormButtons from '../Shared/HeadFormButtons';
 
 function RoleForm ({ mode = 'create', role }) {
   const navigate = useNavigate();
