@@ -14,6 +14,7 @@ import InputGeneric from '../Shared/InputGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
+import SpanText from '../Shared/SpanText';
 
 function RoleForm ({ mode = 'create', role }) {
   const navigate = useNavigate();
@@ -148,9 +149,9 @@ function RoleForm ({ mode = 'create', role }) {
                   </div>
 
                   {loading ? (
-                    <p className="text-sm text-gray-500 text-center py-4">Cargando permisos...</p>
+                    <SpanText text="Cargando permisos..." />
                   ) : modules.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-4">No hay permisos disponibles</p>
+                    <SpanText text="No hay permisos disponibles" />
                   ) : (
                     <div className="flex flex-col lg:flex-row gap-4 min-h-[300px]">
                       {/* === Columna 1: Lista de Módulos === */}

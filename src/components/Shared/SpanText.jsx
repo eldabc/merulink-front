@@ -1,6 +1,8 @@
 function SpanText({ text, dinamicClasses }) {
   return (
-    <span className={`italic text-gray-500 ${dinamicClasses}`}>{text}</span>
+    <div className="flex items-center justify-center min-h-[100px]">
+      <span className={`italic text-gray-500 ${dinamicClasses}`}>{text}</span>
+    </div>
   );
 }
 
