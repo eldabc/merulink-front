@@ -11,6 +11,8 @@ import TitleHeader from '../Shared/TitleHeader';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import InputGeneric from '../Shared/InputGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
+import Counter from '../Shared/Counter';
+import FooterFormButtons from '../Shared/FooterFormButtons';
 
 function RoleForm ({ mode = 'create', role }) {
   const navigate = useNavigate();
@@ -27,7 +29,13 @@ function RoleForm ({ mode = 'create', role }) {
   const [modules, setModules] = useState([]);
   const [selectedModule, setSelectedModule] = useState(null);
   const [selectedPermissions, setSelectedPermissions] = useState(new Set());
-
+  
+  // Cada vez que cambien los permisos seleccionados, sincronizar con el formulario
+  useEffect(() => {
+    setValue('permissions', [...selectedPermissions]);
+    trigger('permissions');
+  }, [selectedPermissions]);
+  
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
 
@@ -102,14 +110,15 @@ function RoleForm ({ mode = 'create', role }) {
               </div>
 
               {/* === Sección de Permisos === */}
-              <div className="div-border mt-6">
+              <div className="div-border mt-1">
                 <div className="bg-[#2a2e30] rounded-lg p-2">
                   <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[#ffffff21]">
                     <Shield className="w-5 h-5 text-[#9fd8ff]" />
                     <h3 className="text-base font-bold text-white">Permisos</h3>
                     <span className="ml-auto text-xs text-gray-400 bg-[#ffffff0d] px-2 py-0.5 rounded-full">
-                      {selectedPermissions.size} seleccionados
+                      <Counter number={selectedPermissions.size} /> seleccionados
                     </span>
+                      
                   </div>
 
                   {loading ? (
@@ -125,6 +134,11 @@ function RoleForm ({ mode = 'create', role }) {
                             <Shield className="w-4 h-4 text-green-400/70" />
                             <h4 className="text-sm font-semibold text-gray-300">Módulos</h4>
                           </div>
+
+                          <div className='mb-3'>
+                            {errors?.permissions?.message && <ErrorMessage msg={errors?.permissions?.message} />}
+                          </div>
+
                           <div className="space-y-0.5">
                             {modules.map((mod) => {
                               const isSelected = selectedModule?.key === mod.key;
@@ -143,9 +157,9 @@ function RoleForm ({ mode = 'create', role }) {
                                   <span className="text-sm text-gray-200 truncate flex-1 font-medium">
                                     {mod.label}
                                   </span>
-                                  <span className="text-xs text-gray-400 bg-[#ffffff0d] px-2 py-0.5 rounded-full">
-                                    {mod.permissions.length}
-                                  </span>
+                                  
+                                  <Counter number={mod.permissions.length} />
+
                                   <ChevronRight
                                     className={`w-4 h-4 text-gray-500 transition-transform duration-300 shrink-0 ${
                                       isSelected ? 'rotate-180' : ''
@@ -210,6 +224,7 @@ function RoleForm ({ mode = 'create', role }) {
                   )}
                 </div>
               </div>
+              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
             </div>
           </div>
         </div>
