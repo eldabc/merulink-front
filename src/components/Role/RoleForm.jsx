@@ -54,6 +54,16 @@ function RoleForm ({ mode = 'create', role }) {
       const next = new Set(prev);
       if (next.has(moduleKey)) {
         next.delete(moduleKey);
+        // Al desmarcar el módulo, también se quitan sus permisos
+        const mod = modules.find(m => m.key === moduleKey);
+        if (mod) {
+          const permKeys = mod.permissions.map(p => p.key);
+          setSelectedPermissions(prevPerms => {
+            const newPerms = new Set(prevPerms);
+            permKeys.forEach(k => newPerms.delete(k));
+            return newPerms;
+          });
+        }
       } else {
         next.add(moduleKey);
       }
