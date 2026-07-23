@@ -16,7 +16,7 @@ import FooterFormButtons from '../Shared/FooterFormButtons';
 
 function RoleForm ({ mode = 'create', role }) {
   const navigate = useNavigate();
-  const { allPermissions } = useRoles();
+  const { allPermissions, createRole, updateRole } = useRoles();
 
   const methods = useForm({ resolver: yupResolver(roleValidationSchema) });
     
@@ -65,17 +65,23 @@ function RoleForm ({ mode = 'create', role }) {
     });
   };
 
+  const changeRoleLabel = (e) => {
+    const cleaned = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+    const capitalized = cleaned.replace(/\b\w/g, (char) => char.toUpperCase());
+    setValue('roleName', capitalized, { shouldValidate: true, shouldDirty: true });
+  };
+
   const onSubmit = async (data) => {
     // console.log("data submit", data);
     let success = false;
     const dataChanges = { ...data, permissions: [...selectedPermissions] };
     console.log("dataChanges", dataChanges)
     // TODO: implementar createRole / updateRole
-    // if (editMode && shift) { 
-    //   success = await updateShift(dataChanges);
-    // } else {
-    //   success = await createShift(dataChanges);
-    // }
+    if (editMode && role) { 
+      success = await updateRole(dataChanges);
+    } else {
+      success = await createRole(dataChanges);
+    }
 
     if (success) {
       navigate(`/empleados/roles`);
@@ -103,6 +109,7 @@ function RoleForm ({ mode = 'create', role }) {
                       {...register('roleName')}
                       placeholder='Ingrese nombre del Rol'
                       className={`md:w-full px-1 py-1 rounded-lg filter-input`}
+                      onChange={(e) => changeRoleLabel(e) }
                     />
                     {errors?.roleName?.message && <ErrorMessage msg={errors?.roleName?.message} />}
                   </div>

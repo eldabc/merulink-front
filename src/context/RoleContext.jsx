@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
 
-// import { mapRoleToBackend } from '../utils/mappers/roleMapper';
+import { mapRoleToBackend } from '../utils/mappers/roleMapper';
 
 const RoleContext = createContext();
 
@@ -44,25 +44,16 @@ export const RoleProvider = ({ children }) => {
   const createRole = async (formData) => {
 
     try {
-    //   const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-    //   const newRole = mapRoleToBackend(formData, isAddingSubDepartment); //formattedRole(formData);
 
-    //   console.log("Creado", newRole);
-    //   const response = await axios.post(`${ENV.API_BACK_URL}roles`, newRole);
-    //   // console.log("response.data.data,", response.data.data,);
+      const newRole = mapRoleToBackend(formData);
 
-    //   setRoleData(prevData => {
-    //     return [response.data.data, ...prevData]; 
-    //   });
+      console.log("Creado", newRole);
+      const response = await axios.post(`${ENV.API_BACK_URL}roles`, newRole);
+      console.log("response.data.data,", response.data.data,);
 
-    //   const globalData = updateGlobalStage(response.data.data);
-    //   console.log("globalData", globalData,departments);
-
-    //   addRoleGlobalState(globalData, isAddingSubDepartment);
-
-    //   showNotification(`Cargo ${newRole.name} creado con éxito`);
+      showNotification(`Rol ${newRole.roleName} creado con éxito`);
       
-    //   return true;
+      return true;
     } catch (error) {
       console.log("error", error);
       showNotification('Error al crear cargo', error?.response?.data?.message, 'error');
