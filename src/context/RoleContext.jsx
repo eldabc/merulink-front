@@ -20,8 +20,8 @@ export const RoleProvider = ({ children }) => {
   const [roleData, setRoleData] = useState([]);
   const { departments, addRoleGlobalState, updateRoleGlobalState } = useGlobalData();
 
-  const loadRoles = async () => {
-    const response = await axios.get(`${ENV.API_BACK_URL}roles/permissions`);
+  const loadRoles = async (assignments = false) => {
+    const response = await axios.get(`${ENV.API_BACK_URL}roles/permissions?getAssignments=${assignments}`);
     return response.data;
   };
 

@@ -26,7 +26,7 @@ export default function RoleAssignment() {
   useEffect(() => {
     const loadRolesData = async () => {
       try {
-        const res = await loadRoles();
+        const res = await loadRoles(true);
         setRoles(res.data || []);
       } catch (error) {
         console.error('Error cargando Roles', error);
