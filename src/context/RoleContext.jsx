@@ -83,7 +83,7 @@ export const RoleProvider = ({ children }) => {
       console.log("Actualizado:", updatedRole);
       
       const response = await axios.put(`${ENV.API_BACK_URL}roles/${roleId}`, updatedRole);
-      showNotification(`Rol ${formData.role_name} actualizado con éxito`); 
+      showNotification(`Rol ${updatedRole.role_name} actualizado con éxito`); 
       return true;
 
     } catch (error) {

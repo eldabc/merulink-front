@@ -147,7 +147,7 @@ function RoleForm ({ mode = 'create' }) {
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">  
       
-      {(viewMode) && <HeadFormButtons url={`/empleados/cargos/editar/${role?.id}`} data={[]} /> }
+      {(viewMode) && <HeadFormButtons url={`/empleados/roles/editar/${roleResult?.id}`} data={[]} /> }
       <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
