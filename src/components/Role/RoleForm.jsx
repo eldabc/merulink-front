@@ -43,13 +43,14 @@ function RoleForm ({ mode = 'create', role }) {
   
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
+  const createMode = mode === 'create';
   const disabledClasses = getDisabledClasses(loading, viewMode);
 
   useEffect(() => {
     const getPermissions = async () => {
       const response = await allPermissions();
       setModules(response || []);
-      setLoading(false);
+      if (createMode) setLoading(false);
     };
 
     getPermissions();
@@ -84,6 +85,7 @@ function RoleForm ({ mode = 'create', role }) {
       }
     });
     setSelectedModules(moduleKeys);
+    setLoading(false);
 
   }, [roleResult, modules]);
 
