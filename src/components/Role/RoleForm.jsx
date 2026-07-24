@@ -17,7 +17,7 @@ import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import SpanText from '../Shared/SpanText';
 
-function RoleForm ({ mode = 'create', role }) {
+function RoleForm ({ mode = 'create' }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { allPermissions, getRole, createRole, updateRole } = useRoles();
@@ -130,13 +130,11 @@ function RoleForm ({ mode = 'create', role }) {
   };
 
   const onSubmit = async (data) => {
-    // console.log("data submit", data);
     let success = false;
     const dataChanges = { ...data, permissions: [...selectedPermissions] };
-    console.log("dataChanges", dataChanges)
-    // TODO: implementar createRole / updateRole
-    if (editMode && role) { 
-      success = await updateRole(dataChanges);
+    console.log("dataChanges", dataChanges);
+    if (editMode && roleResult) { 
+      success = await updateRole({...dataChanges, id});
     } else {
       success = await createRole(dataChanges);
     }
@@ -162,14 +160,15 @@ function RoleForm ({ mode = 'create', role }) {
                   <LabelFieldForm field="Nombre Rol" simbol="*"/>
                 <div>
                   <div className="flex flex-col">
-                    <input
+                    <InputGeneric
                       readOnly={viewMode}
-                      {...register('roleName')}
-                      placeholder='Ingrese nombre del Rol'
-                      className={`md:w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
-                      onChange={(e) => changeRoleLabel(e) }
+                      name="roleName"
+                      register={register}
+                      placeholder="Ingrese nombre del Rol"
+                      dinamicClasses={disabledClasses}
+                      errorIndex={errors?.roleName}
+                      onChange={(e) => changeRoleLabel(e)}
                     />
-                    {errors?.roleName?.message && <ErrorMessage msg={errors?.roleName?.message} />}
                   </div>
                 </div>
               </div>

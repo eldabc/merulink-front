@@ -72,35 +72,22 @@ export const RoleProvider = ({ children }) => {
   // *** Actualizar
   const updateRole = async (formData) => {
     try {
-    //   const roleId = formData.id;
+      const roleId = formData.id;
 
-    //   if (!roleId) {
-    //     showNotification('Error:', 'No se encontró ID de cargo', 'error');
-    //     return false;
-    //   }
+      if (!roleId) {
+        showNotification('Error:', 'No se encontró ID de Rol', 'error');
+        return false;
+      }
 
-    //   const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-    //   const updatedRole = mapRoleToBackend(formData); //formattedRole(formData);
-    //   console.log("Actualizado:", updatedRole);
+      const updatedRole = mapRoleToBackend(formData);
+      console.log("Actualizado:", updatedRole);
       
-    //   const response = await axios.put(`${ENV.API_BACK_URL}roles/${roleId}`, updatedRole);
-      
-    //   setRoleData(prevData => {
-    //     const filteredData = prevData.filter(role => role.id !== roleId);
-    //     return [response.data.data, ...filteredData];
-    //   });
-
-    //   const globalData = updateGlobalStage(response.data.data);
-    //   console.log("globalData update", globalData);
-
-    //   updateRoleGlobalState(globalData, isAddingSubDepartment);
-
-    //   showNotification(`Cargo ${formData.name} actualizado con éxito`); 
-    //   return true;
+      const response = await axios.put(`${ENV.API_BACK_URL}roles/${roleId}`, updatedRole);
+      showNotification(`Rol ${formData.role_name} actualizado con éxito`); 
+      return true;
 
     } catch (error) {
       console.log("error:", error);
-
       showNotification('Error al actualizar:', error?.response?.data?.message, 'error');
       return false;
     }
