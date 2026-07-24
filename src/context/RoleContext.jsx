@@ -36,6 +36,20 @@ export const RoleProvider = ({ children }) => {
   };
 
 
+  const getRole = async (id) => {
+    try {
+
+      const response = await axios.get(`${ENV.API_BACK_URL}roles/${id}`);
+      // console.log("response.data.data,", response.data);
+      return response.data;
+      
+    } catch (error) {
+      console.log("error", error);
+      showNotification('Error al crear cargo', error?.response?.data?.message, 'error');
+      return false;
+    }
+  };
+
   // *** Crear
   const createRole = async (formData) => {
     try {
@@ -126,6 +140,7 @@ export const RoleProvider = ({ children }) => {
     loading,
     allPermissions,
     loadRoles,
+    getRole,
     createRole,
     updateRole,
     deleteRole,

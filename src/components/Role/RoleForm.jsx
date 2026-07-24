@@ -6,6 +6,7 @@ import { Shield, ChevronRight, Check } from 'lucide-react';
 import { useRoles } from '../../context/RoleContext';
 
 import { roleValidationSchema } from '../../utils/Validations/roleValidationSchema';
+import { getDisabledClasses } from '../../utils/global-utils';  
 
 import Counter from '../Shared/Counter';
 import TitleHeader from '../Shared/TitleHeader';
@@ -17,8 +18,9 @@ import HeadFormButtons from '../Shared/HeadFormButtons';
 import SpanText from '../Shared/SpanText';
 
 function RoleForm ({ mode = 'create', role }) {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { allPermissions, createRole, updateRole } = useRoles();
+  const { allPermissions, getRole, createRole, updateRole } = useRoles();
 
   const methods = useForm({ resolver: yupResolver(roleValidationSchema) });
     
@@ -31,6 +33,7 @@ function RoleForm ({ mode = 'create', role }) {
   const [modules, setModules] = useState([]);
   const [selectedModules, setSelectedModules] = useState(new Set());
   const [selectedPermissions, setSelectedPermissions] = useState(new Set());
+  const [roleResult, setRoleResult] = useState(null);
   
   // Cada vez que cambien los permisos seleccionados, sincronizar con el formulario
   useEffect(() => {
@@ -40,6 +43,7 @@ function RoleForm ({ mode = 'create', role }) {
   
   const viewMode = mode === 'view';
   const editMode = mode === 'edit';
+  const disabledClasses = getDisabledClasses(loading, viewMode);
 
   useEffect(() => {
     const getPermissions = async () => {
@@ -49,7 +53,39 @@ function RoleForm ({ mode = 'create', role }) {
     };
 
     getPermissions();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (id && !isNaN(id)) {
+      const getRoleById = async () => {
+        const data = await getRole(id); 
+        setRoleResult(data);
+      };
+      
+      getRoleById();
+    }
+  }, [id]);
+
+  // Pre-seleccionar permisos view/edit
+  useEffect(() => {
+    if (!roleResult?.data || modules.length === 0) return;
+
+    const roleData = roleResult.data;
+    const permSet = new Set(roleData.permissions || []);
+
+    setSelectedPermissions(permSet);
+    setValue('roleName', roleData.label);
+
+    // Expandir módulos que tengan al menos un permiso del rol
+    const moduleKeys = new Set();
+    modules.forEach(mod => {
+      if (mod.permissions.some(p => permSet.has(p.key))) {
+        moduleKeys.add(mod.key);
+      }
+    });
+    setSelectedModules(moduleKeys);
+
+  }, [roleResult, modules]);
 
   const toggleModule = (moduleKey) => {
     setSelectedModules((prev) => {
@@ -128,7 +164,7 @@ function RoleForm ({ mode = 'create', role }) {
                       readOnly={viewMode}
                       {...register('roleName')}
                       placeholder='Ingrese nombre del Rol'
-                      className={`md:w-full px-1 py-1 rounded-lg filter-input`}
+                      className={`md:w-full px-1 py-1 rounded-lg filter-input ${disabledClasses}`}
                       onChange={(e) => changeRoleLabel(e) }
                     />
                     {errors?.roleName?.message && <ErrorMessage msg={errors?.roleName?.message} />}
@@ -138,7 +174,7 @@ function RoleForm ({ mode = 'create', role }) {
 
               {/* === Sección de Permisos === */}
               <div className="div-border mt-1">
-                <div className="bg-[#2a2e30] rounded-lg p-2">
+                <div className={`bg-[#2a2e30] rounded-lg p-2`}>
                   <div className="flex items-center gap-2 mb-4 pb-2 border-b border-[#ffffff21]">
                     <Shield className="w-5 h-5 text-[#9fd8ff]" />
                     <h3 className="text-base font-bold text-white">Permisos</h3>
@@ -166,7 +202,7 @@ function RoleForm ({ mode = 'create', role }) {
                             {errors?.permissions?.message && <ErrorMessage msg={errors?.permissions?.message} />}
                           </div>
 
-                          <div className="space-y-0.5">
+                          <div className={`space-y-0.5 ${disabledClasses}`}>
                             {modules.map((mod) => {
                               const isChecked = selectedModules.has(mod.key);
                               return (
@@ -189,7 +225,7 @@ function RoleForm ({ mode = 'create', role }) {
                                     type="checkbox"
                                     checked={isChecked}
                                     onChange={() => !viewMode && toggleModule(mod.key)}
-                                    className="w-4 h-4 rounded border-gray-500 bg-transparent cursor-pointer shrink-0 accent-[#9fd8ff]"
+                                    className={`w-4 h-4 rounded border-gray-500 bg-transparent cursor-pointer shrink-0 accent-[#9fd8ff] ${disabledClasses}`}
                                   />
                                 </div>
                               );
@@ -211,7 +247,7 @@ function RoleForm ({ mode = 'create', role }) {
                                   {mod.label}
                                 </h4>
                               </div>
-                              <div className="space-y-0.5">
+                              <div className={`space-y-0.5 ${disabledClasses}`}>
                                 {mod.permissions.map((perm) => {
                                   const isChecked = selectedPermissions.has(perm.key);
                                   return (
@@ -228,14 +264,12 @@ function RoleForm ({ mode = 'create', role }) {
                                           isChecked
                                             ? 'bg-[#9fd8ff] border-[#9fd8ff]'
                                             : 'border-gray-500 bg-transparent'
-                                        }`}
-                                        onClick={() => togglePermission(perm.key)}
+                                        } ${disabledClasses}`}
+                                        onClick={() => !viewMode && togglePermission(perm.key)}
                                       >
                                         {isChecked && <Check className="w-3.5 h-3.5 text-gray-900" />}
                                       </div>
-                                      <span className={`text-sm ${isChecked ? 'text-gray-200' : 'text-gray-400'}`}>
-                                        {perm.label}
-                                      </span>
+                                      <span className={`text-sm ${isChecked ? 'text-gray-200' : 'text-gray-400'}`}> {perm.label} </span>
                                     </label>
                                   );
                                 })}
