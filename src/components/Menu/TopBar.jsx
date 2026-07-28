@@ -16,7 +16,7 @@ export default function TopBar() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
   const { user, logoutContext } = useAuth();
-
+  // console.log("user", user)
   // Derive active menu from the current URL
   const context = findMenuContextByPath(location.pathname);
   const activeMenu = context?.activeMenu || null;

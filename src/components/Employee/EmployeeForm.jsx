@@ -30,6 +30,8 @@ import ConfirmDialog from '../Shared/ConfirmDialog';
 import EmployeeScraperModal from './EmployeeScraperModal';
 import { User, Search } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
+import HasPermission from '../Shared/HasPermission';
+
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create' }) {
@@ -370,7 +372,11 @@ export default function EmployeeForm({ mode = 'create' }) {
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       
       <div className="aling-items-right">
-        {(isEmployeeActive && viewMode) && <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} /> }{/*TODO: todas las rutas funcionen sin data  */}
+        {(isEmployeeActive && viewMode) && (  
+          <HasPermission permissions={["edit-employees"]}> 
+            <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} />
+          </HasPermission> 
+        )}{/*TODO: todas las rutas funcionen sin data  */}
       </div>
 
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
@@ -397,6 +403,8 @@ export default function EmployeeForm({ mode = 'create' }) {
             )}
             {(editMode || viewMode) && (
               <>
+              
+              <HasPermission permissions={["change-status-employees"]}> 
                 <span className="text-sm text-gray-400">Estatus:</span>
                   {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
                     <span className="text-xs text-gray-500 italic">Cargando...</span>
@@ -409,7 +417,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                       {getStatusName(employee?.status)}
                     </span>
                   )}
-            
+              </HasPermission>             
 
                 <ConfirmDialog 
                   isOpen={isModalOpen}
