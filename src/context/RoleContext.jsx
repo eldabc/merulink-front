@@ -110,18 +110,6 @@ export const RoleProvider = ({ children }) => {
     // }
   };
 
-  // const updateGlobalStage = (roleData) => {
-  //   return {
-  //     id: roleData.id,
-  //     code: roleData.code,
-  //     name: roleData.name,
-  //     department: { ...roleData.department },
-  //     employees: [ 
-  //       ...roleData.employees
-  //     ],
-  //     subDepartment: { ...roleData.subDepartment }
-  //   };
-  // };
   
   const contextValue = {
     loading,

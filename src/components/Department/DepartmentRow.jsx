@@ -5,6 +5,7 @@ import { useDepartments } from '../../context/DepartmentContext';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import HasPermission from '../Shared/HasPermission';
+import SpanText from '../Shared/SpanText';
 
 export default function EmployeeRow({ dep }) {
   
@@ -46,7 +47,7 @@ export default function EmployeeRow({ dep }) {
       <td className="px-4 py-3 text-white-800 font-medium">{dep.code}</td>
       <td className="px-4 py-3 text-white-700">{dep.departmentName}</td>
       <td className="px-4 py-3">
-        <HasPermission permissions={["delete-departments"]}>  
+        <HasPermission permissions={["delete-departments"]} fallback={<SpanText text="Sin acciones" />}>
           <ButtonDelete 
             setIsModalOpen={() => handleDeleteClick(dep)} 
             title={deleteBtnTitle}

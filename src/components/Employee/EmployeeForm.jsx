@@ -402,22 +402,21 @@ export default function EmployeeForm({ mode = 'create' }) {
               </Link>
             )}
             {(editMode || viewMode) && (
-              <>
-              
-              <HasPermission permissions={["change-status-employees"]}> 
-                <span className="text-sm text-gray-400">Estatus:</span>
-                  {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
-                    <span className="text-xs text-gray-500 italic">Cargando...</span>
-                  ) : (
-                    <span className={`status-tag ${getStatusColor(employee?.status)}`}  
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChangeStatusClick(employee);
-                      }}>
-                      {getStatusName(employee?.status)}
-                    </span>
-                  )}
-              </HasPermission>             
+              <>     
+                <HasPermission permissions={["change-status-employees"]}> 
+                  <span className="text-sm text-gray-400">Estatus:</span>
+                    {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
+                      <span className="text-xs text-gray-500 italic">Cargando...</span>
+                    ) : (
+                      <span className={`status-tag ${getStatusColor(employee?.status)}`}  
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleChangeStatusClick(employee);
+                        }}>
+                        {getStatusName(employee?.status)}
+                      </span>
+                    )}
+                </HasPermission>             
 
                 <ConfirmDialog 
                   isOpen={isModalOpen}

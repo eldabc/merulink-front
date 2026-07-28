@@ -6,6 +6,7 @@ import { getDisabledClasses } from '../../utils/global-utils';
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
+import HasPermission from '../Shared/HasPermission';
 
 export default function RoleRow({ role }) {
 
@@ -14,9 +15,11 @@ export default function RoleRow({ role }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
 
-  const blockBtn = role.employees?.length > 0 ? true : false;
-  const disabledClasses = getDisabledClasses(blockBtn);
-  const deleteBtnTitle = blockBtn ? 'No se puede eliminar, rol tiene Empleados asociados' : 'Eliminar';
+  const hasEmployees = role.employeeCount > 0;
+  const disabledClasses = getDisabledClasses(hasEmployees);
+  const deleteBtnTitle = hasEmployees
+    ? 'No se puede eliminar, rol tiene Empleados asociados'
+    : 'Eliminar';
 
   const handleSelectedRole = (id) => {
     navigate(`/empleados/roles/ver/${id}`, { 
@@ -60,12 +63,14 @@ export default function RoleRow({ role }) {
         </div>
       </td>
       <td className="px-4 py-3">
-        <ButtonDelete 
-          setIsModalOpen={() => handleDeleteClick(role)} 
-          title={deleteBtnTitle}
-          dinamicClasses={disabledClasses}
-          disabled={blockBtn} 
-        />
+        <HasPermission permissions={["delete-roles"]} fallback={<SpanText text="Sin acciones" />}>
+          <ButtonDelete 
+            setIsModalOpen={() => handleDeleteClick(role)} 
+            title={deleteBtnTitle}
+            dinamicClasses={disabledClasses}
+            disabled={hasEmployees} 
+          />
+        </HasPermission>
       </td>
     </tr>
     <ConfirmDialog 

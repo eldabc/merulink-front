@@ -30,6 +30,7 @@ export default function RoleList() {
     const loadRolesData = async () => {
       try {
         const res = await loadRoles();
+        // console.log("ress", res)
         setRoles(res.data || []);
       } catch (error) {
         console.error('Error cargando Roles', error);
@@ -74,6 +75,7 @@ export default function RoleList() {
   const paginatedRoles = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
   return (
+    <HasPermission permissions={["view-roles"]} >
       <div className="main-data-cont table-container">      
         <div className="titles-table">
           <TitleHeader title="Listado de Roles y Permisos" />
@@ -126,5 +128,6 @@ export default function RoleList() {
           moduleName={'Rol'}
         />
       </div>
+    </HasPermission>
   );
 }
