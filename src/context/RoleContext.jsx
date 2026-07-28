@@ -95,19 +95,21 @@ export const RoleProvider = ({ children }) => {
 
   // *** Eliminar
   const deleteRole = async (role) => {
-    // try {
-    //   await axios.delete(`${ENV.API_BACK_URL}roles/${role.id}`);
+    try {
+      
+      if(!role.id) {
+        showNotification('Error:', 'No se encontró ID de Rol', 'error');
+        return false;
+      }
 
-    //   setRoleData(prevData => {
-    //     return prevData.filter(item => item.id !== role.id);
-    //   });
+      await axios.delete(`${ENV.API_BACK_URL}roles/${role.id}`);
 
-    //   showNotification(`Cargo ${role.name} eliminado con éxito`);
-    //   return true;
-    // } catch (error) {
-    //   showNotification('Error al eliminar Cargo', error?.response?.data?.message, 'error');
-    //   return false;
-    // }
+      showNotification(`Rol ${role.label} eliminado con éxito`);
+      return true;
+    } catch (error) {
+      showNotification('Error al eliminar Rol', error?.response?.data?.message, 'error');
+      return false;
+    }
   };
 
   

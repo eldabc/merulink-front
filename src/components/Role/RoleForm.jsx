@@ -185,9 +185,9 @@ function RoleForm ({ mode = 'create' }) {
                   </div>
 
                   {loading ? (
-                    <SpanText text="Cargando permisos..." />
+                    <SpanText text="Cargando permisos..." centerElement={true} />
                   ) : modules.length === 0 ? (
-                    <SpanText text="No hay permisos disponibles" />
+                    <SpanText text="No hay permisos disponibles" centerElement={true} />
                   ) : (
                     <div className="flex flex-col lg:flex-row gap-4 min-h-[300px]">
                       {/* === Columna 1: Lista de Módulos === */}

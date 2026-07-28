@@ -22,9 +22,7 @@ export default function RoleRow({ role }) {
     : 'Eliminar';
 
   const handleSelectedRole = (id) => {
-    navigate(`/empleados/roles/ver/${id}`, { 
-      state: { data: [] } 
-    }); 
+    navigate(`/empleados/roles/ver/${id}`); 
   };
 
   const handleDeleteClick = (role) => {
@@ -81,7 +79,7 @@ export default function RoleRow({ role }) {
       }}
       onConfirm={handleConfirmDelete}
       title="Eliminar Rol"
-      message={`¿Está seguro que desea eliminar Rol "${selectedRole?.name}"?`}
+      message={`¿Está seguro que desea eliminar Rol "${selectedRole?.label}"?`}
     />
     </>
   );
