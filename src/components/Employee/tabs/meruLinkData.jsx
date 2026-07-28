@@ -77,7 +77,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     const roleId = Number(e.target.value);
     setValue('roleId', roleId);
 
-    const role = roles.find((r) => r.value === roleId);
+    const role = roles.find((r) => r.id === roleId);
     setValue('permissions', role?.permissions || []);
   }, [roles, setValue]);
 
@@ -107,7 +107,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
               <SpanText text="Cargando..." />
             ) : (
               <input 
-                disabled={!isEmployeeActive}
+                disabled={viewMode}
                 type="checkbox"
                 {...register('useMeruLink')}
                 className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`}
@@ -149,14 +149,14 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   <div className='w-full md:w-64 md:ml-auto'>
                     <select
                       {...register('roleId')}
-                      disabled={!isEmployeeActive || viewMode}
+                      disabled={viewMode}
                       value={roleIdWatch || ''}
                       onChange={handleRoleChange}
                       className={`w-full md:w-64 px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
                     >
                       <option className="bg-[#3c4042]" value="">{loadingRoles ? 'Cargando...' : 'Seleccionar rol'}</option>
                       {roles.map((role) => (
-                        <option className="bg-[#3c4042]" key={role.value} value={role.value}>
+                        <option className="bg-[#3c4042]" key={role.id} value={role.id}>
                           {role.label}
                         </option>
                       ))}

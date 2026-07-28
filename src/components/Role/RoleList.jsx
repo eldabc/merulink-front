@@ -12,6 +12,7 @@ import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import RowTableLoading  from '../Shared/RowTableLoading';
 import HasPermission from '../Shared/HasPermission';
+import '../../Tables.css';
 
 export default function RoleList() {
   const navigate = useNavigate();

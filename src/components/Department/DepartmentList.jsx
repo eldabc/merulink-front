@@ -10,6 +10,7 @@ import FilterByFields from '../Filters/FilterByFields';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import TitleHeader from '../Shared/TitleHeader';
 import RowTableLoading from '../Shared/RowTableLoading';
+import HasPermission from '../Shared/HasPermission';
 
 export default function DepartmentList() {
 
@@ -56,10 +57,13 @@ export default function DepartmentList() {
   };
 
   return (
+    <HasPermission permissions={["view-departments"]}>
       <div className="main-data-cont table-container">
         <div className="titles-table">
           <TitleHeader title="Listado de Departamentos" />
-          <ButtonNavigate url={`/empleados/departamentos/nuevo`} navigate={navigate}  />
+          <HasPermission permissions={["create-departments"]}>
+            <ButtonNavigate url={`/empleados/departamentos/nuevo`} navigate={navigate}  />
+          </HasPermission>
         </div>
 
         <FilterByFields
@@ -117,5 +121,6 @@ export default function DepartmentList() {
           moduleName={'Departamento'}
         />
       </div>
+    </HasPermission> 
   );
 }

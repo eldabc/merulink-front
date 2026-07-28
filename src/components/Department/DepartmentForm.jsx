@@ -11,6 +11,8 @@ import HeadFormButtons from '../Shared/HeadFormButtons';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import ErrorMessage from '../Shared/ErrorMessage';
 import TitleHeader from '../Shared/TitleHeader';
+import HasPermission from '../Shared/HasPermission';
+
 import '../../Tables.css';
 
 export default function DepartmentForm({ mode = 'create' }) {
@@ -84,7 +86,11 @@ export default function DepartmentForm({ mode = 'create' }) {
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
     
-    {(viewMode) && <HeadFormButtons url={`/empleados/departamentos/editar/${department?.id}`} data={[]} /> }
+    {(viewMode) && (
+      <HasPermission permissions={["edit-departments"]}> 
+        <HeadFormButtons url={`/empleados/departamentos/editar/${department?.id}`} data={[]} /> 
+      </HasPermission> 
+    )}
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">

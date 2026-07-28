@@ -69,9 +69,9 @@ function RoleForm ({ mode = 'create' }) {
 
   // Pre-seleccionar permisos view/edit
   useEffect(() => {
-    if (!roleResult?.data || modules.length === 0) return;
+    if (!roleResult || modules.length === 0) return;
 
-    const roleData = roleResult.data;
+    const roleData = roleResult;
     const permSet = new Set(roleData.permissions || []);
 
     setSelectedPermissions(permSet);
@@ -132,7 +132,6 @@ function RoleForm ({ mode = 'create' }) {
   const onSubmit = async (data) => {
     let success = false;
     const dataChanges = { ...data, permissions: [...selectedPermissions] };
-    console.log("dataChanges", dataChanges);
     if (editMode && roleResult) { 
       success = await updateRole({...dataChanges, id});
     } else {

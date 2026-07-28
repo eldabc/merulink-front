@@ -65,7 +65,7 @@ return (
     <div className="main-data-cont table-container">    
       <div className="titles-table">
         <TitleHeader title='Listado de Empleados' />
-        <HasPermission permissions={["create-employees", "edit-employees"]}>
+        <HasPermission permissions={["create-employees"]}>
           <ButtonNavigate url={`/empleados/nuevo`} navigate={navigate} />
         </HasPermission>
       </div>
