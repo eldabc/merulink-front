@@ -5,7 +5,6 @@ import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
 import { useAuth } from '../../context/AuthContext';
 
-
 import { normalizeText } from '../../utils/text-utils.js';
 import { filterData } from '../../utils/filter-utils.js';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
@@ -54,13 +53,6 @@ export default function ScheduleList({ categoryKeys }) {
     mapToMonthWithYear(now.subtract(2, 'month'))
   ];
 
-  // Cargar departamentos si vienen vacíos (el contexto ya los carga automáticamente)
-  // useEffect(() => {
-  //   if (departments.length === 0 && !globalLoading) {
-  //     loadDepartments();
-  //   }
-  // }, []);
-
   const loadSchedulesData = useCallback((currentFilters) => {
     
     if (currentFilters.department) {
@@ -88,78 +80,80 @@ export default function ScheduleList({ categoryKeys }) {
   }, {});
 
   return (
-    <div className="main-data-cont table-container">
-      <div className="titles-table">
-        <TitleHeader title="Horarios" />
-        <div className="text-sm">
-          <HasPermission permissions={["create-schedules", "edit-schedules"]}>
-            <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
-          </HasPermission>
+    <HasPermission permissions={["view-schedules"]}>
+      <div className="main-data-cont table-container">
+        <div className="titles-table">
+          <TitleHeader title="Horarios" />
+          <div className="text-sm">
+            <HasPermission permissions={["create-schedules"]}>
+              <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
+            </HasPermission>
+          </div>
         </div>
+
+        <ScheduleFilterList 
+          departments={filteredDepartments} 
+          loading={globalLoading} 
+          onLoadSchedules={loadSchedulesData} 
+          filters={filters} 
+          setFilters={setFilters} 
+          availableMonths={availableMonths}
+        />
+
+        {(dataToDisplay.length === 0) && !loading ? (
+          <SpanText text={`No se encontraron horarios registrados.`} dinamicClasses="inline-block mt-5" />
+        ) : (
+          <div className="rounded-lg shadow">
+            <table className="min-w-full border-collapse text-sm sm:text-base">
+              <thead>
+                <tr className="tr-thead-table">
+                  <th className="px-4 py-3 text-left font-semibold">Mes</th>
+                  <th className="px-4 py-3 text-left font-semibold">Quincena</th>
+                  <th className="px-4 py-3 text-left font-semibold">Observación</th>
+                  <th className="px-4 py-3 text-left font-semibold">Estado</th>
+                  <th className="px-4 py-3 text-left font-semibold">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {!loading ? (
+                  paginatedSchedules.map((item) => {
+                    const statusInfo = statusOptionsMap[item?.status] || { 
+                      value: item?.status || '', 
+                      label: 'Sin estado', 
+                      color: '#ffffff' 
+                    };
+
+                    return (
+                      <ScheduleRow 
+                        key={item?.id} 
+                        schedule={item}
+                        statusInfo={statusInfo}
+                        departmentId={filters.department}
+                        monthSelectedJson={monthSelectedJson}
+                        availableMonths={availableMonths}
+                      />
+                    );
+                  })
+                ) : (
+                  <RowTableLoading colSpan={6} />
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <Pagination
+          paginatedData={paginatedSchedules}
+          startIndex={startIndex}
+          itemsPerPage={itemsPerPage}
+          dataToDisplay={dataToDisplay}
+          data={scheduleData}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          moduleName={'Horario'}
+        />
       </div>
-
-      <ScheduleFilterList 
-        departments={filteredDepartments} 
-        loading={globalLoading} 
-        onLoadSchedules={loadSchedulesData} 
-        filters={filters} 
-        setFilters={setFilters} 
-        availableMonths={availableMonths}
-      />
-
-      {(dataToDisplay.length === 0) && !loading ? (
-        <SpanText text={`No se encontraron horarios registrados.`} dinamicClasses="inline-block mt-5" />
-      ) : (
-        <div className="rounded-lg shadow">
-          <table className="min-w-full border-collapse text-sm sm:text-base">
-            <thead>
-              <tr className="tr-thead-table">
-                <th className="px-4 py-3 text-left font-semibold">Mes</th>
-                <th className="px-4 py-3 text-left font-semibold">Quincena</th>
-                <th className="px-4 py-3 text-left font-semibold">Observación</th>
-                <th className="px-4 py-3 text-left font-semibold">Estado</th>
-                <th className="px-4 py-3 text-left font-semibold">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {!loading ? (
-                paginatedSchedules.map((item) => {
-                  const statusInfo = statusOptionsMap[item?.status] || { 
-                    value: item?.status || '', 
-                    label: 'Sin estado', 
-                    color: '#ffffff' 
-                  };
-
-                  return (
-                    <ScheduleRow 
-                      key={item?.id} 
-                      schedule={item}
-                      statusInfo={statusInfo}
-                      departmentId={filters.department}
-                      monthSelectedJson={monthSelectedJson}
-                      availableMonths={availableMonths}
-                    />
-                  );
-                })
-              ) : (
-                <RowTableLoading colSpan={6} />
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <Pagination
-        paginatedData={paginatedSchedules}
-        startIndex={startIndex}
-        itemsPerPage={itemsPerPage}
-        dataToDisplay={dataToDisplay}
-        data={scheduleData}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        moduleName={'Horario'}
-      />
-    </div>        
+    </HasPermission>        
   );
 }

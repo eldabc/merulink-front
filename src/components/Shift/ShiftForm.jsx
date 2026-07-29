@@ -118,7 +118,7 @@ export default function ShiftForm({ mode = 'create' }) {
       setValue('nightShift', nigthShiftOptions.optionOne.key, { shouldValidate: true });
     }
 
-  }, [watchCheckInTime, watchCheckOutTime, setValue]);
+  }, [watchCheckInTime, watchCheckOutTime, setValue]); //, mode
 
 
   useEffect(() => {
@@ -216,9 +216,9 @@ export default function ShiftForm({ mode = 'create' }) {
       }
     };
 
-    if (!viewMode) fetchCodeData(); 
+    fetchCodeData(); 
     
-  }, [selectedDepartmentId, viewMode]);
+  }, [selectedDepartmentId]);
 
 
   const onSubmit = async (data) => {
