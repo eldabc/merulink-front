@@ -19,6 +19,7 @@ import CalendarSidebar from './CalendarSidebar';
 import EventContent from './EventContent';
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import SpanText from '../Shared/SpanText';
+import HasPermission from '../Shared/HasPermission';
 
 import '../../Calendar.css';
 
@@ -181,86 +182,91 @@ export default function Calendar() {
 
 
   return (
-    <div className='w-full mt-5'>
-      <div className='calendar-container'>
-        <div className='demo-app-main relative'>
-          
-          {loading && (
-            <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473] backdrop-blur-[1px]">
-              <div className="bg-[#2f3d44] px-6 py-3 rounded-xl shadow-2xl border border-[#9fd8ff] flex items-center gap-3">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
-                <SpanText text="Cargando eventos..." dinamicClasses="text-white font-medium" />
+    <HasPermission permissions={['view-calendar']} >
+      <div className='w-full mt-5'>
+        <div className='calendar-container'>
+          <div className='demo-app-main relative'>
+            
+            {loading && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473] backdrop-blur-[1px]">
+                <div className="bg-[#2f3d44] px-6 py-3 rounded-xl shadow-2xl border border-[#9fd8ff] flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
+                  <SpanText text="Cargando eventos..." dinamicClasses="text-white font-medium" />
+                </div>
+              </div>
+            )}
+
+            <div className='w-full flex flex-col md:flex-row items-center justify-around gap-4 mb-2'> 
+              <div className="flex gap-2">
+                <button disabled={loading} onClick={handlePrev} className={`bg-gray-700 p-2 rounded ${disabledClasses}`}>Ant.</button>
+                <button disabled={loading} onClick={handleNext} className={`bg-gray-700 p-2 rounded ${disabledClasses}`}>Sig.</button>
+              </div>
+              <div className='flex flex-col items-center'>
+                <h3 className="text-lg md:text-2xl font-bold text-white">Calendario Plaza Meru</h3>
+                <span className="text-lg md:text-2xl font-bold text-white capitalize">
+                  {currentTitle}
+                </span>
+              </div>
+              <div className='relative'>
+                <HasPermission permissions={['view-events']} >
+                  <button title='Gestionar Eventos' 
+                    onClick={() => { navigate('/eventos/eventos-meru'); }}
+                    className='flex items-center bg-gray-600 p-1.5 rounded-xl hover:text-[#9fd8ff] transition-colors'
+                  >
+                    <Cog6ToothIcon className="size-6 text-gray-300" />
+                  </button>
+                </HasPermission>
               </div>
             </div>
-          )}
+            
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              ref={calendarRef}
+              headerToolbar={false}
+              initialView='dayGridMonth'
+              editable={false}
+              selectable={true}
+              selectMirror={true}
+              dayMaxEvents={5}
+              weekends={weekendsVisible}
+              eventSources={eventSources}
+              dayCellClassNames={handleDayCellClassNames}
+              eventContent={(arg) => <EventContent eventInfo={arg} />} // Personalización de eventos (No se esta usando)
+              eventClick={handleEventClick}
+              dateClick={handleDateClick}
+              locale={esLocale}
+              datesSet={handleDatesSet}
+              moreLinkClick="none"
+            />
 
-          <div className='w-full flex flex-col md:flex-row items-center justify-around gap-4 mb-2'> 
-            <div className="flex gap-2">
-              <button disabled={loading} onClick={handlePrev} className={`bg-gray-700 p-2 rounded ${disabledClasses}`}>Ant.</button>
-              <button disabled={loading} onClick={handleNext} className={`bg-gray-700 p-2 rounded ${disabledClasses}`}>Sig.</button>
-            </div>
-            <div className='flex flex-col items-center'>
-              <h3 className="text-lg md:text-2xl font-bold text-white">Calendario Plaza Meru</h3>
-              <span className="text-lg md:text-2xl font-bold text-white capitalize">
-                {currentTitle}
-              </span>
-            </div>
-            <div className='relative'>
-              <button title='Gestionar Eventos' 
-                onClick={() => { navigate('/eventos/eventos-meru'); }}
-                className='flex items-center bg-gray-600 p-1.5 rounded-xl hover:text-[#9fd8ff] transition-colors'
-              >
-                <Cog6ToothIcon className="size-6 text-gray-300" />
-              </button>
-            </div>
           </div>
-          
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            ref={calendarRef}
-            headerToolbar={false}
-            initialView='dayGridMonth'
-            editable={false}
-            selectable={true}
-            selectMirror={true}
-            dayMaxEvents={5}
-            weekends={weekendsVisible}
-            eventSources={eventSources}
-            dayCellClassNames={handleDayCellClassNames}
-            eventContent={(arg) => <EventContent eventInfo={arg} />} // Personalización de eventos (No se esta usando)
-            eventClick={handleEventClick}
-            dateClick={handleDateClick}
-            locale={esLocale}
-            datesSet={handleDatesSet}
-            moreLinkClick="none"
+          <CalendarSidebar
+            eventsOfSelectedDay={allEventsForSidebar}
+            selectedEvent={selectedEvent}
+            onSelectEvent={toggleSelectedEvent}
+            selectedDateLabel={formattedSelectedDate}
           />
-
         </div>
-        <CalendarSidebar
-          eventsOfSelectedDay={allEventsForSidebar}
-          selectedEvent={selectedEvent}
-          onSelectEvent={toggleSelectedEvent}
-          selectedDateLabel={formattedSelectedDate}
-        />
+          <div className="calendar-legend">
+            {categoryLegend
+              .map(cat => {
+                // Verificar si todos los keys de la categorías están activos
+                const allKeysActive = cat.key.every(k => activeCategories[k]);
+                
+                return (
+                  <button
+                    key={cat.key.join('-')}
+                    className={`skip-style-btn legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'} ${disabledClasses}`}
+                    onClick={() => toggleCategory(cat.key)}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+          </div>
+        
       </div>
-        <div className="calendar-legend">
-          {categoryLegend
-            .map(cat => {
-              // Verificar si todos los keys de la categorías están activos
-              const allKeysActive = cat.key.every(k => activeCategories[k]);
-              
-              return (
-                <button
-                  key={cat.key.join('-')}
-                  className={`skip-style-btn legend-item ${cat.color} ${allKeysActive ? '' : 'legend-disabled'} ${disabledClasses}`}
-                  onClick={() => toggleCategory(cat.key)}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
-        </div>
-      
-    </div>
+    </HasPermission>
+    
   );
 }

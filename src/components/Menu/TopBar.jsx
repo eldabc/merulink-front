@@ -4,7 +4,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 import logo from './../../assets/logo.png';
-import { menuTree, topMenuItems, findMenuContextByPath } from './menuTree';
+import { menuTree, findMenuContextByPath, getFilteredTopMenuItems } from './menuTree';
 import { BellIcon } from '@heroicons/react/24/solid';
 import NotificationPanel from "../Shared/NotificationPanel";
 import NameApp from "../Shared/NameApp";
@@ -16,7 +16,10 @@ export default function TopBar() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
   const { user, logoutContext } = useAuth();
-  // console.log("user", user)
+
+  // Menú superior filtrado por permisos
+  const filteredTopItems = getFilteredTopMenuItems(user?.permissions || []);
+
   // Derive active menu from the current URL
   const context = findMenuContextByPath(location.pathname);
   const activeMenu = context?.activeMenu || null;
@@ -42,7 +45,7 @@ export default function TopBar() {
           <NameApp />
         </div>
         <nav className="top-menu" aria-label="Main menu">
-          {topMenuItems.map(item => (
+          {filteredTopItems.map(item => (
             <button
               key={item}
               onClick={() => navigate(menuById[item]?.path || '/')}
@@ -69,7 +72,7 @@ export default function TopBar() {
         </div>
         <div className="flex flex-col">
           <div className="name">{user?.name}</div>
-          <div className="dept">{user?.roleName}</div>
+          <div className="dept">{user.roleName}</div>
           <div className="sesion">
             <Link
               to="/"

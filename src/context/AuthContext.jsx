@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     const name = localStorage.getItem('userName');
     const email = localStorage.getItem('userEmail');
     const roles = localStorage.getItem('userRoles');
+    const roleName = localStorage.getItem('userRoleName');
     const permissions = localStorage.getItem('userPermissions');
     const departmentId = localStorage.getItem('departmentId');
     const isAdmin = localStorage.getItem('userIsAdmin');
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
         name,
         email,
         roles: roles ? JSON.parse(roles) : [],
+        roleName: roleName ?? "",
         permissions: permissions ? JSON.parse(permissions) : [],
         departmentId: departmentId ? Number(departmentId) : null,
         isAdmin
@@ -78,6 +80,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('userEmail', userData.email);
     localStorage.setItem('departmentId', userData.departmentId);
     localStorage.setItem('userRoles', JSON.stringify(userData.roles));
+    localStorage.setItem('userRoleName', JSON.stringify(userData.roleName));
     localStorage.setItem('userPermissions', JSON.stringify(userData.permissions));
     localStorage.setItem('userIsAdmin', userData.roles.includes('admin'));
 

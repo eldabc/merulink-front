@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from 'react-router-dom';
-import { menuTree, findMenuContextByPath } from "./menuTree";
+import { menuTree, findMenuContextByPath, getFilteredMenuTree } from "./menuTree";
 import { menuEvents } from "./menuEvents";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
   return (nodes || []).map((node) => {
@@ -66,22 +67,25 @@ function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, c
 export default function SideBar({ isSidebarOpen }) {
   const location = useLocation();
   const pathname = location.pathname;
+  const { user } = useAuth();
 
   // Detect if we're on an /eventos/* path to use the events menu tree
   const isEventPath = pathname.startsWith('/eventos');
 
-  // Derive menu context from the URL
   const context = isEventPath
-    ? null // event paths don't need the main menu context
+    ? null
     : findMenuContextByPath(pathname);
 
   const activeMenu = context?.activeMenu || null;
   const activePath = context?.activePath || [];
 
+  // Árbol filtrado por permisos del usuario
+  const filteredTree = useMemo(() => getFilteredMenuTree(user?.permissions || []), [user?.permissions]);
+
   // Determine which branch to render
   const branch = isEventPath
     ? menuEvents
-    : (menuTree.find((item) => item.id === activeMenu)?.children || []);
+    : (filteredTree.find((item) => item.id === activeMenu)?.children || []);
 
   const initialCollapsed = useMemo(() => buildAllPaths(branch), [branch]);
   const [collapsed, setCollapsed] = useState(initialCollapsed);
