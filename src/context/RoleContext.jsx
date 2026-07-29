@@ -18,6 +18,7 @@ export const RoleProvider = ({ children }) => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [roleData, setRoleData] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { departments, addRoleGlobalState, updateRoleGlobalState } = useGlobalData();
 
   const loadRoles = async (assignments = false) => {
@@ -103,6 +104,7 @@ export const RoleProvider = ({ children }) => {
       }
 
       await axios.delete(`${ENV.API_BACK_URL}roles/${role.id}`);
+      setRefreshTrigger(prev => prev + 1);
 
       showNotification(`Rol ${role.label} eliminado con éxito`);
       return true;
@@ -122,7 +124,8 @@ export const RoleProvider = ({ children }) => {
     updateRole,
     deleteRole,
     roleData,
-    setRoleData, 
+    setRoleData,
+    refreshTrigger,
   };
 
   return (

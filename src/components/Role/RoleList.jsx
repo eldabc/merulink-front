@@ -16,7 +16,7 @@ import '../../Tables.css';
 
 export default function RoleList() {
   const navigate = useNavigate();
-  const { loading, loadRoles } = useRoles();
+  const { loading, loadRoles, refreshTrigger } = useRoles();
   const [roles, setRoles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
@@ -40,7 +40,7 @@ export default function RoleList() {
     };
 
     loadRolesData();
-  }, []);
+  }, [refreshTrigger]);
 
   // Ejecutar búsqueda automáticamente al teclear
   useEffect(() => {

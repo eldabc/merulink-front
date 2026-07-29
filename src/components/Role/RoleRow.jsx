@@ -71,16 +71,20 @@ export default function RoleRow({ role }) {
         </HasPermission>
       </td>
     </tr>
-    <ConfirmDialog 
-      isOpen={isModalOpen}
-      onClose={() => {
-        setIsModalOpen(false);
-        setSelectedRole(null);
-      }}
-      onConfirm={handleConfirmDelete}
-      title="Eliminar Rol"
-      message={`¿Está seguro que desea eliminar Rol "${selectedRole?.label}"?`}
-    />
+    <tr>
+      <td>
+        <ConfirmDialog 
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedRole(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Eliminar Rol"
+          message={`¿Está seguro que desea eliminar Rol "${selectedRole?.label}"?`}
+        />
+      </td>
+    </tr>
     </>
   );
 }
