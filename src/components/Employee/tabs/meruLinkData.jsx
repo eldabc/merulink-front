@@ -35,7 +35,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
   
   // Rol seleccionado para mostrar texto en edit/view
-  const selectedRole = roles.find((r) => r.value === Number(roleIdWatch));
+  const selectedRole = roles.find((r) => r.id === Number(roleIdWatch));
   const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName;
 
   // Cargar roles + todos los permisos disponibles al activar useMeruLink
