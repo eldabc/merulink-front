@@ -33,7 +33,7 @@ function ScheduleFilterList({
     if ((departments.length === 1 || user?.roles?.includes('admin')) && !filters.department) {
       setFilters((prev) => ({
         ...prev,
-        department: departments[0].id
+        department: departments[0]?.id
       }));
     }
   }, [departments, filters.department]);

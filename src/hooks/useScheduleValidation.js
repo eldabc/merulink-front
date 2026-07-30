@@ -9,6 +9,8 @@ export function useScheduleValidation() {
     currentRows.forEach((employee) => {
       const fortnightDates = Object.keys(employee.dates || {});
       let consecutiveWorkDays = 0;
+      let maxConsecutiveWorkDays = 0;
+      let maxConsecutiveEndDate = null;
       let restDaysCount = 0;
 
       fortnightDates.forEach((dateStr, index) => {
@@ -23,12 +25,9 @@ export function useScheduleValidation() {
         } else {
           consecutiveWorkDays++;
 
-          if (consecutiveWorkDays > 5) {
-            alerts.push({
-              id: `${employee.id}-${dateStr}-consecutive`,
-              type: 'consecutive-work',
-              message: `🚨 **${employee.fullName}** lleva **${consecutiveWorkDays} días seguidos** trabajando sin descanso al llegar al día **${dayjs(dateStr).format('DD/MM/YYYY')}**.`
-            });
+          if (consecutiveWorkDays > maxConsecutiveWorkDays) {
+            maxConsecutiveWorkDays = consecutiveWorkDays;
+            maxConsecutiveEndDate = dateStr;
           }
         }
 
@@ -53,7 +52,11 @@ export function useScheduleValidation() {
             const nextCheckIn = nextShift.checkInTime;
 
             if (currentCheckOut && nextCheckIn) {
-              const outDateTime = dayjs(`${dateStr} ${currentCheckOut}`);
+              // Si el turno cruza medianoche (checkIn > checkOut), la salida real ocurre al día siguiente
+              const crossesMidnight = currentShift.checkInTime > currentShift.checkOutTime;
+              const actualOutDate = crossesMidnight ? nextDateStr : dateStr;
+
+              const outDateTime = dayjs(`${actualOutDate} ${currentCheckOut}`);
               const inDateTime = dayjs(`${nextDateStr} ${nextCheckIn}`);
               const diffInHours = inDateTime.diff(outDateTime, 'hour', true);
 
@@ -61,7 +64,9 @@ export function useScheduleValidation() {
                 alerts.push({
                   id: `${employee.id}-${dateStr}-rest`,
                   type: 'rest',
-                  message: `⏱️ **${employee.fullName}** termina su turno a las ${outDateTime.format('hh:mm A')} (${dayjs(dateStr).format('DD-MM-YYYY')}) e inicia el siguiente a las ${inDateTime.format('hh:mm A')} (${dayjs(nextDateStr).format('DD-MM-YYYY')}). ¡Descanso menor a 12 horas! (${diffInHours.toFixed(1)} hrs).`
+                  message: `⏱️ **${employee.fullName}** termina su turno a las ${outDateTime.format('hh:mm A')} (${dayjs(actualOutDate).format('DD-MM-YYYY')}) 
+                             e inicia el siguiente a las ${inDateTime.format('hh:mm A')} (${dayjs(nextDateStr).format('DD-MM-YYYY')}). 
+                             ¡Descanso menor a 12 horas! (${diffInHours.toFixed(1)} hrs).`          
                 });
               }
             }
@@ -70,6 +75,14 @@ export function useScheduleValidation() {
       });
 
       // Se evalúa al terminar de revisar todos los días del empleado
+      if (maxConsecutiveWorkDays > 5) {
+        alerts.push({
+          id: `${employee.id}-${maxConsecutiveEndDate}-consecutive`,
+          type: 'consecutive-work',
+          message: `🚨 **${employee.fullName}** lleva **${maxConsecutiveWorkDays} días seguidos** trabajando sin descanso al llegar al día **${dayjs(maxConsecutiveEndDate).format('DD/MM/YYYY')}**.`
+        });
+      }
+
       if (restDaysCount < 3) {
         alerts.push({
           id: `${employee.id}-insufficient-rest`,
