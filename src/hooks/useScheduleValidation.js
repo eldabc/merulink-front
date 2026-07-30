@@ -95,5 +95,37 @@ export function useScheduleValidation() {
     return alerts;
   }, []);
 
-  return { runLiveValidation };
+  /**
+   * Valida que cada día de la quincena tenga al menos 1 trabajador asignado por turno.
+   * Solo evalúa turnos reales (no libres, bajas ni vacaciones).
+   */
+  const runShiftCoverageValidation = useCallback((currentRows, workingShifts, fortnightDays) => {
+    const alerts = [];
+
+    if (!workingShifts || workingShifts.length === 0) return alerts;
+    if (!fortnightDays || fortnightDays.length === 0) return alerts;
+    if (!currentRows || currentRows.length === 0) return alerts;
+
+    fortnightDays.forEach((day) => {
+      workingShifts.forEach((shift) => {
+        // Cuenta cuántos empleados tienen este turno en este día
+        const assignedCount = currentRows.filter((row) => {
+          const shiftId = row.dates?.[day.date]?.shift?.id;
+          return shiftId === shift.id;
+        }).length;
+
+        if (assignedCount === 0) {
+          alerts.push({
+            id: `coverage-${day.date}-${shift.id}`,
+            type: 'shift-coverage',
+            message: `⚠️ El turno <strong>${shift.letterShift || shift.description || shift.id}</strong> no tiene ningún trabajador asignado el día <strong>${dayjs(day.date).format('DD/MM/YYYY')}</strong>.`
+          });
+        }
+      });
+    });
+
+    return alerts;
+  }, []);
+
+  return { runLiveValidation, runShiftCoverageValidation };
 }

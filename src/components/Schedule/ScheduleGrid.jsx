@@ -57,7 +57,7 @@ const ScheduleGrid = forwardRef(({
   const [liveAlerts, setLiveAlerts] = useState([]); 
   const [showPastFortnight, setShowPastFortnight] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const { runLiveValidation } = useScheduleValidation();
+  const { runLiveValidation, runShiftCoverageValidation } = useScheduleValidation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const viewMode = mode === 'view';
@@ -65,7 +65,7 @@ const ScheduleGrid = forwardRef(({
   const scheduleSaved = !!scheduleData?.id;
   const groupedEmployees = scheduleData?.employees;
   const shifts = scheduleData?.shifts;
-  const cleanedShifts = shifts?.filter(s => s.letterShift !== 'L');
+  const cleanedShifts = useMemo(() => shifts?.filter(s => s.letterShift !== 'L') ?? [], [shifts]);
   const isOneShift = cleanedShifts.length === 1;
 
   const daysMap = useMemo(() => {
@@ -132,7 +132,13 @@ const ScheduleGrid = forwardRef(({
     if (gridApi) {
       const currentRows = [];
       gridApi.forEachNode(node => currentRows.push(node.data));
-      setLiveAlerts(runLiveValidation(currentRows));
+
+      const liveAlerts = runLiveValidation(currentRows);
+      const coverageAlerts = mode !== 'create' 
+        ? runShiftCoverageValidation(currentRows, cleanedShifts, fortnightDays) 
+        : [];
+      
+        setLiveAlerts([...liveAlerts, ...coverageAlerts]);
     }
   };
 
@@ -193,10 +199,13 @@ const ScheduleGrid = forwardRef(({
   // Ejecutar la validación al renderizar por primera vez
   useEffect(() => {
     if (rowData.length > 0) {
-      const alerts = runLiveValidation(rowData);
-      setLiveAlerts(alerts);
+      const liveAlerts = runLiveValidation(rowData);
+      const coverageAlerts = mode !== 'create'
+        ? runShiftCoverageValidation(rowData, cleanedShifts, fortnightDays)
+        : [];
+      setLiveAlerts([...liveAlerts, ...coverageAlerts]);
     }
-  }, [rowData, runLiveValidation]);
+  }, [rowData]);
 
   const columnDefs = useMemo(() => {
     const hasAdministrativeShift = shifts?.some(s => s.typeShift === 'administrative');
