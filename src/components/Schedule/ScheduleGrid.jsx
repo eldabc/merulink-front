@@ -199,6 +199,7 @@ const ScheduleGrid = forwardRef(({
   }, [rowData, runLiveValidation]);
 
   const columnDefs = useMemo(() => {
+    const hasAdministrativeShift = shifts?.some(s => s.typeShift === 'administrative');
     const baseCols = [
       { 
         headerName: 'Empleado', 
@@ -259,12 +260,12 @@ const ScheduleGrid = forwardRef(({
           }
 
           if (shiftObj?.color) {
-            if (currentShiftId === 'S-0' && day.isWeekend) {
-              return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
-            }
+            // if (currentShiftId === 'S-0' && day.isWeekend && hasAdministrativeShift) {
+            //   return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
+            // }
             if (currentShiftId === 'S-0') {              
               if (day.isToday) return { ...baseStyle, backgroundColor: '#3b82f6' };
-              if (day.isWeekend) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
+              if (day.isWeekend && hasAdministrativeShift) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
             }
             return { ...baseStyle, backgroundColor: shiftObj.color };
           }    
@@ -296,7 +297,7 @@ const ScheduleGrid = forwardRef(({
         headerClass: () => {
           const classes = [];
           if (day.isToday) classes.push('header-today');
-          if (day.isWeekend) classes.push('header-weekend');
+          if (day.isWeekend && hasAdministrativeShift) classes.push('header-weekend');
           if (hasHighlightedEventsForDay) classes.push('header-has-events');
           return classes.join(' ');
         }
