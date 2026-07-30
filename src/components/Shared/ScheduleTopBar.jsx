@@ -4,7 +4,22 @@ import ToggleAutofill from '../Shared/ToggleAutofill';
 import HasRole from '../Shared/HasRole';
 import HasPermission from '../Shared/HasPermission';
 
-function ScheduleTopBar ({ viewMode, disabledClasses, exportToPDF, isExporting, setShowPastFortnight, showPastFortnight, onAutofillClick, onConfirmAutofill, isModalOpen, isOneShift, setIsModalOpen, autofillAlways, onAutofillAlwaysChange, onLoadingHandleAutofill }) {
+function ScheduleTopBar ({ 
+  viewMode, 
+  disabledClasses, 
+  exportToPDF, 
+  isExporting, 
+  setShowPastFortnight, 
+  showPastFortnight, 
+  onAutofillClick, 
+  onConfirmAutofill, 
+  isModalOpen, 
+  isOneShift, 
+  setIsModalOpen, 
+  autofillAlways, 
+  onAutofillAlwaysChange, 
+  onLoadingHandleAutofill 
+}) {
   
   return (
     <div className=" w-full flex items-center justify-end gap-2 mt-2">

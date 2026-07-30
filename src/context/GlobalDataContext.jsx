@@ -184,18 +184,13 @@ export const GlobalDataProvider = ({ children }) => {
   };
 
   const getEmployeesByDepartment = async (departmentId, start, end) => {
-    setGlobalLoading(true);
     try {
-      // console.log("getEmployeesByDepartment", departmentId, start, end);
-      
+      // console.log("getEmployeesByDepartment", departmentId, start, end);      
       const res = await getEmployeesByDept(departmentId, start, end);
       // console.log("RES getEmployees", res);
       return res;
-      setEmployees(res);
     } catch (error) {
-      console.error("Error cargando Localizaciones:", error);
-    } finally {
-      setGlobalLoading(false);
+      console.error("Error cargando empleados por departamento:", error);
     }
   };
 
