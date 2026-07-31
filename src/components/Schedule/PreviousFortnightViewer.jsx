@@ -24,7 +24,9 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   const [previousFortnightDays, setPreviousFortnightDays] = useState([]);
   const [liveAlerts, setLiveAlerts] = useState([]);
   const [gridApi, setGridApi] = useState(null);
-
+  const shifts = previousData?.shifts;
+  const hasAdministrativeShift = useMemo(() => shifts?.some(s => s.typeShift === 'administrative'), [shifts]);
+  
   // Guarda el tamaño y las coordenadas exactas del visor
   const [dimensions, setDimensions] = useState({
     width: 500,
@@ -106,6 +108,11 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
     ];
 
     const dayCols = previousFortnightDays.map((day) => {
+
+      const hasHighlightedEventsForDay = rowData.some((row) => {
+        return (row.dates?.[day.date]?.events || []).length > 0;
+      });
+
       return {        
         headerName: `${day.dayName} ${day.dayNumber}`, 
         field: `date_${day.date}`, 
@@ -145,12 +152,9 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
           }
 
           if (shiftObj?.color) {
-            if (currentShiftId === 'S-0' && day.isWeekend) {
-              return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
-            }
             if (currentShiftId === 'S-0') {              
-              if (day.isToday) return { ...baseStyle, backgroundColor: '#3b82f6' };
-              if (day.isWeekend) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
+              if (day.isToday && hasAdministrativeShift) return { ...baseStyle, backgroundColor: '#3b82f6' };
+              if (day.isWeekend && hasAdministrativeShift) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
             }
             return { ...baseStyle, backgroundColor: shiftObj.color };
           }    
@@ -180,8 +184,9 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         cellClass: '!font-bold',
         headerClass: () => {
           const classes = [];
-          if (day.isToday) classes.push('header-today');
-          if (day.isWeekend) classes.push('header-weekend');
+          if (day.isToday && hasAdministrativeShift) classes.push('header-today');
+          if (day.isWeekend && hasAdministrativeShift) classes.push('header-weekend');
+          if (hasHighlightedEventsForDay) classes.push('header-has-events');
           return classes.join(' ');
         }
       };
