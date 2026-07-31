@@ -219,9 +219,9 @@ export default function ScheduleForm({ }) {
       success = await createSchedule(payload);
     }
 
-    if (success) {
-      navigate(`/empleados/horarios`);
-    }
+    // if (success) {
+      // navigate(`/empleados/horarios`);
+    // }
   };
 
   const onError = (formErrors) => {
@@ -229,7 +229,7 @@ export default function ScheduleForm({ }) {
     if (!formErrors) return;
   };
 
-  const disabledClasses = getDisabledClasses(mode === 'view');
+  // const disabledClasses = getDisabledClasses(mode === 'view');
 
   const handleAutofillAlwaysChange = async (checked) => {
     const departmentId = formData?.departmentId;
