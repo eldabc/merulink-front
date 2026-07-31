@@ -1,0 +1,19 @@
+# No copiar dependencias (se instalan en el contenedor)
+node_modules/
+
+# Archivos de entorno locales
+# .env se incluye porque Vite lo necesita en tiempo de build
+.env.local
+
+# Build y caché
+dist/
+.vite/
+
+# Git
+.git/
+.gitignore
+
+# Editor
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,21 @@
+# ============================================================
+# DOCKERFILE.dev - Frontend React (Desarrollo)
+# ============================================================
+# Solo para desarrollo. Corre Vite dev server con hot reload.
+# NO es para producción (ahí se usa el Dockerfile normal con Nginx).
+# ============================================================
+
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Instalar dependencias
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# El código se monta como volumen en docker-compose.override.yml
+# así que no hace falta COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
