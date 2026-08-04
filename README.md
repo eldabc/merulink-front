@@ -23,6 +23,4 @@ Formularios: React Hook Form (validaciones eficientes sin re-renders innecesario
 Fechas: Day.js (manipulación, diferencias horarias y formateo internacional).
 
 
-/**
 * Todos los derechos reservados Hotel Plaza Meru. 2026
-*/

@@ -8,6 +8,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    // Necesario en Docker (Windows/WSL2) los eventos de cambio de archivo
+    // no siempre llegan por bind mount. Polling garantiza hot reload.
+    watch: {
+      usePolling: true,
+      interval: 500,
+    },
     proxy: {
       '/api': {
         target: 'http://backend:80',
