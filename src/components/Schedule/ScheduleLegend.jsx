@@ -26,7 +26,7 @@ function ScheduleLegend({  }) {
         <span className="w-20 text-center px-2 py-1 bg-[#363f4c] text-gray-400 border border-gray-400 rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#363f4cd9] hover:scale-105 hover:shadow-sm">
           BAJA
         </span>
-        <span className="text-gray-200 font-medium">Personal dado de baja</span>
+        <span className="text-gray-200 font-medium">Personal en (renuncia, despedido, inactivo)</span>
       </div>
     </div> 
   );

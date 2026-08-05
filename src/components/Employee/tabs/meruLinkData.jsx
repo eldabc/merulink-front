@@ -110,7 +110,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                 disabled={viewMode}
                 type="checkbox"
                 {...register('useMeruLink')}
-                className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`}
+                className={`w-4 h-4 rounded ${disabledClasses}`}
                 onClick={() => !createMode && toggleEmployeeField(employee, "use_meru_link")}
               />
             )}
