@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import ErrorMessage from '../Shared/ErrorMessage'; // Tu componente de error existente
+// import ErrorMessage from '../Shared/ErrorMessage';
 import HasPermission from '../Shared/HasPermission';
 
-const ScheduleWorkflowSteps = ({ viewMode }) => {
+const ScheduleWorkflowSteps = ({ viewMode, reviewedBy, approvedBy }) => {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
 
   // Escuchamos los cambios de los tres estados en tiempo real
@@ -57,7 +57,11 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
               <span className={`text-sm font-bold ${isReviewed ? 'text-[#ffb900]' : 'text-gray-300'}`}>1. Revisado</span>
               <div className='flex flex-row'>
                 <span className="text-xs text-gray-400">Verificación inicial por:</span>
-                <span className="text-xs text-[#ffb900] pl-2"> Sistemas </span>
+                <span className="text-xs text-[#ffb900] pl-2">
+                  {reviewedBy?.firstName
+                    ? `${reviewedBy.firstName} ${reviewedBy.lastName ?? ''}`
+                    : '—'}
+                </span>
               </div>
             </div>
           </label>
@@ -79,14 +83,18 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
                 <span className={`text-sm font-bold ${isApproved ? 'text-green-400' : 'text-gray-300'}`}>2. Aprobado</span>
                 <div className='flex flex-row'>
                   <span className="text-xs text-gray-400">Validado por: </span>
-                  <span className="text-xs text-green-400 pl-2"> Sistemas </span>
+                  <span className="text-xs text-green-400 pl-2">
+                    {approvedBy?.firstName
+                      ? `${approvedBy.firstName} ${approvedBy.lastName ?? ''}`
+                      : '—'}
+                  </span>
                 </div>
               </div>
             </label>
           </HasPermission>
 
           {/* PASO 3: CERRADO */}
-          <HasPermission permissions={["closed-schedules"]}>
+          {/* <HasPermission permissions={["closed-schedules"]}>
             <label className={`hidden flex items-center gap-3 p-3 rounded-lg border transition-all
               ${!isApproved ? 'opacity-40 cursor-not-allowed bg-[#1b1c1e] border-transparent' : 'cursor-pointer'}
               ${isClosed ? 'border-red-500 bg-red-500/10' : isApproved ? 'border-[#43474a] bg-[#252729]' : ''}
@@ -106,7 +114,7 @@ const ScheduleWorkflowSteps = ({ viewMode }) => {
                 </div>
               </div>
             </label>
-          </HasPermission>
+          </HasPermission> */}
 
         </div>
 

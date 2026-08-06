@@ -424,7 +424,7 @@ const ScheduleGrid = forwardRef(({
                 </div>
               )}
               
-              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} /> )}
+              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} reviewedBy={scheduleData?.reviewedBy} approvedBy={scheduleData?.approvedBy} /> )}
 
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
