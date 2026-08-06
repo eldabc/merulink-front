@@ -113,19 +113,19 @@ export default function ScheduleForm({ }) {
           } else if (schedule.isClosed || schedule.status === 'approved') {
             
             setMode('view');
-            console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
+            // console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
 
           } else {
-            
-            if (schedule?.id) { // Si ya hay horario guardado
+            // Si ya hay horario guardado
+            if (schedule?.id) { 
               
               setMode('edit');
-              console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)", schedule.employees);
+              // console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)", schedule.employees);
 
             } else { // No hay nada en la BD para esta quincena
               
               setMode('create');
-              console.log("Formulario en Modo: CREATE (Nueva Planificación)",schedule);
+              // console.log("Formulario en Modo: CREATE (Nueva Planificación)",schedule);
             }
           }
 

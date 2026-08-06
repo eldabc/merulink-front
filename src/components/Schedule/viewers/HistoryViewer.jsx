@@ -42,7 +42,7 @@ const HistoryViewer = ({ isOpen, onClose, startDate, endDate, scheduleId  }) => 
         y: 60
       });
 
-      if (!isNaN(scheduleId)) {
+      if (scheduleId != null && !isNaN(scheduleId)) {
         setLoadingHistory(true);
         const historyData = await loadScheduleHistory(scheduleId);
         setData(historyData);

@@ -271,9 +271,6 @@ const ScheduleGrid = forwardRef(({
           }
 
           if (shiftObj?.color) {
-            // if (currentShiftId === 'S-0' && day.isWeekend && hasAdministrativeShift) {
-            //   return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
-            // }
             if (currentShiftId === 'S-0') {              
               if (day.isToday && hasAdministrativeShift) return { ...baseStyle, backgroundColor: '#3b82f6' };
               if (day.isWeekend && hasAdministrativeShift) return { ...baseStyle, backgroundColor: '#f8d7da', color: '#81262e' };
@@ -342,7 +339,6 @@ const ScheduleGrid = forwardRef(({
       setLoading(true);
       const shift = isOneShift ? cleanedShifts[0] : [];
       const id = scheduleData?.id;
-      // console.log("autofillAlways", autofillAlways)
 
       const newData = await autofillSchedule({ start, end, departmentId, shift, id, autofillFortnight: autofillAlways });
       if (onAutofillSuccess && newData) {
