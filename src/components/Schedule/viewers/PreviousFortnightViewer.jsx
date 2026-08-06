@@ -4,16 +4,18 @@ import { themeQuartz } from 'ag-grid-community';
 import { Rnd } from 'react-rnd';
 import dayjs from 'dayjs';
 
-import { useSchedules } from '../../context/ScheduleContext';
-import { useScheduleValidation } from '../../hooks/useScheduleValidation';
-import ShiftLegend from '../Shift/ShiftLegend';
+import { useSchedules } from '../../../context/ScheduleContext';
+import { useScheduleValidation } from '../../../hooks/useScheduleValidation';
+import ShiftLegend from '../../Shift/ShiftLegend';
 
-import { getFortnightDays } from '../../utils/Schedule/schedule-utils';
-import { truncateText } from '../../utils/text-utils';
+import { getFortnightDays } from '../../../utils/Schedule/schedule-utils';
+import { truncateText } from '../../../utils/text-utils';
 
-import LabelFieldForm from '../Shared/LabelFieldForm';
-import LiveAlerts from '../Shared/LiveAlerts';
-import SpanText from '../Shared/SpanText';
+import LabelFieldForm from '../../Shared/LabelFieldForm';
+import LiveAlerts from '../../Shared/LiveAlerts';
+import SpanText from '../../Shared/SpanText';
+import DragBar from '../../Shared/DragBar';
+import BottomWarning from '../../Shared/BottomWarning';
 
 const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   
@@ -269,33 +271,16 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
       
       // Esto le dice a react-rnd que ignore el arrastre si tocan algo con la clase 'no-drag'
       cancel=".no-drag"
-      
       className="fixed z-50 bg-[#3a3c3e] border border-gray-600 rounded-lg shadow-2xl overflow-hidden text-gray-200 flex flex-col"
       style={{ position: 'fixed', display: 'flex', flexDirection: 'column' }}
     >
-      {/* Barra de Arrastre */}
-      <div className="bg-[#2f3132] px-4 py-2 flex items-center justify-between cursor-move select-none border-b border-gray-600 shrink-0">
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
-          <span>📋 Visor: Quincena Anterior</span>
-        </div>
-        <button 
-          onClick={onClose}
-          // onTouchStart para interceptar el toque en celulares al instante
-          onTouchStart={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          // 'no-drag' para que react-rnd sepa que aquí NO se arrastra.
-          className="no-drag relative z-50 text-gray-400 hover:text-red-400 active:text-red-500 text-sm font-bold p-2 transition-colors cursor-pointer"
-        >
-          ✕
-        </button>
-      </div>
+
+      <DragBar onClose={onClose} text="Quincena Anterior" />
 
       {/* Contenido de la Tabla */}
       <div className="flex-1 min-h-0 p-3 overflow-auto text-xs">
         {loadingPrevious ? (
-          <div className="text-center py-8 text-gray-400">Cargando Quincena Anterior...</div>
+          <SpanText text="Cargando Quincena Anterior..." centerElement={true} />
         ) : (
           
           <div className="w-full flex flex-col gap-4">
@@ -306,7 +291,7 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
             </div>
 
             {rowData.length === 0 ? (
-              <SpanText text="Sin quincena anterior registrada." dinamicClasses="mt-10 text-center text-[16px]" />
+              <SpanText text="Sin quincena anterior registrada." centerElement={true} />
             ) : (
               <>
                 {/* Layout de Leyenda + Alertas */}
@@ -340,10 +325,8 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         )}
       </div>   
 
-      {/* ADVERTENCIA INFERIOR */}
-      <div className="bg-[#2f3132] px-3 py-1 text-[10px] text-gray-400 border-t border-gray-700 select-none text-center flex-shrink-0">
-        Ventana de Solo lectura • Estira los bordes para redimensionar
-      </div>
+      <BottomWarning />
+      
     </Rnd>
   );
 };

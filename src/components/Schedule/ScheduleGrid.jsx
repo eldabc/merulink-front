@@ -13,7 +13,8 @@ import { statusOptions } from '../../utils/StaticData/schedule-utils';
 import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 import { exportScheduleToPDF } from '../../utils/Schedule/exportPdf-utils';
 
-import PreviousFortnightViewer from './PreviousFortnightViewer';
+import PreviousFortnightViewer from './viewers/PreviousFortnightViewer';
+import HistoryViewer from './viewers/HistoryViewer';
 import ScheduleWorkflowSteps from './ScheduleWorkflowSteps';
 import ScheduleTopBar from '../Shared/ScheduleTopBar';
 import ScheduleLegend from './ScheduleLegend';
@@ -55,6 +56,7 @@ const ScheduleGrid = forwardRef(({
   const [gridApi, setGridApi] = useState(null);
   const [liveAlerts, setLiveAlerts] = useState([]); 
   const [showPastFortnight, setShowPastFortnight] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const { runLiveValidation, runShiftCoverageValidation } = useScheduleValidation();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,6 +81,7 @@ const ScheduleGrid = forwardRef(({
     setBrushShift(null);
     setLiveAlerts(null);
     setShowPastFortnight(false);
+    setShowHistory(false);
   }, [fortnightDays]);
   
   const onGridReady = (params) => {
@@ -367,6 +370,8 @@ const ScheduleGrid = forwardRef(({
         isExporting={isExporting} 
         setShowPastFortnight={setShowPastFortnight} 
         showPastFortnight={showPastFortnight} 
+        setShowHistory={setShowHistory} 
+        showHistory={showHistory} 
         onAutofillClick={handleAutofillClick} 
         onConfirmAutofill={handleConfirmAutofill} 
         isModalOpen={isModalOpen}
@@ -451,6 +456,14 @@ const ScheduleGrid = forwardRef(({
         isOpen={showPastFortnight} 
         onClose={() => setShowPastFortnight(false)} 
         preFortnightParams={preFortnightParams}
+      />
+
+      <HistoryViewer 
+        isOpen={showHistory} 
+        onClose={() => setShowHistory(false)}
+        startDate={scheduleData?.start}
+        endDate={scheduleData?.end}
+        scheduleId={scheduleData?.id}
       />
 
     </div>

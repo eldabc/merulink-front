@@ -1,4 +1,4 @@
-import { EyeIcon, EyeSlashIcon, DocumentTextIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
+import { EyeIcon, EyeSlashIcon, DocumentTextIcon, ArrowDownTrayIcon, ListBulletIcon, MinusIcon } from '@heroicons/react/24/solid';
 import ConfirmAutofill from '../Shared/ConfirmAutofill';
 import ToggleAutofill from '../Shared/ToggleAutofill';
 import HasRole from '../Shared/HasRole';
@@ -11,6 +11,8 @@ function ScheduleTopBar ({
   isExporting, 
   setShowPastFortnight, 
   showPastFortnight, 
+  setShowHistory,
+  showHistory,
   onAutofillClick, 
   onConfirmAutofill, 
   isModalOpen, 
@@ -66,6 +68,17 @@ function ScheduleTopBar ({
           {showPastFortnight ? ( 
             <EyeSlashIcon className='w-5 h-5 text-gray-300' />
           ) : <EyeIcon className='w-5 h-5 text-gray-300' /> }
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => setShowHistory(!showHistory)}
+          title={showHistory ? 'Ocultar Historial' : 'Ver Historial'}
+          className="flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md"
+        >
+          {showHistory ? ( 
+            <MinusIcon className='w-5 h-5 text-gray-300' />
+          ) : <ListBulletIcon className='w-5 h-5 text-gray-300' /> }
         </button>
       </HasRole>
 

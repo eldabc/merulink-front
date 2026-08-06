@@ -51,6 +51,16 @@ export const ScheduleProvider = ({ children }) => {
     }
   };
 
+  const loadScheduleHistory = async (id) => {
+    try {
+      const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings/${id}/history`);
+      console.log("response", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error cargando historial", error);
+    }
+  };
+
   // *** Crear
   const createSchedule = async (formData) => {
 
@@ -212,6 +222,7 @@ export const ScheduleProvider = ({ children }) => {
     getShifts,
     scheduleData,
     setScheduleData, 
+    loadScheduleHistory
   };
 
   return (
