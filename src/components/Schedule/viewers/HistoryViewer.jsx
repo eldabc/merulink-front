@@ -8,11 +8,12 @@ import { truncateText } from '../../../utils/text-utils';
 import SpanText from '../../Shared/SpanText';
 import DragBar from '../../Shared/DragBar';
 import BottomWarning from '../../Shared/BottomWarning';
+import HistoryTable from './HistoryTable';
 
 const HistoryViewer = ({ isOpen, onClose, startDate, endDate, scheduleId  }) => {
   
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const { loadScheduleHistory } = useSchedules();
   
   // Guarda el tamaño y las coordenadas exactas del visor
@@ -43,8 +44,8 @@ const HistoryViewer = ({ isOpen, onClose, startDate, endDate, scheduleId  }) => 
 
       if (!isNaN(scheduleId)) {
         setLoadingHistory(true);
-        const history = await loadScheduleHistory(scheduleId);
-        setData(history);
+        const historyData = await loadScheduleHistory(scheduleId);
+        setData(historyData);
         setLoadingHistory(false);
       }
     };
@@ -92,13 +93,7 @@ const HistoryViewer = ({ isOpen, onClose, startDate, endDate, scheduleId  }) => 
               </h2>
             </div>
 
-            {data && data.length === 0 ? (
-              <SpanText text="Sin registros en historial." centerElement={true} />
-            ) : (
-              <div className="ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden shrink-0">
-                
-              </div>
-            )}
+            <HistoryTable data={data} />
           </div> 
         )}
       </div>   

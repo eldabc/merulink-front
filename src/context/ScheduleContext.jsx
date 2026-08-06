@@ -54,10 +54,10 @@ export const ScheduleProvider = ({ children }) => {
   const loadScheduleHistory = async (id) => {
     try {
       const response = await axios.get(`${ENV.API_BACK_URL}schedule-plannings/${id}/history`);
-      console.log("response", response.data);
-      return response.data;
+      return response.data?.data ?? [];
     } catch (error) {
       console.error("Error cargando historial", error);
+      return [];
     }
   };
 
