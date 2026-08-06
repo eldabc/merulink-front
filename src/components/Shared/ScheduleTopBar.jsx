@@ -1,4 +1,4 @@
-import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
+import { EyeIcon, EyeSlashIcon, DocumentTextIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ConfirmAutofill from '../Shared/ConfirmAutofill';
 import ToggleAutofill from '../Shared/ToggleAutofill';
 import HasRole from '../Shared/HasRole';
@@ -39,7 +39,7 @@ function ScheduleTopBar ({
             title={'Rellenar Quincena'}
             className={`flex gap-2 px-4 py-2 bg-[#525456] hover:border rounded-md ${disabledClasses}`}
           >
-            <ClipboardDocumentListIcon className='w-5 h-5 text-gray-300' />
+            <DocumentTextIcon className='w-5 h-5 text-gray-300' />
           </button>
         </HasPermission>
         </>

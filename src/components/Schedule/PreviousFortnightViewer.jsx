@@ -20,9 +20,9 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
   const [loadingPrevious, setLoadingPrevious] = useState(false);
   const [previousData, setPreviousData] = useState({});
   const { loadFormData } = useSchedules();
-  const { runLiveValidation } = useScheduleValidation();
+  // const { runLiveValidation } = useScheduleValidation();
   const [previousFortnightDays, setPreviousFortnightDays] = useState([]);
-  const [liveAlerts, setLiveAlerts] = useState([]);
+  // const [liveAlerts, setLiveAlerts] = useState([]);
   const [gridApi, setGridApi] = useState(null);
   const shifts = previousData?.shifts;
   const hasAdministrativeShift = useMemo(() => shifts?.some(s => s.typeShift === 'administrative'), [shifts]);
@@ -85,12 +85,12 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
     return flatRows;
   }, [previousData]);
 
-  useEffect(() => {
-    if (rowData.length > 0) {
-      const alerts = runLiveValidation(rowData);
-      setLiveAlerts(alerts);
-    }
-  }, [rowData, runLiveValidation]);
+  // useEffect(() => {
+  //   if (rowData.length > 0) {
+  //     const alerts = runLiveValidation(rowData);
+  //     setLiveAlerts(alerts);
+  //   }
+  // }, [rowData, runLiveValidation]);
   
   const columnDefs = useMemo(() => {
     const baseCols = [
@@ -334,17 +334,6 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
                     domLayout="autoHeight"
                   />
                 </div>
-
-                {/* <div className="flex flex-col gap-2 w-full div-border p-3">
-                  <LabelFieldForm field="Observación" dinamicClasses="mb-1" />
-                  <textarea
-                    readOnly={viewMode}
-                    value={previousData?.observations ?? ''}
-                    rows="3"                 
-                    placeholder="Sin observaciones en esta quincena..."
-                    className="filter-input p-2 cursor-not-allowed opacity-60 select-none bg-[#2b2d2f] text-gray-300 rounded border border-gray-700 resize-none text-xs w-full"
-                  />
-                </div> */}
               </>
             )}
           </div> 

@@ -183,16 +183,15 @@ export const GlobalDataProvider = ({ children }) => {
     }
   };
 
-  const getEmployeesByDepartment = async (departmentId, start, end) => {
-    try {
-      // console.log("getEmployeesByDepartment", departmentId, start, end);      
-      const res = await getEmployeesByDept(departmentId, start, end);
-      // console.log("RES getEmployees", res);
-      return res;
-    } catch (error) {
-      console.error("Error cargando empleados por departamento:", error);
-    }
-  };
+  // const getEmployeesByDepartment = async (departmentId, start, end) => {
+  //   try {      
+  //     const res = await getEmployeesByDept(departmentId, start, end);
+  //     // console.log("RES getEmployees", res);
+  //     return res;
+  //   } catch (error) {
+  //     console.error("Error cargando empleados por departamento:", error);
+  //   }
+  // };
 
   const contextValue = {
     departments, 
@@ -212,7 +211,7 @@ export const GlobalDataProvider = ({ children }) => {
     categoryEvents,
     getLocations,
     locations,
-    getEmployeesByDepartment
+    // getEmployeesByDepartment
   };
 
   return (

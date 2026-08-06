@@ -4,9 +4,10 @@ import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
+import { getEmployeesByDept } from '../services/masterDataService';
+
 import { allMonths } from '../utils/StaticData/months-utils';
 import { capitalizeFirstLetter } from '../utils/text-utils';
-
 import { mapScheduleToBackend } from '../utils/mappers/scheduleMapper';
 
 const ScheduleContext = createContext();
@@ -24,8 +25,6 @@ export const ScheduleProvider = ({ children }) => {
   const [shifts, setShifts] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [events, setEvents] = useState([]);
-  
-  const { getEmployeesByDepartment } = useGlobalData();
 
   const loadSchedules = useCallback(async (departmentId, month, year) => {
     setLoading(true);
@@ -43,17 +42,12 @@ export const ScheduleProvider = ({ children }) => {
   }, []);
 
   const loadFormData = async (departmentId, start, end) => {
-    // setLoading(true);
     try {
 
-      const responseData = await getEmployeesByDepartment(departmentId, start, end);
-      // console.log("loadFormData", responseData);
-      return responseData;;
+      return await getEmployeesByDept(departmentId, start, end);
 
     } catch (error) {
       console.error("Error cargando datos del formulario", error);
-    } finally {
-      // setLoading(false);
     }
   };
 
