@@ -69,19 +69,15 @@ export const ScheduleProvider = ({ children }) => {
 
       console.log("Creado", newSchedule);
       const response = await axios.post(`${ENV.API_BACK_URL}schedule-plannings`, newSchedule);
-
-      setScheduleData(prevData => {
-        return [response.data.data, ...prevData]; 
-      });
+      // console.log("response", response.data.data);
 
       const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
       showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} creado con éxito`);
       
-      return true;
+      return response.data.data;
     } catch (error) {
       console.log("error", error);
       showNotification('Error al crear Horario', error.response?.data?.message, 'error');
-      return false;
     }
   };
 
@@ -99,11 +95,6 @@ export const ScheduleProvider = ({ children }) => {
       console.log("Actualizado:", updatedSchedule);
       
       const response = await axios.put(`${ENV.API_BACK_URL}schedule-plannings/${scheduleId}`, updatedSchedule);
-      
-      // setScheduleData(prevData => {
-      //   const filteredData = prevData.filter(schedule => schedule.id !== scheduleId);
-      //   return [response.data.data, ...filteredData];
-      // });
 
       const selectedMonth = allMonths.find(m => m.value === Number(formData.monthNumber));
       showNotification(`Horario ${selectedMonth.label} quincena ${formData.selectedFortnight} actualizado con éxito`); 

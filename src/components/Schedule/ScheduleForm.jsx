@@ -3,13 +3,14 @@ import { useEffect, useState, useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getDisabledClasses } from '../../utils/global-utils';  
-import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
 import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 import { useAuth } from '../../context/AuthContext';
 
-import { getStarEndFortnight, getFortnightDays, getFortnightInfo } from '../../utils/Schedule/schedule-utils';
+import { getDisabledClasses } from '../../utils/global-utils';  
+import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
+
+import { getStarEndFortnight, getFortnightDays, getFortnightInfo, resolveFinalStatus } from '../../utils/Schedule/schedule-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ScheduleFilter from './ScheduleFilter';
@@ -117,16 +118,13 @@ export default function ScheduleForm({ }) {
             setMode('view');
 
           } else {
-            // Si ya hay horario guardado
-            if (schedule?.id) { 
+            // Si ya hay horario guardado (Quincena Abierta con registros)
+            if (schedule?.id) {
               
               setMode('edit');
-              // console.log("Formulario en Modo: EDIT (Quincena Abierta con registros)", schedule.employees);
 
-            } else { // No hay nada en la BD para esta quincena
-              
+            } else { // No hay nada en la BD para esta quincena (Nueva Planificación)
               setMode('create');
-              // console.log("Formulario en Modo: CREATE (Nueva Planificación)",schedule);
             }
           }
 
@@ -190,16 +188,6 @@ export default function ScheduleForm({ }) {
 
     const gridPayload = scheduleGridRef.current ? scheduleGridRef.current.collectGridPayload() : { shifts: [], schedules: [] };
 
-    let finalStatus = 'created'; // Estado por defecto
-
-    if (data.isClosed) {
-      finalStatus = 'closed';
-    } else if (data.isApproved) {
-      finalStatus = 'approved';
-    } else if (data.isReviewed) {
-      finalStatus = 'reviewed';
-    }
-
     const payload = {
       ...data,
       id: formData?.id,
@@ -209,28 +197,25 @@ export default function ScheduleForm({ }) {
       selectedFortnight,
       shifts: gridPayload.shifts,
       schedules: gridPayload.schedules,
-      status: finalStatus
+      status: resolveFinalStatus(data)
     };
 
-    let success = false;
+    let response = {};
 
     if (mode === 'edit') { 
-      success = await updateSchedule(payload);
+      response = await updateSchedule(payload);
     } else if (mode === 'create') {
-      success = await createSchedule(payload);
+      response = await createSchedule(payload);
     }
 
-    // if (success) {
-      // navigate(`/empleados/horarios`);
-    // }
+    setFormData(response);
+    setMode('edit');
   };
 
   const onError = (formErrors) => {
     console.warn('Form validation errors:', formErrors);
     if (!formErrors) return;
   };
-
-  // const disabledClasses = getDisabledClasses(mode === 'view');
 
   const handleAutofillAlwaysChange = async (checked) => {
     const departmentId = formData?.departmentId;
@@ -252,13 +237,14 @@ export default function ScheduleForm({ }) {
   const handleAutofillSuccess = (newData) => {
     setFormData(newData);
     setAutofillAlways(!!(newData?.autofillAlways ?? autofillAlways));
-    if (newData?.isClosed || newData?.status === 'approved') {
-      setMode('view');
-    } else if (newData?.id) {
-      setMode('edit');
-    } else {
-      setMode('create');
-    }
+    // if (newData?.isClosed || newData?.status === 'approved') {
+    //   setMode('view');
+    // } else if (newData?.id) {
+    //   setMode('edit');
+    // } else {
+    //   setMode('create');
+    // }
+    setMode('edit');
   };
 
   return (

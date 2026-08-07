@@ -136,3 +136,14 @@ export function getFortnightDetails(date, indicator = 'current') {
   };
 }
 
+// Determina el estado final del horario
+export function resolveFinalStatus(data) {
+
+  if (data.isClosed) return 'closed';
+
+  if (data.isApproved) return 'approved';
+
+  if (data.isReviewed) return 'reviewed';
+
+  return 'created'; // Estado por defecto
+};
