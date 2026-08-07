@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-// import ErrorMessage from '../Shared/ErrorMessage';
+import { useAuth } from '../../context/AuthContext';
 import HasPermission from '../Shared/HasPermission';
 
 const ScheduleWorkflowSteps = ({ viewMode, reviewedBy, approvedBy }) => {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const { user } = useAuth();
+  const canApprove = user?.permissions?.includes('approve-schedules');
 
   // Escuchamos los cambios de los tres estados en tiempo real
   const isReviewed = watch('isReviewed', false);
@@ -67,15 +69,14 @@ const ScheduleWorkflowSteps = ({ viewMode, reviewedBy, approvedBy }) => {
           </label>
 
           {/* PASO 2: APROBADO */}
-          <HasPermission permissions={["approve-schedules"]}>
             <label className={`flex items-center gap-3 p-3 rounded-lg border transition-all
-              ${!isReviewed ? 'opacity-40 cursor-not-allowed bg-[#1b1c1e] border-transparent' : 'cursor-pointer'}
-              ${isApproved ? 'border-green-500 bg-green-500/10' : isReviewed ? 'border-[#43474a] bg-[#252729]' : ''}
+              ${!isReviewed || !canApprove ? 'opacity-40 cursor-not-allowed bg-[#1b1c1e] border-transparent' : 'cursor-pointer'}
+              ${isApproved ? 'border-green-500 bg-green-500/10' : isReviewed && canApprove ? 'border-[#43474a] bg-[#252729]' : ''}
               ${viewMode ? 'pointer-events-none' : ''}`}
             >
               <input
                 type="checkbox"
-                disabled={!isReviewed || viewMode} // Deshabilitado si no está revisado
+                disabled={!isReviewed || viewMode || !canApprove}
                 {...register('isApproved')}
                 className="w-4 h-4 rounded text-green-500 focus:ring-green-500 bg-[#3a3d40] border-[#555a5e] disabled:opacity-30"
               />
@@ -91,7 +92,6 @@ const ScheduleWorkflowSteps = ({ viewMode, reviewedBy, approvedBy }) => {
                 </div>
               </div>
             </label>
-          </HasPermission>
 
           {/* PASO 3: CERRADO */}
           {/* <HasPermission permissions={["closed-schedules"]}>

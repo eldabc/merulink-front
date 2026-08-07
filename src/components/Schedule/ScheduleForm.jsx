@@ -107,13 +107,14 @@ export default function ScheduleForm({ }) {
           
           // Si usuario no es admin ni supervisor, forzar modo view
           const isAdminOrSupervisor = user?.roles?.some(role => ['admin', 'supervisor'].includes(role));
+          const isAdmin = user?.roles?.includes('admin');
+
           if (!isAdminOrSupervisor) {
             
             setMode('view');
-          } else if (schedule.isClosed || schedule.status === 'approved') {
+          } else if (schedule.isClosed || (schedule.status === 'approved' && !isAdmin)) {
             
             setMode('view');
-            // console.log("Formulario en Modo: VIEW (Quincena Cerrada)", schedule);
 
           } else {
             // Si ya hay horario guardado
