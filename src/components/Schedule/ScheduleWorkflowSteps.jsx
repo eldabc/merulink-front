@@ -51,7 +51,7 @@ const ScheduleWorkflowSteps = ({ viewMode, reviewedBy, approvedBy }) => {
           >
             <input
               type="checkbox"
-              disabled={viewMode}
+              disabled={viewMode || reviewedBy?.firstName} 
               {...register('isReviewed')}
               className="w-4 h-4 rounded text-[#ffb900] focus:ring-[#ffb900] bg-[#3a3d40] border-[#555a5e]"
             />
