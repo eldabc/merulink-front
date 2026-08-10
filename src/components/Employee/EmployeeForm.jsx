@@ -6,11 +6,11 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { getDisabledClasses } from '../../utils/global-utils';  
+import { getDisabledClasses, splitPhone, capitalizeWords } from '../../utils/global-utils';  
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
-import { splitPhone } from '../../utils/global-utils';
+
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
 import { formatCI } from '../../utils/text-utils';
 
@@ -346,10 +346,10 @@ export default function EmployeeForm({ mode = 'create' }) {
   };
 
   const handleScraperDataFound = (data) => {
-    if (data.first_name) setValue('firstName', data.first_name);
-    if (data.second_name) setValue('secondName', data.second_name);
-    if (data.last_name) setValue('lastName', data.last_name);
-    if (data.second_last_name) setValue('secondLastName', data.second_last_name);
+    if (data.first_name) setValue('firstName', capitalizeWords(data.first_name.toLowerCase()));
+    if (data.second_name) setValue('secondName', capitalizeWords(data.second_name.toLowerCase()));
+    if (data.last_name) setValue('lastName', capitalizeWords(data.last_name.toLowerCase()));
+    if (data.second_last_name) setValue('secondLastName', capitalizeWords(data.second_last_name.toLowerCase()));
     if (data.ci) setValue('ci', formatCI(data.ci.replace("V-", "")));
     if (data.birthdate) {
       const [d, m, y] = data.birthdate.split('/');

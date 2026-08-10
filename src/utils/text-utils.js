@@ -1,3 +1,5 @@
+import { capitalizeWords } from './global-utils';
+
 // Normalizar strings para la busqueda
 export function normalizeText(text) {
     const safeText = String(text ?? '');
@@ -24,6 +26,11 @@ export const upperOption = { onChange: (e) => { e.target.value = e.target.value.
 
 // Helper para react-hook-form: convierte el valor a minúsculas en tiempo real
 export const lowerOption = { onChange: (e) => { e.target.value = e.target.value.toLowerCase(); } };
+
+// Helper para react-hook-form: limpia y aplica formato de título en tiempo real
+export const capitalizeOption = {
+  onChange: (e) => { e.target.value = capitalizeWords(e.target.value); },
+};
 
 // Formatea cédula: 8123456 → 8.123.456, 21123456 → 21.123.456
 export function formatCI(value) {

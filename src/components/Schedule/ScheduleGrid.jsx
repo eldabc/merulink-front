@@ -82,7 +82,7 @@ const ScheduleGrid = forwardRef(({
     setLiveAlerts(null);
     setShowPastFortnight(false);
     setShowHistory(false);
-  }, [fortnightDays]);
+  }, [fortnightDays, scheduleData]);
   
   const onGridReady = (params) => {
     setGridApi(params.api);

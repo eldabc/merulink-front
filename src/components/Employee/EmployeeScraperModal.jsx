@@ -223,7 +223,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               </div>
 
               <div>
-                <input type="text" value={captchaCode} onChange={e => setCaptchaCode(e.target.value)}
+                <input type="text" value={captchaCode} onChange={e => setCaptchaCode(e.target.value.toLowerCase())}
                   placeholder="Código de la imagen" autoFocus maxLength={10}
                   className="w-full px-3 py-2.5 rounded-lg bg-[#2a2a3a] border border-[#ffffff21] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 text-center tracking-widest text-lg" />
               </div>

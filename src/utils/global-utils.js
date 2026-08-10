@@ -58,3 +58,18 @@ export const splitPhone = (fullNumber, withDash = false) => {
 
   return { code, number };
 };
+
+
+/**
+ * Limpia un texto permitiendo solo letras (incluye acentos y ñ) y espacios,
+ * y capitaliza la primera letra de cada palabra.
+ * @param {string} value - Texto crudo del input
+ * @returns {string} - Texto limpio y capitalizado
+ */
+export const capitalizeWords = (value) => {
+  if (!value) return value;
+
+  const cleaned = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+  // \p{L} con flag u: capitaliza también letras con acento y ñ
+  return cleaned.replace(/(^|\s)\p{L}/gu, (match) => match.toUpperCase());
+};

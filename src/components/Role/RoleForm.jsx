@@ -6,7 +6,7 @@ import { Shield, ChevronRight, Check } from 'lucide-react';
 import { useRoles } from '../../context/RoleContext';
 
 import { roleValidationSchema } from '../../utils/Validations/roleValidationSchema';
-import { getDisabledClasses } from '../../utils/global-utils';  
+import { getDisabledClasses, capitalizeWords } from '../../utils/global-utils';  
 
 import Counter from '../Shared/Counter';
 import TitleHeader from '../Shared/TitleHeader';
@@ -124,8 +124,7 @@ function RoleForm ({ mode = 'create' }) {
   };
 
   const changeRoleLabel = (e) => {
-    const cleaned = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-    const capitalized = cleaned.replace(/\b\w/g, (char) => char.toUpperCase());
+    const capitalized = capitalizeWords(e.target.value);
     setValue('roleName', capitalized, { shouldValidate: true, shouldDirty: true });
   };
 

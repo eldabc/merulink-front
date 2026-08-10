@@ -1,6 +1,7 @@
+import { capitalizeOption } from '../../utils/text-utils';
+
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import ErrorMessage from '../Shared/ErrorMessage';
-import { upperOption } from '../../utils/text-utils';
 
 function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
 
@@ -12,7 +13,7 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('firstName', upperOption)}
+          {...register('firstName', capitalizeOption)}
           placeholder='Ingrese primer nombre'
           className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
@@ -25,7 +26,7 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('secondName', upperOption)}
+          {...register('secondName', capitalizeOption)}
           placeholder='Ingrese segundo nombre'
           className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
@@ -38,7 +39,7 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('lastName', upperOption)}
+          {...register('lastName', capitalizeOption)}
           placeholder='Ingrese primer apellido'
           className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
@@ -51,7 +52,7 @@ function HeaderEmployeeForm ({ register, errors, viewMode, disabledClasses }) {
       <div>
         <input
           readOnly={viewMode}
-          {...register('secondLastName', upperOption)}
+          {...register('secondLastName', capitalizeOption)}
           placeholder='Ingrese segundo apellido'
           className={`w-full rounded-lg filter-input ${disabledClasses}`}
         />
