@@ -69,9 +69,10 @@ export const topMenuItems = menuItems.filter((item) => !item.parentId).map((item
  * 
  * Reglas:
  * - Ítem con `hidden: true`: siempre excluido (módulo no desarrollado).
- * - Ítem con `permission`: se muestra solo si el usuario tiene ese permiso.
- * - Ítem sin `permission` ni `hidden`: se muestra si es hoja, o si tiene al menos un hijo visible.
- * - Un padre contenedor se oculta si todos sus hijos están ocultos.
+ * - Hoja con `permission`: se muestra solo si el usuario tiene ese permiso.
+ * - Hoja sin `permission`: se muestra siempre.
+ * - Contenedor (tiene hijos): se muestra si tiene al menos un hijo visible, o si el usuario posee su propio `permission`.
+ * - Un padre contenedor se oculta si todos sus hijos están ocultos y el usuario no tiene su permiso.
  *
  * @param {Array} items - Array plano de items del menú
  * @param {string[]} userPermissions - Array de permisos del usuario
@@ -126,12 +127,12 @@ export function filterMenuItemsByPermissions(items, userPermissions) {
     const anyChildKept = children.some(childId => shouldKeep(childId));
 
     let result;
-    if (item.permission) {
-      // Tiene permiso requerido → solo si el usuario lo posee
-      result = permSet.has(item.permission);
+    if (children.length === 0) {
+      // Hoja: se muestra según su permiso (o siempre si no tiene)
+      result = item.permission ? permSet.has(item.permission) : true;
     } else {
-      // Sin permiso → se muestra si es hoja O tiene al menos un hijo visible
-      result = children.length === 0 || anyChildKept;
+      // Contenedor: visible si tiene su propio permiso O al menos un hijo visible
+      result = (item.permission ? permSet.has(item.permission) : false) || anyChildKept;
     }
 
     keep.set(itemId, result);
