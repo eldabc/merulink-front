@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
 import SpanText from '../../Shared/SpanText';
 
-export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
+export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
   
+  const { register, formState: { errors } } = useFormContext();
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const showNotApply = subDepartments?.length === 0 || (viewMode && !employee?.subDepartment?.id);
 

@@ -131,6 +131,20 @@ export const employeeValidationSchema = (options = {}) => {
           schema.notRequired().nullable()
         
       }),
+    roleId: yup
+      .string()
+      .nullable()
+      .optional()
+      .when('useMeruLink', {
+        is: true,
+        then: (schema) => {
+          return schema
+            .required('Rol de usuario es requerido.');
+        },
+        otherwise: (schema) => 
+          schema.notRequired().nullable()
+        
+      }),
     status: yup.boolean(),
     useMeruLink: yup.boolean(),
     useHidCard: yup.boolean(),

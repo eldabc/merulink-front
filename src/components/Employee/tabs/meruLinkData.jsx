@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -12,8 +13,9 @@ import ErrorMessage from '../../Shared/ErrorMessage';
 import OptionSelect from '../../Shared/OptionSelect';
 import SpanText from '../../Shared/SpanText';
 
-export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
+export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, employee }) {
   
+  const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { loadingFieldChange, toggleEmployeeField, toggleResetPass } = useEmployees();
   const { user } = useAuth();
   const [roles, setRoles] = useState([]);

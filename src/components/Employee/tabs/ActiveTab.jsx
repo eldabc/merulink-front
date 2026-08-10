@@ -1,0 +1,87 @@
+import PersonalData from './PersonalData';
+import WorkData from './WorkData';
+import ContactData from './ContactData';
+import MeruLinkData from './meruLinkData';
+import HidCard from './HidCard';
+import LockerAssign from './LockerAssign';
+
+/**
+ * Renderiza la pestaña activa del formulario de empleado.
+ * Inyecta props que NO vienen de react-hook-form (pantalla/dominio).
+ */
+export default function ActiveTab({
+  activeTab,
+  mode,
+  createMode,
+  viewMode,
+  isEmployeeActive,
+  disabledClasses,
+  employee,
+  departments,
+  loadingData,
+  selectedDepartmentId,
+  subDepartments,
+  positions,
+  empLockerAssign,
+  selectedSex,
+}) {
+  switch (activeTab) {
+    case 'personal':
+      return <PersonalData viewMode={viewMode} disabledClasses={disabledClasses} />;
+
+    case 'work':
+      return (
+        <WorkData
+          createMode={createMode}
+          viewMode={viewMode}
+          isEmployeeActive={isEmployeeActive}
+          disabledClasses={disabledClasses}
+          employee={employee}
+          availableDepartments={departments}
+          loadingData={loadingData}
+          selectedDepartmentId={selectedDepartmentId}
+          subDepartments={subDepartments}
+          positions={positions}
+        />
+      );
+
+    case 'contact':
+      return <ContactData viewMode={viewMode} />;
+
+    case 'meruLink':
+      return (
+        <MeruLinkData
+          createMode={createMode}
+          viewMode={viewMode}
+          isEmployeeActive={isEmployeeActive}
+          disabledClasses={disabledClasses}
+          employee={employee}
+        />
+      );
+
+    case 'hidCard':
+      return (
+        <HidCard
+          createMode={createMode}
+          viewMode={viewMode}
+          isEmployeeActive={isEmployeeActive}
+          disabledClasses={disabledClasses}
+          employee={employee}
+        />
+      );
+
+    case 'lockerAssign':
+      return (
+        <LockerAssign
+          mode={mode}
+          empLockerAssign={empLockerAssign}
+          selectedSex={selectedSex}
+          isEmployeeActive={isEmployeeActive}
+          disabledClasses={disabledClasses}
+        />
+      );
+
+    default:
+      return null;
+  }
+}

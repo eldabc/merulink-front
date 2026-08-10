@@ -1,10 +1,12 @@
+import { useFormContext } from 'react-hook-form';
 import { useEmployees } from '../../../context/EmployeeContext';
 
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
 
-function HidCard({ createMode, viewMode, isEmployeeActive, disabledClasses, register, errors, employee, watch, setValue }) {
+function HidCard({ createMode, viewMode, isEmployeeActive, disabledClasses, employee }) {
     
+    const { register } = useFormContext();
     const { loadingFieldChange, toggleEmployeeField } = useEmployees();
     const useHidCardWatch = false; //watch('useHidCard');
 

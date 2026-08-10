@@ -1,3 +1,4 @@
+import { useFormContext } from 'react-hook-form';
 import { phoneCodes, mobilePhoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from "../../Shared/ErrorMessage";
@@ -5,7 +6,8 @@ import InputEmail from "../../Shared/InputEmail";
 import PhoneNumber from "../../Shared/PhoneNumber";
 import { ciOption } from "../../../utils/text-utils";
 
-export default function PersonalData({ viewMode, register, errors, disabledClasses, setValue }) {
+export default function PersonalData({ viewMode, disabledClasses }) {
+  const { register, setValue, formState: { errors } } = useFormContext();
 
    return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
@@ -14,12 +14,7 @@ import { calculateAge } from '../../utils/calculateAge-utils';
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
 import { formatCI } from '../../utils/text-utils';
 
-import PersonalData from "./tabs/PersonalData";
-import WorkData from "./tabs/WorkData";
-import ContactData from "./tabs/ContactData";
-import MeruLinkData from "./tabs/meruLinkData";
-import HidCard from "./tabs/HidCard";
-import LockerAssign from "./tabs/LockerAssign";
+import ActiveTab from "./tabs/ActiveTab";
 import TabButtonsManager from './tabs/TabButtonsManager';
 
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -42,14 +37,11 @@ export default function EmployeeForm({ mode = 'create' }) {
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
   const editMode = mode === 'edit';
-  const { register, handleSubmit, control, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const methods = useForm({
     resolver: yupResolver(employeeValidationSchema({ isEditMode: editMode })),
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'contacts',
-  });
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = methods;
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
@@ -271,65 +263,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     return employeeDataForm;
   };
 
-  const getActivetab = (activeTab) => {
-    switch (activeTab) {
-      case 'personal':
-        return <PersonalData viewMode={viewMode} register={register} errors={errors} disabledClasses={disabledClasses} setValue={setValue} />;
-      case 'work':
-        return <WorkData 
-                  createMode={createMode}
-                  viewMode={viewMode}
-                  isEmployeeActive={isEmployeeActive}
-                  disabledClasses={disabledClasses}
-                  register={register} 
-                  errors={errors} 
-                  employee={employee}  
-                  availableDepartments={departments} 
-                  loadingData={loadingData}
-                  selectedDepartmentId={selectedDepartmentId}
-                  subDepartments={subDepartments}
-                  positions={positions}
-                />;
-      case 'contact':
-        return <ContactData viewMode={viewMode} register={register} errors={errors} fields={fields} append={append} remove={remove} />;
-      case 'meruLink':
-        return <MeruLinkData 
-                  createMode={createMode} 
-                  viewMode={viewMode} 
-                  isEmployeeActive={isEmployeeActive} 
-                  disabledClasses={disabledClasses} 
-                  register={register} 
-                  errors={errors} 
-                  employee={employee}  
-                  watch={watch}
-                  setValue={setValue}
-                />;
-      case 'hidCard':
-        return <HidCard 
-                  createMode={createMode} 
-                  viewMode={viewMode} 
-                  isEmployeeActive={isEmployeeActive} 
-                  disabledClasses={disabledClasses} 
-                  register={register} 
-                  errors={errors} 
-                  employee={employee}  
-                  watch={watch}
-                  setValue={setValue}
-                />;
-      case 'lockerAssign':
-        return <LockerAssign 
-                mode={mode}
-                register={register} 
-                errors={errors} 
-                empLockerAssign={empLockerAssign} 
-                selectedSex={selectedSex} 
-                setValue={setValue}
-                isEmployeeActive={isEmployeeActive}
-                watch={watch}
-                disabledClasses={disabledClasses}
-              />;
-    }
-  };
 
   const handleChangeStatusClick = (employee) => {
     setIsModalOpen(true);
@@ -369,6 +302,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   // console.log("EMPLOYEES", employee);
   return (
     <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <FormProvider {...methods}>
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       
       <div className="aling-items-right">
@@ -442,13 +376,29 @@ export default function EmployeeForm({ mode = 'create' }) {
         />
 
         <div className="mt-6">
-          {getActivetab(activeTab)}     
+          <ActiveTab
+            activeTab={activeTab}
+            mode={mode}
+            createMode={createMode}
+            viewMode={viewMode}
+            isEmployeeActive={isEmployeeActive}
+            disabledClasses={disabledClasses}
+            employee={employee}
+            departments={departments}
+            loadingData={loadingData}
+            selectedDepartmentId={selectedDepartmentId}
+            subDepartments={subDepartments}
+            positions={positions}
+            empLockerAssign={empLockerAssign}
+            selectedSex={selectedSex}
+          />
         </div>
       </div>
 
       <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
 
      </form>
+     </FormProvider>
 
       {createMode && (
         <EmployeeScraperModal

@@ -1,8 +1,12 @@
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import { getDisabledClasses } from '../../../utils/global-utils';  
 import ButtonAddContact from '../../Shared/ButtonAddContact';
 import ButtonTrash from '../../Shared/ButtonTrash';
 
-export default function ContactData({ viewMode, register, errors, fields = [], append, remove }) {
+export default function ContactData({ viewMode }) {
+
+  const { register, control, formState: { errors } } = useFormContext();
+  const { fields = [], append, remove } = useFieldArray({ control, name: 'contacts' });
 
   const disabledClasses = getDisabledClasses(viewMode);
   
@@ -26,15 +30,6 @@ export default function ContactData({ viewMode, register, errors, fields = [], a
         <div className="flex justify-between items-center mb-4">
           <p className="text-gray-300">Agregar datos de contacto de emergencia (Máximo 5)</p>
           <ButtonAddContact disabled={viewMode} handleAddContact={handleAddContact} addContacts={addContacts} dynamicClasses={disabledClasses} />
-          {/* <button
-            disabled={viewMode}
-            type="button"
-            onClick={handleAddContact}
-            className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm ${!addContacts && 'cursor-not-allowed opacity-50'} ${disabledClasses}`} 
-          >
-            <PlusIcon className="w-4 h-4" />
-            Agregar Contacto
-          </button> */}
         </div>
 
         {fields.length === 0 ? (

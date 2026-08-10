@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useEmployees } from '../../../context/EmployeeContext';
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
@@ -6,8 +7,9 @@ import PadlockPatternSteps from "../../Shared/PadlockPatternSteps";
 import ResetInstructions from '../../Shared/ResetInstructions.jsx';
 import ErrorMessage  from '../../Shared/ErrorMessage';
 
-function LockerAssign({ mode, register, errors, empLockerAssign, selectedSex, setValue, isEmployeeActive, watch, disabledClasses }) {
+function LockerAssign({ mode, empLockerAssign, selectedSex, isEmployeeActive, disabledClasses }) {
 
+  const { register, watch, setValue, formState: { errors } } = useFormContext();
   const previousSex = useRef();
   const useLockerWatch = watch('useLocker');
   const lockerAssingIdWatch = watch('lockerAssingId');
