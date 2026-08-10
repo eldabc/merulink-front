@@ -255,7 +255,11 @@ export default function ScheduleForm({ }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='w-full mt-6'>
-              <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):( 'Datos del Horario')} dinamicClasses="!mb-3" />
+              <TitleHeader title={mode === 'edit' ? ( 'Editar Horario' ):(
+                mode === 'view' 
+                  ? 'Datos del Horario' 
+                  : 'Crear Horario'
+                )} dinamicClasses="!mb-3" />
               
                <ScheduleFilter departments={filteredDepartments} months={availableMonths} globalLoading={globalLoading} />
               
