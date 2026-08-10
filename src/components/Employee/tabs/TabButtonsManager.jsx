@@ -23,7 +23,7 @@ export default function TabButtonsManager({ activeTab, setActiveTab, errors }) {
               
               const personalKeys = ['numEmployee','birthdate','placeOfBirth','nationality','age', 'sex','ci','maritalStatus','bloodType','email','mobilePhone','homePhone','address'];
               const workKeys = ['joinDate','department','subDepartment','position'];
-              const meruLinkKeys = ['userName', 'userPass'];
+              const meruLinkKeys = ['userName', 'userPass', 'roleId'];
               const lockerAssignKeys = ['lockerAssingId'];
               
               if (tab.id === 'personal') return personalKeys.some(k => Object.prototype.hasOwnProperty.call(errors, k));

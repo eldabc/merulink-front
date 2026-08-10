@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Search, X, CheckCircle, AlertTriangle, Loader2, SkipForward, Shield } from 'lucide-react';
 import { scrapeIvss, scrapeSeniat, getSeniatCaptcha } from '../../services/scraperService';
 
+import RequiredMark from '../Shared/RequiredMark';
+
+
 export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   const [ci, setCi] = useState('');
   const [birthdate, setBirthdate] = useState('');
@@ -126,7 +129,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
 // console.log("result", result)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="bg-[#1e1e2e] border border-[#ffffff21] rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+      <div className="bg-[#2f3235] border border-[#ffffff21] rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
 
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#ffffff15]">
@@ -163,7 +166,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <span className="text-sm font-medium">Datos encontrados en {result.source.toUpperCase()}</span>
               </div>
 
-              <div className="bg-[#2a2a3a] rounded-lg p-4 space-y-2 text-sm">
+              <div className="bg-[#252729] rounded-lg p-4 space-y-2 text-sm">
                 <DataRow label="Cédula" value={result.data.ci} />
                 <DataRow label="Primer Nombre" value={result.data.first_name} />
                 <DataRow label="Segundo Nombre" value={result.data.second_name} />
@@ -225,7 +228,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               <div>
                 <input type="text" value={captchaCode} onChange={e => setCaptchaCode(e.target.value.toLowerCase())}
                   placeholder="Código de la imagen" autoFocus maxLength={10}
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#2a2a3a] border border-[#ffffff21] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 text-center tracking-widest text-lg" />
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#252729] border border-[#ffffff21] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 text-center tracking-widest text-lg" />
               </div>
 
               {captchaError && <p className="text-red-400 text-sm">{captchaError}</p>}
@@ -258,22 +261,23 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 Ingrese cédula y fecha de nacimiento para buscar en el IVSS.
               </p>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Cédula <span className="text-red-400">*</span></label>
-                <input type="text" value={ci} onChange={e => setCi(e.target.value)}
-                  placeholder="Ej: 21380780" autoFocus
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#2a2a3a] border border-[#ffffff21] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500" />
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">Cédula <RequiredMark simbol="*" /></label>
+                <input 
+                  type="text" value={ci} onChange={e => setCi(e.target.value)}
+                  placeholder="Ej: 32123456" autoFocus
+                  className="input-dark" 
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Fecha Nacimiento <span className="text-red-400">*</span></label>
-                <input type="date" value={birthdate} onChange={e => setBirthdate(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#2a2a3a] border border-[#ffffff21] text-gray-200 focus:outline-none focus:border-blue-500" />
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">Fecha Nacimiento <RequiredMark simbol="*" /></label>
+                <input type="date" value={birthdate} onChange={e => setBirthdate(e.target.value)} className="input-dark" />
               </div>
               {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={onSkip} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <SkipForward className="w-4 h-4" /> Omitir
                 </button>
-                <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                <button type="submit" className="flex-1 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <Search className="w-4 h-4" /> Buscar
                 </button>
               </div>
