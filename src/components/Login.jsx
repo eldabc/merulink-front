@@ -71,7 +71,7 @@ const Login = () => {
                 type="text"
                 placeholder="Nombre usuario Ejem: nombre.apellido"
                 {...register('username')}
-                className="w-full p-2.5 rounded-lg bg-[#252729] border border-[#43474a] text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all"
+                className="input-dark"
               />
               {errors.username && ( <ErrorMessage msg={errors.username.message} /> )}
             </div>
