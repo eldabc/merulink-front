@@ -32,7 +32,7 @@ import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create' }) {
   
-  const { employeeData, toggleEmployeeField, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingFieldChange } = useEmployees();
+  const { employeeData, changeStatus, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
   const { departments, loadDepartments } = useGlobalData();
   
   const { id } = useParams();
@@ -62,7 +62,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   const createMode = mode === 'create';
   
   const viewMode = mode === 'view';
-  const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
   
   // Control del modal de scraping
   const [showScraperModal, setShowScraperModal] = useState(createMode);
@@ -273,7 +272,7 @@ export default function EmployeeForm({ mode = 'create' }) {
   const handleConfirmChangeStatus = async (data) => {
     if (!selectedEmployee) return;
 
-    await toggleEmployeeField(selectedEmployee, 'status', data);
+    await changeStatus(selectedEmployee, data);
 
     setIsModalOpen(false);
     setSelectedEmployee(null);
@@ -340,8 +339,8 @@ export default function EmployeeForm({ mode = 'create' }) {
               <>     
                 <HasPermission permissions={["change-status-employees"]}> 
                   <span className="text-sm text-gray-400">Estatus:</span>
-                    {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
-                      <SpanText text="Cargando" />
+                    {loadingChangeStatus.loading ? (
+                      <SpanText />
                     ) : (
                       <span className={`status-tag ${getStatusColor(employee?.status)}`}  
                         onClick={(e) => {
@@ -360,7 +359,6 @@ export default function EmployeeForm({ mode = 'create' }) {
                     setSelectedEmployee(null);
                   }}
                   onConfirm={handleConfirmChangeStatus}
-                  action={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
                   employee={employee}
                 />
               </>

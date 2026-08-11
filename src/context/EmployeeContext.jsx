@@ -22,6 +22,7 @@ export const EmployeeProvider = ({ children }) => {
   const { departments, loadDepartments } = useGlobalData();
   const [loadingEmployeeData, setLoadingEmployeeData] = useState(false);
   const [loadingFieldChange, setLoadingFieldChange] = useState({ loading: false, field: null });
+  const [loadingChangeStatus, setLoadingChangeStatus] = useState(false);
 
   const loadEmployees = useCallback(async () => {
       setLoadingEmployeeData(true);
@@ -43,16 +44,14 @@ export const EmployeeProvider = ({ children }) => {
   }, [loadEmployees]);
 
   // Actualizar campos checkboxs sin entrar en modo edit
-  const toggleEmployeeField = async (employee, field, extraData = {}) => { 
+  const toggleEmployeeField = async (employee, field) => { 
     setLoadingFieldChange({ loading: true, field: field });
     try {
-      console.log("Checkbox", employee, field, extraData);
+      console.log("Checkbox", employee, field);
       if (!employee.id || !field) return; 
 
       const readableField = fieldLabels[field] || field;
-      const payload = mapChangeStatusToBackend(extraData);
-
-      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, payload);
+      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, employee);
 
       setEmployeeData(prevData => {
         const filteredData = prevData.filter(emp => emp.id !== employee.id);
@@ -66,6 +65,31 @@ export const EmployeeProvider = ({ children }) => {
       return false;
     } finally {
       setLoadingFieldChange({ loading: false, field: null });
+    }
+  };
+
+
+  const changeStatus = async (employee, data = {}) => { 
+    setLoadingChangeStatus(true);
+    try {
+      console.log("ChangeStatus", employee, data);
+      if (!employee.id || !data) return; 
+
+      const payload = mapChangeStatusToBackend(data);
+      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeStatus`, payload);
+
+      setEmployeeData(prevData => {
+        const filteredData = prevData.filter(emp => emp.id !== employee.id);
+        return [response.data.data, ...filteredData];
+      });
+
+      showNotification("Éxito", `Empleado ${employee.firstName} ${employee.lastName} ${data.actionLabel}.`);  
+
+     } catch (error) {
+      showNotification('Error al cambiar el estado del Empleado', error.response?.data?.message, 'error');
+      return false;
+    } finally {
+      setLoadingChangeStatus(false);
     }
   };
 
@@ -168,11 +192,13 @@ export const EmployeeProvider = ({ children }) => {
   const contextValue = {
     loadEmployees,
     loadingFieldChange,
+    loadingChangeStatus,
     loadingEmployeeData,
     setLoadingEmployeeData,
     employeeData,
     setEmployeeData,
     toggleEmployeeField,
+    changeStatus,
     toggleResetPass,
     createEmployee,
     updateEmployee,

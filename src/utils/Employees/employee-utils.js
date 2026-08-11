@@ -16,3 +16,21 @@ export const fieldLabels = {
   "use_transport": 'Uso de transporte',
   "status": 'Estatus de Empleado',
 };
+
+// Diccionario de acciones de estatus del empleado (modal de baja / reactivación)
+export const STATUS_ACTIONS = {
+  activate: {
+    key: 'activate',
+    label: 'Activar',
+    actionLabel: 'activado',
+    title: 'Activar Empleado',
+    btnText: 'Activar ahora',
+  },
+  deactivate: {
+    key: 'deactivate',
+    label: 'Desactivar',
+    actionLabel: 'desactivado',
+    title: 'Dar de Baja Empleado',
+    btnText: 'Confirmar Baja',
+  },
+};

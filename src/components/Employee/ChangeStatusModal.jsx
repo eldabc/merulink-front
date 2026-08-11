@@ -4,6 +4,7 @@ import ButtonCancel from '../Shared/ButtonCancel';
 import WarningChangeStatusEmployee from '../Shared/WarningChangeStatusEmployee';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import ErrorMessage from '../Shared/ErrorMessage';
+import { STATUS_ACTIONS } from '../../utils/Employees/employee-utils';
 
 const EGRESS_TYPES = [
   'Renuncia voluntaria',
@@ -21,12 +22,13 @@ const EGRESS_TYPES = [
  *
  * onConfirm recibe { action, retireReason, retireDate, notes }.
  */
-export default function ChangeStatusModal({ isOpen, onClose, onConfirm, action, employee }) {
+export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee }) {
   const [retireReason, setRetireReason] = useState('');
   const [retireDate, setRetireDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [notes, setNotes] = useState('');
   const [formErrors, setFormErrors] = useState({});
-
+  const action = employee?.status ? 'deactivate' : 'activate';
+  const statusAction = STATUS_ACTIONS[action];
   const isDeactivate = action === 'deactivate';
 
   // Reiniciar el formulario cada vez que se abre el modal
@@ -58,9 +60,16 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, action, 
         return;
       }
 
-      onConfirm({ action, retireReason, retireDate, notes });
+      onConfirm({
+        action,
+        label: statusAction.label,
+        actionLabel: statusAction.actionLabel,
+        retireReason,
+        retireDate,
+        notes,
+      });
     } else {
-      onConfirm({ action });
+      onConfirm({ action, label: statusAction.label, actionLabel: statusAction.actionLabel });
     }
   };
 
@@ -72,7 +81,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, action, 
             <span className="text-xl">⚠️</span>
           </div>
           <h3 className="text-lg font-bold text-white">
-            {isDeactivate ? 'Dar de Baja Empleado' : 'Activar Empleado'}
+            {statusAction.title}
           </h3>
         </div>
 
@@ -162,13 +171,13 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, action, 
           <button
             type="button"
             onClick={handleConfirm}
-            className={`rounded-lg
+            className={`skip-style-btn rounded-lg p-2 text-white font-medium
               ${isDeactivate 
-                ? 'skip-style-btn bg-red-600 hover:bg-red-700 text-white font-medium p-2'
-                : 'skip-style-btn bg-emerald-600 hover:bg-emerald-700 text-white font-medium'}
+                ? 'bg-red-600 hover:bg-red-700'
+                : 'bg-emerald-600 hover:bg-emerald-700'}
             `}
           >
-            {isDeactivate ? 'Confirmar Baja' : 'Activar ahora'}
+            {statusAction.btnText}
           </button>
         </div>
       </div>
