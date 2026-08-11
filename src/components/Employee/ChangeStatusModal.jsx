@@ -44,20 +44,17 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (isDeactivate) {
-      const newErrors = {};
+    const newErrors = {};
+
+    if (!retireDate) {
+      newErrors.retireDate = 'Debe seleccionar la fecha de efectividad.';
+      return;
+    }
+    
+    if (isDeactivate) { 
 
       if (!retireReason) {
         newErrors.retireReason = 'Debe seleccionar el tipo de egreso.';
-      }
-
-      if (!retireDate) {
-        newErrors.retireDate = 'Debe seleccionar la fecha de efectividad.';
-      }
-
-      if (Object.keys(newErrors).length > 0) {
-        setFormErrors(newErrors);
-        return;
       }
 
       onConfirm({
@@ -70,6 +67,11 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
       });
     } else {
       onConfirm({ action, label: statusAction.label, actionLabel: statusAction.actionLabel });
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      return;
     }
   };
 
@@ -86,34 +88,12 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
         </div>
 
         <p className="text-gray-400 text-sm mb-5 text-justify">
-          ¿Está seguro que desea {isDeactivate ? 'dar de baja' : 'reactivar'} al empleado "
-          {employee?.firstName} {employee?.lastName}"?
+          ¿Está seguro que desea {isDeactivate ? 'dar de baja' : 'reactivar'} al empleado {employee?.firstName} {employee?.lastName}?
         </p>
-
-        {isDeactivate ? (
-          <div className="space-y-4 mb-5">
-            {/* Tipo de Egreso */}
+        <div className="space-y-4 mb-5">
+          {/* Fecha de Efectividad */}
             <div>
-              <LabelFieldForm field="Tipo de Egreso" simbol="*" dinamicClasses="text-sm! mb-1.5" />
-              <select
-                value={retireReason}
-                onChange={(e) => {
-                  setRetireReason(e.target.value);
-                  setFormErrors((prev) => ({ ...prev, retireReason: '' }));
-                }}
-                className="input-dark"
-              >
-                <option value="">Seleccionar...</option>
-                {EGRESS_TYPES.map((type) => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-              {formErrors.retireReason && <ErrorMessage msg={formErrors.retireReason} />}
-            </div>
-
-            {/* Fecha de Efectividad */}
-            <div>
-              <LabelFieldForm field="Fecha de Efectividad (último día laborado)" simbol="*" dinamicClasses="text-sm! mb-1.5" />
+              <LabelFieldForm field={`${isDeactivate ? 'Fecha de Efectividad (último día laborado)' : 'Fecha de reactivación'}`} simbol="*" dinamicClasses="text-sm! mb-1.5" />
               <input
                 type="date"
                 value={retireDate}
@@ -125,46 +105,45 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
               />
               {formErrors.retireDate && <ErrorMessage msg={formErrors.retireDate} />}
             </div>
+          {isDeactivate ? (
+            <>
+              {/* Tipo de Egreso */}
+              <div>
+                <LabelFieldForm field="Tipo de Egreso" simbol="*" dinamicClasses="text-sm! mb-1.5" />
+                <select
+                  value={retireReason}
+                  onChange={(e) => {
+                    setRetireReason(e.target.value);
+                    setFormErrors((prev) => ({ ...prev, retireReason: '' }));
+                  }}
+                  className="input-dark"
+                >
+                  <option value="">Seleccionar...</option>
+                  {EGRESS_TYPES.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+                {formErrors.retireReason && <ErrorMessage msg={formErrors.retireReason} />}
+              </div>
 
-            {/* Motivo / Observaciones */}
-            <div>
-              <LabelFieldForm field="Motivo / Observaciones" dinamicClasses="text-sm! mb-1.5" />
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                placeholder="Explicación detallada para el expediente de RRHH..."
-                className="input-dark resize-y"
-              />
-            </div>
-
-            {/* Resumen de Impacto */}
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-              <span className="block font-bold text-red-400 text-sm mb-2">
-                Resumen de Impacto
-              </span>
-              <ul className="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                <li>Se reseteará la asignación de locker y candado.</li>
-                <li>Se deshabilitará el uso de transporte.</li>
-                <li>Se deshabilitará el uso de tarjeta HID.</li>
-                <li>Se desactivará el usuario MeruLink y sus permisos.</li>
-                <li>
-                  Se eliminarán del horario los turnos asignados a este empleado a partir del{' '}
-                  <b>{dayjs(retireDate).format('DD/MM/YYYY')}</b>.
-                </li>
-              </ul>
-              <p className="text-gray-400 text-xs mt-3">
-                Luego de esta acción podrá reactivar al empleado, pero los cambios listados arriba
-                NO se desharán automáticamente.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="mb-5">
-            <WarningChangeStatusEmployee toggleStatusChangeList="activate" />
-          </div>
-        )}
-
+              {/* Motivo / Observaciones */}
+              <div>
+                <LabelFieldForm field="Motivo / Observaciones" dinamicClasses="text-sm! mb-1.5" />
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Explicación detallada para el expediente de RRHH..."
+                  className="input-dark resize-y"
+                />
+              </div>
+            </>
+          ) : (  
+            <div></div>
+          )}      
+          {/* Resumen de Impacto */}
+          <WarningChangeStatusEmployee toggleStatusChangeList={action} retireDate={retireDate} />
+        </div>
         <div className="flex justify-end gap-3">
           <ButtonCancel onClose={onClose} />
 

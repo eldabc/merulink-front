@@ -1,31 +1,44 @@
-function WarningChangeStatusEmployee ({ toggleStatusChangeList }) {
+import dayjs from 'dayjs';
+
+function WarningChangeStatusEmployee ({ toggleStatusChangeList, retireDate }) {
   return (
     <>
-    <div className="mt-3 p-5">
-      {toggleStatusChangeList === 'activate' ? (
-        <>
-        <h2 className="text-lg font-bold text-red-500">Esta acción NO restaurará los cambios previos</h2>
-        <p className="text-justify mt-4 mb-6">
-          Al reactivar al empleado, el sistema <b>NO restablecerá automáticamente</b> los siguientes elementos que fueron cambiados:
-        </p>
+    <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+      
+      <span className="block font-bold text-red-400 text-sm mb-2">
+        Resumen de Impacto
+      </span>
 
-        <ul className="list-disc ml-5 text-justify">
-          <li className="hover:text-gray-300">Asignación de locker y candado (deberá asignarlos manualmente).</li> 
-          <li className="hover:text-gray-300">Uso del servicio de transporte.</li>
-          <li className="hover:text-gray-300">Uso de tarjeta HID.</li>
-          <li className="hover:text-gray-300">Cuenta de usuario Merulink y sus permisos de acceso.</li>
-        </ul>
+      {toggleStatusChangeList === 'activate' ? (
+        <> 
+          <p className="text-gray-400 text-xs mt-3">
+            Esta acción NO restaurará los cambios previos.
+          </p>
+          <ul className="list-disc list-inside space-y-1 text-gray-300 text-sm">
+            <li>Asignación de locker y candado (deberá asignarlos manualmente).</li>
+            <li>Uso del servicio de transporte.</li>
+            <li>Uso de tarjeta HID.</li>
+            <li>Cuenta de usuario Merulink y sus permisos de acceso.</li>
+            <li>Turnos de su último horario registrado. </li>
+          </ul>
+          
         </>
       ) : (
         <>
-        <h2 className="text-lg font-bold text-red-500">Esta acción ocasionará </h2>
-        <ul className="list-disc ml-5 text-justify">
-          <li className="hover:text-gray-300">Resetear Asignación de Locker y Candado.</li> 
-          <li className="hover:text-gray-300">Deshabilitar uso de transporte.</li>
-          <li className="hover:text-gray-300">Deshabilitar use de tarjeta HID.</li>
-          <li className="hover:text-gray-300">Desactivar usuario Merulink y sus permisos.</li>
-        </ul>
-        <p className="text-justify mt-6">Luego de esta acción usted podrá reactivar empleado pero los cambios listados arriba <b>NO se desharán</b>. </p>
+          <ul className="list-disc list-inside space-y-1 text-gray-300 text-sm">
+            <li>Se reseteará la asignación de locker y candado.</li>
+            <li>Se deshabilitará el uso de transporte.</li>
+            <li>Se deshabilitará el uso de tarjeta HID.</li>
+            <li>Se desactivará el usuario MeruLink y sus permisos.</li>
+            <li>
+              Se eliminarán del horario los turnos asignados a este empleado a partir del{' '}
+              <b>{dayjs(retireDate).format('DD/MM/YYYY')}</b>.
+            </li>
+          </ul>
+          <p className="text-gray-400 text-xs mt-3">
+            Luego de esta acción podrá reactivar al empleado, pero los cambios listados arriba
+            NO se desharán automáticamente.
+          </p>
         </>
       )}
     </div>
