@@ -72,7 +72,7 @@ function ScheduleFilterList({
 
         {/* Mes */}
         <div>
-          <LabelFieldForm field="Mes" simbol="*" dinamicClasses="mb-3"/>
+          <LabelFieldForm field="Mes" dinamicClasses="mb-3"/>
           <select 
             disabled={viewMode || loading} 
             name='month'

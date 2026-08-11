@@ -55,6 +55,7 @@ export default function ContactData({ viewMode }) {
                         readOnly={viewMode}
                         {...register(`contacts.${index}.name`)}
                         placeholder="Nombre"
+                        maxLength={20}
                         className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.name && (
@@ -66,6 +67,7 @@ export default function ContactData({ viewMode }) {
                         readOnly={viewMode}
                         {...register(`contacts.${index}.lastName`)}
                         placeholder="Apellido"
+                        maxLength={20}
                         className={`w-full px-2 py-1 rounded filter-input text-sm ${disabledClasses}`}
                       />
                       {errors?.contacts?.[index]?.lastName && (
@@ -106,14 +108,6 @@ export default function ContactData({ viewMode }) {
                       )}
                     </td>
                     <td className="p-2 text-center">
-                      {/* <button
-                        disabled={viewMode}
-                        type="button"
-                        onClick={() => remove(index)}
-                        className={`inline-flex items-center justify-center p-1 rounded ${disabledClasses}`}
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button> */}
                       <ButtonTrash disabled={viewMode} remove={remove} index={index} dinamicClasses={disabledClasses} />
                     </td>
                   </tr>
