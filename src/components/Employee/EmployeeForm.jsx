@@ -21,11 +21,12 @@ import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
-import ConfirmDialog from '../Shared/ConfirmDialog';
+import ChangeStatusModal from './ChangeStatusModal';
 import EmployeeScraperModal from './EmployeeScraperModal';
 import { User, Search } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import HasPermission from '../Shared/HasPermission';
+import SpanText from '../Shared/SpanText';
 
 import '../../Tables.css';
 
@@ -269,10 +270,10 @@ export default function EmployeeForm({ mode = 'create' }) {
     setSelectedEmployee(employee);
   };
 
-  const handleConfirmChangeStatus = async () => {
+  const handleConfirmChangeStatus = async (data) => {
     if (!selectedEmployee) return;
 
-    await toggleEmployeeField(selectedEmployee, 'status');
+    await toggleEmployeeField(selectedEmployee, 'status', data);
 
     setIsModalOpen(false);
     setSelectedEmployee(null);
@@ -340,7 +341,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                 <HasPermission permissions={["change-status-employees"]}> 
                   <span className="text-sm text-gray-400">Estatus:</span>
                     {loadingFieldChange.loading && loadingFieldChange.field === 'status' ? (
-                      <span className="text-xs text-gray-500 italic">Cargando...</span>
+                      <SpanText text="Cargando" />
                     ) : (
                       <span className={`status-tag ${getStatusColor(employee?.status)}`}  
                         onClick={(e) => {
@@ -352,18 +353,15 @@ export default function EmployeeForm({ mode = 'create' }) {
                     )}
                 </HasPermission>             
 
-                <ConfirmDialog 
+                <ChangeStatusModal
                   isOpen={isModalOpen}
                   onClose={() => {
                     setIsModalOpen(false);
                     setSelectedEmployee(null);
                   }}
                   onConfirm={handleConfirmChangeStatus}
-                  title={`${statusChangeLabel} Empleado`}
-                  message={`¿Está seguro que desea ${statusChangeLabel} Empleado "${employee?.firstName} ${employee?.lastName}"?`}
-                  btnText={`${statusChangeLabel} ahora`}
-                  warningMessage={true}
-                  toggleStatusChangeList={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
+                  action={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
+                  employee={employee}
                 />
               </>
             )}

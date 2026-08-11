@@ -5,6 +5,7 @@ import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from './GlobalDataContext';
 
 import { mapEmployeeToBackend } from '../utils/mappers/employeeMapper';
+import { mapChangeStatusToBackend } from '../utils/mappers/changeStatusEmployeeMapper';
 import { fieldLabels } from '../utils/Employees/employee-utils';
 
 const EmployeeContext = createContext();
@@ -42,14 +43,16 @@ export const EmployeeProvider = ({ children }) => {
   }, [loadEmployees]);
 
   // Actualizar campos checkboxs sin entrar en modo edit
-  const toggleEmployeeField = async (employee, field) => { 
+  const toggleEmployeeField = async (employee, field, extraData = {}) => { 
     setLoadingFieldChange({ loading: true, field: field });
     try {
-      console.log("Checkbox", employee, field);
+      console.log("Checkbox", employee, field, extraData);
       if (!employee.id || !field) return; 
 
       const readableField = fieldLabels[field] || field;
-      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, employee);
+      const payload = mapChangeStatusToBackend(extraData);
+
+      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, payload);
 
       setEmployeeData(prevData => {
         const filteredData = prevData.filter(emp => emp.id !== employee.id);
