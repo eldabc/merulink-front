@@ -183,7 +183,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         'bloodType', 'email', 'mobilePhoneCode', 'mobilePhone', 'homePhoneCode', 'homePhone', 'address'
       ],
       work: [ 'joinDate', 'department', 'subDepartment', 'position'],
-      meruLink: ['userName', 'userPass' ],
+      meruLink: ['userName', 'userPass', 'roleId' ],
       contact: [ 'contacts' ],
       lockerAssign: ['lockerAssingId' ],
     };
@@ -349,7 +349,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
                       <span
                         className={`status-tag ${getStatusColor(employee?.status)}`}
-                        onClick={canChangeStatus ? (e) => {
+                        onClick={canChangeStatus && !employee?.scheduledDeactivation ? (e) => {
                           e.stopPropagation();
                           handleChangeStatusClick(employee);
                         } : undefined}
@@ -359,7 +359,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                     )}
                   </div>
 
-                  {!loadingChangeStatus.loading && employee?.status === false && (
+                  {!loadingChangeStatus.loading && employee?.status === false ? (
                     <span className="group relative text-xs font-medium text-red-300 bg-red-500/15 border border-red-500/30 rounded-md px-2.5 py-1 text-center whitespace-nowrap cursor-help">
                       Razón: {employee?.latestPeriod?.retireReason} desde {dayjs(employee?.latestPeriod?.retireDate).format('DD/MM/YYYY')}
                       {employee?.latestPeriod?.retireNote && (
@@ -369,6 +369,14 @@ export default function EmployeeForm({ mode = 'create' }) {
                         </div>
                       )}
                     </span>
+                  ) : (
+
+                    employee?.scheduledDeactivation && (
+                      <span className="group relative text-xs font-medium text-yellow-300 bg-yellow-500/15 border border-yellow-500/30 rounded-md px-2.5 py-1 text-center whitespace-nowrap cursor-help">
+                        Desactivación programada: {dayjs(employee?.latestPeriod?.retireDate).format('DD/MM/YYYY')}
+                      </span>
+                    )
+
                   )}
                   
                 </div>

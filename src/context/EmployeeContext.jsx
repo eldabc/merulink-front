@@ -72,18 +72,20 @@ export const EmployeeProvider = ({ children }) => {
   const changeStatus = async (employee, data = {}) => { 
     setLoadingChangeStatus(true);
     try {
-      console.log("ChangeStatus", employee, data);
+
       if (!employee.id || !data) return; 
 
       const payload = mapChangeStatusToBackend(data);
       const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeStatus`, payload);
+      const isScheduledDeactivation = response.data.data.scheduledDeactivation;
+      const actionLabel = isScheduledDeactivation ? 'programado para desactivación' : data.actionLabel;
 
       setEmployeeData(prevData => {
         const filteredData = prevData.filter(emp => emp.id !== employee.id);
         return [response.data.data, ...filteredData];
       });
 
-      showNotification("Éxito", `Empleado ${employee.firstName} ${employee.lastName} ${data.actionLabel}.`);  
+      showNotification("Éxito", `Empleado ${employee.firstName} ${employee.lastName} ${actionLabel}.`);  
 
      } catch (error) {
       showNotification('Error al cambiar el estado del Empleado', error.response?.data?.message, 'error');
