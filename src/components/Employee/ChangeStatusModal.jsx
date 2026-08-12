@@ -20,11 +20,11 @@ const EGRESS_TYPES = [
  *   fecha de efectividad y motivo) más el resumen de impacto.
  * - action = 'activate': muestra solo las advertencias de reactivación.
  *
- * onConfirm recibe { action, retireReason, retireDate, notes }.
+ * onConfirm recibe { action, retireReason, effectiveDate, notes }.
  */
 export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee }) {
   const [retireReason, setRetireReason] = useState('');
-  const [retireDate, setRetireDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [effectiveDate, seteffectiveDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [notes, setNotes] = useState('');
   const [formErrors, setFormErrors] = useState({});
   const action = employee?.status ? 'deactivate' : 'activate';
@@ -35,7 +35,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
   useEffect(() => {
     if (isOpen) {
       setRetireReason('');
-      setRetireDate(dayjs().format('YYYY-MM-DD'));
+      seteffectiveDate(dayjs().format('YYYY-MM-DD'));
       setNotes('');
       setFormErrors({});
     }
@@ -44,8 +44,8 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (!retireDate) {
-      setFormErrors({ retireDate: 'Debe seleccionar la fecha de efectividad.' });
+    if (!effectiveDate) {
+      setFormErrors({ effectiveDate: 'Debe seleccionar la fecha de efectividad.' });
       return;
     }
 
@@ -60,11 +60,11 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
         label: statusAction.label,
         actionLabel: statusAction.actionLabel,
         retireReason,
-        retireDate,
+        effectiveDate,
         notes,
       });
     } else {
-      onConfirm({ action, label: statusAction.label, actionLabel: statusAction.actionLabel });
+      onConfirm({ action, label: statusAction.label, actionLabel: statusAction.actionLabel, effectiveDate });
     }
   };
 
@@ -89,14 +89,14 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
               <LabelFieldForm field={`${isDeactivate ? 'Fecha de Efectividad (último día laborado)' : 'Fecha de reactivación'}`} simbol="*" dinamicClasses="text-sm! mb-1.5" />
               <input
                 type="date"
-                value={retireDate}
+                value={effectiveDate}
                 onChange={(e) => {
-                  setRetireDate(e.target.value);
-                  setFormErrors((prev) => ({ ...prev, retireDate: '' }));
+                  seteffectiveDate(e.target.value);
+                  setFormErrors((prev) => ({ ...prev, effectiveDate: '' }));
                 }}
                 className="input-dark"
               />
-              {formErrors.retireDate && <ErrorMessage msg={formErrors.retireDate} />}
+              {formErrors.effectiveDate && <ErrorMessage msg={formErrors.effectiveDate} />}
             </div>
           {isDeactivate ? (
             <>
@@ -135,7 +135,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
             <div></div>
           )}      
           {/* Resumen de Impacto */}
-          <WarningChangeStatusEmployee toggleStatusChangeList={action} retireDate={retireDate} />
+          <WarningChangeStatusEmployee toggleStatusChangeList={action} effectiveDate={effectiveDate} />
         </div>
         <div className="flex justify-end gap-3">
           <ButtonCancel onClose={onClose} />

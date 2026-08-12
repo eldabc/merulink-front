@@ -2,7 +2,7 @@ export const mapChangeStatusToBackend = (formData) => {
   // console.log("formData", formData);
   return {
     retire_reason: formData.retireReason,
-    retire_date: formData.retireDate,
+    effective_date: formData.effectiveDate,
     notes: formData?.notes,
   };
 };
