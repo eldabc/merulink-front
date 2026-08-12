@@ -44,17 +44,15 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    const newErrors = {};
-
     if (!retireDate) {
-      newErrors.retireDate = 'Debe seleccionar la fecha de efectividad.';
+      setFormErrors({ retireDate: 'Debe seleccionar la fecha de efectividad.' });
       return;
     }
-    
-    if (isDeactivate) { 
 
+    if (isDeactivate) {
       if (!retireReason) {
-        newErrors.retireReason = 'Debe seleccionar el tipo de egreso.';
+        setFormErrors({ retireReason: 'Debe seleccionar el tipo de egreso.' });
+        return;
       }
 
       onConfirm({
@@ -67,11 +65,6 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
       });
     } else {
       onConfirm({ action, label: statusAction.label, actionLabel: statusAction.actionLabel });
-    }
-    
-    if (Object.keys(newErrors).length > 0) {
-      setFormErrors(newErrors);
-      return;
     }
   };
 

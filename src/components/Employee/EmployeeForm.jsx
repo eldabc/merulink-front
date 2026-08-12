@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
+import { useAuth } from '../../context/AuthContext';
 
 import { getDisabledClasses, splitPhone, capitalizeWords } from '../../utils/global-utils';  
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
@@ -34,6 +35,8 @@ export default function EmployeeForm({ mode = 'create' }) {
   
   const { employeeData, changeStatus, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
   const { departments, loadDepartments } = useGlobalData();
+  const { user } = useAuth();
+  const canChangeStatus = user?.permissions?.includes('change-status-employees');
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
@@ -337,20 +340,38 @@ export default function EmployeeForm({ mode = 'create' }) {
             )}
             {(editMode || viewMode) && (
               <>     
-                <HasPermission permissions={["change-status-employees"]}> 
-                  <span className="text-sm text-gray-400">Estatus:</span>
+                <div className="flex flex-col items-end gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">Estatus:</span>
                     {loadingChangeStatus.loading ? (
                       <SpanText />
                     ) : (
-                      <span className={`status-tag ${getStatusColor(employee?.status)}`}  
-                        onClick={(e) => {
+
+                      <span
+                        className={`status-tag ${getStatusColor(employee?.status)}`}
+                        onClick={canChangeStatus ? (e) => {
                           e.stopPropagation();
                           handleChangeStatusClick(employee);
-                        }}>
+                        } : undefined}
+                      >
                         {getStatusName(employee?.status)}
                       </span>
                     )}
-                </HasPermission>             
+                  </div>
+
+                  {!loadingChangeStatus.loading && employee?.status === false && (
+                    <span className="group relative text-xs font-medium text-red-300 bg-red-500/15 border border-red-500/30 rounded-md px-2.5 py-1 text-center whitespace-nowrap cursor-help">
+                      Razón: {employee?.latestPeriod?.retireReason} desde {dayjs(employee?.latestPeriod?.retireDate).format('DD/MM/YYYY')}
+                      {employee?.latestPeriod?.retireNote && (
+                        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 hidden group-hover:block max-w-xs whitespace-normal text-left custom-grid-tooltip-container border border-gray-700 shadow-lg">
+                          <div className="tooltip-title">Detalles</div>
+                          <div className="tooltip-item">- {employee?.latestPeriod?.retireNote}</div>
+                        </div>
+                      )}
+                    </span>
+                  )}
+                  
+                </div>
 
                 <ChangeStatusModal
                   isOpen={isModalOpen}
