@@ -162,27 +162,27 @@ export default function Workspace() {
             
             {/* Locker Room */}
             <Route element={<LockerLayout />}>
-              <Route path="/empleados/vestuarios/lockers/*" element={<LockerRoomPage/> } />
+              <Route path="/empleados/vestuarios/lockers/*" element={<div className="main-workspace"><LockerRoomPage/></div> } />
             </Route>
 
             {/* Padlock */}
             <Route element={<PadlockLayout />}>
-              <Route path="/empleados/vestuarios/candados/*" element={<PadlockPage/> } />
+              <Route path="/empleados/vestuarios/candados/*" element={<div className="main-workspace"><PadlockPage/></div> } />
             </Route>
 
             {/* Padlock Pattern */}
             <Route element={<PadlockPatternLayout />}>
-              <Route path="/empleados/vestuarios/candados/patrones/*" element={<PadlockPatternPage/> } />
+              <Route path="/empleados/vestuarios/candados/patrones/*" element={<div className="main-workspace"><PadlockPatternPage/></div> } />
             </Route>
 
             {/* LockerAssign */}
             <Route element={<LockerAssignLayout />}>
-              <Route path="/empleados/vestuarios/casilleros/*" element={<LockerAssignPage/> } />
+              <Route path="/empleados/vestuarios/casilleros/*" element={<div className="main-workspace"><LockerAssignPage/></div> } />
             </Route>
 
             {/* Calendario - Eventos */}
             <Route element={<EventLayout showNotification={showNotification} />}>
-              <Route path="/eventos/*" element={<EventsPage />} />
+              <Route path="/eventos/*" element={<div className="main-workspace"><EventsPage /></div>} />
             </Route>
 
             {/* Fallback */}
