@@ -143,7 +143,7 @@ function RoleForm ({ mode = 'create' }) {
   };
 
   return (
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">  
+    <div className="w-full mx-auto overflow-x-auto p-2 rounded-lg">  
       
       {(viewMode) && <HeadFormButtons url={`/empleados/roles/editar/${roleResult?.id}`} data={[]} /> }
       <FormProvider {...methods}>

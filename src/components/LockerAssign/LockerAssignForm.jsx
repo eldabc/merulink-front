@@ -124,7 +124,7 @@ function LockerAssignForm({ mode = 'create' }) {
     };
 
   return (
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <div className="w-full max-w-7xl mx-auto overflow-x-auto p-2 rounded-lg">
           {(viewMode) && <HeadFormButtons url={`/empleados/vestuarios/casilleros/editar/${lockerAssign?.id}`} data={[]} /> }
           
           <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">

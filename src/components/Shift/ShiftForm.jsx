@@ -245,7 +245,7 @@ export default function ShiftForm({ mode = 'create' }) {
 
   return (
     <FormProvider {...methods}>
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <div className="w-full mx-auto overflow-x-auto p-2 rounded-lg">
     
     {(viewMode) && <HeadFormButtons url={`/empleados/turnos/editar/${shift?.id}`} data={[]} /> }
       <form onSubmit={handleSubmit(onSubmit, onError)}>        

@@ -151,11 +151,9 @@ export default function EventsList({ categoryKeys }) {
     <div className="main-data-cont table-container">
       <div className="titles-table">
         <TitleHeader title={stringCategory} />
-        <div className="text-sm">
           {!isMeruBirthday && (
             <ButtonNavigate url={`/eventos${isBankingMondays}/nuevo`} navigate={navigate} flagDisabled={hasBankingRegisters} />
           )}
-        </div>
       </div>
 
       <FilterByFields
@@ -196,7 +194,7 @@ export default function EventsList({ categoryKeys }) {
           ) : (
 
             // Los demás Eventos
-            <div className="rounded-lg shadow">
+            <div className="rounded-lg shadow overflow-x-auto">
               <table className="min-w-full border-collapse text-sm sm:text-base">
                 {!loading ? (
                   <>

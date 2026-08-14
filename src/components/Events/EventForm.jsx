@@ -19,6 +19,8 @@ import TabButtonsManager from './tabs/TabButtonsManager.jsx';
 import EventTemplates from './tabs/EventTemplates.jsx';
 import EventFormContent from './EventFormContent.jsx';
 import ClientContactForm from '../Client/ClientContactForm.jsx';
+import RequiredMark from '../Shared/RequiredMark.jsx';
+import { Tags, ChevronDown } from 'lucide-react';
 
 import '../../Calendar.css';
 
@@ -309,7 +311,7 @@ export default function EventForm({ mode = 'create' }) {
 
   return (
     <FormProvider {...methods}>
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <div className="w-full max-w-[1700px] mx-auto overflow-x-auto p-5 rounded-lg">
       {loading ? (
         <div className='flex justify-center items-center mt-20'>
           <SpanText text="Cargando Datos Evento..." dinamicClasses="justify-center" />
@@ -318,29 +320,45 @@ export default function EventForm({ mode = 'create' }) {
         <>
         {(viewMode && selectedCategory !== EVENT_CAT.M_BIRTHDAYS.key) && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
         
-        <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+        <div className="table-container rounded-lg shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
             <div className="titles-table ml-5">
-              <div className="justify-center w-64">
-                <div className='mt-5'>
-                  <h3 className="text-xl font-bold mb-4 text-white"> Tipo de Evento: *</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-3 rounded-xl bg-[#2f3d44]/50 border border-[#ffffff14] shadow-inner sm:ml-auto sm:w-fit">
+                {/* Icono + título */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#00A4BC]/25 to-[#00A4BC]/5 border border-[#00A4BC]/30 shrink-0">
+                    <Tags className="w-5 h-5 text-[#9fd8ff]" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-semibold text-white leading-tight">
+                      Tipo de Evento <RequiredMark simbol="*" />
+                    </h3>
+                    <p className="text-xs text-gray-400 mt-0.5 truncate">{createMode && 'Selecciona la categoría del evento'}</p>
+                  </div>
                 </div>
-                <div className='mt-5'>
+
+                {/* Selector */}
+                <div className="w-full sm:w-72 sm:ml-auto">
                   {viewMode || editMode ? (
-                    <div className={`text-xl w-full px-2 py-2 rounded-lg text-center text-white-600 border border-gray-300 hover:border-[#9fd8ff]! transition-all
-                                     duration-600 ease-in-out hover:shadow-lg hover:-translate-y-1 ${event?.extendedProps?.category?.color ?? ''}`}
+                    <div className={`text-base w-full px-2 py-2 rounded-xl text-center font-medium border transition-all shadow-sm
+                                     ${event?.extendedProps?.category?.color ?? 'bg-[#3c4042] text-gray-200 border-[#ffffff21]'}`}
                     >
-                     {event?.extendedProps?.category?.label || 'Sin tipo'}
+                      {event?.extendedProps?.category?.label || 'Sin tipo'}
                     </div>
                   ) : (
-                    <select 
-                      {...register('category' )} //, { onChange: handleEventChange }
-                      disabled={globalLoading}
-                      className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
-                    >
-                      <option className="bg-[#3c4042]" value=""> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
-                      {renderCategoryEvents()}
-                    </select>
+                    <div className="relative">
+                      <select
+                        {...register('category')} //, { onChange: handleEventChange }
+                        disabled={globalLoading}
+                        className={`appearance-none w-full text-base px-4 py-2.5 pr-10 rounded-xl bg-[#252729] text-gray-200 border border-[#ffffff21]
+                                    focus:outline-none focus:border-[#00A4BC] focus:ring-2 focus:ring-[#00A4BC]/20 transition-all
+                                    disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer ${disabledClasses}`}
+                      >
+                        <option className="bg-[#3c4042]" value="">{globalLoading ? 'Cargando...' : 'Seleccionar...'}</option>
+                        {renderCategoryEvents()}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
                   )}
                 </div>
               </div>

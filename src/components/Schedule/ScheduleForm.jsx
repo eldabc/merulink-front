@@ -249,7 +249,7 @@ export default function ScheduleForm({ }) {
 
   return (
     <FormProvider {...methods}>
-    <div className="md:min-w-7xl p-2 rounded-lg">
+    <div className="w-full mx-auto p-2 rounded-lg">
     
       <form onSubmit={handleSubmit(onSubmit, onError)}>        
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full">

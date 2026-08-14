@@ -368,7 +368,7 @@ b { /* used for event dates/times */
     max-width: 100%;
   }
   h2 {
-    font-size: 12px;
+    /* font-size: 12px; */
   }
 }
 
@@ -447,7 +447,7 @@ b { /* used for event dates/times */
 
   /* Ajustar tamaño de fuente en móviles */
   h2 {
-    font-size: 12px;
+    /* font-size: 12px; */
   }
 
   .fc-col-header-cell {

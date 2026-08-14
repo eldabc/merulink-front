@@ -90,7 +90,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
   
 
   return (
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <div className="w-full max-w-7xl mx-auto overflow-x-auto p-2 rounded-lg">
     {(viewMode) && <HeadFormButtons url={`/empleados/sub-departamentos/editar/${subDepartment?.id}`} data={[]} /> }
 
     <form onSubmit={handleSubmit(onSubmit, onError)}>
