@@ -11,7 +11,6 @@ import { getDisabledClasses, splitPhone, capitalizeWords } from '../../utils/glo
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
-
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
 import { formatCI } from '../../utils/text-utils';
 
@@ -24,7 +23,7 @@ import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
 import ChangeStatusModal from './ChangeStatusModal';
 import EmployeeScraperModal from './EmployeeScraperModal';
-import { User, Search } from "lucide-react";
+import { User, Search, Palmtree } from "lucide-react";
 import { tabs } from '../../utils/tabs-utils';
 import HasPermission from '../Shared/HasPermission';
 import SpanText from '../Shared/SpanText';
@@ -304,7 +303,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   // console.log("EMPLOYEES", employee);
   return (
-    <div className="md:min-w-7xl overflow-x-auto p-2 rounded-lg">
+    <div className="w-full mx-auto overflow-x-auto p-2 rounded-lg">
     <FormProvider {...methods}>
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       
@@ -324,7 +323,7 @@ export default function EmployeeForm({ mode = 'create' }) {
             </div>
           </div>
           <div className='w-full md:w-auto justify-center md:justify-start'>
-            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6 md:mb-3 text-center md:text-left" />
+            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6! md:mb-4! text-center md:text-left" />
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
         </div>
@@ -340,6 +339,20 @@ export default function EmployeeForm({ mode = 'create' }) {
             )}
             {(editMode || viewMode) && (
               <>     
+                <div className="flex flex-col items-end gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                      <span
+                        className={`status-tag px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 rounded-2xl px-4 py-2 border border-transparent bg-gray-300`}
+                        onClick={canChangeStatus && !employee?.scheduledDeactivation ? (e) => {
+                          e.stopPropagation();
+                          handleChangeStatusClick(employee);
+                        } : undefined}
+                      >
+                        <Palmtree/>
+                      </span>
+                  </div>
+                </div>
+
                 <div className="flex flex-col items-end gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg p-3">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">Estatus:</span>
