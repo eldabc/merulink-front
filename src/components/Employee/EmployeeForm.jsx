@@ -373,7 +373,7 @@ export default function EmployeeForm({ mode = 'create' }) {
 
                     employee?.scheduledDeactivation && (
                       <span className="group relative text-xs font-medium text-yellow-300 bg-yellow-500/15 border border-yellow-500/30 rounded-md px-2.5 py-1 text-center whitespace-nowrap cursor-help">
-                        Desactivación programada: {dayjs(employee?.latestPeriod?.retireDate).format('DD/MM/YYYY')}
+                        Desactivación programada: {dayjs(employee?.latestPeriod?.scheduledDeactivateDate).format('DD/MM/YYYY')}
                       </span>
                     )
 
