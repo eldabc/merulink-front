@@ -59,7 +59,7 @@ const ChangePassword = () => {
   return (
     <div>
       <GuestBar />
-      <div className="min-h-screen min-w-screen bg-[#1e2022] flex items-center justify-center p-4">
+      <div className="min-h-screen min-w-full bg-[#1e2022] flex items-center justify-center p-4">
         
         <div className="w-full max-w-md p-6 bg-[#2f3235] rounded-xl border border-[#43474a] shadow-2xl">
           
