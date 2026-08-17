@@ -31,6 +31,14 @@
   .input-dark {
     @apply w-full px-3 py-2.5 rounded-lg bg-[#252729] border border-[#ffffff21] text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[#00A4BC] transition-all;
   }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE y Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;             /* Chrome / Safari */
+  }
 }
 
 :root {
