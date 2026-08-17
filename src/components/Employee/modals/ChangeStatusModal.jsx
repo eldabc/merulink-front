@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import ButtonCancel from '../Shared/ButtonCancel';
-import WarningChangeStatusEmployee from '../Shared/WarningChangeStatusEmployee';
-import LabelFieldForm from '../Shared/LabelFieldForm';
-import ErrorMessage from '../Shared/ErrorMessage';
-import { STATUS_ACTIONS } from '../../utils/Employees/employee-utils';
+import ButtonCancel from '../../Shared/ButtonCancel';
+import WarningChangeStatusEmployee from '../../Shared/WarningChangeStatusEmployee';
+import LabelFieldForm from '../../Shared/LabelFieldForm';
+import ErrorMessage from '../../Shared/ErrorMessage';
+import { STATUS_ACTIONS } from '../../../utils/Employees/employee-utils';
 
 const EGRESS_TYPES = [
   'Renuncia voluntaria',

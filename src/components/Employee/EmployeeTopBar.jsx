@@ -7,7 +7,7 @@ import { useEmployees } from '../../context/EmployeeContext';
 
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 
-import ChangeStatusModal from './ChangeStatusModal';
+import ChangeStatusModal from './modals/ChangeStatusModal';
 import AbsenceModal from './modals/AbsenceModal';
 
 function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, setScraperKey, employee, loadingChangeStatus  }) {
