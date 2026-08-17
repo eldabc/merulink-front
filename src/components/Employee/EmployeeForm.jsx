@@ -1,18 +1,21 @@
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { User, Search } from "lucide-react";
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
-import { useAuth } from '../../context/AuthContext';
+// import { useAuth } from '../../context/AuthContext';
 
 import { getDisabledClasses, splitPhone, capitalizeWords } from '../../utils/global-utils';  
-import { getStatusColor, getStatusName } from '../../utils/status-utils';  
+// import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
 import { formatCI } from '../../utils/text-utils';
+import { tabs } from '../../utils/tabs-utils';
+
 
 import ActiveTab from "./tabs/ActiveTab";
 import TabButtonsManager from './tabs/TabButtonsManager';
@@ -21,21 +24,20 @@ import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
-import ChangeStatusModal from './ChangeStatusModal';
+// import ChangeStatusModal from './ChangeStatusModal';
 import EmployeeScraperModal from './EmployeeScraperModal';
-import { User, Search, Palmtree } from "lucide-react";
-import { tabs } from '../../utils/tabs-utils';
 import HasPermission from '../Shared/HasPermission';
 import SpanText from '../Shared/SpanText';
+import EmployeeTopBar from './EmployeeTopBar';
 
 import '../../Tables.css';
 
 export default function EmployeeForm({ mode = 'create' }) {
   
-  const { employeeData, changeStatus, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
+  const { employeeData, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
   const { departments, loadDepartments } = useGlobalData();
-  const { user } = useAuth();
-  const canChangeStatus = user?.permissions?.includes('change-status-employees');
+  // const { user } = useAuth();
+  // const canChangeStatus = user?.permissions?.includes('change-status-employees');
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
@@ -54,8 +56,8 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
   const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [selectedEmployee, setSelectedEmployee] = useState(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   
   const selectedSex = watch('sex');
   const watchedBirthDate = watch('birthdate');
@@ -265,21 +267,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     return employeeDataForm;
   };
 
-
-  const handleChangeStatusClick = (employee) => {
-    setIsModalOpen(true);
-    setSelectedEmployee(employee);
-  };
-
-  const handleConfirmChangeStatus = async (data) => {
-    if (!selectedEmployee) return;
-
-    await changeStatus(selectedEmployee, data);
-
-    setIsModalOpen(false);
-    setSelectedEmployee(null);
-  };
-
   const handleScraperDataFound = (data) => {
     if (data.first_name) setValue('firstName', capitalizeWords(data.first_name.toLowerCase()));
     if (data.second_name) setValue('secondName', capitalizeWords(data.second_name.toLowerCase()));
@@ -328,84 +315,15 @@ export default function EmployeeForm({ mode = 'create' }) {
           </div>
         </div>
 
-          <div className="w-full md:w-auto flex flex-wrap justify-center md:justify-end items-center gap-3 mt-3 md:mt-0 border-b border-[#ffffff21] pb-3">
-            {createMode && (
-              <Link
-                onClick={ (e) => { setShowScraperModal(true); setScraperKey(k => k + 1); }}
-                className="flex items-center gap-1 text-sm !text-[#9fd8ff] hover:!text-white transition-colors font-medium mr-5"
-              >
-               <Search className="w-4 h-4 text-[#9fd8ff]" /> Traer Datos
-              </Link>
-            )}
-            {(editMode || viewMode) && (
-              <>     
-                <div className="flex flex-col items-end gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg p-3">
-                  <div className="flex items-center gap-2">
-                      <span
-                        className={`status-tag px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 rounded-2xl px-4 py-2 border border-transparent bg-gray-300`}
-                        onClick={canChangeStatus && !employee?.scheduledDeactivation ? (e) => {
-                          e.stopPropagation();
-                          handleChangeStatusClick(employee);
-                        } : undefined}
-                      >
-                        <Palmtree/>
-                      </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-end gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg p-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">Estatus:</span>
-                    {loadingChangeStatus.loading ? (
-                      <SpanText />
-                    ) : (
-
-                      <span
-                        className={`status-tag ${getStatusColor(employee?.status)}`}
-                        onClick={canChangeStatus && !employee?.scheduledDeactivation ? (e) => {
-                          e.stopPropagation();
-                          handleChangeStatusClick(employee);
-                        } : undefined}
-                      >
-                        {getStatusName(employee?.status)}
-                      </span>
-                    )}
-                  </div>
-
-                  {!loadingChangeStatus.loading && employee?.status === false ? (
-                    <span className="group relative text-xs font-medium text-red-300 bg-red-500/15 border border-red-500/30 rounded-md px-2.5 py-1 text-center whitespace-nowrap cursor-help">
-                      Razón: {employee?.latestPeriod?.retireReason} desde {dayjs(employee?.latestPeriod?.retireDate).format('DD/MM/YYYY')}
-                      {employee?.latestPeriod?.retireNote && (
-                        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 hidden group-hover:block max-w-xs whitespace-normal text-left custom-grid-tooltip-container border border-gray-700 shadow-lg">
-                          <div className="tooltip-title">Detalles</div>
-                          <div className="tooltip-item">- {employee?.latestPeriod?.retireNote}</div>
-                        </div>
-                      )}
-                    </span>
-                  ) : (
-
-                    employee?.scheduledDeactivation && (
-                      <span className="group relative text-xs font-medium text-yellow-300 bg-yellow-500/15 border border-yellow-500/30 rounded-md px-2.5 py-1 text-center whitespace-nowrap cursor-help">
-                        Desactivación programada: {dayjs(employee?.latestPeriod?.scheduledDeactivateDate).format('DD/MM/YYYY')}
-                      </span>
-                    )
-
-                  )}
-                  
-                </div>
-
-                <ChangeStatusModal
-                  isOpen={isModalOpen}
-                  onClose={() => {
-                    setIsModalOpen(false);
-                    setSelectedEmployee(null);
-                  }}
-                  onConfirm={handleConfirmChangeStatus}
-                  employee={employee}
-                />
-              </>
-            )}
-          </div>
+        <EmployeeTopBar 
+          createMode={createMode} 
+          editMode={editMode} 
+          viewMode={viewMode} 
+          setShowScraperModal={setShowScraperModal} 
+          setScraperKey={setScraperKey} 
+          employee={employee} 
+          loadingChangeStatus={loadingChangeStatus} 
+        />
       
         <TabButtonsManager 
           activeTab={activeTab} 
