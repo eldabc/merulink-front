@@ -113,6 +113,7 @@ function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, s
             }}
             onConfirm={handleConfirmChangeStatus}
             employee={employee}
+            onLoadingChangeStatus={loadingChangeStatus}
           />
 
           <AbsenceModal

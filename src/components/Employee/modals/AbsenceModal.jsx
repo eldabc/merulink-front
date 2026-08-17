@@ -2,10 +2,16 @@ import { useEffect, useState } from 'react';
 import { Palmtree, X, Loader2 } from 'lucide-react';
 
 import { useAbsences } from '../../../context/AbsenceContext';
-import { ABSENCE_TYPES, validateAbsence } from '../../../utils/Validations/absenceValidationSchema';
 
 import LabelFieldForm from '../../Shared/LabelFieldForm';
 import ErrorMessage from '../../Shared/ErrorMessage';
+import ButtonCancel from '../../Shared/ButtonCancel';
+
+/** Tipos de ausencia disponibles para el selector. */
+const ABSENCE_TYPES = [
+  { key: 'vacation', label: 'Vacaciones' },
+  { key: 'medical_leave', label: 'Reposo médico' },
+];
 
 /**
  * Modal para registrar ausencias de un empleado (vacaciones / reposo médico).
@@ -42,12 +48,15 @@ export default function AbsenceModal({ isOpen, onClose, employee }) {
   const clearError = (field) => setFormErrors((prev) => ({ ...prev, [field]: '' }));
 
   const handleRegister = async () => {
-    const values = { type, start, end, observations };
+    // Validación simple, igual que ChangeStatusModal
+    const newErrors = {};
+    if (!type) newErrors.type = 'Debe seleccionar el tipo de ausencia.';
+    if (!start) newErrors.start = 'Debe seleccionar la fecha de inicio.';
+    if (!end) newErrors.end = 'Debe seleccionar la fecha de fin.';
+    else if (start && end && end < start) newErrors.end = 'La fecha de fin no puede ser anterior a la de inicio.';
 
-    // Validación con yup migrada a método
-    const { isValid, errors: validationErrors } = await validateAbsence(values);
-    if (!isValid) {
-      setFormErrors(validationErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
       return;
     }
     setFormErrors({});
@@ -126,10 +135,9 @@ export default function AbsenceModal({ isOpen, onClose, employee }) {
 
           {/* Acciones */}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} disabled={loadingAbsence}
-              className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg">
-              Cancelar
-            </button>
+            
+            <ButtonCancel onClose={onClose} />
+
             <button type="button" onClick={handleRegister} disabled={loadingAbsence}
               className="flex-1 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50">
               {loadingAbsence ? <Loader2 className="w-4 h-4 animate-spin" /> : <Palmtree className="w-4 h-4" />}

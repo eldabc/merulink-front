@@ -22,7 +22,7 @@ const EGRESS_TYPES = [
  *
  * onConfirm recibe { action, retireReason, effectiveDate, notes }.
  */
-export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee }) {
+export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee, onLoadingChangeStatus }) {
   const [retireReason, setRetireReason] = useState('');
   const [effectiveDate, seteffectiveDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [notes, setNotes] = useState('');
@@ -142,14 +142,14 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
 
           <button
             type="button"
-            onClick={handleConfirm}
+            onClick={() => !onLoadingChangeStatus && handleConfirm()}
             className={`skip-style-btn rounded-lg p-2 text-white font-medium
               ${isDeactivate 
                 ? 'bg-red-600 hover:bg-red-700'
                 : 'bg-emerald-600 hover:bg-emerald-700'}
             `}
           >
-            {statusAction.btnText}
+            {onLoadingChangeStatus ? 'Enviando...' : statusAction.btnText}
           </button>
         </div>
       </div>

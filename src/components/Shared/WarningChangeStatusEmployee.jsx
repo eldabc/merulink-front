@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-function WarningChangeStatusEmployee ({ toggleStatusChangeList, retireDate }) {
+function WarningChangeStatusEmployee ({ toggleStatusChangeList, effectiveDate }) {
   return (
     <>
     <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
@@ -32,7 +32,7 @@ function WarningChangeStatusEmployee ({ toggleStatusChangeList, retireDate }) {
             <li>Se desactivará el usuario MeruLink y sus permisos.</li>
             <li>
               Se eliminarán del horario los turnos asignados a este empleado a partir del{' '}
-              <b>{dayjs(retireDate).format('DD/MM/YYYY')}</b>.
+              <b>{dayjs(effectiveDate).format('DD/MM/YYYY')}</b>.
             </li>
           </ul>
           <p className="text-gray-400 text-xs mt-3">
