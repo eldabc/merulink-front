@@ -24,6 +24,7 @@ import { LockerRoomProvider } from "../context/LockerRoomContext";
 import { PadlockProvider } from "../context/PadlockContext";
 import { LockerAssignProvider } from "../context/LockerAssignContext";
 import { EmployeeProvider } from '../context/EmployeeContext'; 
+import { AbsenceProvider } from '../context/AbsenceContext'; 
 import { DepartmentProvider } from '../context/DepartmentContext'; 
 import { SubDepartmentProvider } from '../context/SubDepartmentContext'; 
 import { PositionProvider } from '../context/PositionContext'; 
@@ -62,7 +63,9 @@ const LockerAssignLayout = () => (
 
 const EmployeeLayout = () => (
   <EmployeeProvider>
-    <Outlet />
+    <AbsenceProvider>
+      <Outlet />
+    </AbsenceProvider>
   </EmployeeProvider>
 );
 

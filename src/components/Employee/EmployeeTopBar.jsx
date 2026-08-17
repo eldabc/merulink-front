@@ -8,12 +8,14 @@ import { useEmployees } from '../../context/EmployeeContext';
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 
 import ChangeStatusModal from './ChangeStatusModal';
+import AbsenceModal from './modals/AbsenceModal';
 
 function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, setScraperKey, employee, loadingChangeStatus  }) {
   const { user } = useAuth();
   const { changeStatus } = useEmployees();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isAbsenceOpen, setIsAbsenceOpen] = useState(false);
   
 
   const canChangeStatus = user?.permissions?.includes('change-status-employees');
@@ -47,15 +49,18 @@ function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, s
         <>     
           <div className="flex flex-col items-end gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg p-3">
             <div className="flex items-center gap-2">
-                <span
-                  className={`status-tag px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 rounded-2xl px-4 py-2 border border-transparent bg-gray-300`}
-                  onClick={canChangeStatus && !employee?.scheduledDeactivation ? (e) => {
-                    e.stopPropagation();
-                    handleChangeStatusClick(employee);
-                  } : undefined}
-                >
-                  <Palmtree/>
-                </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsAbsenceOpen(true);
+                }}
+                title="Registrar ausencia"
+                aria-label="Registrar ausencia"
+                className="skip-style-btn flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 hover:bg-gray-200 text-gray-700 transition-colors"
+              >
+                <Palmtree className="w-5 h-5" />
+              </button>
             </div>
           </div>
 
@@ -107,6 +112,12 @@ function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, s
               setSelectedEmployee(null);
             }}
             onConfirm={handleConfirmChangeStatus}
+            employee={employee}
+          />
+
+          <AbsenceModal
+            isOpen={isAbsenceOpen}
+            onClose={() => setIsAbsenceOpen(false)}
             employee={employee}
           />
         </>
