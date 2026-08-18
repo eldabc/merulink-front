@@ -125,7 +125,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
+                  rows={2}
                   placeholder="Explicación detallada para el expediente de RRHH..."
                   className="input-dark resize-y"
                 />

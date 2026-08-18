@@ -3,36 +3,19 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Palmtree } from "lucide-react";
 import { useAuth } from '../../context/AuthContext';
-import { useEmployees } from '../../context/EmployeeContext';
 
 import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 
 import ChangeStatusModal from './modals/ChangeStatusModal';
 import AbsenceModal from './modals/AbsenceModal';
+import useChangeStatusModal from '../../hooks/useChangeStatusModal';
 
 function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, setScraperKey, employee, loadingChangeStatus  }) {
   const { user } = useAuth();
-  const { changeStatus } = useEmployees();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isAbsenceOpen, setIsAbsenceOpen] = useState(false);
-  
+  const { isModalOpen, openChangeStatus, confirmChangeStatus, closeChangeStatus } = useChangeStatusModal();
 
   const canChangeStatus = user?.permissions?.includes('change-status-employees');
-
-  const handleChangeStatusClick = (employee) => {
-    setIsModalOpen(true);
-    setSelectedEmployee(employee);
-  };
-
-  const handleConfirmChangeStatus = async (data) => {
-    if (!selectedEmployee) return;
-
-    await changeStatus(selectedEmployee, data);
-
-    setIsModalOpen(false);
-    setSelectedEmployee(null);
-  };
 
   return (
     <div className="w-full md:w-auto flex flex-wrap justify-center md:justify-end items-center gap-3 mt-3 md:mt-0 border-b border-[#ffffff21] pb-3">
@@ -75,7 +58,7 @@ function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, s
                     className={`status-tag ${getStatusColor(employee?.status)}`}
                     onClick={canChangeStatus && !employee?.scheduledDeactivation ? (e) => {
                       e.stopPropagation();
-                      handleChangeStatusClick(employee);
+                      openChangeStatus(employee);
                     } : undefined}
                   >
                     {getStatusName(employee?.status)}
@@ -111,11 +94,8 @@ function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, s
 
           <ChangeStatusModal
             isOpen={isModalOpen}
-            onClose={() => {
-              setIsModalOpen(false);
-              setSelectedEmployee(null);
-            }}
-            onConfirm={handleConfirmChangeStatus}
+            onClose={closeChangeStatus}
+            onConfirm={confirmChangeStatus}
             employee={employee}
             onLoadingChangeStatus={loadingChangeStatus}
           />

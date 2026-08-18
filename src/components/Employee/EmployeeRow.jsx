@@ -1,21 +1,19 @@
-import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 
 import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import { formatCI } from '../../utils/text-utils';
 
-import ConfirmDialog  from '../Shared/ConfirmDialog';
+import ChangeStatusModal from './modals/ChangeStatusModal';
+import useChangeStatusModal from '../../hooks/useChangeStatusModal';
 import SpanText from '../Shared/SpanText';
 import HasPermission from '../Shared/HasPermission';
 
 export default function EmployeeRow({ emp }) {
 
   const navigate = useNavigate();
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statusChangeLabel, setStatusChangeLabel] = useState('');
-  const { toggleEmployeeField } = useEmployees(); 
+  const { loadingChangeStatus } = useEmployees();
+  const { isModalOpen, openChangeStatus, confirmChangeStatus, closeChangeStatus } = useChangeStatusModal();
   
   const handleSelectedEmployee = (id) => {
     navigate(`/empleados/ver/${id}`, { 
@@ -26,20 +24,6 @@ export default function EmployeeRow({ emp }) {
   const subDepartmentName = emp?.subDepartment?.name ?? (
     <SpanText text="No Aplica" />
   );
-
-  const handleChangeStatusClick = (employee) => {
-    const statusChangeLabel = employee?.status ? 'Desactivar' : 'Activar';
-    setStatusChangeLabel(statusChangeLabel);
-
-    setIsModalOpen(true);
-    setSelectedEmployee(employee);
-  };
-
-  const handleConfirmChangeStatus = async () => {
-    if (!selectedEmployee) return;
-
-    await toggleEmployeeField(selectedEmployee, 'status');
-  };
 
   return (
     <>
@@ -61,7 +45,7 @@ export default function EmployeeRow({ emp }) {
             className={getStatusColor(emp.status)}
             onClick={(e) => {
               e.stopPropagation();
-              handleChangeStatusClick(emp);
+              openChangeStatus(emp);
             }}
           >
             {getStatusName(emp.status)}
@@ -71,18 +55,12 @@ export default function EmployeeRow({ emp }) {
     </tr>
     <tr>
       <td>
-        <ConfirmDialog 
+        <ChangeStatusModal 
           isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedEmployee(null);
-          }}
-          onConfirm={handleConfirmChangeStatus}
-          title={`${statusChangeLabel} Empleado`}
-          message={`¿Está seguro que desea ${statusChangeLabel} al Empleado "${emp?.firstName} ${emp?.lastName}"?`}
-          btnText={`${statusChangeLabel} ahora`}
-          warningMessage={true}
-          toggleStatusChangeList={statusChangeLabel === 'Activar' ? 'activate' : 'deactivate'}
+          onClose={closeChangeStatus}
+          onConfirm={confirmChangeStatus}
+          employee={emp}
+          onLoadingChangeStatus={loadingChangeStatus}
         />
       </td>
     </tr>
