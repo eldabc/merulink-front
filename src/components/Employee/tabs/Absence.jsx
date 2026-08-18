@@ -1,11 +1,13 @@
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Eye, Palmtree, Loader2, Inbox } from 'lucide-react';
+import { Plus, Pencil, Eye, Palmtree,  Inbox } from 'lucide-react';
 
 import { useAbsences } from '../../../context/AbsenceContext';
 import { ABSENCE_TYPES, getAbsenceTypeLabel, canEditAbsence } from '../../../utils/Employees/absence-utils';
 
 import AbsenceModal from '../modals/AbsenceModal';
+import SpanText from '../../Shared/SpanText';
+import LoadingSpinner from '../../Shared/LoadingSpinner';
 
 /**
  * Pestaña de ausencias del empleado.
@@ -16,7 +18,7 @@ import AbsenceModal from '../modals/AbsenceModal';
  * - Ver/editar una ausencia: solo se puede editar si su fecha de inicio aún
  *   no ha llegado (start > hoy); de lo contrario es solo lectura ('view').
  */
-export default function Absence({ employee }) {
+export default function Absence({ employee, viewMode, disabledClasses }) {
   const { absences, loadingAbsence, loadAbsences } = useAbsences();
 
   const [filter, setFilter] = useState('vacation');
@@ -32,8 +34,10 @@ export default function Absence({ employee }) {
 
   const openCreate = () => setModal({ isOpen: true, mode: 'create', absence: null });
 
-  const openDetail = (absence) =>
-    setModal({ isOpen: true, mode: canEditAbsence(absence.start) ? 'edit' : 'view', absence });
+  const openDetail = (absence) => {
+    const editable = canEditAbsence(absence.start) && !viewMode;
+    setModal({ isOpen: true, mode: editable ? 'edit' : 'view', absence });
+  };
 
   const closeModal = () => setModal((m) => ({ ...m, isOpen: false }));
 
@@ -56,6 +60,7 @@ export default function Absence({ employee }) {
         employee={employee}
         mode={modal.mode}
         absence={modal.absence}
+        disabledClasses={disabledClasses}
       />
 
       <div className="bg-[#2f3235] border border-[#ffffff21] rounded-xl p-5 shadow-md">
@@ -66,17 +71,17 @@ export default function Absence({ employee }) {
               <Palmtree className="w-5 h-5 text-[#9fd8ff]" />
               Ausencias del empleado
             </h3>
-            <p className="text-sm text-gray-500">Registros de vacaciones y reposo médico.</p>
           </div>
 
           <button
             type="button"
             onClick={openCreate}
-            disabled={!hasEmployee}
-            className="flex items-center gap-2 text-sm font-medium"
+            title="Registrar ausencia"
+            disabled={!hasEmployee || viewMode}
+            className={`flex items-center gap-2 text-sm font-medium ${disabledClasses}`}
           >
             <Plus className="w-4 h-4" />
-            Registrar ausencia
+            Registrar
           </button>
         </div>
 
@@ -111,19 +116,19 @@ export default function Absence({ employee }) {
           </div>
         ) : loadingAbsence ? (
           <div className="flex flex-col items-center py-10 gap-3">
-            <Loader2 className="w-8 h-8 text-[#9fd8ff] animate-spin" />
-            <p className="text-gray-400 text-sm">Cargando ausencias...</p>
+            <LoadingSpinner className="py-0" />
+            <SpanText text="Cargando ausencias" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center py-10 gap-2 text-gray-500">
             <Inbox className="w-8 h-8" />
-            <p className="text-sm">No hay registros de {getAbsenceTypeLabel(filter).toLowerCase()}.</p>
+            <SpanText text={`No hay registros de ${getAbsenceTypeLabel(filter).toLowerCase()}.`}/>
           </div>
         ) : (
           <div className="space-y-2">
             {filtered.map((a) => {
               const status = getStatus(a);
-              const editable = canEditAbsence(a.start);
+              const editable = canEditAbsence(a.start) && !viewMode;
               return (
                 <div
                   key={a.id}
@@ -152,7 +157,7 @@ export default function Absence({ employee }) {
                     onClick={() => openDetail(a)}
                     title={editable ? 'Editar ausencia' : 'Ver detalle'}
                     aria-label={editable ? 'Editar ausencia' : 'Ver detalle'}
-                    className="skip-style-btn shrink-0 p-2 rounded-lg bg-[#3c4042] text-gray-300 hover:text-[#9fd8ff] transition-colors"
+                    className={`skip-style-btn shrink-0 p-2 rounded-lg bg-[#3c4042] text-gray-300 hover:text-[#9fd8ff] transition-colors`}
                   >
                     {editable ? <Pencil className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>

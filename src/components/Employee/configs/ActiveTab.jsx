@@ -85,9 +85,7 @@ export default function ActiveTab({
   case 'absence':
     return (
       <Absence
-        mode={mode}
         viewMode={viewMode}
-        isEmployeeActive={isEmployeeActive}
         disabledClasses={disabledClasses}
         employee={employee}
       />

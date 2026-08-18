@@ -16,7 +16,7 @@ import ButtonCancel from '../../Shared/ButtonCancel';
  * - 'view':   solo lectura (ausencia ya comenzada o pasada): campos
  *             deshabilitados y solo botón cerrar.
  */
-export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create', absence = null }) {
+export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create', absence = null, disabledClasses }) {
   const { createAbsence, updateAbsence, loadingAbsence } = useAbsences();
 
   const isView = mode === 'view';
@@ -107,7 +107,8 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
           {/* Tipo de ausencia */}
           <div>
             <LabelFieldForm field="Tipo de Ausencia" simbol="*" dinamicClasses="text-sm! mb-1.5" />
-            <select value={type} disabled={isView} onChange={(e) => { setType(e.target.value); clearError('type'); }} className="input-dark disabled:opacity-60">
+            <select value={type} disabled={isView} onChange={(e) => { setType(e.target.value); clearError('type'); }} 
+              className={`input-dark disabled:opacity-60 ${disabledClasses}`}>
               {ABSENCE_TYPES.map((t) => (
                 <option key={t.key} value={t.key}>{t.label}</option>
               ))}
@@ -118,14 +119,16 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
           {/* Fecha de inicio */}
           <div>
             <LabelFieldForm field="Fecha de Inicio" simbol="*" dinamicClasses="text-sm! mb-1.5" />
-            <input type="date" value={start} disabled={isView} onChange={(e) => { setStart(e.target.value); clearError('start'); }} className="input-dark disabled:opacity-60" />
+            <input type="date" value={start} disabled={isView} onChange={(e) => { setStart(e.target.value); clearError('start'); }} 
+              className={`input-dark disabled:opacity-60 ${disabledClasses}`} />
             {formErrors.start && <ErrorMessage msg={formErrors.start} />}
           </div>
 
           {/* Fecha de fin */}
           <div>
             <LabelFieldForm field="Fecha de Fin" simbol="*" dinamicClasses="text-sm! mb-1.5" />
-            <input type="date" value={end} disabled={isView} onChange={(e) => { setEnd(e.target.value); clearError('end'); }} className="input-dark disabled:opacity-60" />
+            <input type="date" value={end} disabled={isView} onChange={(e) => { setEnd(e.target.value); clearError('end'); }} 
+              className={`input-dark disabled:opacity-60 ${disabledClasses}`} />
             {formErrors.end && <ErrorMessage msg={formErrors.end} />}
           </div>
 
@@ -138,7 +141,7 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
               onChange={(e) => { setObservations(e.target.value); clearError('observations'); }}
               rows={3}
               placeholder="Detalle adicional (opcional)..."
-              className="input-dark resize-y disabled:opacity-60"
+              className={`input-dark resize-y disabled:opacity-60 ${disabledClasses}`}
             />
             {formErrors.observations && <ErrorMessage msg={formErrors.observations} />}
           </div>
