@@ -5,6 +5,7 @@ export const tabs = [
     { id: "meruLink", label: "Meru Link" },
     { id: "hidCard", label: "Tarjeta HID" },
     { id: "lockerAssign", label: "Locker y Asignaciones" },
+    { id: "absence", label: "Ausencias" },
 ];
 
 export const tabsEvents = [

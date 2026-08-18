@@ -1,9 +1,10 @@
-import PersonalData from './PersonalData';
-import WorkData from './WorkData';
-import ContactData from './ContactData';
-import MeruLinkData from './meruLinkData';
-import HidCard from './HidCard';
-import LockerAssign from './LockerAssign';
+import PersonalData from '../tabs/PersonalData';
+import WorkData from '../tabs/WorkData';
+import ContactData from '../tabs/ContactData';
+import MeruLinkData from '../tabs/meruLinkData';
+import HidCard from '../tabs/HidCard';
+import LockerAssign from '../tabs/LockerAssign';
+import Absence from '../tabs/Absence';
 
 /**
  * Renderiza la pestaña activa del formulario de empleado.
@@ -80,6 +81,15 @@ export default function ActiveTab({
           disabledClasses={disabledClasses}
         />
       );
+
+  case 'absence':
+    return (
+      <Absence
+        mode={mode}
+        isEmployeeActive={isEmployeeActive}
+        disabledClasses={disabledClasses}
+      />
+    );
 
     default:
       return null;

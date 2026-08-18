@@ -1,4 +1,3 @@
-// import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { User, Search } from "lucide-react";
 import { useForm, FormProvider } from 'react-hook-form';
@@ -6,10 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
-// import { useAuth } from '../../context/AuthContext';
 
 import { getDisabledClasses, splitPhone, capitalizeWords } from '../../utils/global-utils';  
-// import { getStatusColor, getStatusName } from '../../utils/status-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
@@ -17,14 +14,13 @@ import { formatCI } from '../../utils/text-utils';
 import { tabs } from '../../utils/tabs-utils';
 
 
-import ActiveTab from "./tabs/ActiveTab";
-import TabButtonsManager from './tabs/TabButtonsManager';
+import ActiveTab from "./configs/ActiveTab";
+import TabButtonsManager from './configs/TabButtonsManager';
 
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
-// import ChangeStatusModal from './ChangeStatusModal';
 import EmployeeScraperModal from './EmployeeScraperModal';
 import HasPermission from '../Shared/HasPermission';
 import SpanText from '../Shared/SpanText';
@@ -36,8 +32,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   
   const { employeeData, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
   const { departments, loadDepartments } = useGlobalData();
-  // const { user } = useAuth();
-  // const canChangeStatus = user?.permissions?.includes('change-status-employees');
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
@@ -56,8 +50,6 @@ export default function EmployeeForm({ mode = 'create' }) {
   const [loadingData, setLoadingData] = useState(false);
   const [subDepartments, setSubDepartments] = useState([]);
   const [selectedDepartmentData, setSelectedDepartmentData] = useState([]);
-  // const [selectedEmployee, setSelectedEmployee] = useState(null);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   
   const selectedSex = watch('sex');
   const watchedBirthDate = watch('birthdate');
@@ -310,7 +302,13 @@ export default function EmployeeForm({ mode = 'create' }) {
             </div>
           </div>
           <div className='w-full md:w-auto justify-center md:justify-start'>
-            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 'Registrar Empleado')} dinamicClasses="mb-6! md:mb-4! text-center md:text-left" />
+            
+            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 
+              viewMode 
+              ? 'Datos del Empleado'
+              : 'Registrar Empleado'
+              )} dinamicClasses="mb-6! md:mb-4! text-center md:text-left" />
+
             <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
           </div>
         </div>
