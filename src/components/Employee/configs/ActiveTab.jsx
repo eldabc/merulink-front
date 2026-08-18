@@ -86,8 +86,10 @@ export default function ActiveTab({
     return (
       <Absence
         mode={mode}
+        viewMode={viewMode}
         isEmployeeActive={isEmployeeActive}
         disabledClasses={disabledClasses}
+        employee={employee}
       />
     );
 
