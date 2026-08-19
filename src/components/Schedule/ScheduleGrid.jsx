@@ -68,7 +68,9 @@ const ScheduleGrid = forwardRef(({
   const shifts = scheduleData?.shifts;
   const hasAdministrativeShift = useMemo(() => shifts?.some(s => s.typeShift === 'administrative'), [shifts]);
   const cleanedShifts = useMemo(() => shifts?.filter(s => s.letterShift !== 'L') ?? [], [shifts]);
+  const freeShift = useMemo(() => shifts?.find(s => s.id === 'S-0') ?? null, [shifts]);
   const isOneShift = cleanedShifts.length === 1;
+  const titleFortnight = dayjs(scheduleData?.start).format('MMMM YYYY');
 
   const daysMap = useMemo(() => {
     return fortnightDays.reduce((acc, curr) => {
@@ -168,11 +170,11 @@ const ScheduleGrid = forwardRef(({
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setBrushShift(null);
+      if (e.key === 'Escape') setBrushShift(freeShift);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [freeShift]);
 
   const myTheme = useMemo(() => {
     return themeQuartz.withParams({
@@ -304,8 +306,8 @@ const ScheduleGrid = forwardRef(({
         cellClass: '!font-bold',
         headerClass: () => {
           const classes = [];
-          if (day.isToday && hasAdministrativeShift) classes.push('header-today');
-          if (day.isWeekend && hasAdministrativeShift) classes.push('header-weekend');
+          if (day.isToday) classes.push('header-today');
+          if (day.isWeekend) classes.push('header-weekend');
           if (hasHighlightedEventsForDay) classes.push('header-has-events');
           return classes.join(' ');
         }
@@ -378,7 +380,7 @@ const ScheduleGrid = forwardRef(({
         onLoadingHandleAutofill={onLoadingHandleAutofill}
       />
 
-      <div id="merulink-grid-container" className="w-full flex flex-col gap-4">
+      <div id="merulink-grid-container" className="w-full flex flex-col gap-1">
         
           {hasShiftGrid ? ( 
             <>
@@ -406,6 +408,9 @@ const ScheduleGrid = forwardRef(({
                   )}
 
                   <div className={`ag-theme-quartz w-full h-auto shadow-sm rounded-lg overflow-hidden ${brushShift ? 'cursor-brocha' : ''}`}>
+                    <div className='w-full text-center mb-2'>
+                      <h2 className='text-base font-bold text-gray-100'>{titleFortnight.charAt(0).toUpperCase() + titleFortnight.slice(1)} </h2> 
+                    </div>
                     <AgGridReact
                       rowData={rowData}
                       columnDefs={columnDefs}
