@@ -8,7 +8,7 @@ import { allMonths } from '../../utils/StaticData/months-utils';
 
 function ScheduleFilterList({ 
   viewMode, 
-  departments = [], 
+  onFilteredDepartments = [], 
   months = [], 
   onLoadSchedules,
   loading, 
@@ -30,13 +30,13 @@ function ScheduleFilterList({
 
   // Auto-seleccionar departamento para mostrar horarios segun el rol o departamento del usuario
   useEffect(() => {
-    if ((departments.length === 1 || user?.roles?.includes('admin')) && !filters.department) {
+    if (onFilteredDepartments.length === 1 && !filters.department) { //|| user?.roles?.includes('admin')) 
       setFilters((prev) => ({
         ...prev,
-        department: departments[0]?.id
+        department: onFilteredDepartments[0]?.id
       }));
     }
-  }, [departments, filters.department]);
+  }, [onFilteredDepartments, filters.department]);
 
   // Escucha cuando 'filters' cambia y ejecuta automáticamente la búsqueda
   useEffect(() => {
@@ -62,7 +62,7 @@ function ScheduleFilterList({
             className={`w-full text-xl px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
           >
             <option className="bg-[#3c4042]" value=""> {loading ? "Cargando..." : "Seleccionar..."} </option>
-            {departments.map((item) => ( 
+            {onFilteredDepartments.map((item) => ( 
               <option key={item.id} value={item.id} className='bg-[#3c4042]'> 
                 {item.departmentName} 
               </option>

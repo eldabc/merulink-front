@@ -92,7 +92,7 @@ export default function ScheduleList({ categoryKeys }) {
         </div>
 
         <ScheduleFilterList 
-          departments={filteredDepartments} 
+          onFilteredDepartments={filteredDepartments} 
           loading={globalLoading} 
           onLoadSchedules={loadSchedulesData} 
           filters={filters} 
