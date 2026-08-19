@@ -2,7 +2,7 @@ function AlertBadge({ alert, dynamicClasses }) {
 
   const ALERT_STYLES = {
     new_modification: "bg-cyan-950 text-cyan-400 border-cyan-800",
-    warning: "bg-amber-950 text-amber-400 border-amber-800",
+    warning: "bg-amber-950 text-amber-400 border-amber-400",
     danger: "bg-red-950 text-red-400 border-red-800"
   };
 
