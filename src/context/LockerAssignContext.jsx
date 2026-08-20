@@ -3,7 +3,7 @@ import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect, useMemo  } from 'react';
 import { useNotification } from "./NotificationContext";
 
-import { normalizeDateDDMMYYY } from '../utils/date-utils.js';
+import dayjs from 'dayjs';
 
 const LockerAssignContext = createContext();
 
@@ -67,7 +67,8 @@ export const LockerAssignProvider = ({ children }) => {
   const formattedLockerAssign = (formData) => {
     // console.log("formData", formData);
     const wasAssigned = formData.employee.id ;
-    const today = normalizeDateDDMMYYY(new Date());
+    const today = dayjs().format('YYYY-MM-DD');
+    const todayLabel = dayjs().format('DD-MM-YYYY');
 
     const employeeDataSet = wasAssigned ? (
       {
@@ -81,7 +82,7 @@ export const LockerAssignProvider = ({ children }) => {
 
     return {
       id: formData.id ? formData.id : Date.now(),
-      assignCode: wasAssigned ? `ASG${formData.locker?.code}-${today}` : '',
+      assignCode: wasAssigned ? `ASG${formData.locker?.code}-${todayLabel}` : '',
       assignDate: wasAssigned ? today : '',
       locker: {
         id: formData.locker?.id,
@@ -101,7 +102,7 @@ export const LockerAssignProvider = ({ children }) => {
     };
   }
 
-  // *** Actualizar
+  // *** Asignar/Emparejar Lockers
   const updateLockerAssign = async (formData) => {
     try {
       const assignId = formData.id;
