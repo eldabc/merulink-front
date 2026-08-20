@@ -30,9 +30,9 @@ export const getRoles = async () => {
   return response.data;
 };
 
-export const getEmployeesByPermission = async (permission, selectedRole) => {
+export const getEmployeesByPermission = async (permission) => {
   const response = await axios.get(`${ENV.API_BACK_URL}employees/by-permission`, {
-    params: { permission, selectedRole },
+    params: { permission },
   });
   return response.data.data;
 };

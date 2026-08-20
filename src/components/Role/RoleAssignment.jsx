@@ -60,8 +60,9 @@ export default function RoleAssignment() {
     setSelectedPermission(perKey);
     setSelectedPermissionLabel(permName);
     setLoadingEmployees(true);
+
     try {
-      const data = await getEmployeesByPermission(perKey, selectedRole);
+      const data = await getEmployeesByPermission(perKey);
       setEmployees(data);
     } catch {
       setEmployees([]);
