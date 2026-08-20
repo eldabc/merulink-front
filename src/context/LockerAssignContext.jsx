@@ -3,8 +3,7 @@ import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect, useMemo  } from 'react';
 import { useNotification } from "./NotificationContext";
 
-import dayjs from 'dayjs';
-
+import { mapLockerAssignToBackend } from '../utils/mappers/lockerAssignMapper';
 const LockerAssignContext = createContext();
 
 // hook personalizado para usar el contexto
@@ -52,7 +51,7 @@ export const LockerAssignProvider = ({ children }) => {
         setAssignments(assignsData.data.data);
         
       } catch (error) {
-        showNotification('Error obteniendo los datos', error.response.data.message, 'error');
+        showNotification('Error obteniendo los datos', error?.response?.data?.message, 'error');
       } finally {
         setLoading(false);
       }
@@ -62,45 +61,6 @@ export const LockerAssignProvider = ({ children }) => {
 
   }, [resetAssign]);
 
-
-  // Armado JSON
-  const formattedLockerAssign = (formData) => {
-    // console.log("formData", formData);
-    const wasAssigned = formData.employee.id ;
-    const today = dayjs().format('YYYY-MM-DD');
-    const todayLabel = dayjs().format('DD-MM-YYYY');
-
-    const employeeDataSet = wasAssigned ? (
-      {
-        id: formData.employee.id,
-        firstName: formData.employee.firstName,
-        lastName: formData.employee.lastName,
-        department: formData.employee.department,
-        departmentName: formData.employee.departmentName,
-      }
-    ) : null;
-
-    return {
-      id: formData.id ? formData.id : Date.now(),
-      assignCode: wasAssigned ? `ASG${formData.locker?.code}-${todayLabel}` : '',
-      assignDate: wasAssigned ? today : '',
-      locker: {
-        id: formData.locker?.id,
-        code: formData.locker?.code,
-        status: wasAssigned ? 'Ocupado' : 'Emparejado',
-        category:{
-          id: formData.locker?.category?.id,
-          key: formData.locker?.category?.key,
-          name: formData.locker?.category?.name,
-        },
-        padlock: {
-          ...formData.padlock,
-          status: 'Asignado',
-        }
-      },
-      employee: employeeDataSet
-    };
-  }
 
   // *** Asignar/Emparejar Lockers
   const updateLockerAssign = async (formData) => {
@@ -112,11 +72,11 @@ export const LockerAssignProvider = ({ children }) => {
         return false;
       }
 
-      const updatedLockerAssign = formattedLockerAssign(formData);
-      console.log("Actualizado:", updatedLockerAssign);
+      // Armado JSON
+      const updatedLockerAssign = mapLockerAssignToBackend(formData);
+      console.log("Asignar/Emparejar:", updatedLockerAssign);
       
       const customMessage = updatedLockerAssign.employee ? 'Asignado' : 'Emparejado';
-
       const response = await axios.post(`${ENV.API_BACK_URL}assigns`, updatedLockerAssign);
       
       setAssignments(prevData => {
@@ -130,7 +90,8 @@ export const LockerAssignProvider = ({ children }) => {
       return true;
 
     } catch (error) {
-      showNotification('Error al actualizar:', error.response.data.message, 'error');
+      console.log("error", error);
+      showNotification('Error al actualizar:', error?.response?.data?.message, 'error');
       return false;
     }
   };
@@ -161,7 +122,7 @@ export const LockerAssignProvider = ({ children }) => {
       return responseLockers.data.data;
       
     } catch (error) {
-      showNotification('Error al obtener Lockers', error.response.data.message, 'error');
+      showNotification('Error al obtener Lockers', error?.response?.data?.message, 'error');
       return false;
     }
   }
@@ -175,7 +136,7 @@ export const LockerAssignProvider = ({ children }) => {
       }
         return response.data.data;     
     } catch (error) {
-      showNotification('Error al obtener Padlocks', error.response.data.message, 'error');
+      showNotification('Error al obtener Padlocks', error?.response?.data?.message, 'error');
       return false;
     }
   }
@@ -185,7 +146,7 @@ export const LockerAssignProvider = ({ children }) => {
         const response = await axios.get(`${ENV.API_BACK_URL}departments`);
         return response.data.data;       
       } catch (error) {
-        showNotification('Error al obtener Departamentos', error.response.data.message, 'error');
+        showNotification('Error al obtener Departamentos', error?.response?.data?.message, 'error');
         return [];
       }
     }
@@ -210,7 +171,7 @@ export const LockerAssignProvider = ({ children }) => {
         return [...response.data.data];
 
       } catch (error) {
-        showNotification('Error al obtener Empleados por Categoría', error.response.data.message, 'error');
+        showNotification('Error al obtener Empleados por Categoría', error?.response?.data?.message, 'error');
         return false;
       }
   }
