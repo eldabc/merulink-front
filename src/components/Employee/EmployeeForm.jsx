@@ -226,7 +226,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         nationality: employee?.nationality ?? 'V',
         sex: employee?.sex ?? '',
         maritalStatus: employee?.maritalStatus ?? 'Soltero',
-        bloodType: employee?.bloodType ?? 'O+',
+        bloodType: employee?.bloodType ?? '',
         email: employee?.email ?? '',
         mobilePhoneCode: mobileCode || '0414',
         mobilePhone: mobileNumber ?? '',

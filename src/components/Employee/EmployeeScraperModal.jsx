@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { Search, X, CheckCircle, AlertTriangle, Loader2, SkipForward, Shield } from 'lucide-react';
+import { Search, X, CheckCircle, AlertTriangle, Loader2, SkipForward, Shield, ArrowLeft } from 'lucide-react';
 import { scrapeIvss, scrapeSeniat, getSeniatCaptcha } from '../../services/scraperService';
+import { ciOption } from '../../utils/text-utils';
 
 import RequiredMark from '../Shared/RequiredMark';
 
 
 export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   const [ci, setCi] = useState('');
+  const [nationality, setNationality] = useState('V');
   const [birthdate, setBirthdate] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -24,6 +26,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   /** Reinicia todos los estados al formulario inicial (IVSS). */
   const handleReset = () => {
     setCi('');
+    setNationality('V');
     setBirthdate('');
     setLoading(false);
     setResult(null);
@@ -35,9 +38,25 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCaptchaError('');
   };
 
+  /** Formatea la cédula con puntos mientras se escribe (ciOption). */
+  const handleCiChange = (e) => {
+    ciOption.onChange(e);   // aplica el formato 8.123.456 en el input
+    setCi(e.target.value);  // sincroniza el estado con el valor formateado
+  };
+
+  /** Vuelve al formulario inicial de IVSS (limpia resultados y captcha). */
+  const handleGoBack = () => {
+    setResult(null);
+    setErrorMsg('');
+    setCaptchaImage(null);
+    setCaptchaCode('');
+    setShowCaptcha(false);
+    setCaptchaError('');
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!ci.trim() || !birthdate.trim()) {
+    if (!ci.replace(/\D/g, '') || !birthdate.trim()) {
       setErrorMsg('Complete ambos campos.');
       return;
     }
@@ -50,7 +69,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     try {
       const [y, m, d] = birthdate.split('-');
       const formattedDate = `${d}/${m}/${y}`;
-      const response = await scrapeIvss(ci.trim(), formattedDate);
+      const response = await scrapeIvss(ci.replace(/\D/g, ''), formattedDate, nationality);
       setResult(response);
     } catch (err) {
       console.log("error ivss", err);
@@ -96,8 +115,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCaptchaError('');
 
     try {
-      console.log("ci.trim(), captchaCode.trim()", ci.trim(), captchaCode.trim());
-      const response = await scrapeSeniat(ci.trim(), captchaCode.trim());
+      const response = await scrapeSeniat(ci.replace(/\D/g, ''), captchaCode.trim(), nationality);
       console.log("response seniat", response);
 
       setResult(response);
@@ -115,7 +133,18 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
 
   const handleAcceptData = () => {
     if (result?.success && result?.data) {
-      onDataFound(result.data);
+      const data = { ...result.data };
+
+      // En caso que IVSS fallo y usaron SENIAT, set a la fecha de nacimiento que el usuario ingresó.
+      if (!data.birthdate && birthdate) {
+        const [y, m, d] = birthdate.split('-');
+        data.birthdate = `${d}/${m}/${y}`;
+      }
+
+      // Nacionalidad seleccionada (V/E)
+      data.nationality = nationality;
+
+      onDataFound(data);
     }
   };
 
@@ -199,8 +228,8 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               </div>
 
               <div className="flex gap-3">
-                <button onClick={onSkip} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
-                  <SkipForward className="w-4 h-4" /> Llenar manualmente
+                <button onClick={handleGoBack} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                  <ArrowLeft className="w-4 h-4" /> Volver
                 </button>
                 <button onClick={handleLoadCaptcha} disabled={captchaLoading}
                   className="flex-1 bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 font-medium py-2.5 px-4 rounded-lg border border-amber-500/30 flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
@@ -250,7 +279,9 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0" />
                 <p className="text-sm">{captchaError || 'Error al cargar el captcha.'}</p>
               </div>
-              <button onClick={onSkip} className="w-full bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg">Volver al formulario manual</button>
+              <button onClick={handleGoBack} className="w-full bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                <ArrowLeft className="w-4 h-4" /> Volver
+              </button>
             </div>
           )}
 
@@ -262,11 +293,25 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               </p>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Cédula <RequiredMark simbol="*" /></label>
-                <input 
-                  type="text" value={ci} onChange={e => setCi(e.target.value)}
-                  placeholder="Ej: 32123456" autoFocus
-                  className="input-dark" 
-                />
+                <div className="flex gap-2">
+                  <select
+                    value={nationality}
+                    onChange={(e) => setNationality(e.target.value)}
+                    className="input-dark w-20 text-center"
+                    title="Nacionalidad: V = Venezolano, E = Extranjero"
+                  >
+                    <option value="V">V</option>
+                    <option value="E">E</option>
+                  </select>
+                  <input
+                    type="text"
+                    value={ci}
+                    onChange={handleCiChange}
+                    placeholder="Ej: 32123456"
+                    autoFocus
+                    className="input-dark flex-1"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Fecha Nacimiento <RequiredMark simbol="*" /></label>
