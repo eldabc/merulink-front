@@ -14,10 +14,16 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Máquina de estados del flujo: 'form' | 'result' | 'error' | 'captcha'
+  const [step, setStep] = useState('form');
+  // Último servicio consultado ('ivss' | 'seniat') para mensajes y Volver
+  const [source, setSource] = useState(null);
+  // Pila de pasos previos para que "Volver" regrese al paso correcto
+  const [history, setHistory] = useState([]);
+
   // SENIAT captcha
   const [captchaImage, setCaptchaImage] = useState(null);
   const [captchaCode, setCaptchaCode] = useState('');
-  const [showCaptcha, setShowCaptcha] = useState(false);
   const [captchaLoading, setCaptchaLoading] = useState(false);
   const [captchaError, setCaptchaError] = useState('');
 
@@ -33,9 +39,11 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setErrorMsg('');
     setCaptchaImage(null);
     setCaptchaCode('');
-    setShowCaptcha(false);
     setCaptchaLoading(false);
     setCaptchaError('');
+    setStep('form');
+    setSource(null);
+    setHistory([]);
   };
 
   /** Formatea la cédula con puntos mientras se escribe (ciOption). */
@@ -44,13 +52,28 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCi(e.target.value);  // sincroniza el estado con el valor formateado
   };
 
-  /** Vuelve al formulario inicial de IVSS (limpia resultados y captcha). */
-  const handleGoBack = () => {
+  // ── Navegación del flujo (máquina de estados) ─────────
+  /** Avanza a un paso guardando el actual en la pila (para Volver). */
+  const go = (nextStep) => {
+    setHistory((h) => [...h, step]);
+    setStep(nextStep);
+  };
+
+  /** Regresa al paso anterior de la pila (Volver contextual). */
+  const goBack = () => {
+    const prev = history.length ? history[history.length - 1] : 'form';
+    setHistory((h) => h.slice(0, -1));
+    setStep(prev);
+  };
+
+  /** Desde el resultado: vuelve siempre al formulario para rehacer. */
+  const backToForm = () => {
+    setHistory([]);
+    setStep('form');
     setResult(null);
     setErrorMsg('');
     setCaptchaImage(null);
     setCaptchaCode('');
-    setShowCaptcha(false);
     setCaptchaError('');
   };
 
@@ -63,19 +86,27 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
 
     setLoading(true);
     setErrorMsg('');
+    setCaptchaError('');
     setResult(null);
-    setShowCaptcha(false);
 
     try {
+      setSource('ivss');
       const [y, m, d] = birthdate.split('-');
       const formattedDate = `${d}/${m}/${y}`;
       const response = await scrapeIvss(ci.replace(/\D/g, ''), formattedDate, nationality);
       setResult(response);
+      if (response?.success) {
+        go('result');
+      } else {
+        setErrorMsg(response?.error || 'No se encontraron datos en IVSS.');
+        go('error');
+      }
     } catch (err) {
       console.log("error ivss", err);
       const msg = err?.response?.data?.error || err?.response?.data?.message || 'Error de conexión.';
       setErrorMsg(msg);
       setResult({ success: false, data: null, source: 'error', error: msg });
+      go('error');
     } finally {
       setLoading(false);
     }
@@ -86,12 +117,12 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCaptchaLoading(true);
     setCaptchaError('');
     setCaptchaCode('');
+    setResult(null);
+    go('captcha');
     try {
       const data = await getSeniatCaptcha();
       if (data.success) {
         setCaptchaImage(data.captcha_image);
-        setShowCaptcha(true);
-        setResult(null);
       } else {
         setCaptchaError(data.error || 'No se pudo cargar el captcha.');
       }
@@ -115,17 +146,24 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCaptchaError('');
 
     try {
+      setSource('seniat');
       const response = await scrapeSeniat(ci.replace(/\D/g, ''), captchaCode.trim(), nationality);
       console.log("response seniat", response);
 
       setResult(response);
-      setShowCaptcha(false);
+      if (response?.success) {
+        go('result');
+      } else {
+        setErrorMsg(response?.error || 'No se encontraron datos en SENIAT.');
+        go('error');
+      }
     } catch (err) {
       console.log("error seniat", err);
       const msg = err.response?.data?.error || 'Código incorrecto o error de conexión.';
-      setCaptchaError(msg);
-      setShowCaptcha(false);
+      setErrorMsg(msg);
+      setCaptchaError('');
       setResult({ success: false, data: null, source: 'error', error: msg });
+      go('error');
     } finally {
       setLoading(false);
     }
@@ -188,7 +226,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
           )}
 
           {/* Resultado consulta */}
-          {!loading && result?.success && result?.data && (
+          {!loading && step === 'result' && result?.success && result?.data && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-green-400 bg-green-400/10 rounded-lg p-3">
                 <CheckCircle className="w-5 h-5" />
@@ -206,8 +244,8 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button onClick={onSkip} className="flex-1 text-gray-300 font-medium py-2.5 px-4 flex items-center justify-center gap-2">
-                  <SkipForward className="w-4 h-4" /> Llenar manualmente
+                <button onClick={backToForm} className="flex-1 text-gray-300 font-medium py-2.5 px-4 flex items-center justify-center gap-2">
+                  <ArrowLeft className="w-4 h-4" /> Volver
                 </button>
                 <button onClick={handleAcceptData} className="flex-1 text-white font-medium py-2.5 px-4 flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4" /> Usar estos datos
@@ -217,18 +255,20 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
           )}
 
           {/* Error + opción SENIAT */}
-          {!loading && result && !result.success && !showCaptcha && (
+          {!loading && step === 'error' && (
             <div className="space-y-4">
               <div className="flex items-start gap-2 text-amber-400 bg-amber-400/10 rounded-lg p-3">
                 <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm font-medium">No se encontraron datos en IVSS</p>
+                  <p className="text-sm font-medium">
+                    No se encontraron datos en {source === 'seniat' ? 'SENIAT' : 'IVSS'}
+                  </p>
                   <p className="text-xs text-gray-400 mt-1">{errorMsg}</p>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button onClick={handleGoBack} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+                <button onClick={goBack} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <ArrowLeft className="w-4 h-4" /> Volver
                 </button>
                 <button onClick={handleLoadCaptcha} disabled={captchaLoading}
@@ -237,12 +277,11 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                   Intentar con SENIAT
                 </button>
               </div>
-              {captchaError && <p className="text-red-400 text-sm">{captchaError}</p>}
             </div>
           )}
 
           {/* Captcha SENIAT */}
-          {!loading && showCaptcha && captchaImage && (
+          {!loading && step === 'captcha' && captchaImage && (
             <form className="space-y-4">
               <div className="flex items-center gap-2 text-amber-400 bg-amber-400/10 rounded-lg p-3">
                 <Shield className="w-5 h-5" />
@@ -263,7 +302,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
               {captchaError && <p className="text-red-400 text-sm">{captchaError}</p>}
 
               <div className="flex gap-3">
-                <button type="button" onClick={() => { setShowCaptcha(false); setResult({ success: false, source: 'error', error: 'Búsqueda cancelada.' }); }}
+                <button type="button" onClick={goBack}
                   className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg">Volver</button>
                 <button type="button" onClick={(e) => { handleCaptchaSubmit(e); }} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <Search className="w-4 h-4" /> Verificar
@@ -272,21 +311,29 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
             </form>
           )}
 
-          {/* Error genérico (sin opción SENIAT) */}
-          {!loading && result && !result.success && showCaptcha && !captchaImage && (
+          {/* Cargando captcha SENIAT */}
+          {!loading && step === 'captcha' && captchaLoading && (
+            <div className="flex flex-col items-center py-10 gap-3">
+              <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
+              <p className="text-sm text-gray-400">Cargando captcha del SENIAT...</p>
+            </div>
+          )}
+
+          {/* Error genérico (no se pudo cargar el captcha) */}
+          {!loading && step === 'captcha' && !captchaImage && !captchaLoading && (
             <div className="space-y-4">
               <div className="flex items-start gap-2 text-red-400 bg-red-400/10 rounded-lg p-3">
                 <AlertTriangle className="w-5 h-5 mt-0.5 shrink-0" />
                 <p className="text-sm">{captchaError || 'Error al cargar el captcha.'}</p>
               </div>
-              <button onClick={handleGoBack} className="w-full bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
+              <button onClick={goBack} className="w-full bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                 <ArrowLeft className="w-4 h-4" /> Volver
               </button>
             </div>
           )}
 
           {/* Formulario inicial */}
-          {!loading && !result && !showCaptcha && (
+          {!loading && step === 'form' && (
             <form onSubmit={handleSearch} className="space-y-4">
               <p className="text-sm text-gray-400">
                 Ingrese cédula y fecha de nacimiento para buscar en el IVSS.
