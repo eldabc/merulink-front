@@ -34,40 +34,66 @@ export default function ParticlesCanvas() {
       }));
     }
 
-    function draw() {
-      if (!canvas || !ctx) return;
-      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    // ── limitar FPS y pausar cuando la pestaña no es visible ──
+    // Sin límite, el requestAnimationFrame corre a la tasa nativa del monitor
+    const FPS_LIMIT = 30;
+    const FRAME_INTERVAL = 1000 / FPS_LIMIT;
+    let lastFrame = 0;
+    let running = true;
 
-      // Gradient y dibujo de partículas
-      const g = ctx.createLinearGradient(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-      g.addColorStop(0, 'rgba(255,255,255,0.01)');
-      g.addColorStop(1, 'rgba(83,196,255,0.02)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    function draw(now) {
+      if (!running || !canvas || !ctx) return;
 
-      const parts = particlesRef.current;
-      for (let i = 0; i < parts.length; i++) {
-        const p = parts[i];
-        // Lógica de movimiento y rebote
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < -20) p.x = canvas.offsetWidth + 20;
-        if (p.x > canvas.offsetWidth + 20) p.x = -20;
-        if (p.y < -20) p.y = canvas.offsetHeight + 20;
-        if (p.y > canvas.offsetHeight + 20) p.y = -20;
+      // Solo dibuja si pasó el intervalo.
+      if (now - lastFrame >= FRAME_INTERVAL) {
+        lastFrame = now;
 
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(150,200,255,${p.alpha})`;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+        // Gradient y dibujo de partículas
+        const g = ctx.createLinearGradient(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+        g.addColorStop(0, 'rgba(255,255,255,0.01)');
+        g.addColorStop(1, 'rgba(83,196,255,0.02)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+        const parts = particlesRef.current;
+        for (let i = 0; i < parts.length; i++) {
+          const p = parts[i];
+          // Lógica de movimiento y rebote
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < -20) p.x = canvas.offsetWidth + 20;
+          if (p.x > canvas.offsetWidth + 20) p.x = -20;
+          if (p.y < -20) p.y = canvas.offsetHeight + 20;
+          if (p.y > canvas.offsetHeight + 20) p.y = -20;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(150,200,255,${p.alpha})`;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       rafRef.current = requestAnimationFrame(draw);
     }
 
+    // Pausa el loop cuando la pestaña no es visible.
+    const handleVisibility = () => {
+      if (document.hidden) {
+        running = false;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      } else {
+        running = true;
+        lastFrame = 0;
+        rafRef.current = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     // Inicio
     setCanvasSize();
-    draw();
+    rafRef.current = requestAnimationFrame(draw);
 
     // Responsive resize handling
     if (window.ResizeObserver) {
@@ -79,7 +105,9 @@ export default function ParticlesCanvas() {
 
     // Cleanup
     return () => {
+      running = false;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      document.removeEventListener('visibilitychange', handleVisibility);
       if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
       else window.removeEventListener('resize', setCanvasSize);
     };

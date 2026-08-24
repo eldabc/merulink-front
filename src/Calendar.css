@@ -186,7 +186,7 @@ b { /* used for event dates/times */
     color: #90d0ff; /* Color azul claro para los días de la semana */
     font-size: 1.1em;
     font-weight: 500;
-    padding-bottom: 15px; /* Más espacio debajo de los nombres de los días */
+    padding-bottom: 8px; /* Más espacio debajo de los nombres de los días */
 }
 
 /* Eliminar todos los bordes por defecto de la cuadrícula */
@@ -213,19 +213,21 @@ b { /* used for event dates/times */
 }
 
 .fc-scrollgrid-sync-table tbody tr td {
-    padding: 0.7%;
+    padding: 2px 0.7%;
 }
 
-.fc .fc-daygrid-day-frame .fc-daygrid-day-top a, .fc .fc-daygrid-day-frame .fc-daygrid-day-events {
+.fc .fc-daygrid-day-frame .fc-daygrid-day-top a {
     color: #fff !important;
     font-weight: 600;
     font-size: 22px;
+    line-height: 1;
+    padding: 3px;
 }
 
 .fc .fc-daygrid-day-frame {
     min-height: 100%;
     position: relative;
-    padding: 12px;
+    padding: 6px;
     border-radius: 10px;
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.03);
@@ -592,9 +594,9 @@ a[aria-label="domingo"] {
     flex-wrap: wrap;
     align-items: flex-end;
     gap: 0;
-    margin-top: auto !important;
-    padding-bottom: 4px !important;
-    min-height: 20px;
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: 0;
 }
 
 /* Ajuste individual de los puntos */
@@ -610,8 +612,9 @@ a[aria-label="domingo"] {
 .fc-daygrid-day-frame {
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important; /* Número arriba, puntos abajo */
-    height: 100%;
+    justify-content: flex-start !important; /* Número arriba, puntos debajo */
+    height: 95% !important;
+    min-height: auto !important;
 }
 
 .fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {

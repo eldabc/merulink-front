@@ -31,6 +31,8 @@ export default function Calendar() {
   const [currentTitle, setCurrentTitle] = useState('');
   const { eventData, loadEvents, refetchEvents, specialDays, currentYear, currentMonth, loading, setCurrentYear, setCurrentMonth } = useEvents();
   const calendarRef = useRef(null);
+  // Guard contra la doble ejecución del useEffect en desarrollo (StrictMode).
+  const initialLoadDone = useRef(false);
   const navigate = useNavigate();
 
   // Funciones para controlar el calendario manualmente
@@ -39,6 +41,8 @@ export default function Calendar() {
   const disabledClasses = getDisabledClasses(loading);
 
   useEffect(() => {  
+    if (initialLoadDone.current) return;
+    initialLoadDone.current = true;
     loadEvents({year: currentYear, month: currentMonth});
   }, []);
 
@@ -183,7 +187,7 @@ export default function Calendar() {
 
   return (
     <HasPermission permissions={['view-calendar']} >
-      <div className='w-full mt-5'>
+      <div className='w-full'>
         <div className='calendar-container'>
           <div className='demo-app-main relative'>
             
