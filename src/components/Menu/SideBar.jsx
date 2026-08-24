@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from 'react-router-dom';
-import { menuTree, findMenuContextByPath, getFilteredMenuTree } from "./menuTree";
-import { menuEvents } from "./menuEvents";
+import { findMenuContextByPath } from "../../utils/menu-utils";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -67,25 +66,14 @@ function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, c
 export default function SideBar({ isSidebarOpen }) {
   const location = useLocation();
   const pathname = location.pathname;
-  const { user } = useAuth();
-
-  // Detect if we're on an /eventos/* path to use the events menu tree
-  const isEventPath = pathname.startsWith('/eventos');
-
-  const context = isEventPath
-    ? null
-    : findMenuContextByPath(pathname);
+  const { menu } = useAuth(); // Menú del usuario (ya filtrado por permisos en el backend)
+  const context = findMenuContextByPath(pathname, menu);
 
   const activeMenu = context?.activeMenu || null;
   const activePath = context?.activePath || [];
 
-  // Árbol filtrado por permisos del usuario
-  const filteredTree = useMemo(() => getFilteredMenuTree(user?.permissions || []), [user?.permissions]);
-
-  // Determine which branch to render
-  const branch = isEventPath
-    ? menuEvents
-    : (filteredTree.find((item) => item.id === activeMenu)?.children || []);
+  // Rama del sidebar: hijos del módulo activo del menú superior
+  const branch = menu.find((item) => item.id === activeMenu)?.children || [];
 
   const initialCollapsed = useMemo(() => buildAllPaths(branch), [branch]);
   const [collapsed, setCollapsed] = useState(initialCollapsed);
@@ -104,10 +92,8 @@ export default function SideBar({ isSidebarOpen }) {
     if (different) setCollapsed(initialCollapsed);
   }, [initialCollapsed]);
 
-  // Show sidebar when:
-  // - On event paths (always show events sidebar)
-  // - activeMenu is set, has children, and is not IA
-  const shouldShow = isEventPath || (activeMenu && branch.length > 0 && activeMenu !== 'IA');
+  // Show sidebar when the active module has children to show
+  const shouldShow = activeMenu && branch.length > 0 && activeMenu !== 'IA';
 
   if (!shouldShow) {
     return <aside className="sidebar hidden" />;
@@ -121,9 +107,7 @@ export default function SideBar({ isSidebarOpen }) {
   };
 
   // Breadcrumb building helper
-  const breadcrumbSegments = isEventPath
-    ? ['Eventos']
-    : (activeMenu ? [activeMenu, ...activePath] : []);
+  const breadcrumbSegments = activeMenu ? [activeMenu, ...activePath] : [];
 
   return (
     <aside className={` sidebar

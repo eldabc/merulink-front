@@ -7,15 +7,38 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
   const isCleaningUp = useRef(false); // evita múltiples cierres por 401
+  const menuFetchInFlight = useRef(false); // evita doble fetch del menú (StrictMode)
+
+  // Cargar el menú del usuario desde el backend (GET /me/menu).
+  // El backend filtra por permisos, el front solo lo guarda y expone.
+  const fetchMenu = useCallback(async () => {
+    
+    if (menuFetchInFlight.current) return;
+    menuFetchInFlight.current = true;
+
+    try {
+      const response = await axios.get(`${ENV.API_BACK_URL}me/menu`, { timeout: 15000 });
+      const data = response.data?.data ?? [];
+      setMenu(data);
+      localStorage.setItem('userMenu', JSON.stringify(data));
+    } catch (error) {
+      console.error('Error al cargar el menú:', error);
+      // Si falla, se mantiene el menú en caché (si existe)
+    } finally {
+      menuFetchInFlight.current = false;
+    }
+  }, []);
 
   // Limpiar estado de sesión (sin llamar al backend)
   const clearSession = useCallback(() => {
     localStorage.clear();
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
+    setMenu([]);
   }, []);
 
   // Al montar la app, verifica si ya había una sesión en LocalStorage
@@ -43,9 +66,16 @@ export const AuthProvider = ({ children }) => {
 
       // Configuramos axios con el token por defecto para todas las peticiones a Laragon
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Menú: primero el caché (inmediato), luego refresca del servidor
+      const cachedMenu = localStorage.getItem('userMenu');
+      if (cachedMenu) {
+        try { setMenu(JSON.parse(cachedMenu)); } catch { /* JSON inválido: ignorar */ }
+      }
+      fetchMenu();
     }
     setLoading(false);
-  }, []);
+  }, [fetchMenu]);
 
   // Interceptor global de Axios: detecta 401 y cierra sesión automáticamente
   useEffect(() => {
@@ -86,6 +116,7 @@ export const AuthProvider = ({ children }) => {
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser({ ...userData, isAdmin: userData.roles.includes('admin') });
+    fetchMenu();
   };
 
   // Cerrar sesión (manual o por inactividad)
@@ -150,6 +181,7 @@ export const AuthProvider = ({ children }) => {
   const contextValue = {
     authLoading: loading,
     user,
+    menu,
     loginContext,
     logoutContext,
     logoutDueToInactivity,

@@ -31,7 +31,7 @@ import '../../Tables.css';
 export default function EmployeeForm({ mode = 'create' }) {
   
   const { employeeData, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
-  const { departments, loadDepartments } = useGlobalData();
+  const { departments } = useGlobalData();
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));

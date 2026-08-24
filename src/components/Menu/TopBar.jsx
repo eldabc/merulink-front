@@ -4,7 +4,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 import logo from './../../assets/logo.png';
-import { menuTree, findMenuContextByPath, getFilteredTopMenuItems } from './menuTree';
+import { findMenuContextByPath } from '../../utils/menu-utils';
 import { BellIcon } from '@heroicons/react/24/solid';
 import NotificationPanel from "../Shared/NotificationPanel";
 import NameApp from "../Shared/NameApp";
@@ -15,16 +15,15 @@ export default function TopBar() {
   const navigate = useNavigate();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
-  const { user, logoutContext } = useAuth();
+  const { user, menu, logoutContext } = useAuth();
 
-  // Menú superior filtrado por permisos
-  const filteredTopItems = getFilteredTopMenuItems(user?.permissions || []);
+  // Menú superior: viene del backend ya filtrado por permisos.
+  // Los módulos con hideFromTop se mantienen en estructura (sidebar) pero no salen en el topBar.
+  const filteredTopItems = menu.filter((item) => !item.hideFromTop);
 
   // Derive active menu from the current URL
-  const context = findMenuContextByPath(location.pathname);
+  const context = findMenuContextByPath(location.pathname, menu);
   const activeMenu = context?.activeMenu || null;
-
-  const menuById = Object.fromEntries(menuTree.map((item) => [item.id, item]));
 
   const handleLogout = async (e) => {
 
@@ -47,11 +46,11 @@ export default function TopBar() {
         <nav className="top-menu" aria-label="Main menu">
           {filteredTopItems.map(item => (
             <button
-              key={item}
-              onClick={() => navigate(menuById[item]?.path || '/')}
-              className={activeMenu === item ? 'active' : ''}
+              key={item.id}
+              onClick={() => navigate(item.path || '/')}
+              className={activeMenu === item.id ? 'active' : ''}
             >
-              {item}
+              {item.label}
             </button>
           ))}
         </nav>

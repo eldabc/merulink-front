@@ -1,11 +1,13 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { findMenuContextByPath } from './Menu/menuTree';
+import { findMenuContextByPath } from '../utils/menu-utils';
+import { useAuth } from '../context/AuthContext';
 import TitleHeader from './Shared/TitleHeader';
 
 function DefaultWorkspace() {
   const navigate = useNavigate();
   const location = useLocation();
-  const context = findMenuContextByPath(location.pathname);
+  const { menu } = useAuth();
+  const context = findMenuContextByPath(location.pathname, menu);
   const activeMenu = context?.activeMenu || '404';
 
   return (
