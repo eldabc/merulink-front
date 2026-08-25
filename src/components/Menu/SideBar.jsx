@@ -1,8 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useLocation, NavLink, Link } from 'react-router-dom';
+import { Users } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+
 import { findMenuContextByPath } from "../../utils/menu-utils";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
-import { useAuth } from '../../context/AuthContext';
+
+import HasPermission from "../Shared/HasPermission";
 
 function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
   return (nodes || []).map((node) => {
@@ -134,13 +138,29 @@ export default function SideBar({ isSidebarOpen }) {
   }, []);
 
   return (
-    <aside className={` sidebar
+    <aside className={`sidebar
         bg-gray-800 text-white h-full transition-transform duration-300
         lg:translate-x-0 lg:static lg:block
         fixed top-0 left-0 w-64 z-40
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}  text-sm sm:text-base
-      `}>
+      `}
+    >
+
+      {/* Botón contextual: en RRHH navega al listado de empleados */}
+      {activeMenu === 'RRHH' && (
+        <HasPermission permissions={['view-employees']} >
+          <Link
+            to="/empleados"
+            className="mb-3 flex items-center justify-center gap-2 rounded-lg border border-[#53c4ff]/40 bg-[#53c4ff]/15 px-3 py-2 text-sm font-semibold text-[#9fd8ff] transition-colors hover:bg-[#53c4ff]/25 hover:text-white"
+          >
+            <Users className="h-4 w-4" />
+            Empleados
+          </Link>
+        </HasPermission>
+      )}
+
       <div className="submenu-title">Secciones</div>
+
       {/* Breadcrumbs */}
       <div className="mb-3 flex flex-wrap items-center gap-1 rounded-lg bg-[#667eea14] px-2 py-1.5 text-xs">
         {breadcrumbSegments.length > 0 ? (
@@ -173,7 +193,10 @@ export default function SideBar({ isSidebarOpen }) {
           </Link>
         )}
       </div>
-      <div>{renderNode(branch, [], null, activePath, toggleCollapse, collapsed)}</div>
+
+      <div>
+        {renderNode(branch, [], null, activePath, toggleCollapse, collapsed)}
+      </div>
     </aside>
   );
 }
