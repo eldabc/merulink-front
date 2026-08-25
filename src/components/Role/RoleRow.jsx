@@ -8,6 +8,18 @@ import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
 import HasPermission from '../Shared/HasPermission';
 
+// Clase del badge según la acción del permiso (create/view/edit/delete/especial)
+const permissionBadgeClass = (key = '') => {
+  const action = String(key).split('-')[0];
+  switch (action) {
+    case 'create': return 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300';
+    case 'view':   return 'border-sky-400/30 bg-sky-400/10 text-sky-300';
+    case 'edit':   return 'border-amber-400/30 bg-amber-400/10 text-amber-300';
+    case 'delete': return 'border-rose-400/30 bg-rose-400/10 text-rose-300';
+    default:       return 'border-slate-400/30 bg-slate-400/10 text-slate-300';
+  }
+};
+
 export default function RoleRow({ role }) {
 
   const navigate = useNavigate();
@@ -47,17 +59,25 @@ export default function RoleRow({ role }) {
     >
       <td className="px-4 py-3 text-gray-200 font-medium">{role.label}</td>
       <td className="px-4 py-3 text-gray-300">
-        <div className='bg-[#2f3d44a7] rounded-lg pl-2'>
-        {role.permissionGroups?.map((group, gi) => (
-          <div key={group.key || gi}>
-            <span className="font-semibold text-sm text-gray-200">{group.label}:</span>{' '}
-            {group.permissions.map((perm, pi) => (
-              <span className='text-xs text-gray-500 hover:text-[#9fd8ff]' key={perm.key || pi}>
-                {perm.label}{pi < group.permissions.length - 1 ? '. ' : ''}
+        <div className="space-y-3 rounded-xl bg-[#2f3d44a7] p-3">
+          {role.permissionGroups?.map((group, gi) => (
+            <div key={group.key || gi} className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[#9fd8ff]">
+                {group.label}:
               </span>
-            ))}
-          </div>
-        ))}
+              <span className="rounded-full bg-white/5 px-1.5 py-px text-[10px] text-gray-400">
+                {group.permissions.length}
+              </span>
+              {group.permissions.map((perm, pi) => (
+                <span
+                  key={perm.key || pi}
+                  className={`rounded-md border px-2 py-0.5 text-[11px] font-medium leading-4 ${permissionBadgeClass(perm.key)}`}
+                >
+                  {perm.label}
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </td>
       <td className="px-4 py-3">
