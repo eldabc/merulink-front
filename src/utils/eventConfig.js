@@ -148,7 +148,7 @@ export const EVENT_CAT = {
   },
   M_BIRTHDAYS: {
     key: "meru-birthdays",
-    path: "cumpleaños-merú",
+    path: "cumpleanos-meru",
   },
   E_MOD: {
     key: "executive-mod",

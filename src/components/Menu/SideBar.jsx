@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useLocation, NavLink, Link } from 'react-router-dom';
 import { findMenuContextByPath } from "../../utils/menu-utils";
 import { buildAllPaths } from "../../utils/sidebar-menu-utils";
-import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 function renderNode(nodes, path = [], onItemClick, activePath, toggleCollapse, collapsed) {
@@ -109,6 +108,31 @@ export default function SideBar({ isSidebarOpen }) {
   // Breadcrumb building helper
   const breadcrumbSegments = activeMenu ? [activeMenu, ...activePath] : [];
 
+  // Índice id → item del menú (para etiquetas y rutas de las migas)
+  const itemsById = useMemo(() => {
+    const map = new Map();
+    const walk = (nodes) => {
+      for (const n of nodes) {
+        map.set(n.id, n);
+        if (n.children?.length) walk(n.children);
+      }
+    };
+    walk(menu);
+    return map;
+  }, [menu]);
+
+  // Resuelve la ruta a la que pertenece un item: su propio path o el primer descendiente con path real 
+  // (para contenedores tipo Planificación).
+  const resolveItemPath = useCallback((item) => {
+    if (!item) return null;
+    if (item.path && item.path !== '#') return item.path;
+    for (const child of item.children || []) {
+      const p = resolveItemPath(child);
+      if (p) return p;
+    }
+    return null;
+  }, []);
+
   return (
     <aside className={` sidebar
         bg-gray-800 text-white h-full transition-transform duration-300
@@ -118,27 +142,35 @@ export default function SideBar({ isSidebarOpen }) {
       `}>
       <div className="submenu-title">Secciones</div>
       {/* Breadcrumbs */}
-      <div style={{ marginBottom: 8, fontSize: 12, color: '#666' }}>
+      <div className="mb-3 flex flex-wrap items-center gap-1 rounded-lg bg-[#667eea14] px-2 py-1.5 text-xs">
         {breadcrumbSegments.length > 0 ? (
           breadcrumbSegments.map((seg, idx) => {
             const isLast = idx === breadcrumbSegments.length - 1;
+            const item = itemsById.get(seg);
+            const label = item?.label || seg;
+            const linkPath = resolveItemPath(item);
             return (
-              <span key={idx} style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <span
-                  style={{
-                    color: isLast ? '#666' : '#cfeeff',
-                    textDecoration: isLast ? 'none' : 'underline',
-                    cursor: isLast ? 'default' : 'pointer',
-                  }}
-                >
-                  {seg}
-                </span>
-                {!isLast && <span style={{ margin: '0 6px', color: '#666' }}>/</span>}
+              <span key={seg} className="inline-flex items-center gap-1">
+                {idx > 0 && <span className="select-none text-gray-500">›</span>}
+                {isLast ? (
+                  <span className="font-semibold text-white">{label}</span>
+                ) : linkPath ? (
+                  <Link
+                    to={linkPath}
+                    className="font-medium text-[#9fd8ff] transition-colors hover:text-white hover:underline"
+                  >
+                    {label}
+                  </Link>
+                ) : (
+                  <span className="text-gray-400">{label}</span>
+                )}
               </span>
             );
           })
         ) : (
-          'Inicio'
+          <Link to="/" className="font-medium text-[#9fd8ff] transition-colors hover:text-white hover:underline">
+            Inicio
+          </Link>
         )}
       </div>
       <div>{renderNode(branch, [], null, activePath, toggleCollapse, collapsed)}</div>
