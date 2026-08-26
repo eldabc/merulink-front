@@ -17,7 +17,7 @@ export function useScheduleValidation() {
         const dayData = employee.dates[dateStr];
         const currentShift = dayData?.shift;
 
-        const isRestDay = !currentShift || currentShift.id === 'S-0' || currentShift.id === 'S-1' || currentShift.id === 'S-2';
+        const isRestDay = !currentShift || currentShift.id === 'S-0' || currentShift.id === 'S-1' || currentShift.id === 'S-2' || currentShift.id === 'S-3';
 
         if (isRestDay) {
           consecutiveWorkDays = 0;

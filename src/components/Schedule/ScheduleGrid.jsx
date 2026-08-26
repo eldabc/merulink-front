@@ -105,8 +105,8 @@ const ScheduleGrid = forwardRef(({
     const dateFieldName = params.column.getColId();
     const currentShiftId = params.value;
 
-    // Si es baja/vacaciones bloquea que la brocha pinte encima
-    if (currentShiftId === 'S-1' || currentShiftId === 'S-2') return;
+    // Si es baja/vacaciones/permiso bloquea que la brocha pinte encima
+    if (currentShiftId === 'S-1' || currentShiftId === 'S-2' || currentShiftId === 'S-3') return;
 
     const updatedData = { ...params.data };
 
@@ -220,7 +220,10 @@ const ScheduleGrid = forwardRef(({
         pinned: 'left', 
         width: window.innerWidth < 640 ? 110 : 180,
         cellRenderer: (params) => {
-          if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
+          const tags = [];
+          if (params.data.permission) tags.push('🩺 Permiso');
+          if (params.data.vacation) tags.push('🌴 Vacaciones');
+          if (tags.length) return `${params.value} (${tags.join(' - ')})`;
           return params.value;
         }
       }
@@ -298,10 +301,10 @@ const ScheduleGrid = forwardRef(({
         resizable: true,
         sortable: false,
         suppressMovable: true,
-        // Bloquea edición si es baja/vacaciones
-        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2',
+        // Bloquea edición si es baja/vacaciones/permiso
+        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2' && params.value !== 'S-3',
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' ,
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' || params.value === 'S-3' ,
         },
         cellClass: '!font-bold',
         headerClass: () => {

@@ -103,7 +103,10 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         width: 120,
         cellClass: 'text-xs font-semibold',
         cellRenderer: (params) => {
-          if (params.data.vacation) return `🌴 ${params.value} (Vacaciones)`;
+          const tags = [];
+          if (params.data.permission) tags.push('🩺 Permiso');
+          if (params.data.vacation) tags.push('🌴 Vacaciones');
+          if (tags.length) return `${params.value} (${tags.join(' - ')})`;
           return params.value;
         }
       }
@@ -179,9 +182,9 @@ const PreviousFortnightViewer = ({ isOpen, onClose, preFortnightParams  }) => {
         resizable: true,
         sortable: false,
         suppressMovable: true,
-        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2',
+        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2' && params.value !== 'S-3',
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' ,
+          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' || params.value === 'S-3' ,
         },
         cellClass: '!font-bold',
         headerClass: () => {

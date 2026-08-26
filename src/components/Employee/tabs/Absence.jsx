@@ -74,6 +74,7 @@ export default function Absence({ employee, viewMode, disabledClasses }) {
           </div>
 
           <button
+            hidden={true}
             type="button"
             onClick={openCreate}
             title="Registrar ausencia"
