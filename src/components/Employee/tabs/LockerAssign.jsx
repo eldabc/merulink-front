@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useEmployees } from '../../../context/EmployeeContext';
+
 import { getCategoryKey } from '../../../utils/LockerAssign/locker-assign-utils.js';
+
 import LabelFieldForm from '../../Shared/LabelFieldForm.jsx';
 import PadlockPatternSteps from "../../Shared/PadlockPatternSteps";
 import ResetInstructions from '../../Shared/ResetInstructions.jsx';
@@ -40,17 +41,23 @@ function LockerAssign({ mode, empLockerAssign, selectedSex, isEmployeeActive, di
     previousSex.current = selectedSex;
   }, [selectedSex]);
 
-  const renderLockerAssigns = () => {
-    const lockerAssignCategoryKey = getCategoryKey(selectedSex);
+  const lockerAssignCategoryKey = useMemo(() => getCategoryKey(selectedSex), [selectedSex]);
 
-    return empLockerAssign
-      .filter(assign => assign.locker?.category?.key === lockerAssignCategoryKey)
-      .map((assign, index) => (
-        <option key={`lockerAssign-${assign?.id}-${index}`} className='bg-[#3c4042]' value={assign?.id}>
-          {assign.locker.code}
-        </option>
-      ));
-  };
+  const availableLockerMatched = useMemo(
+    () => empLockerAssign.filter(
+      assign => assign.locker?.category?.key === lockerAssignCategoryKey
+    ),
+    [empLockerAssign, lockerAssignCategoryKey]
+  );
+
+  const noLockerMatchedAvailable = availableLockerMatched.length === 0;
+
+  const renderLockerAssigns = () =>
+    availableLockerMatched.map((assign, index) => (
+      <option key={`lockerAssign-${assign?.id}-${index}`} value={assign?.id}>
+        {assign.locker.code}
+      </option>
+    ));
 
   const lockerAssignSelected = empLockerAssign.find(
     assign => assign?.id === Number(lockerAssingIdWatch)
@@ -93,30 +100,37 @@ function LockerAssign({ mode, empLockerAssign, selectedSex, isEmployeeActive, di
           </div>
           {useLockerWatch && (
             <>
-              <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4 mt-6 div-border'>
-                <div className='max-w-3xl'>
+              <div className='flex flex-col lg:flex-row justify-center lg:items-center gap-2 lg:gap-4 mb-4 mt-6 border border-[#ffffff21] p-7 lg:[&>*:nth-child(2n)]:border-l lg:[&>*:nth-child(2n)]:border-[#ffffff21] lg:[&>*:nth-child(2n)]:pl-4'>
+                <div className='md:max-w-3xl lg:shrink-0'>
                   <select 
-                    disabled={viewMode}
+                    disabled={viewMode || noLockerMatchedAvailable}
                     {...register('lockerAssingId')}
-                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses} `} 
+                    className={`text-xl w-full lg:w-44 px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses} ${noLockerMatchedAvailable ? 'opacity-50 cursor-not-allowed' : ''} `} 
                   >
-                    <option className='bg-[#3c4042]' value="">Seleccionar Locker...</option>
+                    <option className='bg-[#3c4042]' value="">{noLockerMatchedAvailable ? 'Sin opciones' : 'Seleccionar...'}</option>
                     {renderLockerAssigns()}
                   </select>
                   {errors.lockerAssingId && <ErrorMessage msg={errors.lockerAssingId.message} /> }
                 </div>
+
                 <LabelFieldForm field="Serial candado" simbol="*" />
-                <input disabled={true}  
-                      {...register('padlockAssignSerial')} 
-                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl cursor-not-allowed ${disabledClasses} `} 
+                <input 
+                  disabled={true}  
+                  {...register('padlockAssignSerial')} 
+                  className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl cursor-not-allowed flex-1 min-w-25 ${disabledClasses} `} 
                 />
+
                 <LabelFieldForm field="Clave candado" simbol="*" />
-                <input disabled={true}  
-                      {...register('padlockAssignPass')} 
-                      className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl cursor-not-allowed ${disabledClasses} `} 
+                <input 
+                  disabled={true}  
+                  {...register('padlockAssignPass')} 
+                  className={`filter-input rounded-lg px-1 py-1 pl-2 text-xl cursor-not-allowed flex-1 min-w-25 ${disabledClasses} `} 
                 />
               </div>
+
+              
               <div className='flex flex-col border border-[#ffffff21] md:pl-4 p-7'>
+                {noLockerMatchedAvailable && <ErrorMessage msg="Sin locker y candado disponible para asignación." />}
                 {lockerAssignSelected  && (
                   <>
                     <LabelFieldForm field="Patrón de Candado" />

@@ -80,6 +80,10 @@ h1 {
   line-height: 1.1;
 }
 
+option {
+  background-color: #3c4042;
+}
+
 button:not(.skip-style-btn), .generic-btn {
   border-radius: 8px;
   border: 1px solid transparent;
