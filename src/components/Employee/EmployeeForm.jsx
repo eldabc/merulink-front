@@ -21,7 +21,7 @@ import FooterFormButtons from '../Shared/FooterFormButtons';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
-import EmployeeScraperModal from './EmployeeScraperModal';
+import EmployeeScraperModal from './modals/EmployeeScraperModal';
 import HasPermission from '../Shared/HasPermission';
 import SpanText from '../Shared/SpanText';
 import EmployeeTopBar from './EmployeeTopBar';

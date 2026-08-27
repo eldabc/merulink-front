@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Search, X, CheckCircle, AlertTriangle, Loader2, SkipForward, Shield, ArrowLeft } from 'lucide-react';
-import { scrapeIvss, scrapeSeniat, getSeniatCaptcha } from '../../services/scraperService';
-import { ciOption } from '../../utils/text-utils';
+import { scrapeIvss, scrapeSeniat, getSeniatCaptcha } from '../../../services/scraperService';
+import { ciOption } from '../../../utils/text-utils';
 
-import RequiredMark from '../Shared/RequiredMark';
+import RequiredMark from '../../Shared/RequiredMark';
 
 
 export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
@@ -170,20 +170,19 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   };
 
   const handleAcceptData = () => {
-    if (result?.success && result?.data) {
-      const data = { ...result.data };
+    const data =  result?.success && result?.data ? { ...result.data } : {};
 
-      // En caso que IVSS fallo y usaron SENIAT, set a la fecha de nacimiento que el usuario ingresó.
+      // Aseguramos datos que mandar a form.
       if (!data.birthdate && birthdate) {
         const [y, m, d] = birthdate.split('-');
         data.birthdate = `${d}/${m}/${y}`;
       }
 
-      // Nacionalidad seleccionada (V/E)
       data.nationality = nationality;
+      data.ci = ci;
 
       onDataFound(data);
-    }
+
   };
 
   const mapSex = (s) => {
@@ -271,11 +270,18 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <button onClick={goBack} className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2">
                   <ArrowLeft className="w-4 h-4" /> Volver
                 </button>
-                <button onClick={handleLoadCaptcha} disabled={captchaLoading}
-                  className="flex-1 bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 font-medium py-2.5 px-4 rounded-lg border border-amber-500/30 flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
-                  {captchaLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-                  Intentar con SENIAT
-                </button>
+                {source === 'seniat' ? (
+                  <button onClick={handleAcceptData} className="flex-1 text-white font-medium py-2.5 px-4 flex items-center justify-center gap-2">
+                    <CheckCircle className="w-4 h-4" /> Llenar Manualmente
+                  </button>
+                ) : (
+                  <button onClick={handleLoadCaptcha} disabled={captchaLoading}
+                    className="flex-1 bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 font-medium py-2.5 px-4 rounded-lg border border-amber-500/30 flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
+                    {captchaLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                    Intentar con SENIAT
+                  </button>
+                )}
+                
               </div>
             </div>
           )}
@@ -287,6 +293,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <Shield className="w-5 h-5" />
                 <span className="text-sm font-medium">Verificación SENIAT</span>
               </div>
+              <span className="text-sm text-gray-400">Buscando datos para: {ci}</span>
               <p className="text-sm text-gray-400">Ingrese el código que aparece en la imagen:</p>
 
               <div className="flex justify-center bg-white rounded-lg p-2">
