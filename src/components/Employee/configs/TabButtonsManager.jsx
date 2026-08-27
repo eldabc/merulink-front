@@ -12,6 +12,9 @@ export default function TabButtonsManager({ activeTab, setActiveTab, errors }) {
         if (tab.id === 'meruLink') {
             return user?.permissions?.includes('manage-merulink-tab-employees');
         }
+        if (tab.id === 'absence') {
+            return user?.permissions?.includes('manage-absences-tab-employees');
+        }
         return true;
     });
 

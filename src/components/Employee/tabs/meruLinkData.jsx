@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { useEmployees } from '../../../context/EmployeeContext';
@@ -10,13 +9,12 @@ import { getRoles } from '../../../services/masterDataService';
 import { PasswordInputEye } from '../../togglePasswordVisibility';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
-import OptionSelect from '../../Shared/OptionSelect';
 import SpanText from '../../Shared/SpanText';
 
 export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, employee }) {
   
   const { register, watch, setValue, formState: { errors } } = useFormContext();
-  const { loadingFieldChange, toggleEmployeeField, toggleResetPass } = useEmployees();
+  const { loadingFieldChange, toggleResetPass } = useEmployees();
   const { user } = useAuth();
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
@@ -65,12 +63,14 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
   // Autocompletar username/password
   useEffect(() => {
-    if (createMode && useMeruLinkWatch) {
-      if (!firstNameWatch || !lastNameWatch) return;
-      const firstName = (firstNameWatch || '').toLowerCase().trim();
-      const lastName = (lastNameWatch || '').toLowerCase().trim();
-      setValue('userName', `${firstName.charAt(0)}.${lastName}`);
-      setValue('userPass', (ciWatch || '').replace(/\./g, ''));
+    if (useMeruLinkWatch) {
+      if (!viewMode && !employee?.userName) {
+        if (!firstNameWatch || !lastNameWatch) return;
+        const firstName = (firstNameWatch || '').toLowerCase().trim();
+        const lastName = (lastNameWatch || '').toLowerCase().trim();
+        setValue('userName', `${firstName.charAt(0)}.${lastName}`);
+        setValue('userPass', (ciWatch || '').replace(/\./g, ''));
+      }
     }
   }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
 
@@ -113,7 +113,6 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                 type="checkbox"
                 {...register('useMeruLink')}
                 className={`w-4 h-4 rounded ${disabledClasses}`}
-                onClick={() => !createMode && toggleEmployeeField(employee, "use_meru_link")}
               />
             )}
         </label>
