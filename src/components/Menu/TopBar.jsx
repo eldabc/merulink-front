@@ -71,7 +71,7 @@ export default function TopBar() {
         </div>
         <div className="flex flex-col">
           <div className="name">{user?.name}</div>
-          <div className="dept">{user.roleName}</div>
+          <div className="dept">{user.roleName ?? ''}</div>
           <div className="sesion">
             <Link
               to="/"

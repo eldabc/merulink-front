@@ -93,8 +93,8 @@ export default function ScheduleList({ categoryKeys }) {
 
         <ScheduleFilterList 
           onFilteredDepartments={filteredDepartments} 
-          loading={globalLoading} 
           onLoadSchedules={loadSchedulesData} 
+          loading={globalLoading} 
           filters={filters} 
           setFilters={setFilters} 
           availableMonths={availableMonths}

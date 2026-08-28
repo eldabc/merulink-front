@@ -1,18 +1,14 @@
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-import { radioOptions } from '../../utils/StaticData/schedule-utils';
 import LabelFieldForm from '../Shared/LabelFieldForm';
-import { allMonths } from '../../utils/StaticData/months-utils';
 
 function ScheduleFilterList({ 
   viewMode, 
-  onFilteredDepartments = [], 
-  months = [], 
-  onLoadSchedules,
-  loading, 
   disabledClasses,
+  onFilteredDepartments = [], 
+  onLoadSchedules,
+  loading,
   filters,
   setFilters,
   availableMonths
