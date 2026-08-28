@@ -146,19 +146,6 @@ export default function SideBar({ isSidebarOpen }) {
       `}
     >
 
-      {/* Botón contextual: en RRHH navega al listado de empleados */}
-      {activeMenu === 'RRHH' && (
-        <HasPermission permissions={['view-employees']} >
-          <Link
-            to="/empleados"
-            className="mb-3 flex items-center justify-center gap-2 rounded-lg border border-[#53c4ff]/40 bg-[#53c4ff]/15 px-3 py-2 text-sm font-semibold text-[#9fd8ff] transition-colors hover:bg-[#53c4ff]/25 hover:text-white"
-          >
-            <Users className="h-4 w-4" />
-            Empleados
-          </Link>
-        </HasPermission>
-      )}
-
       <div className="submenu-title">Secciones</div>
 
       {/* Breadcrumbs */}

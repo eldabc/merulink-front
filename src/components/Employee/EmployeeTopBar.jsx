@@ -9,6 +9,7 @@ import { getStatusColor, getStatusName } from '../../utils/status-utils';
 import ChangeStatusModal from './modals/ChangeStatusModal';
 import AbsenceModal from './modals/AbsenceModal';
 import useChangeStatusModal from '../../hooks/useChangeStatusModal';
+import HasPermission from '../Shared/HasPermission';
 
 function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, setScraperKey, employee, loadingChangeStatus  }) {
   const { user } = useAuth();
@@ -31,22 +32,24 @@ function EmployeeTopBar({ createMode, editMode, viewMode, setShowScraperModal, s
       {(editMode || viewMode) && (
         <>
           <div className="flex items-stretch gap-3">
-            <div className="flex flex-col items-end justify-center gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg py-2 px-3">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsAbsenceOpen(true);
-                  }}
-                  title="Registrar ausencia"
-                  aria-label="Registrar ausencia"
-                  className="skip-style-btn flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 hover:bg-gray-200 text-gray-700 transition-colors"
-                >
-                  <Palmtree className="w-5 h-5" />
-                </button>
+            <HasPermission permissions={['manage-absences-tab-employees']} >
+              <div className="flex flex-col items-end justify-center gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg py-2 px-3">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsAbsenceOpen(true);
+                    }}
+                    title="Registrar ausencia"
+                    aria-label="Registrar ausencia"
+                    className="skip-style-btn flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 hover:bg-gray-200 text-gray-700 transition-colors"
+                  >
+                    <Palmtree className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            </div>
+            </HasPermission>
 
             <div className="flex flex-col items-end justify-center gap-2 bg-[#50575b87] border border-[#ffffff21] rounded-lg py-2 px-3">
               <div className="flex items-center gap-2">
