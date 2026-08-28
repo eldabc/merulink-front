@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Search, X, CheckCircle, AlertTriangle, Loader2, SkipForward, Shield, ArrowLeft } from 'lucide-react';
+
 import { scrapeIvss, scrapeSeniat, getSeniatCaptcha } from '../../../services/scraperService';
 import { ciOption } from '../../../utils/text-utils';
 
 import RequiredMark from '../../Shared/RequiredMark';
-
 
 export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   const [ci, setCi] = useState('');
@@ -52,7 +52,6 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
     setCi(e.target.value);  // sincroniza el estado con el valor formateado
   };
 
-  // ── Navegación del flujo (máquina de estados) ─────────
   /** Avanza a un paso guardando el actual en la pila (para Volver). */
   const go = (nextStep) => {
     setHistory((h) => [...h, step]);
@@ -98,12 +97,12 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
       if (response?.success) {
         go('result');
       } else {
-        setErrorMsg(response?.error || 'No se encontraron datos en IVSS.');
+        setErrorMsg('No se encontraron datos en IVSS.');
         go('error');
       }
     } catch (err) {
       console.log("error ivss", err);
-      const msg = err?.response?.data?.error || err?.response?.data?.message || 'Error de conexión.';
+      const msg = err?.response?.data?.error || 'Error de conexión.';
       setErrorMsg(msg);
       setResult({ success: false, data: null, source: 'error', error: msg });
       go('error');
@@ -124,7 +123,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
       if (data.success) {
         setCaptchaImage(data.captcha_image);
       } else {
-        setCaptchaError(data.error || 'No se pudo cargar el captcha.');
+        setCaptchaError('No se pudo cargar el captcha.');
       }
     } catch (err) {
       setCaptchaError('Error al obtener el captcha del SENIAT.');
@@ -136,7 +135,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
   /** Enviar código captcha al SENIAT */
   const handleCaptchaSubmit = async (e) => {
     e.preventDefault();
-    console.log("captchaCode", captchaCode)
+    // console.log("captchaCode", captchaCode)
     if (!captchaCode.trim()) {
       setCaptchaError('Ingrese el código de la imagen.');
       return;
@@ -154,12 +153,12 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
       if (response?.success) {
         go('result');
       } else {
-        setErrorMsg(response?.error || 'No se encontraron datos en SENIAT.');
+        setErrorMsg('No se encontraron datos en SENIAT.');
         go('error');
       }
     } catch (err) {
       console.log("error seniat", err);
-      const msg = err.response?.data?.error || 'Código incorrecto o error de conexión.';
+      const msg = err?.response?.data?.error || 'Código incorrecto o error de conexión.';
       setErrorMsg(msg);
       setCaptchaError('');
       setResult({ success: false, data: null, source: 'error', error: msg });
