@@ -1,5 +1,3 @@
-import { useEffect, useState, useMemo } from 'react';
-
 import { radioOptions } from '../../utils/StaticData/schedule-utils';
 
 import LabelFieldForm from '../Shared/LabelFieldForm';
@@ -8,7 +6,7 @@ import SelectGeneric from '../Shared/SelectGeneric';
 import ButtonRadioGeneric from '../Shared/ButtonRadioGeneric';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
-function ScheduleFilter({ viewMode, departments = [], months, onClose, globalLoading, disabledClasses }) {
+function ScheduleFilter({ viewMode, departments = [], months, globalLoading, disabledClasses }) {
 
   if (months?.length === 0) {
     months = allMonths; // Fallback a todos los meses si no se pasan como prop

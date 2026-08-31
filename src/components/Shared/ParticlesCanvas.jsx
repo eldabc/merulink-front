@@ -28,8 +28,9 @@ export default function ParticlesCanvas() {
         x: Math.random() * canvas.offsetWidth,
         y: Math.random() * canvas.offsetHeight,
         r: 0.6 + Math.random() * 2.8,
-        vx: (Math.random() - 0.5) * 0.22,
-        vy: (Math.random() - 0.5) * 0.22,
+        // Multiplicador de velocidad de partículas
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
         alpha: 0.06 + Math.random() * 0.16,
       }));
     }

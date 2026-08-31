@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,7 +20,6 @@ import '../../Tables.css';
 export default function SubDepartmentForm({ mode = 'create' }) {
 
   const navigate = useNavigate();
-  const [loadingData, setLoadingData] = useState(true);
   const { departments, globalLoading, loadDepartments } = useGlobalData();
   const { subDepartmentData, createSubDepartment, updateSubDepartment } = useSubDepartments();
 
@@ -100,40 +99,42 @@ export default function SubDepartmentForm({ mode = 'create' }) {
           <div className='mx-auto mt-6'>
               <TitleHeader title={editMode ? ( 'Editar Sub-Departamento' ):( 'Datos Sub-Departamento')} dinamicClasses="mb-5" />
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:m-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-2 w-full div-border">
                 
                 <LabelFieldForm field="Departamento" simbol="*"/>
               <div>
                 <select 
                   disabled= {viewMode}
                   {...register('departmentId', { onChange: handleDepartmentChange })} 
-                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}>
-
-                    <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
-
-                    {departments.map(dep => (
-                      <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
-                    ))}
+                  className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+                >
+                  <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
+                  {departments.map(dep => (
+                    <option key={`departmentId-${dep.id}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
+                  ))}
                 </select>
                 {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} />}  
               </div>
 
-                <LabelFieldForm field="Nombre Sub-Departamento" simbol="*"/>
+                <LabelFieldForm field="Nombre Subdepartamento" simbol="*"/>
               <div>
                 <input
                   readOnly={viewMode}
                   {...register('name')}
+                  placeholder='Ingrese Subdepartamento'
                   className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                 />
                 {errors?.name && <ErrorMessage msg={errors.name.message} />}  
               </div>
-              <div className='grid  grid-cols-2 md:mt-0 mt-2'>
+
+              <div className='grid grid-cols-2 md:mt-0 mt-2'>
 
                 <LabelFieldForm field="Código" simbol="*"/>
                 <div>
                   <input
                     readOnly={true}
                     {...register('code')}
+                    placeholder='Código'
                     className={`w-20 px-1 py-1 text-xl rounded-lg filter-input cursor-not-allowed ${disabledClasses}`}
                   />
                   {errors?.code && <ErrorMessage msg={errors.code.message} /> }  

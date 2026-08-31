@@ -1,12 +1,9 @@
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
-import { useAuth } from '../../context/AuthContext';
 
-import { normalizeText } from '../../utils/text-utils.js';
-import { filterData } from '../../utils/filter-utils.js';
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
@@ -22,12 +19,12 @@ import ScheduleFilterList from './ScheduleFilterList';
 import '../../Tables.css';
 
 export default function ScheduleList({ categoryKeys }) {
-  const { user } = useAuth();
+
   const navigate = useNavigate();
-  const { globalLoading, departments, loadDepartments, filteredDepartments } = useGlobalData();
+  const { globalLoading, filteredDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
   const [currentPage, setCurrentPage] = useState(1);
-  const [monthSelectedJson, setMonthSelectedJson] = useState(1);
+  const [monthSelectedJson] = useState(1);
   const [filters, setFilters] = useState({
     department: '',
     month: '',
@@ -38,7 +35,6 @@ export default function ScheduleList({ categoryKeys }) {
   // Mes actual
   const now = dayjs();
   const currentYear = now.year();
-  const todayFormatted = now.format('YYYY-MM-DD');
 
   // Añadir año correspondiente a los meses
   const mapToMonthWithYear = (d) => {
