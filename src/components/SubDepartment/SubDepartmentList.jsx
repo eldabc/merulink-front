@@ -2,14 +2,16 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubDepartments } from "../../context/SubDepartmentContext";
 
-import Pagination from '../Pagination';
-import SubDepartmentRow from './SubDepartmentRow';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
 import FilterByFields from '../Filters/FilterByFields';
+
+import SubDepartmentRow from './SubDepartmentRow';
 import RowTableLoading from '../Shared/RowTableLoading';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
+import HasPermission from '../Shared/HasPermission';
+import Pagination from '../Pagination';
 
 export default function SubDepartmentList() {
 
@@ -56,10 +58,13 @@ export default function SubDepartmentList() {
   const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
 
   return (
+    <HasPermission permissions={["view-subdepartments"]}>
       <div className="main-data-cont table-container">
         <div className="titles-table">
           <TitleHeader title="Listado de Sub-Departamentos" />
-          <ButtonNavigate url={`/empleados/sub-departamentos/nuevo`} navigate={navigate}  />
+            <HasPermission permissions={["create-subdepartments"]}>
+              <ButtonNavigate url={`/empleados/sub-departamentos/nuevo`} navigate={navigate}  />
+            </HasPermission>
         </div>
 
         <FilterByFields
@@ -109,5 +114,6 @@ export default function SubDepartmentList() {
           moduleName={'Subdepartamento'}
         />
       </div>
+    </HasPermission>
   );
 }

@@ -15,6 +15,7 @@ import FooterFormButtons from '../Shared/FooterFormButtons';
 import ErrorMessage from '../Shared/ErrorMessage';
 import LabelFieldForm from '../Shared/LabelFieldForm';
 import RowTableResults from '../Shared/RowTableResults'; 
+import HasPermission from '../Shared/HasPermission';
 import '../../Tables.css';
 
 export default function SubDepartmentForm({ mode = 'create' }) {
@@ -90,7 +91,11 @@ export default function SubDepartmentForm({ mode = 'create' }) {
 
   return (
     <div className="w-full max-w-7xl mx-auto overflow-x-auto p-2 rounded-lg">
-    {(viewMode) && <HeadFormButtons url={`/empleados/sub-departamentos/editar/${subDepartment?.id}`} data={[]} /> }
+    {(viewMode) && (
+      <HasPermission permissions={["edit-subdepartments"]}>
+        <HeadFormButtons url={`/empleados/sub-departamentos/editar/${subDepartment?.id}`} data={[]} /> 
+      </HasPermission>
+    )}
 
     <form onSubmit={handleSubmit(onSubmit, onError)}>
 

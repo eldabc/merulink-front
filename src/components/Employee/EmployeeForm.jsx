@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { User, Search } from "lucide-react";
+import { User } from "lucide-react";
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';

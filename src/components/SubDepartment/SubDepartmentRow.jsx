@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubDepartments } from '../../context/SubDepartmentContext';
+
 import { getDisabledClasses } from '../../utils/global-utils';  
+
 import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
+import HasPermission from '../Shared/HasPermission';
+import SpanText from '../Shared/SpanText';
 
 export default function SubDepartmentRow({ subDep }) {
   
@@ -45,12 +49,14 @@ export default function SubDepartmentRow({ subDep }) {
       <td className="px-4 py-3 text-white-700">{subDep.name}</td>
       <td className="px-4 py-3 text-white-700">{subDep.department.departmentName}</td>
       <td className="px-4 py-3">
-        <ButtonDelete 
-          setIsModalOpen={() => handleDeleteClick(subDep)} 
-          title={deleteBtnTitle}
-          dinamicClasses={disabledClasses}
-          disabled={blockBtn} 
-        />
+        <HasPermission permissions={["delete-subdepartments"]} fallback={<SpanText text="Sin acciones" />}>
+          <ButtonDelete 
+            setIsModalOpen={() => handleDeleteClick(subDep)} 
+            title={deleteBtnTitle}
+            dinamicClasses={disabledClasses}
+            disabled={blockBtn} 
+          />
+        </HasPermission>
       </td>
     </tr>
     <tr>

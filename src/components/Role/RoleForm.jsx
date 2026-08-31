@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Shield, ChevronRight, Check } from 'lucide-react';
+import { Shield, Check } from 'lucide-react';
 import { useRoles } from '../../context/RoleContext';
 
 import { roleValidationSchema } from '../../utils/Validations/roleValidationSchema';
