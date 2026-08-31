@@ -95,23 +95,6 @@ export default function SideBar({ isSidebarOpen }) {
     if (different) setCollapsed(initialCollapsed);
   }, [initialCollapsed]);
 
-  // Show sidebar when the active module has children to show
-  const shouldShow = activeMenu && branch.length > 0 && activeMenu !== 'IA';
-
-  if (!shouldShow) {
-    return <aside className="sidebar hidden" />;
-  }
-
-  const toggleCollapse = (pathKey) => {
-    setCollapsed(prev => ({
-      ...prev,
-      [pathKey]: !prev[pathKey]
-    }));
-  };
-
-  // Breadcrumb building helper
-  const breadcrumbSegments = activeMenu ? [activeMenu, ...activePath] : [];
-
   // Índice id → item del menú (para etiquetas y rutas de las migas)
   const itemsById = useMemo(() => {
     const map = new Map();
@@ -136,6 +119,23 @@ export default function SideBar({ isSidebarOpen }) {
     }
     return null;
   }, []);
+
+  // Show sidebar when the active module has children to show
+  const shouldShow = activeMenu && branch.length > 0 && activeMenu !== 'IA';
+
+  if (!shouldShow) {
+    return <aside className="sidebar hidden" />;
+  }
+
+  const toggleCollapse = (pathKey) => {
+    setCollapsed(prev => ({
+      ...prev,
+      [pathKey]: !prev[pathKey]
+    }));
+  };
+
+  // Breadcrumb building helper
+  const breadcrumbSegments = activeMenu ? [activeMenu, ...activePath] : [];
 
   return (
     <aside className={`sidebar
