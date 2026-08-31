@@ -1,13 +1,14 @@
 import { useEffect, useState, useMemo } from 'react';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getDisabledClasses } from '../../utils/global-utils';  
-import { positionValidationSchema  } from '../../utils/Validations/positionValidationSchema';
 import { usePositions } from '../../context/PositionContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
+import { getDisabledClasses } from '../../utils/global-utils';  
+import { positionValidationSchema  } from '../../utils/Validations/positionValidationSchema';
 import { newCodePosition } from '../../utils/Positions/positions-utils';
+
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
@@ -247,6 +248,7 @@ export default function PositionForm({ mode = 'create' }) {
                   <input
                     readOnly={viewMode}
                     {...register('name')}
+                    placeholder='Ingrese nombre Cargo'
                     className={`w-full px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                   />
                   {errors?.name && <ErrorMessage msg={errors.name.message} />}  
@@ -257,6 +259,7 @@ export default function PositionForm({ mode = 'create' }) {
                   <input
                     readOnly={viewMode}
                     {...register('code')}
+                    placeholder='Código'
                     className={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                   />
                   {errors?.code && <ErrorMessage msg={errors.code.message} />}  

@@ -1,30 +1,27 @@
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useLockerAssigns } from '../../context/LockerAssignContext';
 import { useEffect, useMemo, useState } from 'react';
 
-import TitleHeader from '../Shared/TitleHeader';
+import { lockerCategories } from '../../utils/StaticData/locker-room-utils';
+
 import LockerAssignRow from './LockerAssignRow'; 
-import Pagination from '../Pagination';
-import FilterByFields from '../Filters/FilterByFields';
-import { filterData } from '../../utils/filter-utils';
-import { normalizeText } from '../../utils/text-utils';
+import TitleHeader from '../Shared/TitleHeader';
 import ButtonReset from '../Shared/ButtonReset';
 import ConfirmDialog from '../Shared/ConfirmDialog';
-import { lockerCategories } from '../../utils/StaticData/locker-room-utils';
 import RowTableLoading from '../Shared/RowTableLoading';
-
+import Pagination from '../Pagination';
 import '../../Tables.css';
 
 function LockerAssignList() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { loading, loadingReset, lockerAssignData, resetLockerAssign } = useLockerAssigns();
 
   // Para buscador y paginación
   const itemsPerPage = 10;
-  const SEARCH_FIELDS = ['serial'];
-  const [searchValue, setSearchValue] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [hasSearched, setHasSearched] = useState(false);
+  
+  // const [searchValue, setSearchValue] = useState('');
+  // const [filterStatus, setFilterStatus] = useState('all');
+  // const [hasSearched, setHasSearched] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeCat, setActiveCat] = useState('C');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,14 +29,14 @@ function LockerAssignList() {
   const isActiveCatD = activeCat === 'D';
   const isActiveCatC = activeCat === 'C';
 
-  useEffect(() => {
-    if (searchValue.trim() || filterStatus !== 'all' ) {
-      setHasSearched(true);
-    } else {
-      setHasSearched(false);
-    }
-    setCurrentPage(1);
-  }, [searchValue, filterStatus]);
+  // useEffect(() => {
+  //   if (searchValue.trim() || filterStatus !== 'all' ) {
+  //     setHasSearched(true);
+  //   } else {
+  //     setHasSearched(false);
+  //   }
+  //   setCurrentPage(1);
+  // }, [searchValue, filterStatus]);
 
   const handleActiveCategoryName = (key) => {
     const category = lockerCategories.find(te => te.key === key);
@@ -102,21 +99,8 @@ function LockerAssignList() {
   return (
     <div className="main-data-cont table-container">
         <div className="titles-table">
-          
           <TitleHeader title="Asignación de Casilleros" />
         </div>
-
-        {/* <FilterByFields
-          searchValue={searchValue}
-          onSearchChange={setSearchValue}
-          filterStatus={filterStatus}
-          onFilterStatus={setFilterStatus}
-          moduleName='Candado'
-          placeholder={'Ingrese serial del candado'}
-          showFilterStatus={true}
-          active='disponible'
-          inactive='asignado'
-        /> */}
 
         <div className="rounded-lg shadow">
           <div className="flex w-full bg-[#1e2122] rounded-xl p-1 gap-1 mb-6 border border-gray-700">
@@ -172,7 +156,7 @@ function LockerAssignList() {
                 <th className="px-4 py-3 text-left font-semibold">Asignado a:</th>
                 <th className="px-4 py-3 text-left font-semibold">Departamento:</th>
                 <th className="px-4 py-3 text-left font-semibold">Fecha Asig.</th>
-                <th className="px-4 py-3 text-left font-semibold">Código Asig.</th>
+                {/* <th className="px-4 py-3 text-left font-semibold">Código Asig.</th> */}
                 <th className="px-4 py-3 text-left font-semibold">Categoría</th>
                 <th className="px-4 py-3 text-left font-semibold">Acciones</th>
               </tr>
@@ -209,7 +193,7 @@ function LockerAssignList() {
           startIndex={startIndex}
           itemsPerPage={itemsPerPage}
           dataToDisplay={dataToDisplay}
-          hasSearched={hasSearched}
+          // hasSearched={hasSearched}
           data={lockerAssignData}
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}

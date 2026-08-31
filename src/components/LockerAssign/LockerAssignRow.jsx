@@ -54,7 +54,7 @@ function LockerAssignRow({ lockerAssign }){
         </td>
         <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.employee?.department?.departmentName}</td>
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerAssign?.assignDate}</td>
-        <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.assignCode}</td>
+        {/* <td className="px-4 py-3 text-white-800 font-medium">{lockerAssign?.assignCode}</td> */}
         <td className="px-4 py-3 text-white-800 font-medium ">{lockerAssign?.locker?.category.name}
           
         </td>
