@@ -18,7 +18,7 @@ import ScheduleFilterList from './ScheduleFilterList';
 
 import '../../Tables.css';
 
-export default function ScheduleList({ categoryKeys }) {
+export default function ScheduleList() {
 
   const navigate = useNavigate();
   const { globalLoading, filteredDepartments } = useGlobalData();
@@ -34,16 +34,16 @@ export default function ScheduleList({ categoryKeys }) {
 
   // Mes actual
   const now = dayjs();
-  const currentYear = now.year();
 
-  // Añadir año correspondiente a los meses
+  // Añadir año correspondiente a los meses (dayjs maneja el cambio de año)
   const mapToMonthWithYear = (d) => {
     const idx = d.month(); // 0-11
     return { ...allMonths[idx], currentYear: d.year() };
   };
 
-  // Mes actual + anterior
+  // Orden del selector: mes próximo, mes actual y dos meses atrás
   const availableMonths = [
+    mapToMonthWithYear(now.add(1, 'month')),
     mapToMonthWithYear(now),
     mapToMonthWithYear(now.subtract(1, 'month')),
     mapToMonthWithYear(now.subtract(2, 'month'))
