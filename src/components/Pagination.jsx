@@ -15,7 +15,7 @@ export default function Pagination({ paginatedData, startIndex, itemsPerPage, da
       <button
         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
         disabled={currentPage === 1}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        className="px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed! transition-colors"
       >
       Anterior
       </button>
@@ -24,10 +24,10 @@ export default function Pagination({ paginatedData, startIndex, itemsPerPage, da
           <button
             key={page}
             onClick={() => setCurrentPage(page)}
-            className={`px-3 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-3 py-2 font-medium transition-colors ${
               currentPage === page
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-sky-200 hover:bg-gray-300'
+              ? 'text-[#9fd8ff] border-number-page'
+              : ''
             }`}
             >
             {page}
@@ -37,7 +37,7 @@ export default function Pagination({ paginatedData, startIndex, itemsPerPage, da
         <button
           onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed! transition-colors"
         >
         Siguiente
         </button>

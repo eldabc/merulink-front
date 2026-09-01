@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 /** Tipos de ausencia disponibles en la app. */
 export const ABSENCE_TYPES = [
   { key: 'vacation', label: 'Vacaciones' },
-  { key: 'medical_leave', label: 'Reposo médico' },
+  { key: 'medical_leave', label: 'Permiso/Reposo' },
 ];
 
 /** Devuelve el label legible de un tipo de ausencia. */

@@ -1,22 +1,22 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useEmployees } from '../../context/EmployeeContext'; 
 import { useNavigate } from 'react-router-dom';
+import useLoadMore from '../../hooks/useLoadMore';
 
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 
 import EmployeeRow from './EmployeeRow';
-import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import RowTableLoading from '../Shared/RowTableLoading';
 import HasPermission from '../Shared/HasPermission';
+import LoadMorePagination from '../Shared/LoadMorePagination';
 import '../../Tables.css';
 
 export default function EmployeeList() {
   const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
@@ -37,7 +37,6 @@ export default function EmployeeList() {
     } else {
       setHasSearched(false);
     }
-    setCurrentPage(1);
   }, [searchValue, filterStatus]);
 
   const EMPLOYEE_SEARCH_FIELDS = [
@@ -61,11 +60,11 @@ export default function EmployeeList() {
       );
   }, [employeeData, searchValue, filterStatus]);
 
-  // Datos para mostrar
+  // Datos para mostrar + "Ver más"/paginación scroll vertical (reutilizable)
   const dataToDisplay = hasSearched ? filteredEmployees : employeeData;
-  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+  const {
+    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage, chunkOf, chunkClass, total,
+  } = useLoadMore(dataToDisplay, itemsPerPage);
 
 return (
   <HasPermission permissions={['view-employees']} >
@@ -105,24 +104,29 @@ return (
             {loadingEmployeeData ? (
               <RowTableLoading colSpan={8} />
             ) : (
-              paginatedData.map((emp) => (
-                <EmployeeRow key={emp.id} emp={emp} />
+              visibleItems.map((emp, index) => (
+                <EmployeeRow
+                  key={emp.id}
+                  emp={emp}
+                  rowClassName={chunkClass(index)}
+                  chunk={chunkOf(index)}
+                />
               ))
             )}
           </tbody>
         </table>
       </div>
 
-      <Pagination
-        paginatedData={paginatedData}
-        startIndex={startIndex}
-        itemsPerPage={itemsPerPage}
-        dataToDisplay={dataToDisplay}
-        hasSearched={hasSearched}
-        data={employeeData}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
+      <LoadMorePagination
+        activePage={activePage}
         totalPages={totalPages}
+        goToPage={goToPage}
+        isExpanded={isExpanded}
+        loadMore={loadMore}
+        showLess={showLess}
+        itemsPerPage={itemsPerPage}
+        visibleCount={visibleItems.length}
+        total={total}
         moduleName={'Empleado'}
       />
     </div>

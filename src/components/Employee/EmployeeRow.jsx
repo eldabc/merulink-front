@@ -12,7 +12,7 @@ import HasPermission from '../Shared/HasPermission';
 import AlertBadge from '../Shared/AlertBadge';
 
 
-export default function EmployeeRow({ emp }) {
+export default function EmployeeRow({ emp, rowClassName = '', chunk }) {
 
   const navigate = useNavigate();
   const { loadingChangeStatus } = useEmployees();
@@ -37,8 +37,9 @@ export default function EmployeeRow({ emp }) {
     <>
     <tr
       key={emp.id}
+      data-chunk={chunk}
       onClick={() => handleSelectedEmployee(emp.id)}
-      className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
+      className={`border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer ${rowClassName}`}
     >
       <td className="px-4 py-3 text-white-800 font-medium">{emp.numEmployee}</td>
       <td className="px-4 py-3 text-white-700">{formatCI(emp.ci)}</td>

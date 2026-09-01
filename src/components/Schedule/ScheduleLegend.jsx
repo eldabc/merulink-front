@@ -23,7 +23,7 @@ function ScheduleLegend({  }) {
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-        <span className="w-20 text-center px-2 py-1 bg-[#00ffd7] text-[#696e74] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#9ea2a3d1] hover:scale-105 hover:shadow-sm">
+        <span className="w-20 text-center px-2 py-1 bg-[#903bb4c1] text-[#7b8791] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#9252ae] hover:scale-105 hover:shadow-sm">
           PER
         </span>
         <span className="text-gray-200 font-medium">Permiso o Reposo</span>
