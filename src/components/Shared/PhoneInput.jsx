@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { formatPhone } from "../../utils/global-utils";
 
 const PhoneInput = ({ type = 'mobilePhone', dynamicNumberName, readOnly, register, dinamicClasses, setValue }) => {
@@ -25,7 +24,7 @@ const PhoneInput = ({ type = 'mobilePhone', dynamicNumberName, readOnly, registe
       type="text"
       onChange={handleChange}
       placeholder={type === 'mobilePhone' ? '000-0000' : '0000000'}
-      className={`w-full md:w-55 px-3 py-2 rounded-lg filter-input ${dinamicClasses}`}
+      className={`w-full px-3 py-2 rounded-lg filter-input ${dinamicClasses}`} // md:w-55
     />
   );
 };

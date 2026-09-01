@@ -48,11 +48,11 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
 
   /** Formatea la cédula con puntos mientras se escribe (ciOption). */
   const handleCiChange = (e) => {
-    ciOption.onChange(e);   // aplica el formato 8.123.456 en el input
+    ciOption.onChange(e);   // aplica el formato 0.000.000 en el input
     setCi(e.target.value);  // sincroniza el estado con el valor formateado
   };
 
-  /** Avanza a un paso guardando el actual en la pila (para Volver). */
+  /** Avanza un paso guardando el actual en la pila para 'Volver'. */
   const go = (nextStep) => {
     setHistory((h) => [...h, step]);
     setStep(nextStep);
@@ -184,14 +184,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
 
   };
 
-  const mapSex = (s) => {
-    if (!s) return null;
-    const x = s.toUpperCase();
-    if (x === 'FEMENINO' || x === 'F') return 'Femenino';
-    if (x === 'MASCULINO' || x === 'M') return 'Masculino';
-    return s;
-  };
-// console.log("result", result)
+  // console.log("result", result)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="bg-[#2f3235] border border-[#ffffff21] rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
@@ -238,7 +231,7 @@ export default function EmployeeScraperModal({ isOpen, onDataFound, onSkip }) {
                 <DataRow label="Primer Apellido" value={result.data.last_name} />
                 <DataRow label="Segundo Apellido" value={result.data.second_last_name} />
                 <DataRow label="Fecha Nac." value={result.data.birthdate} />
-                <DataRow label="Sexo" value={mapSex(result.data.sex)} />
+                <DataRow label="Sexo" value={result.data.sex} />
               </div>
 
               <div className="flex gap-3 pt-2">

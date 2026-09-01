@@ -260,10 +260,11 @@ export default function EmployeeForm({ mode = 'create' }) {
   };
 
   const handleScraperDataFound = (data) => {
-    if (data.first_name) setValue('firstName', capitalizeWords(data.first_name.toLowerCase()));
-    if (data.second_name) setValue('secondName', capitalizeWords(data.second_name.toLowerCase()));
-    if (data.last_name) setValue('lastName', capitalizeWords(data.last_name.toLowerCase()));
-    if (data.second_last_name) setValue('secondLastName', capitalizeWords(data.second_last_name.toLowerCase()));
+    
+    if (data.first_name) setValue('firstName', data.first_name);
+    if (data.second_name) setValue('secondName', data.second_name);
+    if (data.last_name) setValue('lastName', data.last_name);
+    if (data.second_last_name) setValue('secondLastName', data.second_last_name);
     if (data.ci) setValue('ci', formatCI(data.ci.replace("V-", "")));
     if (data.birthdate) {
       const [d, m, y] = data.birthdate.split('/');
@@ -271,9 +272,8 @@ export default function EmployeeForm({ mode = 'create' }) {
     }
     if (data.nationality) setValue('nationality', data.nationality);
     if (data.sex) {
-      const s = data.sex.toUpperCase();
-      if (s === 'FEMENINO' || s === 'F') setValue('sex', 'M');
-      else if (s === 'MASCULINO' || s === 'M') setValue('sex', 'H');
+      if (data.sex === 'Femenino') setValue('sex', 'M');
+      else if (data.sex === 'Masculino') setValue('sex', 'H');
     }
     setShowScraperModal(false);
   };

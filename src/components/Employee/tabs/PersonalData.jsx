@@ -1,10 +1,12 @@
 import { useFormContext } from 'react-hook-form';
+
+import { ciOption } from "../../../utils/text-utils";
 import { phoneCodes, mobilePhoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
+
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from "../../Shared/ErrorMessage";
 import InputEmail from "../../Shared/InputEmail";
 import PhoneNumber from "../../Shared/PhoneNumber";
-import { ciOption } from "../../../utils/text-utils";
 
 export default function PersonalData({ viewMode, disabledClasses }) {
   const { register, setValue, formState: { errors } } = useFormContext();
@@ -27,7 +29,7 @@ export default function PersonalData({ viewMode, disabledClasses }) {
         </div>
 
         <div>
-          <LabelFieldForm field="Nacionalidad"/>
+          <LabelFieldForm field="Nacionalidad" simbol="*" />
             <select 
               disabled= {viewMode} 
               {...register('nationality')}
@@ -103,31 +105,27 @@ export default function PersonalData({ viewMode, disabledClasses }) {
 
         <div>
           <LabelFieldForm field="Teléfono Móvil" simbol="*"/>
-           <div className="flex flex-row">
-              <PhoneNumber 
-                type="mobilePhone" 
-                disabled={viewMode} 
-                register={register} 
-                dinamicClasses={disabledClasses} 
-                arrayCodes={mobilePhoneCodes}
-                setValue={setValue}
-              />
-          </div>
+            <PhoneNumber 
+              type="mobilePhone" 
+              disabled={viewMode} 
+              register={register} 
+              dinamicClasses={disabledClasses} 
+              arrayCodes={mobilePhoneCodes}
+              setValue={setValue}
+            />
           {errors?.mobilePhone && <ErrorMessage msg={errors.mobilePhone.message} />}
         </div>
 
         <div>
           <LabelFieldForm field="Teléfono Habitación"/>
-           <div className="flex flex-row">
-              <PhoneNumber 
-                type="homePhone" 
-                disabled={viewMode} 
-                register={register} 
-                dinamicClasses={disabledClasses} 
-                arrayCodes={phoneCodes}
-                setValue={setValue}
-              />
-          </div>
+            <PhoneNumber 
+              type="homePhone" 
+              disabled={viewMode} 
+              register={register} 
+              dinamicClasses={disabledClasses} 
+              arrayCodes={phoneCodes}
+              setValue={setValue}
+            />
           {errors?.homePhone && <ErrorMessage msg={errors.homePhone.message} />}
         </div>
 
