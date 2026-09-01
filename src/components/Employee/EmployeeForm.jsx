@@ -158,8 +158,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     }
 
     if (success) {
-      if (mode === 'create') navigate(-1);
-        else navigate(-2);
+      navigate('/empleados');
     }
 
   };

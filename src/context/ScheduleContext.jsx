@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { ENV } from '../config/env';
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 import { useNotification } from "../context/NotificationContext";
-import { useGlobalData } from './GlobalDataContext';
 import { getEmployeesByDept } from '../services/masterDataService';
 
 import { allMonths } from '../utils/StaticData/months-utils';
@@ -22,9 +21,6 @@ export const ScheduleProvider = ({ children }) => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [scheduleData, setScheduleData] = useState([]);
-  const [shifts, setShifts] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [events, setEvents] = useState([]);
 
   const loadSchedules = useCallback(async (departmentId, month, year) => {
     setLoading(true);

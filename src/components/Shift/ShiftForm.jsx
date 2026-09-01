@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -8,7 +8,6 @@ import { shiftValidationSchema  } from '../../utils/Validations/shiftValidationS
 import { useShifts } from '../../context/ShiftContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { newCodePosition } from '../../utils/Positions/positions-utils';
 import { calculateWorkPeriods } from '../../utils/Shift/shift-utils';
 import { typeShiftOptions, minHourOptions, radioOptions, nigthShiftOptions } from '../../utils/StaticData/shift-utils';
 import { getFortnightDetails } from '../../utils/Schedule/schedule-utils';
@@ -18,7 +17,6 @@ import HeadFormButtons from '../Shared/HeadFormButtons';
 import FooterFormButtons from '../Shared/FooterFormButtons';
 import ErrorMessage from '../Shared/ErrorMessage';
 import LabelFieldForm from '../Shared/LabelFieldForm';
-import RowTableResults from '../Shared/RowTableResults';
 import SpanText from '../Shared/SpanText';
 import InputGeneric from '../Shared/InputGeneric';
 import OptionSelect from '../Shared/OptionSelect';

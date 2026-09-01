@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { useNotification } from "../context/NotificationContext"; 
 import { useGlobalData } from './GlobalDataContext';
 
@@ -24,7 +24,7 @@ export const EmployeeProvider = ({ children }) => {
   const [loadingFieldChange, setLoadingFieldChange] = useState({ loading: false, field: null });
   const [loadingChangeStatus, setLoadingChangeStatus] = useState(false);
 
-  const loadEmployees = useCallback(async () => {
+  const loadEmployees = async () => {
       setLoadingEmployeeData(true);
     try {
       
@@ -37,11 +37,7 @@ export const EmployeeProvider = ({ children }) => {
     } finally {
       setLoadingEmployeeData(false);
     }
-  }, []);
-
-  useEffect(() => {
-    loadEmployees();
-  }, [loadEmployees]);
+  };
 
   // Actualizar campos checkboxs sin entrar en modo edit
   const toggleEmployeeField = async (employee, field) => { 
@@ -51,12 +47,12 @@ export const EmployeeProvider = ({ children }) => {
       if (!employee.id || !field) return; 
 
       const readableField = fieldLabels[field] || field;
-      const response = await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, employee);
+      await axios.put(`${ENV.API_BACK_URL}employees/${employee.id}/changeBooleanField?field=${field}`, employee);
 
-      setEmployeeData(prevData => {
-        const filteredData = prevData.filter(emp => emp.id !== employee.id);
-        return [response.data.data, ...filteredData];
-      });
+      // setEmployeeData(prevData => {
+      //   const filteredData = prevData.filter(emp => emp.id !== employee.id);
+      //   return [response.data.data, ...filteredData];
+      // });
 
       showNotification("Éxito", `${readableField} actualizado.`);  
 
@@ -129,9 +125,6 @@ export const EmployeeProvider = ({ children }) => {
       
       const response = await axios.post(`${ENV.API_BACK_URL}employees`, newEmployee);
       const newEmpResponse = response.data.data;
-      setEmployeeData(prevData => {
-        return [newEmpResponse, ...prevData]; 
-      });
 
       showNotification(`Empleado ${newEmpResponse.firstName} ${newEmpResponse.lastName} creado con éxito`);
       
@@ -157,11 +150,6 @@ export const EmployeeProvider = ({ children }) => {
       
       const response = await axios.put(`${ENV.API_BACK_URL}employees/${employeeId}`, updatedEmployee);
       const editEmpResponse = response.data.data;
-      
-      setEmployeeData(prevData => {
-        const filteredData = prevData.filter(employee => employee.id !== employeeId);
-        return [editEmpResponse, ...filteredData];
-      });
 
       showNotification(`Empleado ${editEmpResponse.firstName} ${editEmpResponse.lastName} actualizado con éxito`); 
       return true;

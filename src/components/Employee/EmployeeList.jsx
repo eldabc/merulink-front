@@ -15,13 +15,20 @@ import HasPermission from '../Shared/HasPermission';
 import '../../Tables.css';
 
 export default function EmployeeList() {
-  const { loadingEmployeeData, employeeData } = useEmployees();
+  const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [hasSearched, setHasSearched] = useState(false);
   const navigate = useNavigate();
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const getEmployees = async () => {
+      await loadEmployees();
+    }
+    getEmployees();
+  }, []);
 
   // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
   useEffect(() => {

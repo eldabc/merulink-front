@@ -1,16 +1,16 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePadlocks } from '../../context/PadlockContext';
-import { useEffect, useMemo, useState } from 'react';
 
-import TitleHeader from '../Shared/TitleHeader';
-import ButtonNavigate from '../Shared/ButtonNavigate';
-import PadlockRow from './PadlockRow'; 
-import Pagination from '../Pagination';
 import FilterByFields from '../Filters/FilterByFields';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
-import RowTableLoading from '../Shared/RowTableLoading';
 
+import TitleHeader from '../Shared/TitleHeader';
+import ButtonNavigate from '../Shared/ButtonNavigate';
+import RowTableLoading from '../Shared/RowTableLoading';
+import PadlockRow from './PadlockRow'; 
+import Pagination from '../Pagination';
 import '../../Tables.css';
 
 function PadlockList() {
