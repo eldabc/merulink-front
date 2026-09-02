@@ -69,7 +69,8 @@ const Login = () => {
               <LabelUppercase text="Nombre Usuario" />
               <input
                 type="text"
-                placeholder="Nombre usuario Ejem: nombre.apellido"
+                autoFocus
+                placeholder="Nombre usuario Ejem: n.apellido"
                 {...register('username')}
                 className="input-dark"
               />

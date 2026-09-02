@@ -26,6 +26,7 @@ export default function FilterByFields({
       </label>
       <input
         type="text"
+        autoFocus
         placeholder={placeholder}
         value={searchValue}
         onChange={(e) => onSearchChange(e.target.value)}

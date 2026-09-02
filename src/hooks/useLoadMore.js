@@ -12,16 +12,32 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *    resaltan (pulso temporal).
  *
  * Opciones:
- *  - options.initial = { visibleCount, activePage } → restaura una posición previa
- *    (p. ej. al volver de un detalle). Se usa solo al montar.
- *  - La posición NO se resetea al cambiar la data (solo se recorta si excede el
- *    total). Así el listado puede recordar dónde estaba al filtrar/limpiar.
+ *  - options.initial = { visibleCount, activePage } → posición inicial (solo al montar).
+ *  - options.remember = { storage: {get,set}, key, isBaseView, resetToken } → guarda/restaura
+ *    la posición del listado base entre navegaciones y al filtrar/limpiar (reutilizable).
+ *    - isBaseView: true cuando se muestra el listado base (sin filtrar).
+ *    - resetToken: cambia al iniciar una nueva búsqueda/filtro (el filtrado arranca en pág. 1).
+ *  - La posición NO se resetea al cambiar la data (solo se recorta si excede el total).
  */
 export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) {
-  const { initial = null } = options;
+  const { initial = null, remember = null } = options;
 
-  const [visibleCount, setVisibleCount] = useState(initial?.visibleCount ?? itemsPerPage);
-  const [activePage, setActivePage] = useState(initial?.activePage ?? 1);
+  const rememberKey = remember?.key;
+  const rememberStorage = remember?.storage;
+  const isBaseView = remember ? remember.isBaseView : true;
+  const resetToken = remember?.resetToken ?? '';
+
+  // Posición inicial: restaurada desde el almacén si estamos en la vista base
+  const [visibleCount, setVisibleCount] = useState(() => {
+    const pos = rememberStorage?.get(rememberKey)?.position;
+    if (rememberStorage && isBaseView && pos?.visibleCount) return pos.visibleCount;
+    return initial?.visibleCount ?? itemsPerPage;
+  });
+  const [activePage, setActivePage] = useState(() => {
+    const pos = rememberStorage?.get(rememberKey)?.position;
+    if (rememberStorage && isBaseView && pos?.activePage) return pos.activePage;
+    return initial?.activePage ?? 1;
+  });
   const [pulsePage, setPulsePage] = useState(null);
 
   // Ref para leer el último visibleCount sin depender de un closure viejo
@@ -34,6 +50,45 @@ export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) 
   const visibleItems = data.slice(0, visibleCount);
   const hasMore = visibleCount < total;
   const isExpanded = total > 0 && visibleCount >= total;
+
+  // Transiciones de búsqueda/filtro (solo si hay "remember")
+  const wasBaseRef = useRef(isBaseView);
+  const prevTokenRef = useRef(resetToken);
+  const skipPersistRef = useRef(false);
+
+  useEffect(() => {
+    if (!rememberStorage) return;
+    const wasBase = wasBaseRef.current;
+    const tokenChanged = resetToken !== prevTokenRef.current;
+    wasBaseRef.current = isBaseView;
+    prevTokenRef.current = resetToken;
+
+    if (!isBaseView) {
+      // Vista filtrada: nueva búsqueda/filtro → arranca en la página 1
+      if (wasBase || tokenChanged) {
+        setVisibleCount(itemsPerPage);
+        setActivePage(1);
+        setPulsePage(null);
+      }
+    } else if (!wasBase) {
+      // Volvió a la vista base (limpió búsqueda) → restaurar la posición guardada
+      skipPersistRef.current = true; // no pisar la posición guardada en este mismo render
+      const pos = rememberStorage.get(rememberKey)?.position;
+      if (pos) {
+        setVisibleCount(pos.visibleCount ?? itemsPerPage);
+        setActivePage(pos.activePage ?? 1);
+      }
+      setPulsePage(null);
+    }
+  }, [rememberKey, rememberStorage, isBaseView, resetToken, itemsPerPage]);
+
+  // Persistir la posición cuando se navega la vista base
+  useEffect(() => {
+    if (!rememberStorage || !isBaseView) return;
+    if (skipPersistRef.current) { skipPersistRef.current = false; return; }
+    const cur = rememberStorage.get(rememberKey) || {};
+    rememberStorage.set(rememberKey, { ...cur, position: { visibleCount, activePage } });
+  }, [visibleCount, activePage, isBaseView, rememberKey, rememberStorage]);
 
   // NO resetea la posición al cambiar la data: solo la recorta si excede el total
   // (permite recordar dónde estaba al filtrar/limpiar búsqueda o volver de otra vista).
@@ -64,21 +119,6 @@ export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) 
     setActivePage(p);
     setPulsePage(p);
   }, [totalPages, itemsPerPage]);
-
-  /** Vuelve a la primera página (en vistas que empiezan de cero, ej. al buscar). */
-  const resetToFirstPage = useCallback(() => {
-    setVisibleCount(itemsPerPage);
-    setActivePage(1);
-    setPulsePage(null);
-  }, [itemsPerPage]);
-
-  /** Restaura una posición guardada (para volver a donde estaba). */
-  const restorePosition = useCallback((pos) => {
-    if (!pos) return;
-    setVisibleCount(pos.visibleCount ?? itemsPerPage);
-    setActivePage(pos.activePage ?? 1);
-    setPulsePage(null);
-  }, [itemsPerPage]);
 
   // Scroll al bloque del pulso + desvanecer el sombreado
   useEffect(() => {
@@ -112,8 +152,6 @@ export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) 
     activePage,
     totalPages,
     goToPage,
-    resetToFirstPage,
-    restorePosition,
     visibleCount,
     chunkOf,
     chunkClass,
