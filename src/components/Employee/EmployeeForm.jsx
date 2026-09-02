@@ -6,13 +6,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEmployees } from '../../context/EmployeeContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 
-import { getDisabledClasses, splitPhone, capitalizeWords } from '../../utils/global-utils';  
+import { getDisabledClasses, splitPhone } from '../../utils/global-utils';  
 import { employeeValidationSchema } from '../../utils/Validations/employeeValidationSchema';
 import { calculateAge } from '../../utils/calculateAge-utils';
 import { newNumEmployee } from '../../utils/Employees/employee-utils';
 import { formatCI } from '../../utils/text-utils';
 import { tabs } from '../../utils/tabs-utils';
-
 
 import ActiveTab from "./configs/ActiveTab";
 import TabButtonsManager from './configs/TabButtonsManager';
@@ -23,7 +22,6 @@ import TitleHeader from '../Shared/TitleHeader';
 import HeaderEmployeeForm from './HeaderEmployeeForm';
 import EmployeeScraperModal from './modals/EmployeeScraperModal';
 import HasPermission from '../Shared/HasPermission';
-import SpanText from '../Shared/SpanText';
 import EmployeeTopBar from './EmployeeTopBar';
 
 import '../../Tables.css';
@@ -243,6 +241,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         useMeruLink: !!employee?.useMeruLink,
         roleId: employee?.roleId ?? '',
         permissions: employee?.roleSnapshot?.permissions ?? [],
+        departments: employee?.roleSnapshot?.departments ?? [],
         useHidCard: !!employee?.useHidCard,
         useLocker: !!employee?.useLocker,
         useTransport: !!employee?.useTransport,

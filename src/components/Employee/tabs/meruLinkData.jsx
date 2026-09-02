@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 
 import { useEmployees } from '../../../context/EmployeeContext';
 import { useAuth } from '../../../context/AuthContext';
+import { useGlobalData } from '../../../context/GlobalDataContext';
+
 import { getRoles } from '../../../services/masterDataService';
 
 import { PasswordInputEye } from '../../togglePasswordVisibility';
@@ -15,6 +17,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   
   const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { loadingFieldChange, toggleResetPass } = useEmployees();
+  const { departments } = useGlobalData();
   const { user } = useAuth();
   const [roles, setRoles] = useState([]);
   const [allModules, setAllModules] = useState([]);
@@ -25,6 +28,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const firstNameWatch = watch('firstName');
   const lastNameWatch = watch('lastName');
   const checkedPerms = watch('permissions') || [];
+  const checkedDepartments = watch('departments') || [];
   const roleIdWatch = watch('roleId');
   const ciWatch = watch('ci');
 
@@ -59,6 +63,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
     setValue('roleId', snapshot.roleId);
     setValue('permissions', snapshot.permissions);
+    setValue('departments', snapshot.departments ?? []);
   }, [employee?.roleSnapshot]);
 
   // Autocompletar username/password
@@ -92,6 +97,16 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
       : [...current, perm];
     setValue('permissions', next);
   }, [checkedPerms, setValue, isBlocked]);
+
+  // Toggle de un departamento en el array de acceso
+  const toggleDepartment = useCallback((deptId) => {
+    if (isBlocked) return;
+    const current = checkedDepartments;
+    const next = current.includes(deptId)
+      ? current.filter((d) => d !== deptId)
+      : [...current, deptId];
+    setValue('departments', next);
+  }, [checkedDepartments, setValue, isBlocked]);
 
   const handleResetPass = async () => {
     setLoadingResetPass(true);
@@ -271,6 +286,40 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   </table>
                 </div>
 
+              </div>
+            )}
+
+            {roleIdWatch && useMeruLinkWatch && (
+              <div className='w-full mt-2.5'>
+                <h2 className='text-center p-2.5 text-xl font-bold'>Departamentos</h2>
+
+                {/* Departamentos a los que tendrá acceso el usuario */}
+                <div className="bg-[#ffffff21] rounded-xl p-4">
+                  {departments.length === 0 ? (
+                    <SpanText text="No hay departamentos registrados" />
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                      {departments.map((dep) => {
+                        const isChecked = checkedDepartments.includes(Number(dep.id));
+                        return (
+                          <label
+                            key={dep.id}
+                            className={`flex items-center gap-2 text-sm text-gray-300 rounded px-2 py-1.5 transition-colors ${isBlocked ? '' : 'hover:bg-[#ffffff12] cursor-pointer'}`}
+                          >
+                            <input
+                              disabled={isBlocked}
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => toggleDepartment(Number(dep.id))}
+                              className="w-4 h-4 rounded accent-blue-500"
+                            />
+                            <span className="truncate">{dep.departmentName}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </>
