@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useEmployees } from '../../context/EmployeeContext'; 
 import { useNavigate } from 'react-router-dom';
+import { useListState } from '../../context/ListStateContext';
 import useLoadMore from '../../hooks/useLoadMore';
 
 import { normalizeText } from '../../utils/text-utils';
@@ -17,11 +18,32 @@ import '../../Tables.css';
 
 export default function EmployeeList() {
   const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
-  const [searchValue, setSearchValue] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [hasSearched, setHasSearched] = useState(false);
+  const { get, set } = useListState();
   const navigate = useNavigate();
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
+
+  const LIST_KEY = 'employee-list';
+
+  // Estado recordado entre navegaciones (se lee UNA vez al montar)
+  const restoredRef = useRef(null);
+  if (restoredRef.current === null) {
+    restoredRef.current = get(LIST_KEY);
+  }
+  const restored = restoredRef.current;
+
+  const [searchValue, setSearchValue] = useState(restored?.searchValue ?? '');
+  const [filterStatus, setFilterStatus] = useState(restored?.filterStatus ?? 'all');
+
+  // ¿Estamos filtrando? (búsqueda activa o estatus distinto de "todos")
+  const isFiltering = Boolean(searchValue.trim()) || filterStatus !== 'all';
+
+  // Posición del listado COMPLETO (se restaura al limpiar búsqueda o volver de un detalle)
+  const fullPosRef = useRef(restored?.fullPosition ?? { visibleCount: itemsPerPage, activePage: 1 });
+
+  // Token del filtro para detectar cambios de búsqueda/estatus
+  const filterToken = `${searchValue}|${filterStatus}`;
+  const wasFilteringRef = useRef(isFiltering);
+  const prevTokenRef = useRef(filterToken);
 
   useEffect(() => {
     const getEmployees = async () => {
@@ -29,15 +51,6 @@ export default function EmployeeList() {
     }
     getEmployees();
   }, []);
-
-  // Ejecutar búsqueda automáticamente al teclear o al cambiar el filtro de estado
-  useEffect(() => {
-    if (searchValue.trim() || filterStatus !== 'all') {
-      setHasSearched(true);
-    } else {
-      setHasSearched(false);
-    }
-  }, [searchValue, filterStatus]);
 
   const EMPLOYEE_SEARCH_FIELDS = [
       'numEmployee', 
@@ -61,10 +74,40 @@ export default function EmployeeList() {
   }, [employeeData, searchValue, filterStatus]);
 
   // Datos para mostrar + "Ver más"/paginación scroll vertical (reutilizable)
-  const dataToDisplay = hasSearched ? filteredEmployees : employeeData;
+  const dataToDisplay = isFiltering ? filteredEmployees : employeeData;
   const {
-    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage, chunkOf, chunkClass, total,
-  } = useLoadMore(dataToDisplay, itemsPerPage);
+    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage,
+    resetToFirstPage, restorePosition, visibleCount, chunkOf, chunkClass, total,
+  } = useLoadMore(dataToDisplay, itemsPerPage, {
+    // Al volver al listado completo (sin filtro) se restaura la posición recordada
+    initial: isFiltering ? null : fullPosRef.current,
+  });
+
+  // Un solo efecto: resetea/restaura la posición según el filtro y guarda el estado recordado
+  useEffect(() => {
+    const wasFiltering = wasFilteringRef.current;
+    const tokenChanged = filterToken !== prevTokenRef.current;
+    wasFilteringRef.current = isFiltering;
+    prevTokenRef.current = filterToken;
+
+    // Nueva búsqueda/filtro → el resultado filtrado empieza en la página 1
+    if (isFiltering && (!wasFiltering || tokenChanged)) {
+      resetToFirstPage();
+    }
+
+    // Se limpió la búsqueda → volver a la posición del listado completo
+    if (!isFiltering && wasFiltering) {
+      restorePosition(fullPosRef.current);
+      set(LIST_KEY, { searchValue, filterStatus, fullPosition: fullPosRef.current });
+      return; // no pisar fullPos con la posición "de filtrado" de este mismo render
+    }
+
+    // Guardar la posición base solo cuando estamos en el listado completo
+    if (!isFiltering) {
+      fullPosRef.current = { visibleCount, activePage };
+    }
+    set(LIST_KEY, { searchValue, filterStatus, fullPosition: fullPosRef.current });
+  }, [isFiltering, filterToken, visibleCount, activePage, searchValue, filterStatus, set, resetToFirstPage, restorePosition]);
 
 return (
   <HasPermission permissions={['view-employees']} >

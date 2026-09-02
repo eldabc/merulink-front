@@ -10,10 +10,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *    primera página resaltando el bloque 1.
  *  - Los números de página expanden lo necesario, hacen scroll al bloque y lo
  *    resaltan (pulso temporal).
+ *
+ * Opciones:
+ *  - options.initial = { visibleCount, activePage } → restaura una posición previa
+ *    (p. ej. al volver de un detalle). Se usa solo al montar.
+ *  - La posición NO se resetea al cambiar la data (solo se recorta si excede el
+ *    total). Así el listado puede recordar dónde estaba al filtrar/limpiar.
  */
-export default function useLoadMore(data = [], itemsPerPage = 10) {
-  const [visibleCount, setVisibleCount] = useState(itemsPerPage);
-  const [activePage, setActivePage] = useState(1);
+export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) {
+  const { initial = null } = options;
+
+  const [visibleCount, setVisibleCount] = useState(initial?.visibleCount ?? itemsPerPage);
+  const [activePage, setActivePage] = useState(initial?.activePage ?? 1);
   const [pulsePage, setPulsePage] = useState(null);
 
   // Ref para leer el último visibleCount sin depender de un closure viejo
@@ -27,15 +35,12 @@ export default function useLoadMore(data = [], itemsPerPage = 10) {
   const hasMore = visibleCount < total;
   const isExpanded = total > 0 && visibleCount >= total;
 
-  // Reset / ajuste cuando cambia la data (filtros, carga inicial)
+  // NO resetea la posición al cambiar la data: solo la recorta si excede el total
+  // (permite recordar dónde estaba al filtrar/limpiar búsqueda o volver de otra vista).
   useEffect(() => {
-    if (total === 0) {
-      setVisibleCount(itemsPerPage);
-      setActivePage(1);
-    } else {
-      setVisibleCount((c) => Math.min(c, total));
-    }
-    setPulsePage(null);
+    if (total === 0) return; // datos aún cargando: conservar posición
+    setVisibleCount((c) => Math.min(c, total));
+    setActivePage((p) => Math.min(p, Math.max(1, Math.ceil(total / itemsPerPage))));
   }, [total, itemsPerPage]);
 
   /** "Ver más": revela itemsPerPage filas adicionales. */
@@ -59,6 +64,21 @@ export default function useLoadMore(data = [], itemsPerPage = 10) {
     setActivePage(p);
     setPulsePage(p);
   }, [totalPages, itemsPerPage]);
+
+  /** Vuelve a la primera página (en vistas que empiezan de cero, ej. al buscar). */
+  const resetToFirstPage = useCallback(() => {
+    setVisibleCount(itemsPerPage);
+    setActivePage(1);
+    setPulsePage(null);
+  }, [itemsPerPage]);
+
+  /** Restaura una posición guardada (para volver a donde estaba). */
+  const restorePosition = useCallback((pos) => {
+    if (!pos) return;
+    setVisibleCount(pos.visibleCount ?? itemsPerPage);
+    setActivePage(pos.activePage ?? 1);
+    setPulsePage(null);
+  }, [itemsPerPage]);
 
   // Scroll al bloque del pulso + desvanecer el sombreado
   useEffect(() => {
@@ -92,6 +112,9 @@ export default function useLoadMore(data = [], itemsPerPage = 10) {
     activePage,
     totalPages,
     goToPage,
+    resetToFirstPage,
+    restorePosition,
+    visibleCount,
     chunkOf,
     chunkClass,
     itemsPerPage,
