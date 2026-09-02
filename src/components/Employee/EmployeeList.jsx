@@ -20,7 +20,7 @@ export default function EmployeeList() {
   const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
   const { get, set } = useListState();
   const navigate = useNavigate();
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const LIST_KEY = 'employee-list';
 
