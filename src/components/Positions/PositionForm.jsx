@@ -296,7 +296,7 @@ export default function PositionForm({ mode = 'create' }) {
             </div>
           )}
         </div>
-        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-positions", "edit-positions"]} />
       </form>
     </div>
   );

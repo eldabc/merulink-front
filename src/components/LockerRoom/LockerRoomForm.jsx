@@ -130,7 +130,7 @@ function LockerRoomForm({ mode = 'create' }) {
                   </div>
                 </div>
             </div>
-            <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+            <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-lockers", "edit-lockers"]} />
           </form>
         </div>
       </div>

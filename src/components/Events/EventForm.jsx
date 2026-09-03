@@ -411,7 +411,7 @@ export default function EventForm({ mode = 'create' }) {
               </div>
             )}
 
-            <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} /> 
+            <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-events", "edit-events"]} /> 
             
           </form>
         </div>

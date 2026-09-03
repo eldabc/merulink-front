@@ -283,7 +283,7 @@ export default function ScheduleForm({ }) {
             </div>
           </div>
         </div>
-        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-schedules", "edit-schedules"]} />
       </form>
     </div>
   </FormProvider>

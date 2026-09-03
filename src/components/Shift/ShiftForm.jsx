@@ -461,7 +461,7 @@ export default function ShiftForm({ mode = 'create' }) {
             </div>
           </div>
         </div>
-        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+        <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-shifts", "edit-shifts"]} />
       </form>
     </div>
   </FormProvider>

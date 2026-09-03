@@ -151,7 +151,7 @@ function PadlockForm ({ mode = 'create' }) {
                     </div>
                   </div>
               </div>
-              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-padlocks", "edit-padlocks"]} />
             </form>
           </div>
         </div>

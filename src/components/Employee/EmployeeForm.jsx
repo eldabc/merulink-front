@@ -379,7 +379,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         </div>
       </div>
 
-      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-employees", "edit-employees"]} />
 
      </form>
      </FormProvider>

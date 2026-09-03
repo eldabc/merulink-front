@@ -286,7 +286,7 @@ function RoleForm ({ mode = 'create' }) {
                   )}
                 </div>
               </div>
-              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-roles", "edit-roles"]} />
             </div>
           </div>
         </div>

@@ -148,7 +148,7 @@ export default function DepartmentForm({ mode = 'create' }) {
         )}
       </div>
 
-      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-departments", "edit-departments"]} />
      </form>
     </div>
   );

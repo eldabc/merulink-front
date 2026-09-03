@@ -198,6 +198,7 @@ export default function BankingMondaysForm({ mode = 'create', event = [], onBack
         mode={mode} 
         navigate={navigate} 
         txtCreate={`Calendario ${year}`}
+        permissions={["create-events", "edit-events"]} 
       />
     </div>
   );

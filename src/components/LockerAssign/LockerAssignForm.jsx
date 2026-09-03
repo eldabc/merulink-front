@@ -246,7 +246,7 @@ function LockerAssignForm({ mode = 'create' }) {
                     </div> 
                   </div>
               </div>
-              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} />
+              <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-assigns", "edit-assigns"]} />
             </form>
           </div>
         </div>
