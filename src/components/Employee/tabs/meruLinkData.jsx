@@ -74,10 +74,12 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     if (useMeruLinkWatch) {
       if (!viewMode && !employee?.userName) {
         if (!firstNameWatch || !lastNameWatch) return;
+
         const firstName = (firstNameWatch || '').toLowerCase().trim();
         const lastName = (lastNameWatch || '').toLowerCase().trim();
         setValue('userName', `${firstName.charAt(0)}.${lastName}`);
         setValue('userPass', (ciWatch || '').replace(/\./g, ''));
+        
       }
     }
   }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
@@ -94,10 +96,10 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   // Toggle de un permiso en el array
   const togglePerm = useCallback((perm) => {
     if (isBlocked) return;
-    const current = checkedPerms;
-    const next = current.includes(perm)
-      ? current.filter((p) => p !== perm)
-      : [...current, perm];
+
+    const next = checkedPerms.includes(perm)
+      ? checkedPerms.filter((p) => p !== perm)
+      : [...checkedPerms, perm];
     setValue('permissions', next);
   }, [checkedPerms, setValue, isBlocked]);
 
