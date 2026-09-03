@@ -7,10 +7,9 @@ import { useSchedules } from '../../context/ScheduleContext';
 import { useGlobalData } from '../../context/GlobalDataContext';
 import { useAuth } from '../../context/AuthContext';
 
-import { getDisabledClasses } from '../../utils/global-utils';  
 import { scheduleValidationSchema  } from '../../utils/Validations/scheduleValidationSchema';
 
-import { getStarEndFortnight, getFortnightDays, getFortnightInfo, resolveFinalStatus } from '../../utils/Schedule/schedule-utils';
+import { getFortnightDays, resolveFinalStatus } from '../../utils/Schedule/schedule-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ScheduleFilter from './ScheduleFilter';
@@ -27,16 +26,15 @@ export default function ScheduleForm({ }) {
   const navigate = useNavigate();
   const { departmentId, monthNumber, fortnight, monthSelectedJson } = location.state || {};
 
-  const { scheduleData, setScheduleData, createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
-  const { globalLoading, loadDepartments, filteredDepartments, departmentsLoaded } = useGlobalData();
+  const { createSchedule, updateSchedule, loading, loadFormData, setLoading, toggleAutofillAlways } = useSchedules();
+  const { globalLoading, filteredDepartments, departmentsLoaded } = useGlobalData();
   const { user } = useAuth();
-  const [existingCodes, setExistingCodes] = useState([]);
   
   const methods = useForm({ resolver: yupResolver(scheduleValidationSchema), });
   
   // Desestructuración de methods
   const { 
-    register, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isSubmitting }
+    register, handleSubmit, watch, setValue, trigger, formState: { errors, isSubmitting }
   } = methods;
 
   const selectedDepartmentId = watch('departmentId');

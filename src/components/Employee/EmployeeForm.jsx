@@ -171,9 +171,9 @@ export default function EmployeeForm({ mode = 'create' }) {
     const changed =
       next.length !== currentList.length ||
       next.some((d, i) => d !== currentList[i]);
-    if (changed) {
-      setValue('departmentCollectedIds', next);
-    }
+    
+    if (changed) setValue('departmentCollectedIds', next);
+
   }, [createMode, departmentWatched, watch, setValue]);
 
   const onSubmit = async (data) => {

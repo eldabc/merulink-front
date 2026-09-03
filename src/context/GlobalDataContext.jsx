@@ -40,13 +40,24 @@ export const GlobalDataProvider = ({ children }) => {
     }
   }, []);
 
-  // Derivar filteredDepartments con useMemo
+  // Deja solo los departamentos que el usuario tiene asignados. 
+  // Si no tiene asignado, cae a su propio departamento.
   const filteredDepartments = useMemo(() => {
     if (!departmentsLoaded || !user) return [];
-    if (!user?.roles?.includes('admin')) {
-      return departments.filter(dept => Number(dept.id) === Number(user.departmentId));
-    }
-    return departments;
+
+    const assigned = Array.isArray(user.departments)
+      ? user.departments.map(Number)
+      : [];
+    const allowedIds =
+      assigned.length > 0
+        ? assigned
+        : user.departmentId
+          ? [Number(user.departmentId)]
+          : [];
+
+    if (allowedIds.length === 0) return [];
+
+    return departments.filter((dept) => allowedIds.includes(Number(dept.id)));
   }, [departments, departmentsLoaded, user]);
 
   // *** Setters para mantener el estado global actualizado

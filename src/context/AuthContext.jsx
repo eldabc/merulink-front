@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     const roleName = localStorage.getItem('userRoleName');
     const permissions = localStorage.getItem('userPermissions');
     const departmentId = localStorage.getItem('departmentId');
+    const departments = localStorage.getItem('userDepartments');
     const isAdmin = localStorage.getItem('userIsAdmin');
 
     if (token && name) {
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }) => {
         roleName: roleName ?? "",
         permissions: permissions ? JSON.parse(permissions) : [],
         departmentId: departmentId ? Number(departmentId) : null,
+        departments: departments ? JSON.parse(departments) : [],
         isAdmin
       });
 
@@ -112,6 +114,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('userRoles', JSON.stringify(userData.roles));
     localStorage.setItem('userRoleName', JSON.stringify(userData.roleName));
     localStorage.setItem('userPermissions', JSON.stringify(userData.permissions));
+    localStorage.setItem('userDepartments', JSON.stringify(userData.departments || []));
     localStorage.setItem('userIsAdmin', userData.roles.includes('admin'));
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
