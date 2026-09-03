@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { User } from "lucide-react";
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -53,6 +53,8 @@ export default function EmployeeForm({ mode = 'create' }) {
   const watchedBirthDate = watch('birthdate');
   const selectedDepartmentId = watch('department');
   const selectedSubDepartmentId = watch('subDepartment');
+  const autoDeptRef = useRef(null);
+  const departmentWatched = watch('department');
   const createMode = mode === 'create';
   
   const viewMode = mode === 'view';
@@ -143,6 +145,36 @@ export default function EmployeeForm({ mode = 'create' }) {
 
     setPositions(positionsBySubDepartment);
   }, [selectedSubDepartmentId])
+
+  // Modo crear: mantener en la lista de Departamentos el departamento seleccionado. 
+  // Cuando el select cambia, se quita el valor viejo y se marca el nuevo.
+  useEffect(() => {
+    if (!createMode) return;
+
+    const newDept = Number(departmentWatched);
+    if (!newDept || Number.isNaN(newDept)) return; // aún sin departamento
+
+    const prevDept = autoDeptRef.current;
+    const currentList = Array.isArray(watch('departmentCollectedIds')) ? watch('departmentCollectedIds') : [];
+
+    let next = currentList;
+    // Si el select cambió, desmarcar el valor viejo
+    if (prevDept && prevDept !== newDept) {
+      next = next.filter((d) => Number(d) !== prevDept);
+    }
+    // Marcar el nuevo valor
+    if (!next.some((d) => Number(d) === newDept)) {
+      next = [...next, newDept];
+    }
+    autoDeptRef.current = newDept;
+
+    const changed =
+      next.length !== currentList.length ||
+      next.some((d, i) => d !== currentList[i]);
+    if (changed) {
+      setValue('departmentCollectedIds', next);
+    }
+  }, [createMode, departmentWatched, watch, setValue]);
 
   const onSubmit = async (data) => {
     // console.log("submit", data);
@@ -241,7 +273,7 @@ export default function EmployeeForm({ mode = 'create' }) {
         useMeruLink: !!employee?.useMeruLink,
         roleId: employee?.roleId ?? '',
         permissions: employee?.roleSnapshot?.permissions ?? [],
-        departments: employee?.roleSnapshot?.departments ?? [],
+        departmentCollectedIds: employee?.roleSnapshot?.departments ?? [],
         useHidCard: !!employee?.useHidCard,
         useLocker: !!employee?.useLocker,
         useTransport: !!employee?.useTransport,

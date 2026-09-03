@@ -28,12 +28,15 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const firstNameWatch = watch('firstName');
   const lastNameWatch = watch('lastName');
   const checkedPerms = watch('permissions') || [];
-  const checkedDepartments = watch('departments') || [];
+  const departmentCollectedIds = watch('departmentCollectedIds') || [];
   const roleIdWatch = watch('roleId');
   const ciWatch = watch('ci');
 
   const isBlocked = viewMode || !isEmployeeActive;
   const hasUserCreated = !!employee?.userName;
+
+  // La sincronización del departamento asignado al empleado se hace en EmployeeForm.
+  const isDepartmentChecked = (deptId) => departmentCollectedIds.includes(deptId);
 
   const CRUD_HEADERS = ['create', 'view', 'edit', 'delete'];
   const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
@@ -63,7 +66,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
     setValue('roleId', snapshot.roleId);
     setValue('permissions', snapshot.permissions);
-    setValue('departments', snapshot.departments ?? []);
+    setValue('departmentCollectedIds', snapshot.departments ?? []);
   }, [employee?.roleSnapshot]);
 
   // Autocompletar username/password
@@ -98,15 +101,16 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     setValue('permissions', next);
   }, [checkedPerms, setValue, isBlocked]);
 
-  // Toggle de un departamento en el array de acceso
+  // Toggle de un departamento en la lista (agregar/quitar).
   const toggleDepartment = useCallback((deptId) => {
     if (isBlocked) return;
-    const current = checkedDepartments;
-    const next = current.includes(deptId)
-      ? current.filter((d) => d !== deptId)
-      : [...current, deptId];
-    setValue('departments', next);
-  }, [checkedDepartments, setValue, isBlocked]);
+
+    const next = departmentCollectedIds.includes(deptId)
+      ? departmentCollectedIds.filter((d) => d !== deptId)
+      : [...departmentCollectedIds, deptId];
+
+    setValue('departmentCollectedIds', next);
+  }, [departmentCollectedIds, setValue, isBlocked]);
 
   const handleResetPass = async () => {
     setLoadingResetPass(true);
@@ -213,10 +217,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
             </div>
 
             {roleIdWatch && useMeruLinkWatch && (
+              <>
               <div className='w-full mt-2.5'>
-                <h2 className='text-center p-2.5 text-xl font-bold'>
-                  Permisos - {roleNameText}
-                </h2>
+                <h2 className='text-center p-2.5 text-xl font-bold'> Permisos - {roleNameText} </h2>
 
                 {/* Tabla de módulos CRUD + Especiales */}
                 <div className="overflow-x-auto">
@@ -279,7 +282,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                                 );
                               })}
                             </div>
-                        </td>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -287,11 +290,9 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                 </div>
 
               </div>
-            )}
-
-            {roleIdWatch && useMeruLinkWatch && (
+            
               <div className='w-full mt-2.5'>
-                <h2 className='text-center p-2.5 text-xl font-bold'>Departamentos</h2>
+                <h2 className='text-center p-2.5 text-xl font-bold'> Departamentos </h2>
 
                 {/* Departamentos a los que tendrá acceso el usuario */}
                 <div className="bg-[#ffffff21] rounded-xl p-4">
@@ -300,7 +301,8 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                       {departments.map((dep) => {
-                        const isChecked = checkedDepartments.includes(Number(dep.id));
+                        const deptId = Number(dep.id);
+                        const isChecked = isDepartmentChecked(deptId);
                         return (
                           <label
                             key={dep.id}
@@ -310,7 +312,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                               disabled={isBlocked}
                               type="checkbox"
                               checked={isChecked}
-                              onChange={() => toggleDepartment(Number(dep.id))}
+                              onChange={() => toggleDepartment(deptId)}
                               className="w-4 h-4 rounded accent-blue-500"
                             />
                             <span className="truncate">{dep.departmentName}</span>
@@ -321,6 +323,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   )}
                 </div>
               </div>
+              </>
             )}
           </>
         )}
