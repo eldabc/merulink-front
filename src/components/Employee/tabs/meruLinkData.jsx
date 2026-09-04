@@ -13,8 +13,8 @@ import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
 import SpanText from '../../Shared/SpanText';
 
-export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, disabledClasses, employee }) {
-  
+export default function MeruLinkData({ viewMode, isEmployeeActive, disabledClasses, employee }) {
+
   const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { loadingFieldChange, toggleResetPass } = useEmployees();
   const { departments } = useGlobalData();
@@ -23,25 +23,44 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
   const [allModules, setAllModules] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [loadingResetPass, setLoadingResetPass] = useState(false);
-  
+
   const useMeruLinkWatch = watch('useMeruLink');
   const firstNameWatch = watch('firstName');
   const lastNameWatch = watch('lastName');
-  const checkedPerms = watch('permissions') || [];
-  const departmentCollectedIds = watch('departmentCollectedIds') || [];
   const roleIdWatch = watch('roleId');
   const ciWatch = watch('ci');
+
+
+  // Checkboxes CONTROLADOS reflejan siempre el valor del form
+  const checkedPerms = watch('permissions') || [];
+  const deptCollectedIds = (watch('departmentCollectedIds') || []).map(Number);
 
   const isBlocked = viewMode || !isEmployeeActive;
   const hasUserCreated = !!employee?.userName;
 
-  // La sincronización del departamento asignado al empleado se hace en EmployeeForm.
-  const isDepartmentChecked = (deptId) => departmentCollectedIds.includes(deptId);
+  // Toggle de un permiso (array de strings)
+  const togglePerm = useCallback((perm) => {
+    if (isBlocked) return;
+    const current = watch('permissions') || [];
+    const next = current.includes(perm)
+      ? current.filter((p) => p !== perm)
+      : [...current, perm];
+    setValue('permissions', next, { shouldDirty: true });
+  }, [isBlocked, watch, setValue]);
+
+  // Toggle de un departamento (array de números)
+  const toggleDepartment = useCallback((deptId) => {
+    if (isBlocked) return;
+    const current = (watch('departmentCollectedIds') || []).map(Number);
+    const next = current.includes(deptId)
+      ? current.filter((d) => d !== deptId)
+      : [...current, deptId];
+    setValue('departmentCollectedIds', next, { shouldDirty: true });
+  }, [isBlocked, watch, setValue]);
 
   const CRUD_HEADERS = ['create', 'view', 'edit', 'delete'];
   const CRUD_LABELS = { create: 'Crear', view: 'Ver', edit: 'Editar', delete: 'Eliminar' };
-  
-  // Rol seleccionado para mostrar texto en edit/view
+
   const selectedRole = roles.find((r) => r.id === Number(roleIdWatch));
   const roleNameText = selectedRole?.label || employee?.roleSnapshot?.roleName;
 
@@ -58,31 +77,17 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
       .finally(() => setLoadingRoles(false));
   }, [useMeruLinkWatch]);
 
-  // Precargar roleSnapshot en modo edit/view
-  useEffect(() => { 
-    if (createMode) return;
-    const snapshot = employee?.roleSnapshot;
-    if (!snapshot) return;
-
-    setValue('roleId', snapshot.roleId);
-    setValue('permissions', snapshot.permissions);
-    setValue('departmentCollectedIds', snapshot.departments ?? []);
-  }, [employee?.roleSnapshot]);
-
   // Autocompletar username/password
   useEffect(() => {
-    if (useMeruLinkWatch) {
-      if (!viewMode && !employee?.userName) {
-        if (!firstNameWatch || !lastNameWatch) return;
+    if (useMeruLinkWatch && !viewMode && !employee?.userName) {
+      if (!firstNameWatch || !lastNameWatch) return;
 
-        const firstName = (firstNameWatch || '').toLowerCase().trim();
-        const lastName = (lastNameWatch || '').toLowerCase().trim();
-        setValue('userName', `${firstName.charAt(0)}.${lastName}`);
-        setValue('userPass', (ciWatch || '').replace(/\./g, ''));
-        
-      }
+      const firstName = (firstNameWatch || '').toLowerCase().trim();
+      const lastName = (lastNameWatch || '').toLowerCase().trim();
+      setValue('userName', `${firstName.charAt(0)}.${lastName}`);
+      setValue('userPass', (ciWatch || '').replace(/\./g, ''));
     }
-  }, [useMeruLinkWatch, firstNameWatch, lastNameWatch]);
+  }, [useMeruLinkWatch, firstNameWatch, lastNameWatch, ciWatch, viewMode, employee?.userName, setValue]);
 
   // Al cambiar el select de rol, precargar sus permisos
   const handleRoleChange = useCallback((e) => {
@@ -93,58 +98,36 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
     setValue('permissions', role?.permissions || []);
   }, [roles, setValue]);
 
-  // Toggle de un permiso en el array
-  const togglePerm = useCallback((perm) => {
-    if (isBlocked) return;
-
-    const next = checkedPerms.includes(perm)
-      ? checkedPerms.filter((p) => p !== perm)
-      : [...checkedPerms, perm];
-    setValue('permissions', next);
-  }, [checkedPerms, setValue, isBlocked]);
-
-  // Toggle de un departamento en la lista (agregar/quitar).
-  const toggleDepartment = useCallback((deptId) => {
-    if (isBlocked) return;
-
-    const next = departmentCollectedIds.includes(deptId)
-      ? departmentCollectedIds.filter((d) => d !== deptId)
-      : [...departmentCollectedIds, deptId];
-
-    setValue('departmentCollectedIds', next);
-  }, [departmentCollectedIds, setValue, isBlocked]);
-
   const handleResetPass = async () => {
     setLoadingResetPass(true);
     await toggleResetPass(employee);
     setLoadingResetPass(false);
   };
-  
-  // console.log("hasUserCreated", hasUserCreated)
+
   return (
     <>
       <div className="flex items-center gap-4 mb-4 pl-4">
         <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
           <span className="text-sm">¿Usa MeruLink?</span>
-            {loadingFieldChange.loading && loadingFieldChange.field === 'use_meru_link' ? (
-              <SpanText text="Cargando..." />
-            ) : (
-              <input 
-                disabled={viewMode}
-                type="checkbox"
-                {...register('useMeruLink')}
-                className={`w-4 h-4 rounded ${disabledClasses}`}
-              />
-            )}
+          {loadingFieldChange.loading && loadingFieldChange.field === 'use_meru_link' ? (
+            <SpanText text="Cargando..." />
+          ) : (
+            <input 
+              disabled={viewMode}
+              type="checkbox"
+              {...register('useMeruLink')}
+              className={`w-4 h-4 rounded ${disabledClasses}`}
+            />
+          )}
         </label>
       </div>
+
       <div className="border border-[#ffffff21] p-5 mt-6">
         {useMeruLinkWatch && (
           <>
             <div className="col-span-full mx-auto w-full max-w-lg rounded-xl p-6 md:p-4">
               <div className='bg-[#ffffff21] rounded-xl p-6'>
-                
-                {/* Fila: Nombre de Usuario */}
+                {/* Nombre de Usuario */}
                 <div className='flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2'>
                   <LabelFieldForm field="Nombre Usuario" simbol="*" />
                   <div className='w-full md:w-auto md:ml-auto'>
@@ -158,7 +141,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   </div>
                 </div>
 
-                {/* Fila: Contraseña */}
+                {/* Contraseña */}
                 <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-2'>
                   <LabelFieldForm field="Contraseña" simbol="*" />
                   <div className='w-full md:w-64 md:ml-auto'>
@@ -166,6 +149,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   </div>
                 </div>
 
+                {/* Rol */}
                 <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-2 mt-3'>
                   <LabelFieldForm field="Rol" simbol="*" />
                   <div className='w-full md:w-64 md:ml-auto'>
@@ -187,11 +171,11 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                   </div>
                 </div>
 
-                {/* Reset */}
+                {/* Reset Password */}
                 <div className="flex items-start md:justify-end mt-3 gap-2">
                   {hasUserCreated ? (
                     loadingResetPass ? (
-                      <SpanText text="Cargando..." />
+                      <SpanText />
                     ) : (
                       <Link 
                         onClick={(e) => { if (user.isAdmin) handleResetPass(); else e.preventDefault(); }} 
@@ -210,7 +194,7 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
                         className={`w-5 h-5 ${disabledClasses}`}
                       />
                       <label className="text-sm text-gray-300 hover:text-[#9fd8ff]">
-                        {hasUserCreated ? '' : 'Cambia la contraseña al próximo inicio.'}
+                        Cambia la contraseña al próximo inicio.
                       </label>
                     </>
                   )}      
@@ -220,111 +204,104 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
 
             {roleIdWatch && useMeruLinkWatch && (
               <>
-              <div className='w-full mt-2.5'>
-                <h2 className='text-center p-2.5 text-xl font-bold'> Permisos - {roleNameText} </h2>
+                {/* Permisos */}
+                <div className='w-full mt-2.5'>
+                  <h2 className='text-center p-2.5 text-xl font-bold'> Permisos - {roleNameText} </h2>
+                  {errors.permissions && <ErrorMessage msg={errors.permissions.message} />}
 
-                {/* Tabla de módulos CRUD + Especiales */}
-                <div className="overflow-x-auto">
-                  <table className="min-w-full border-collapse text-sm sm:text-base">
-                    <thead>
-                      <tr className="tr-thead-table">
-                        <th className="px-4 py-3 text-left font-semibold">Módulo</th>
-                        {CRUD_HEADERS.map((action) => (
-                          <th key={action} className="px-4 py-3 text-center font-semibold">
-                            {CRUD_LABELS[action]}
-                          </th>
-                        ))}
-                        <th className="px-4 py-3 text-center font-semibold">Permisos Especiales</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allModules.map((mod) => (
-                        <tr key={mod.key} className="border-b tr-table">
-                          <td className="px-4 py-3 text-white font-medium">{mod.label}</td>
-                          {CRUD_HEADERS.map((action) => {
-                            const permName = mod[action];
-                            if (!permName) {
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border-collapse text-sm sm:text-base">
+                      <thead>
+                        <tr className="tr-thead-table">
+                          <th className="px-4 py-3 text-left font-semibold">Módulo</th>
+                          {CRUD_HEADERS.map((action) => (
+                            <th key={action} className="px-4 py-3 text-center font-semibold">
+                              {CRUD_LABELS[action]}
+                            </th>
+                          ))}
+                          <th className="px-4 py-3 text-center font-semibold">Permisos Especiales</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allModules.map((mod) => (
+                          <tr key={mod.key} className="border-b tr-table">
+                            <td className="px-4 py-3 text-white font-medium">{mod.label}</td>
+                            {CRUD_HEADERS.map((action) => {
+                              const permName = mod[action];
+                              if (!permName) {
+                                return (
+                                  <td key={action} className="px-4 py-3 text-center text-gray-600 text-xs">—</td>
+                                );
+                              }
                               return (
-                                <td key={action} className="px-4 py-3 text-center text-gray-600 text-xs">
-                                  —
+                                <td key={action} className="px-4 py-3">
+                                  <div className="flex justify-center items-center">
+                                    <input
+                                      disabled={isBlocked}
+                                      type="checkbox"
+                                      checked={checkedPerms.includes(permName)}
+                                      onChange={() => togglePerm(permName)}
+                                      className="w-4 h-4 rounded accent-blue-500 cursor-pointer"
+                                    />
+                                  </div>
                                 </td>
                               );
-                            }
-                            const isChecked = checkedPerms.includes(permName);
-                            return (
-                              <td key={action} className="px-4 py-3">
-                                <div className="flex justify-center items-center">
-                                  <input
-                                    disabled={isBlocked}
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => togglePerm(permName)}
-                                    className="w-4 h-4 rounded accent-blue-500 cursor-pointer"
-                                  />
-                                </div>
-                              </td>
-                            );
-                          })}
-                          {/* Columna de especiales del módulo */}
-                          <td className="px-4 py-3">
-                            <div className="flex flex-col gap-1 items-start w-max mx-auto">
-                              {mod.specials.map((sp) => {
-                                const isChecked = checkedPerms.includes(sp.key);
-                                return (
+                            })}
+                            <td className="px-4 py-3">
+                              <div className="flex flex-col gap-1 items-start w-max mx-auto">
+                                {mod.specials.map((sp) => (
                                   <label key={sp.key} className="flex items-start gap-1.5 text-xs text-gray-300 cursor-pointer">
                                     <input
                                       disabled={isBlocked}
                                       type="checkbox"
-                                      checked={isChecked}
+                                      checked={checkedPerms.includes(sp.key)}
                                       onChange={() => togglePerm(sp.key)}
                                       className="w-3.5 h-3.5 rounded accent-blue-500 cursor-pointer"
                                     />
                                     <span className="whitespace-nowrap">{sp.label}</span>
                                   </label>
-                                );
-                              })}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
-              </div>
-            
-              <div className='w-full mt-2.5'>
-                <h2 className='text-center p-2.5 text-xl font-bold'> Departamentos </h2>
+                {/* Departamentos */}
+                <div className='w-full mt-2.5'>
+                  <h2 className='text-center p-2.5 text-xl font-bold'> Departamentos </h2>
+                  {errors.departmentCollectedIds && <ErrorMessage msg={errors.departmentCollectedIds.message} />}
 
-                {/* Departamentos a los que tendrá acceso el usuario */}
-                <div className="bg-[#ffffff21] rounded-xl p-4">
-                  {departments.length === 0 ? (
-                    <SpanText text="No hay departamentos registrados" />
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                      {departments.map((dep) => {
-                        const deptId = Number(dep.id);
-                        const isChecked = isDepartmentChecked(deptId);
-                        return (
-                          <label
-                            key={dep.id}
-                            className={`flex items-center gap-2 text-sm text-gray-300 rounded px-2 py-1.5 transition-colors ${isBlocked ? '' : 'hover:bg-[#ffffff12] cursor-pointer'}`}
-                          >
-                            <input
-                              disabled={isBlocked}
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleDepartment(deptId)}
-                              className="w-4 h-4 rounded accent-blue-500"
-                            />
-                            <span className="truncate">{dep.departmentName}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
+                  <div className="bg-[#ffffff21] rounded-xl p-4">
+                    {departments.length === 0 ? (
+                      <SpanText text="No hay departamentos registrados" />
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                        {departments.map((dep) => {
+                          const deptId = Number(dep.id);
+                          return (
+                            <label
+                              key={dep.id}
+                              className={`flex items-center gap-2 text-sm text-gray-300 rounded px-2 py-1.5 transition-colors ${isBlocked ? '' : 'hover:bg-[#ffffff12] cursor-pointer'}`}
+                            >
+                              <input
+                                disabled={isBlocked}
+                                type="checkbox"
+                                checked={deptCollectedIds.includes(deptId)}
+                                onChange={() => toggleDepartment(deptId)}
+                                className="w-4 h-4 rounded accent-blue-500"
+                              />
+                              <span className="truncate">{dep.departmentName}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
               </>
             )}
           </>
@@ -332,4 +309,4 @@ export default function MeruLinkData({ createMode, viewMode, isEmployeeActive, d
       </div>
     </>
   );
-};
+}

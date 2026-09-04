@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { User } from "lucide-react";
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -34,6 +34,9 @@ export default function EmployeeForm({ mode = 'create' }) {
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
   const editMode = mode === 'edit';
+  const createMode = mode === 'create';
+  const viewMode = mode === 'view';
+
   const methods = useForm({
     resolver: yupResolver(employeeValidationSchema({ isEditMode: editMode })),
   });
@@ -53,30 +56,23 @@ export default function EmployeeForm({ mode = 'create' }) {
   const watchedBirthDate = watch('birthdate');
   const selectedDepartmentId = watch('department');
   const selectedSubDepartmentId = watch('subDepartment');
-  const autoDeptRef = useRef(null);
-  const departmentWatched = watch('department');
-  const createMode = mode === 'create';
-  
-  const viewMode = mode === 'view';
-  
+
   // Control del modal de scraping
   const [showScraperModal, setShowScraperModal] = useState(createMode);
   const [scraperKey, setScraperKey] = useState(0);
   
-  let isEmployeeActive;
-  (createMode) ? isEmployeeActive = true : ( isEmployeeActive = employee?.status ?? false);
+  let isEmployeeActive = createMode ? true : (employee?.status ?? false);
   const disabledClasses = getDisabledClasses(viewMode, !isEmployeeActive);
 
   useEffect(() => {
     if (loadingEmployeeData) return;
     if (!employeeData.length) return;
     
-    const  newNumber = employee?.numEmployee ?? newNumEmployee(employeeData);
+    const newNumber = employee?.numEmployee ?? newNumEmployee(employeeData);
     setValue('numEmployee', newNumber);
-
   }, [employeeData, loadingEmployeeData]);
   
-  // calcular edad al cambiar birthdate
+  // Calcular edad al cambiar birthdate
   useEffect(() => {
     calculateAge(watchedBirthDate, setValue);
   }, [watchedBirthDate, setValue]);
@@ -87,7 +83,6 @@ export default function EmployeeForm({ mode = 'create' }) {
       try {
         const lockerAssignsData = await getLockerAssigns();
         setLockerAssigns(lockerAssignsData);
-          
       } catch (error) {
         console.error("Error cargando dependencias del formulario", error);
       } finally {
@@ -95,32 +90,31 @@ export default function EmployeeForm({ mode = 'create' }) {
       }
     };
 
-     loadFormData();
+    loadFormData();
   }, []);
   
   useEffect(() => {    
-     const lockerAssignEmp = employee?.assign
-            ? [...lockerAssigns, employee.assign]
-            : [...lockerAssigns];
-     setEmpLockerAssign(lockerAssignEmp);
+    const lockerAssignEmp = employee?.assign
+      ? [...lockerAssigns, employee.assign]
+      : [...lockerAssigns];
+    setEmpLockerAssign(lockerAssignEmp);
   }, [lockerAssigns]);
 
   useEffect(() => {
-    reset( employeeReset() );
+    reset(employeeReset());
   }, [empLockerAssign, employeeData]);
 
-  useEffect (() => {
-    
+  useEffect(() => {
     setValue('subDepartment', 0);
     setValue('position', '');
     setPositions([]);
 
-    if(selectedDepartmentId) {  
-      const selectedDepartment = departments.find( d => d.id === Number(selectedDepartmentId) );
+    if (selectedDepartmentId) {  
+      const selectedDepartment = departments.find(d => d.id === Number(selectedDepartmentId));
       
       // Cargos por Departamento
       const positionsByDepartment = selectedDepartment?.positions.filter(
-          pos => pos.subDepartment === null
+        pos => pos.subDepartment === null
       );
 
       setPositions(positionsByDepartment);
@@ -144,42 +138,11 @@ export default function EmployeeForm({ mode = 'create' }) {
     });
 
     setPositions(positionsBySubDepartment);
-  }, [selectedSubDepartmentId])
-
-  // Modo crear: mantener en la lista de Departamentos el departamento seleccionado. 
-  // Cuando el select cambia, se quita el valor viejo y se marca el nuevo.
-  useEffect(() => {
-    if (!createMode) return;
-
-    const newDept = Number(departmentWatched);
-    if (!newDept || Number.isNaN(newDept)) return; // aún sin departamento
-
-    const prevDept = autoDeptRef.current;
-    const currentList = Array.isArray(watch('departmentCollectedIds')) ? watch('departmentCollectedIds') : [];
-
-    let next = currentList;
-    // Si el select cambió, desmarcar el valor viejo
-    if (prevDept && prevDept !== newDept) {
-      next = next.filter((d) => Number(d) !== prevDept);
-    }
-    // Marcar el nuevo valor
-    if (!next.some((d) => Number(d) === newDept)) {
-      next = [...next, newDept];
-    }
-    autoDeptRef.current = newDept;
-
-    const changed =
-      next.length !== currentList.length ||
-      next.some((d, i) => d !== currentList[i]);
-    
-    if (changed) setValue('departmentCollectedIds', next);
-
-  }, [createMode, departmentWatched, watch, setValue]);
+  }, [selectedSubDepartmentId]);
 
   const onSubmit = async (data) => {
-    // console.log("submit", data);
     let success = false;
-    const submissionData = { id: employee?.id ?? null, ...data, };
+    const submissionData = { id: employee?.id ?? null, ...data };
 
     if (editMode && employee) {
       success = await updateEmployee(submissionData);
@@ -190,7 +153,6 @@ export default function EmployeeForm({ mode = 'create' }) {
     if (success) {
       navigate('/empleados');
     }
-
   };
 
   const onError = (formErrors) => {
@@ -204,10 +166,10 @@ export default function EmployeeForm({ mode = 'create' }) {
         'birthdate', 'placeOfBirth', 'nationality', 'age', 'sex', 'ci', 'maritalStatus',
         'bloodType', 'email', 'mobilePhoneCode', 'mobilePhone', 'homePhoneCode', 'homePhone', 'address'
       ],
-      work: [ 'joinDate', 'department', 'subDepartment', 'position'],
-      meruLink: ['userName', 'userPass', 'roleId' ],
-      contact: [ 'contacts' ],
-      lockerAssign: ['lockerAssingId' ],
+      work: ['joinDate', 'department', 'subDepartment', 'position'],
+      meruLink: ['userName', 'userPass', 'roleId'],
+      contact: ['contacts'],
+      lockerAssign: ['lockerAssingId'],
     };
 
     // Helper to check if errors object has any key for given list
@@ -245,45 +207,45 @@ export default function EmployeeForm({ mode = 'create' }) {
     const birthdate = employee?.birthdate ? new Date(employee.birthdate).toISOString().split('T')[0] : null;
 
     const employeeDataForm = {
-        ci: formatCI(employee?.ci) ?? '',
-        firstName: employee?.firstName ?? '',
-        secondName: employee?.secondName ?? '',
-        lastName: employee?.lastName ?? '',
-        secondLastName: employee?.secondLastName ?? '',
-        birthdate: birthdate,
-        placeOfBirth: employee?.placeOfBirth ?? '',
-        nationality: employee?.nationality ?? 'V',
-        sex: employee?.sex ?? '',
-        maritalStatus: employee?.maritalStatus ?? 'Soltero',
-        bloodType: employee?.bloodType ?? '',
-        email: employee?.email ?? '',
-        mobilePhoneCode: mobileCode || '0414',
-        mobilePhone: mobileNumber ?? '',
-        homePhoneCode: homeCode ?? '0286',
-        homePhone: homeNumber ?? null,
-        address: employee?.address ?? '',
-        joinDate: joinDate ?? null,
-        department: employee?.department.id ?? '',
-        subDepartment: employee?.subDepartment.id ?? 0,
-        position: employee?.position.id ?? '',
-        userName: employee?.userName ?? null,
-        userPass: employee?.userPass ?? null,
-        changePassNextLogin: !!employee?.changePassNextLogin,
-        status: createMode ? true : !!employee?.status,
-        useMeruLink: !!employee?.useMeruLink,
-        roleId: employee?.roleId ?? '',
-        permissions: employee?.roleSnapshot?.permissions ?? [],
-        departmentCollectedIds: employee?.roleSnapshot?.departments ?? [],
-        useHidCard: !!employee?.useHidCard,
-        useLocker: !!employee?.useLocker,
-        useTransport: !!employee?.useTransport,
-        contacts: employee?.contacts ?? [],
-        lockerAssingId: employee?.assign?.id ?? '',
-        padlockAssignPass: employee?.assign?.locker?.padlock?.pass ?? '',
-        padlockAssignSerial: employee?.assign?.locker?.padlock?.serial ?? '',
-        resetInstructions: employee?.assign?.locker?.padlock?.padlockPattern?.resetInstructions ?? '',
-        unlockSequence: employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence ?? [],
-    }
+      ci: formatCI(employee?.ci) ?? '',
+      firstName: employee?.firstName ?? '',
+      secondName: employee?.secondName ?? '',
+      lastName: employee?.lastName ?? '',
+      secondLastName: employee?.secondLastName ?? '',
+      birthdate: birthdate,
+      placeOfBirth: employee?.placeOfBirth ?? '',
+      nationality: employee?.nationality ?? 'V',
+      sex: employee?.sex ?? '',
+      maritalStatus: employee?.maritalStatus ?? 'Soltero',
+      bloodType: employee?.bloodType ?? '',
+      email: employee?.email ?? '',
+      mobilePhoneCode: mobileCode || '0414',
+      mobilePhone: mobileNumber ?? '',
+      homePhoneCode: homeCode ?? '0286',
+      homePhone: homeNumber ?? null,
+      address: employee?.address ?? '',
+      joinDate: joinDate ?? null,
+      department: employee?.department?.id ?? '',
+      subDepartment: employee?.subDepartment?.id ?? 0,
+      position: employee?.position?.id ?? '',
+      userName: employee?.userName ?? null,
+      userPass: employee?.userPass ?? null,
+      changePassNextLogin: !!employee?.changePassNextLogin,
+      status: createMode ? true : !!employee?.status,
+      useMeruLink: !!employee?.useMeruLink,
+      roleId: employee?.roleSnapshot?.roleId ?? employee?.roleId ?? '',
+      permissions: employee?.roleSnapshot?.permissions ?? [],
+      departmentCollectedIds: (employee?.roleSnapshot?.departments ?? []).map(Number),
+      useHidCard: !!employee?.useHidCard,
+      useLocker: !!employee?.useLocker,
+      useTransport: !!employee?.useTransport,
+      contacts: employee?.contacts ?? [],
+      lockerAssingId: employee?.assign?.id ?? '',
+      padlockAssignPass: employee?.assign?.locker?.padlock?.pass ?? '',
+      padlockAssignSerial: employee?.assign?.locker?.padlock?.serial ?? '',
+      resetInstructions: employee?.assign?.locker?.padlock?.padlockPattern?.resetInstructions ?? '',
+      unlockSequence: employee?.assign?.locker?.padlock?.padlockPattern?.unlockSequence ?? [],
+    };
     if (createMode) return { ...employeeDataForm, age: '' };
 
     return employeeDataForm;
@@ -310,79 +272,73 @@ export default function EmployeeForm({ mode = 'create' }) {
 
   const handleScraperSkip = () => setShowScraperModal(false);
 
-  // console.log("EMPLOYEES", employee);
   return (
     <div className="w-full mx-auto overflow-x-auto p-2 rounded-lg">
-    <FormProvider {...methods}>
-    <form onSubmit={handleSubmit(onSubmit, onError)}>
-      
-      <div className="aling-items-right">
-        {(isEmployeeActive && viewMode) && (  
-          <HasPermission permissions={["edit-employees"]}> 
-            <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} />
-          </HasPermission> 
-        )}{/*TODO: todas las rutas funcionen sin data  */}
-      </div>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
+          <div className="aling-items-right">
+            {(isEmployeeActive && viewMode) && (  
+              <HasPermission permissions={["edit-employees"]}> 
+                <HeadFormButtons url={`/empleados/editar/${employee?.id}`} data={[]} />
+              </HasPermission> 
+            )}{/*TODO: todas las rutas funcionen sin data  */}
+          </div>
 
-      <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
-        <div className="md:justify-center flex gap-x-34 items-center gap-6 relative  pb-6  flex-wrap">
-          <div className="w-full md:w-auto shrink-0 flex justify-center md:justify-start mb-2 md:mb-0">
-            <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center md:ml-2.5">
-              <User className="w-20 h-20 text-white" />
+          <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
+            <div className="md:justify-center flex gap-x-34 items-center gap-6 relative pb-6 flex-wrap">
+              <div className="w-full md:w-auto shrink-0 flex justify-center md:justify-start mb-2 md:mb-0">
+                <div className="w-30 h-30 bg-gray-300 rounded-full overflow-hidden flex items-center justify-center md:ml-2.5">
+                  <User className="w-20 h-20 text-white" />
+                </div>
+              </div>
+              <div className='w-full md:w-auto justify-center md:justify-start'>
+                <TitleHeader 
+                  title={editMode ? ('Editar Empleado') : (viewMode ? 'Datos del Empleado' : 'Registrar Empleado')} 
+                  dinamicClasses="mb-6! md:mb-4! text-center md:text-left" 
+                />
+                <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
+              </div>
+            </div>
+
+            <EmployeeTopBar 
+              createMode={createMode} 
+              editMode={editMode} 
+              viewMode={viewMode} 
+              setShowScraperModal={setShowScraperModal} 
+              setScraperKey={setScraperKey} 
+              employee={employee} 
+              loadingChangeStatus={loadingChangeStatus} 
+            />
+          
+            <TabButtonsManager 
+              activeTab={activeTab} 
+              setActiveTab={setActiveTab} 
+              errors={errors}
+            />
+
+            <div className="mt-6">
+              <ActiveTab
+                activeTab={activeTab}
+                mode={mode}
+                createMode={createMode}
+                viewMode={viewMode}
+                isEmployeeActive={isEmployeeActive}
+                disabledClasses={disabledClasses}
+                employee={employee}
+                departments={departments}
+                loadingData={loadingData}
+                selectedDepartmentId={selectedDepartmentId}
+                subDepartments={subDepartments}
+                positions={positions}
+                empLockerAssign={empLockerAssign}
+                selectedSex={selectedSex}
+              />
             </div>
           </div>
-          <div className='w-full md:w-auto justify-center md:justify-start'>
-            
-            <TitleHeader title={editMode ? ( 'Editar Empleado' ):( 
-              viewMode 
-              ? 'Datos del Empleado'
-              : 'Registrar Empleado'
-              )} dinamicClasses="mb-6! md:mb-4! text-center md:text-left" />
 
-            <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
-          </div>
-        </div>
-
-        <EmployeeTopBar 
-          createMode={createMode} 
-          editMode={editMode} 
-          viewMode={viewMode} 
-          setShowScraperModal={setShowScraperModal} 
-          setScraperKey={setScraperKey} 
-          employee={employee} 
-          loadingChangeStatus={loadingChangeStatus} 
-        />
-      
-        <TabButtonsManager 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          errors={errors}
-        />
-
-        <div className="mt-6">
-          <ActiveTab
-            activeTab={activeTab}
-            mode={mode}
-            createMode={createMode}
-            viewMode={viewMode}
-            isEmployeeActive={isEmployeeActive}
-            disabledClasses={disabledClasses}
-            employee={employee}
-            departments={departments}
-            loadingData={loadingData}
-            selectedDepartmentId={selectedDepartmentId}
-            subDepartments={subDepartments}
-            positions={positions}
-            empLockerAssign={empLockerAssign}
-            selectedSex={selectedSex}
-          />
-        </div>
-      </div>
-
-      <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-employees", "edit-employees"]} />
-
-     </form>
-     </FormProvider>
+          <FooterFormButtons isSubmitting={isSubmitting} mode={mode} navigate={navigate} permissions={["create-employees", "edit-employees"]} />
+        </form>
+      </FormProvider>
 
       {createMode && (
         <EmployeeScraperModal

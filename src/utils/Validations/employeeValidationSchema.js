@@ -73,7 +73,7 @@ export const employeeValidationSchema = (options = {}) => {
     maritalStatus: yup.string(),
     bloodType: yup.string().nullable(),
     
-    email: yup.string().email('Email inválido').required('Email es requerido'),
+    email: yup.string().email('Email inválido'),
     
     mobilePhoneCode: yup.string(),
     mobilePhone: yup

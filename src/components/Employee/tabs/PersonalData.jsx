@@ -130,7 +130,7 @@ export default function PersonalData({ viewMode, disabledClasses }) {
         </div>
 
         <div className="">
-          <LabelFieldForm field="Correo Electrónico" simbol="*"/>
+          <LabelFieldForm field="Correo Electrónico" />
             <InputEmail readOnly={viewMode} register={register} disabledClasses={disabledClasses} />
           {errors?.email && <ErrorMessage msg={errors.email.message} />}
         </div>

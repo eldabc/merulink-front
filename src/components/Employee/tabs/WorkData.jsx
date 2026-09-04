@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { useEmployees } from '../../../context/EmployeeContext';
@@ -8,9 +7,25 @@ import SpanText from '../../Shared/SpanText';
 
 export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
   
-  const { register, formState: { errors } } = useFormContext();
+  const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const showNotApply = subDepartments?.length === 0 || (viewMode && !employee?.subDepartment?.id);
+
+  const deptField = register('department');
+
+  // Sincroniza los checkboxes en tab MeruLink: quita el departamento anterior y marca el nuevo.
+  const handleDepartmentChange = (e) => {
+    const prevId = Number(watch('department')) || null;
+    deptField.onChange(e); // primero: react-hook-form actualiza 'department'
+    const newId = Number(e.target.value);
+    if (viewMode || !newId || newId === prevId) return;
+
+    const currentList = (watch('departmentCollectedIds') || []).map(Number);
+    let next = currentList;
+    if (prevId) next = next.filter((d) => d !== prevId); // desmarcar el anterior
+    if (!next.includes(newId)) next = [...next, newId];  // marcar el nuevo
+    setValue('departmentCollectedIds', next, { shouldDirty: true });
+  };
 
      return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded border div-border">
@@ -27,7 +42,7 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
         <div>
           <LabelFieldForm field="Departamento" simbol="*"/>
             <select 
-              disabled={viewMode} {...register('department')} 
+              disabled={viewMode} {...deptField} onChange={handleDepartmentChange}
               className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
             >
               <option className="bg-[#3c4042]" value=""> {loadingData ? "Cargando..." : "Seleccionar..."} </option>
