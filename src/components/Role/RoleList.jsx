@@ -24,7 +24,7 @@ export default function RoleList() {
   const [loadingData, setLoadingData] = useState(true);
 
 
-  const itemsPerPage = 10; 
+  const itemsPerPage = 25; 
 
   useEffect(() => {
     const loadRolesData = async () => {

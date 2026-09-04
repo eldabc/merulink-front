@@ -15,7 +15,7 @@ function PadlockPatternPatternList() {
   const { loading, padlockPatternData } = usePadlockPatterns();
 
   // Para buscador y paginación
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
 
   // Datos para mostrar

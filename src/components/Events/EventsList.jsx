@@ -37,7 +37,7 @@ export default function EventsList({ categoryKeys }) {
   const prevHistoryYear = useRef(currentSystemYear);
   const isFirstRender = useRef(true);
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const SEARCH_FIELDS = useMemo(() => ['title', 'start'], []);
   const categoryKeysString = JSON.stringify(categoryKeys);
   const locationState = location.state;

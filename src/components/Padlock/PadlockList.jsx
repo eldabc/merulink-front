@@ -18,7 +18,7 @@ function PadlockList() {
   const { loading, padlockData } = usePadlocks();
 
   // Para buscador y paginación
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const SEARCH_FIELDS = ['serial'];
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');

@@ -17,7 +17,7 @@ function LockerAssignList() {
   const { loading, loadingReset, lockerAssignData, resetLockerAssign } = useLockerAssigns();
 
   // Para buscador y paginación
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   
   // const [searchValue, setSearchValue] = useState('');
   // const [filterStatus, setFilterStatus] = useState('all');

@@ -16,7 +16,7 @@ export default function PositionList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   
   // Fuente única de verdad
   const { loading, positionData } = usePositions();

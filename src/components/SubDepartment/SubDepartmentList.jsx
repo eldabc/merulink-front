@@ -21,7 +21,7 @@ export default function SubDepartmentList() {
   const [hasSearched, setHasSearched] = useState(false);
   const { loading, subDepartmentData } = useSubDepartments();
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
 
   // Ejecutar búsqueda automáticamente al teclear
   useEffect(() => {

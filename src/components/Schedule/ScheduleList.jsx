@@ -30,7 +30,7 @@ export default function ScheduleList() {
     month: '',
   });
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
 
   // Mes actual
   const now = dayjs();

@@ -18,7 +18,7 @@ function LockerRoomList() {
   const { lockerData, loading } = useLockers();
 
   // Para buscador y paginación
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const SEARCH_FIELDS = ['code'];
   const [searchValue, setSearchValue] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');

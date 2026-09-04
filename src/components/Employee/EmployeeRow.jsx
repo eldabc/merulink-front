@@ -46,7 +46,6 @@ export default function EmployeeRow({ emp, rowClassName = '', chunk }) {
       <td className="px-4 py-3 text-white-700">{emp.firstName}</td>
       <td className="px-4 py-3 text-white-700">{emp.lastName}</td>
       <td className="px-4 py-3 text-white-700">{emp.department.departmentName}</td>
-      <td className="px-4 py-3 text-white-700">{subDepartmentName}</td>
       <td className="px-4 py-3 text-white-700">{emp.position.name}</td>
       <td className="px-4 py-3">
         <span className="relative inline-block">

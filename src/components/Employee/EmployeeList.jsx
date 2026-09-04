@@ -20,7 +20,7 @@ export default function EmployeeList() {
   const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
   const { get, set } = useListState();
   const navigate = useNavigate();
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
 
   const LIST_KEY = 'employee-list';
 
@@ -109,7 +109,6 @@ return (
               <th className="px-4 py-3 text-left font-semibold">Nombre</th>
               <th className="px-4 py-3 text-left font-semibold">Apellido</th>
               <th className="px-4 py-3 text-left font-semibold">Departamento</th>
-              <th className="px-4 py-3 text-left font-semibold">Sub-Departamento</th>
               <th className="px-4 py-3 text-left font-semibold">Cargo</th>
               <th className="px-4 py-3 text-left font-semibold">Estatus</th>
             </tr>

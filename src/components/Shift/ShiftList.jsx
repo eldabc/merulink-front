@@ -21,7 +21,7 @@ export default function ShiftList({ categoryKeys }) {
   const { loading, shiftData } = useShifts();
   const [searchDateValue, setSearchDateValue] = useState('');
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
