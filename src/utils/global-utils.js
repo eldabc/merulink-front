@@ -69,7 +69,11 @@ export const splitPhone = (fullNumber, withDash = false) => {
 export const capitalizeWords = (value) => {
   if (!value) return value;
 
+  // Permite solo letras (incluye acentos y ñ) y espacios
   const cleaned = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-  // \p{L} con flag u: capitaliza también letras con acento y ñ
-  return cleaned.replace(/(^|\s)\p{L}/gu, (match) => match.toUpperCase());
+
+  // \p{L} con flag u cubre también letras con acento y ñ.
+  return cleaned.replace(/(^|\s)(\p{L})(\p{L}*)/gu, (_match, space, first, rest) =>
+    `${space}${first.toUpperCase()}${rest.toLowerCase()}`
+  );
 };
