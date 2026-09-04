@@ -1,14 +1,12 @@
 import { useFormContext } from 'react-hook-form';
 
-import { useEmployees } from '../../../context/EmployeeContext';
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage';
 import SpanText from '../../Shared/SpanText';
 
-export default function WorkData({ createMode, viewMode, isEmployeeActive, disabledClasses, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
+export default function WorkData({ viewMode, disabledClasses, employee, availableDepartments, loadingData, selectedDepartmentId, subDepartments, positions }) {
   
   const { register, watch, setValue, formState: { errors } } = useFormContext();
-  const { loadingFieldChange, toggleEmployeeField } = useEmployees();
   const showNotApply = subDepartments?.length === 0 || (viewMode && !employee?.subDepartment?.id);
 
   const deptField = register('department');
@@ -98,24 +96,6 @@ export default function WorkData({ createMode, viewMode, isEmployeeActive, disab
             <SpanText text="Sin cargos registrados" />
           )}
           {errors.position && <ErrorMessage msg={errors.position.message} />}
-        </div>
-
-        <div className='flex flex-row'>
-
-          <div className="flex items-center gap-4 pl-4">
-            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
-              <span className="text-sm">¿Usa Transporte?</span>
-                {loadingFieldChange.loading && loadingFieldChange.field === 'use_transport' ? (
-                  <span className="text-xs text-gray-500 italic">Cargando...</span>
-                ) : (
-                  <input 
-                    disabled={!isEmployeeActive }//|| viewMode
-                    type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
-                    onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} 
-                  />
-                )}
-            </label>
-          </div>
         </div>
       </div>
     );

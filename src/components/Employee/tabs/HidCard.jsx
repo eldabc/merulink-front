@@ -3,6 +3,7 @@ import { useEmployees } from '../../../context/EmployeeContext';
 
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from '../../Shared/ErrorMessage.jsx';
+import SpanText from "../../Shared/SpanText";
 
 function HidCard({ createMode, viewMode, isEmployeeActive, disabledClasses, employee }) {
     
@@ -16,7 +17,7 @@ function HidCard({ createMode, viewMode, isEmployeeActive, disabledClasses, empl
           <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
             <span className="text-sm">¿Usa HID Card?</span>
               {loadingFieldChange.loading && loadingFieldChange.field === 'use_hid_card' ? (
-                <span className="text-xs text-gray-500 italic">Cargando...</span>
+                <SpanText />
               ) : (
                 <input 
                   disabled={!isEmployeeActive}

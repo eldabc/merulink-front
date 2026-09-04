@@ -28,14 +28,12 @@ export default function ActiveTab({
 }) {
   switch (activeTab) {
     case 'personal':
-      return <PersonalData viewMode={viewMode} disabledClasses={disabledClasses} />;
+      return <PersonalData createMode={createMode} viewMode={viewMode} isEmployeeActive={isEmployeeActive} employee={employee} disabledClasses={disabledClasses} />;
 
     case 'work':
       return (
         <WorkData
-          createMode={createMode}
           viewMode={viewMode}
-          isEmployeeActive={isEmployeeActive}
           disabledClasses={disabledClasses}
           employee={employee}
           availableDepartments={departments}

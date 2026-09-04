@@ -1,4 +1,5 @@
 import { useFormContext } from 'react-hook-form';
+import { useEmployees } from '../../../context/EmployeeContext';
 
 import { ciOption } from "../../../utils/text-utils";
 import { phoneCodes, mobilePhoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
@@ -7,9 +8,11 @@ import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from "../../Shared/ErrorMessage";
 import InputEmail from "../../Shared/InputEmail";
 import PhoneNumber from "../../Shared/PhoneNumber";
+import SpanText from "../../Shared/SpanText";
 
-export default function PersonalData({ viewMode, disabledClasses }) {
+export default function PersonalData({ createMode, viewMode, isEmployeeActive, employee, disabledClasses }) {
   const { register, setValue, formState: { errors } } = useFormContext();
+  const { loadingFieldChange, toggleEmployeeField } = useEmployees();
 
    return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">
@@ -139,6 +142,24 @@ export default function PersonalData({ viewMode, disabledClasses }) {
           <LabelFieldForm field="Dirección" />
            <input readOnly={viewMode} {...register('address')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
           {errors?.address && <ErrorMessage msg={errors.address.message} />}
+        </div>
+
+        <div className='flex flex-row'>
+
+          <div className="flex items-center gap-4 pl-4">
+            <label className="flex items-center gap-2 text-gray-300 cursor-pointer">
+              <span className="text-sm">¿Usa Transporte?</span>
+                {loadingFieldChange.loading && loadingFieldChange.field === 'use_transport' ? (
+                  <SpanText />
+                ) : (
+                  <input 
+                    disabled={!isEmployeeActive }
+                    type="checkbox" {...register('useTransport')} className={`w-4 h-4 rounded ${!isEmployeeActive && disabledClasses}`} 
+                    onClick={() => !createMode && toggleEmployeeField(employee, "use_transport")} 
+                  />
+                )}
+            </label>
+          </div>
         </div>
       </div>
     );
