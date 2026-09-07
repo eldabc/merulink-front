@@ -29,7 +29,7 @@ import '../../Tables.css';
 export default function EmployeeForm({ mode = 'create' }) {
   
   const { employeeData, createEmployee, updateEmployee, getLockerAssigns, loadingEmployeeData, loadingChangeStatus } = useEmployees();
-  const { departments } = useGlobalData();
+  const { filteredDepartments } = useGlobalData();
   
   const { id } = useParams();
   const employee = employeeData.find(e => e.id === Number(id));
@@ -110,7 +110,7 @@ export default function EmployeeForm({ mode = 'create' }) {
     setPositions([]);
 
     if (selectedDepartmentId) {  
-      const selectedDepartment = departments.find(d => d.id === Number(selectedDepartmentId));
+      const selectedDepartment = filteredDepartments.find(d => d.id === Number(selectedDepartmentId));
       
       // Cargos por Departamento
       const positionsByDepartment = selectedDepartment?.positions.filter(
@@ -325,7 +325,7 @@ export default function EmployeeForm({ mode = 'create' }) {
                 isEmployeeActive={isEmployeeActive}
                 disabledClasses={disabledClasses}
                 employee={employee}
-                departments={departments}
+                departments={filteredDepartments}
                 loadingData={loadingData}
                 selectedDepartmentId={selectedDepartmentId}
                 subDepartments={subDepartments}
