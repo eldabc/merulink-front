@@ -12,18 +12,18 @@ function ScheduleLegend({  }) {
         <span className="w-20 text-center px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-red-200 hover:scale-105 hover:shadow-sm">
           Fecha
         </span>
-        <span className="text-gray-200 font-medium">Feriados, Sábados, Domingos</span>
+        <span className="text-gray-200 font-medium">Sábados y Domingos</span>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-        <span className="w-20 text-center px-2 py-1 bg-[#9ea2a3] text-[#696e74] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#9ea2a3d1] hover:scale-105 hover:shadow-sm">
+        <span className="w-20 text-center px-2 py-1 bg-[#9ea2a3] text-[#cbccce] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#9ea2a3d1] hover:scale-105 hover:shadow-sm">
           VAC
         </span>
         <span className="text-gray-200 font-medium">Periodo de Vacaciones</span>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-        <span className="w-20 text-center px-2 py-1 bg-[#903bb4c1] text-[#7b8791] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#9252ae] hover:scale-105 hover:shadow-sm">
+        <span className="w-20 text-center px-2 py-1 bg-[#ff8f00] text-[#cbccce] rounded text-xs font-bold transition-all duration-200 cursor-pointer hover:bg-[#ff9100d8] hover:scale-105 hover:shadow-sm">
           PER
         </span>
         <span className="text-gray-200 font-medium">Permiso o Reposo</span>

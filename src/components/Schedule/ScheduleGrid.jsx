@@ -304,7 +304,7 @@ const ScheduleGrid = forwardRef(({
         // Bloquea edición si es baja/vacaciones/permiso
         editable: (params) => params.value !== 'S-1' && params.value !== 'S-2' && params.value !== 'S-3',
         cellClassRules: {
-          'cursor-not-allowed opacity-60 select-none text-gray-400 bg-gray-100': (params) => params.value === 'S-1' || params.value === 'S-2' || params.value === 'S-3' ,
+          'cursor-not-allowed opacity-70 select-none text-white': (params) => params.value === 'S-1' || params.value === 'S-2' || params.value === 'S-3' ,
         },
         cellClass: '!font-bold',
         headerClass: () => {
