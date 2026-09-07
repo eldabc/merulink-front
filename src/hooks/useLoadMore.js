@@ -44,10 +44,15 @@ export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) 
   const visibleRef = useRef(visibleCount);
   useEffect(() => { visibleRef.current = visibleCount; }, [visibleCount]);
 
+  // Total anterior, para detectar cuándo hay nuevo registro.
+  const prevTotalRef = useRef(data.length);
+
   const total = data.length;
   const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
 
-  const visibleItems = data.slice(0, visibleCount);
+  // Si la lista NO alcanza a paginarse (vista base y total <= itemsPerPage) se muestran TODOS.
+  const sliceCount = isBaseView && total <= itemsPerPage ? total : visibleCount;
+  const visibleItems = data.slice(0, sliceCount);
   const hasMore = visibleCount < total;
   const isExpanded = total > 0 && visibleCount >= total;
 
@@ -90,13 +95,30 @@ export default function useLoadMore(data = [], itemsPerPage = 10, options = {}) 
     rememberStorage.set(rememberKey, { ...cur, position: { visibleCount, activePage } });
   }, [visibleCount, activePage, isBaseView, rememberKey, rememberStorage]);
 
-  // NO resetea la posición al cambiar la data: solo la recorta si excede el total
-  // (permite recordar dónde estaba al filtrar/limpiar búsqueda o volver de otra vista).
+  // NO resetea la posición al cambiar la data: solo la recorta si excede el total.
+  // Si la data CRECIÓ y se estaba mostrando TODO el listado anterior, se amplía para revelar lo nuevo. Y si la lista no alcanza
+  // a paginarse, se muestra completa.
   useEffect(() => {
+    const prevTotal = prevTotalRef.current;
+    prevTotalRef.current = total;
+
     if (total === 0) return; // datos aún cargando: conservar posición
-    setVisibleCount((c) => Math.min(c, total));
+
+    const wasShowingAll = prevTotal > 0 && visibleRef.current >= prevTotal;
+
+    setVisibleCount((c) => {
+      let next = Math.min(c, total);
+      if (isBaseView) {
+        if (total <= itemsPerPage) {
+          next = total; // no pagina → mostrar todos
+        } else if (wasShowingAll && total > prevTotal) {
+          next = total; // creció y veía todo → revelar lo nuevo
+        }
+      }
+      return next;
+    });
     setActivePage((p) => Math.min(p, Math.max(1, Math.ceil(total / itemsPerPage))));
-  }, [total, itemsPerPage]);
+  }, [total, itemsPerPage, isBaseView]);
 
   /** "Ver más": revela itemsPerPage filas adicionales. */
   const loadMore = useCallback(() => {
