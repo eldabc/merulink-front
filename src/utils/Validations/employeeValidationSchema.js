@@ -64,7 +64,12 @@ export const employeeValidationSchema = (options = {}) => {
       //   }
       // )
 
-    placeOfBirth: yup.string(),
+    placeOfBirth: yup.string()
+      .when('nationality', {
+        is: (value) => value === 'V',
+        then: (schema) => schema.required('Lugar de nacimiento es requerido'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
     nationality: yup.string().required('Nacionalidad es requerida'),
     
     age: yup.string().matches(/^[0-9]*$/, 'Solo se permiten números.'), 

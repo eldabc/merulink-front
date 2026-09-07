@@ -3,16 +3,37 @@ import { useEmployees } from '../../../context/EmployeeContext';
 
 import { ciOption } from "../../../utils/text-utils";
 import { phoneCodes, mobilePhoneCodes } from "../../../utils/StaticData/phoneCodes-utils"; 
+import { findVenezuelaState } from "../../../utils/StaticData/venezuelaStates-utils";
 
 import LabelFieldForm from "../../Shared/LabelFieldForm";
 import ErrorMessage from "../../Shared/ErrorMessage";
 import InputEmail from "../../Shared/InputEmail";
 import PhoneNumber from "../../Shared/PhoneNumber";
+import PlaceOfBirthField from "../../Shared/PlaceOfBirthField";
 import SpanText from "../../Shared/SpanText";
 
 export default function PersonalData({ createMode, viewMode, isEmployeeActive, employee, disabledClasses }) {
-  const { register, setValue, formState: { errors } } = useFormContext();
+  const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { loadingFieldChange, toggleEmployeeField } = useEmployees();
+
+  //  - Venezolano: preselecciona un estado si el texto coincide, si no limpia.
+  //  - Extranjero: limpia placeOfBirth.
+  const nationalityField = register('nationality');
+  const handleNationalityChange = (e) => {
+    const prevNationality = watch('nationality');
+    nationalityField.onChange(e); // react-hook-form actualiza 'nationality'
+    const newNationality = e.target.value;
+
+    if (viewMode || prevNationality === newNationality) return;
+
+    if (newNationality === 'V') {
+      const currentPlace = watch('placeOfBirth') || '';
+      const matched = findVenezuelaState(currentPlace);
+      setValue('placeOfBirth', matched ? matched.name : '', { shouldDirty: true, shouldValidate: true });
+    } else {
+      setValue('placeOfBirth', '', { shouldDirty: true, shouldValidate: true });
+    }
+  };
 
    return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 w-full">
@@ -27,15 +48,14 @@ export default function PersonalData({ createMode, viewMode, isEmployeeActive, e
         </div>
         <div className="w-full">
           <LabelFieldForm field="Lugar de Nacimiento" />
-            <input readOnly={viewMode} {...register('placeOfBirth')} className={`w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`} />
-          {errors?.placeOfBirth && <ErrorMessage msg={errors.placeOfBirth.message} /> }
+          <PlaceOfBirthField viewMode={viewMode} disabledClasses={disabledClasses} />
         </div>
 
         <div>
           <LabelFieldForm field="Nacionalidad" simbol="*" />
             <select 
               disabled= {viewMode} 
-              {...register('nationality')}
+              {...nationalityField} onChange={handleNationalityChange}
               className={`w-full px-3 py-2 rounded-lg filter-input text-gray-300 ${disabledClasses}`}
             >
               <option className='bg-[#3c4042]' value="">Seleccionar...</option>
