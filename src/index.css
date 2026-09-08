@@ -374,6 +374,26 @@ footer {
   font-weight: 700 !important;
 }
 
+/* Fila separadora de subdepartamento en el grid de horarios */
+.ag-theme-quartz .ag-row.subdept-header-row .ag-cell {
+  background-color: rgba(0, 164, 188, 0.16) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  cursor: default;
+}
+
+.ag-theme-quartz .ag-row.subdept-header-row:hover .ag-cell {
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.ag-theme-quartz .subdept-header-name {
+  color: #7ff4ff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .s-status-created {
   background-color: #717070;
 }

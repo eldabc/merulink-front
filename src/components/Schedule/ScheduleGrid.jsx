@@ -101,7 +101,9 @@ const ScheduleGrid = forwardRef(({
 
   const handleCellClicked = (params) => {
     if (!brushShift) return;
-    
+    // Las filas separadoras de subdepartamento no se pintan con la brocha
+    if (params.data?.isSubDepartmentHeader) return;
+
     const dateFieldName = params.column.getColId();
     const currentShiftId = params.value;
 
@@ -136,7 +138,9 @@ const ScheduleGrid = forwardRef(({
     // Disparar validación inmediatamente después de cambiar la celda activa
     if (gridApi) {
       const currentRows = [];
-      gridApi.forEachNode(node => currentRows.push(node.data));
+      gridApi.forEachNode(node => {
+        if (!node.data.isSubDepartmentHeader) currentRows.push(node.data);
+      });
 
       const liveAlerts = runLiveValidation(currentRows);
       const coverageAlerts = mode !== 'create' && !hasAdministrativeShift
@@ -153,6 +157,7 @@ const ScheduleGrid = forwardRef(({
     const schedulesBatch = [];
     gridApi.forEachNode((node) => {
       const row = node.data;
+      if (row?.isSubDepartmentHeader) return;
       schedulesBatch.push({
         employeeId: row.id,
         subDepartmentId: row.subDepartment?.id || null,
@@ -190,6 +195,20 @@ const ScheduleGrid = forwardRef(({
     
     const flatRows = [];
     Object.keys(groupedEmployees).forEach((subDeptName) => {
+
+      if (groupedEmployees[subDeptName].length === 0) return; // Evita agregar subdepartamentos sin empleados
+      
+      if (subDeptName !== '') {
+        // Fila separadora (vacía) con el nombre del subdepartamento
+        flatRows.push({
+          isSubDepartmentHeader: true,
+          subDepartmentName: subDeptName,
+          fullName: subDeptName,
+          id: `subdept-${subDeptName}`,
+          dates: {},
+        });
+      }
+
       groupedEmployees[subDeptName].forEach((employee) => {
         flatRows.push({
           ...employee,
@@ -203,10 +222,12 @@ const ScheduleGrid = forwardRef(({
 
   // Ejecutar la validación al renderizar por primera vez
   useEffect(() => {
-    if (rowData.length > 0) {
-      const liveAlerts = runLiveValidation(rowData);
+    // Las filas separadoras de subdepartamento no participan en la validación
+    const employeeRows = rowData.filter((row) => !row.isSubDepartmentHeader);
+    if (employeeRows.length > 0) {
+      const liveAlerts = runLiveValidation(employeeRows);
       const coverageAlerts = mode !== 'create' && !hasAdministrativeShift
-        ? runShiftCoverageValidation(rowData, cleanedShifts, fortnightDays)
+        ? runShiftCoverageValidation(employeeRows, cleanedShifts, fortnightDays)
         : [];
       setLiveAlerts([...liveAlerts, ...coverageAlerts]);
     }
@@ -219,7 +240,9 @@ const ScheduleGrid = forwardRef(({
         field: 'fullName', 
         pinned: 'left', 
         width: window.innerWidth < 640 ? 110 : 180,
+        cellClass: (params) => params.data?.isSubDepartmentHeader ? 'subdept-header-name' : '',
         cellRenderer: (params) => {
+          if (params.data?.isSubDepartmentHeader) return params.data.subDepartmentName;
           const tags = [];
           if (params.data.permission) tags.push('🩺 Permiso');
           if (params.data.vacation) tags.push('🌴 Vacaciones');
@@ -252,17 +275,21 @@ const ScheduleGrid = forwardRef(({
 
         // Retorna el ID del shift asignado a esa fecha específica
         valueGetter: (params) => {
+          if (params.data.isSubDepartmentHeader) return null;
           return params.data.dates?.[day.date]?.shift?.id ?? 'S-0';
         },
 
-        // MÁSCARA VISUAL: Retorna el código o letterShift directo del objeto mandado por el Back
+        // MÁSCARA VISUAL: Retorna el letterShift directo del objeto mandado por el Back
         valueFormatter: (params) => {
+          if (params.data.isSubDepartmentHeader) return '';
           const shiftObj = params.data.dates?.[day.date]?.shift;
           return shiftObj?.letterShift || 'L'; 
         },
 
         cellStyle: (params) => {
           const baseStyle = { textAlign: 'center' };
+          // Fila separadora de subdepartamento: celdas vacías sin contenido
+          if (params.data.isSubDepartmentHeader) return { ...baseStyle };
           const dayData = params.data.dates?.[day.date];
           const shiftObj = dayData?.shift;
           const eventsList = dayData?.events || [];
@@ -301,8 +328,11 @@ const ScheduleGrid = forwardRef(({
         resizable: true,
         sortable: false,
         suppressMovable: true,
-        // Bloquea edición si es baja/vacaciones/permiso
-        editable: (params) => params.value !== 'S-1' && params.value !== 'S-2' && params.value !== 'S-3',
+        // Bloquea edición si es baja/vacaciones/permiso o fila separadora
+        editable: (params) => {
+          if (params.data.isSubDepartmentHeader) return false;
+          return params.value !== 'S-1' && params.value !== 'S-2' && params.value !== 'S-3';
+        },
         cellClassRules: {
           'cursor-not-allowed opacity-70 select-none text-white': (params) => params.value === 'S-1' || params.value === 'S-2' || params.value === 'S-3' ,
         },
@@ -419,6 +449,11 @@ const ScheduleGrid = forwardRef(({
                       columnDefs={columnDefs}
                       readOnlyEdit={viewMode} 
                       suppressCellFocus={viewMode}
+                      rowClassRules={{
+                        'subdept-header-row': (params) => params.data?.isSubDepartmentHeader,
+                      }}
+                      // Altura para fila separadora;
+                      getRowHeight={(params) => (params.data?.isSubDepartmentHeader ? 30 : undefined)}
                       defaultColDef={defaultColDef}
                       animateRows={true}
                       theme={myTheme}
