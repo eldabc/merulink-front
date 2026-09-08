@@ -17,14 +17,14 @@ import LoadMorePagination from '../Shared/LoadMorePagination';
 import '../../Tables.css';
 
 export default function EmployeeList() {
-  const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
-  const { get, set } = useListState();
   const navigate = useNavigate();
+  const { get, set } = useListState();
+  const { loadingEmployeeData, employeeData, loadEmployees } = useEmployees();
+   
   const itemsPerPage = 25;
-
   const LIST_KEY = 'employee-list';
 
-  // Restaurar búsqueda/filtro recordados (se lee UNA vez al montar)
+  // Restaurar búsqueda/filtro recordados
   const restoredRef = useRef(null);
   if (restoredRef.current === null) {
     restoredRef.current = get(LIST_KEY);
@@ -36,7 +36,7 @@ export default function EmployeeList() {
 
   const isFiltering = Boolean(searchValue.trim()) || filterStatus !== 'all';
 
-  // Persistir búsqueda/filtro (la posición la recuerda useLoadMore con "remember")
+  // Persistir búsqueda/filtro (la posición de scroll la recuerda useLoadMore "remember")
   useEffect(() => {
     set(LIST_KEY, { ...(get(LIST_KEY) || {}), searchValue, filterStatus });
   }, [searchValue, filterStatus, get, set]);
@@ -67,10 +67,10 @@ export default function EmployeeList() {
       );
   }, [employeeData, searchValue, filterStatus]);
 
-  // "Ver más"/paginación scroll vertical con memoria de posición (reutilizable)
+  // "Ver más"/paginación scroll vertical con memoria de posición
   const {
     visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage,
-    visibleCount, chunkOf, chunkClass, total,
+    chunkOf, chunkClass, total,
   } = useLoadMore(isFiltering ? filteredEmployees : employeeData, itemsPerPage, {
     remember: {
       storage: { get, set },

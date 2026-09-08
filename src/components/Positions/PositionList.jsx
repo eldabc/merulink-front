@@ -1,35 +1,44 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePositions } from "../../context/PositionContext";
+import useLoadMore from '../../hooks/useLoadMore';
+import { useListState } from '../../context/ListStateContext';
 
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 import FilterByFields from '../Filters/FilterByFields';
-import Pagination from '../Pagination';
 import PositionRow from './PositionRow';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import RowTableLoading  from '../Shared/RowTableLoading';
+import LoadMorePagination from '../Shared/LoadMorePagination';
 
 export default function PositionList() {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
-  const itemsPerPage = 25;
+  const { get, set } = useListState();
+  const { loading, positionData, loadPositions } = usePositions();
   
-  // Fuente única de verdad
-  const { loading, positionData } = usePositions();
+  const itemsPerPage = 25;
+  const LIST_KEY = 'position-list';
 
-  // Ejecutar búsqueda automáticamente al teclear
+  // Restaurar búsqueda/filtro recordados
+  const restoredRef = useRef(null);
+  if (restoredRef.current === null) {
+    restoredRef.current = get(LIST_KEY);
+  }
+  const restored = restoredRef.current;
+
+  const [searchValue, setSearchValue] = useState(restored?.searchValue ?? '');
+  const isFiltering = Boolean(searchValue.trim());
+
+  // Persistir búsqueda/filtro (la posición de scroll la recuerda useLoadMore "remember")
   useEffect(() => {
-    if (searchValue.trim()) {
-      setHasSearched(true);
-    } else {
-      setHasSearched(false);
-    }
-    setCurrentPage(1);
-  }, [searchValue]);
+    set(LIST_KEY, { ...(get(LIST_KEY) || {}), searchValue });
+  }, [searchValue, get, set]);
+
+  useEffect(() => {
+    loadPositions();
+  }, []);
 
   const POSITIONS_SEARCH_FIELDS = [
     'code', 
@@ -47,11 +56,18 @@ export default function PositionList() {
       );
   }, [positionData, searchValue]);
 
-  // Datos para mostrar
-  const dataToDisplay = hasSearched ? filteredPositions : positionData;
-  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedPositions = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
+  // "Ver más"/paginación scroll vertical con memoria de posición
+  const {
+    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage,
+    chunkOf, chunkClass, total,
+  } = useLoadMore(isFiltering ? filteredPositions : positionData, itemsPerPage, {
+    remember: {
+      storage: { get, set },
+      key: LIST_KEY,
+      isBaseView: !isFiltering,
+      resetToken: `${searchValue}|`,
+    },
+  });
 
   return (
       <div className="main-data-cont table-container">      
@@ -82,10 +98,12 @@ export default function PositionList() {
               {loading ? (
                 <RowTableLoading colSpan={5} />
               ) : (
-                paginatedPositions.map((position) => (
+                visibleItems.map((position, index) => (
                   <PositionRow 
                     key={position.id}
-                    position={position} 
+                    position={position}
+                    rowClassName={chunkClass(index)}
+                    chunk={chunkOf(index)} 
                   />
                 ))
               )}
@@ -93,16 +111,16 @@ export default function PositionList() {
           </table>
         </div>
 
-        <Pagination
-          paginatedData={paginatedPositions}
-          startIndex={startIndex}
-          itemsPerPage={itemsPerPage}
-          dataToDisplay={dataToDisplay}
-          hasSearched={hasSearched}
-          data={positionData}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
+        <LoadMorePagination
+          activePage={activePage}
           totalPages={totalPages}
+          goToPage={goToPage}
+          isExpanded={isExpanded}
+          loadMore={loadMore}
+          showLess={showLess}
+          itemsPerPage={itemsPerPage}
+          visibleCount={visibleItems.length}
+          total={total}
           moduleName={'Cargo'}
         />
       </div>

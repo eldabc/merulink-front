@@ -85,9 +85,11 @@ const SubDepartmentLayout = () => (
 );
 
 const PositionLayout = () => (
-  <PositionProvider>
-    <Outlet />
-  </PositionProvider>
+  <ListStateProvider>
+    <PositionProvider>
+      <Outlet />
+    </PositionProvider>
+  </ListStateProvider>
 );
 
 const RoleLayout = () => (

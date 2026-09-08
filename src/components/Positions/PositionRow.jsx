@@ -7,7 +7,7 @@ import ButtonDelete from '../Shared/ButtonDelete';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 import SpanText from '../Shared/SpanText';
 
-export default function PositionRow({ position }) {
+export default function PositionRow({ position, rowClassName = '', chunk }) {
 
   const navigate = useNavigate();
   const { deletePosition } = usePositions();
@@ -45,8 +45,9 @@ export default function PositionRow({ position }) {
     <>
     <tr
       key={position.id}
+      data-chunk={chunk}
       onClick={() => handleSelectedPosition(position.id)}
-      className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
+      className={`border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer ${rowClassName}`}
     >
       <td className="px-4 py-3 text-white-800 font-medium">{position.code}</td>
       <td className="px-4 py-3 text-white-700">{position.name}</td>

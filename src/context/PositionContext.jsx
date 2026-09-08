@@ -35,30 +35,25 @@ export const PositionProvider = ({ children }) => {
     }
   }, []);
   
-  useEffect(() => {
-    loadPositions();
-  }, [loadPositions]);
-
 
   // *** Crear
   const createPosition = async (formData) => {
 
     try {
       const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-      const newPosition = mapPositionToBackend(formData, isAddingSubDepartment); //formattedPosition(formData);
+      const newPosition = mapPositionToBackend(formData, isAddingSubDepartment);
 
       console.log("Creado", newPosition);
       const response = await axios.post(`${ENV.API_BACK_URL}positions`, newPosition);
-      // console.log("response.data.data,", response.data.data,);
 
-      setPositionData(prevData => {
-        return [response.data.data, ...prevData]; 
-      });
+      // setPositionData(prevData => {
+      //   return [response.data.data, ...prevData]; 
+      // });
 
-      const globalData = updateGlobalStage(response.data.data);
-      console.log("globalData", globalData,departments);
+      // const globalData = updateGlobalStage(response.data.data);
+      // console.log("globalData", globalData,departments);
 
-      addPositionGlobalState(globalData, isAddingSubDepartment);
+      // addPositionGlobalState(globalData, isAddingSubDepartment);
 
       showNotification(`Cargo ${newPosition.name} creado con éxito`);
       
@@ -80,21 +75,21 @@ export const PositionProvider = ({ children }) => {
         return false;
       }
 
-      const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
-      const updatedPosition = mapPositionToBackend(formData); //formattedPosition(formData);
+      // const isAddingSubDepartment = formData.subDepartmentName && formData.newSubDepartmentCode;
+      const updatedPosition = mapPositionToBackend(formData);
       console.log("Actualizado:", updatedPosition);
       
       const response = await axios.put(`${ENV.API_BACK_URL}positions/${positionId}`, updatedPosition);
       
-      setPositionData(prevData => {
-        const filteredData = prevData.filter(position => position.id !== positionId);
-        return [response.data.data, ...filteredData];
-      });
+      // setPositionData(prevData => {
+      //   const filteredData = prevData.filter(position => position.id !== positionId);
+      //   return [response.data.data, ...filteredData];
+      // });
 
-      const globalData = updateGlobalStage(response.data.data);
-      console.log("globalData update", globalData);
+      // const globalData = updateGlobalStage(response.data.data);
+      // console.log("globalData update", globalData);
 
-      updatePositionGlobalState(globalData, isAddingSubDepartment);
+      // updatePositionGlobalState(globalData, isAddingSubDepartment);
 
       showNotification(`Cargo ${formData.name} actualizado con éxito`); 
       return true;
@@ -139,6 +134,7 @@ export const PositionProvider = ({ children }) => {
   
   const contextValue = {
     loading,
+    loadPositions,
     createPosition,
     updatePosition,
     deletePosition,
