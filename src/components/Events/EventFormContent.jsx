@@ -36,7 +36,8 @@ export default function EventFormContent({
   templateInfo,
   watch,
   setActiveTab,
-  parentEventId
+  parentEventId,
+  isMeruBirthDay
 }) {
 
   const yearlyEvent = config?.isYearly;
@@ -218,7 +219,7 @@ export default function EventFormContent({
                   </div>
                   
                 </div>
-                {(isRepeatEvent || parentEventId) && ( 
+                {((isRepeatEvent || parentEventId) && !isMeruBirthDay) && ( 
                   <>
                   <div className='pb-1 w-full  bg-field rounded-xl'>
                     <div className='flex flex-row p-2 mt-2 gap-4 justify-center'>

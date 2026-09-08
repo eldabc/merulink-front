@@ -434,7 +434,7 @@ const ScheduleGrid = forwardRef(({
                 <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
                   {scheduleData?.isClosed && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none overflow-hidden select-none bg-[#2f3d4473]">
-                      <div className="dark:text-gray-400/40 text-5xl md:text-8xl font-black uppercase tracking-widest transform -rotate-20 whitespace-nowrap">
+                      <div className="dark:text-gray-400/40 text-4xl md:text-6xl font-black uppercase tracking-[0.60em] transform -rotate-10 whitespace-nowrap">
                         Quincena cerrada
                       </div>
                     </div>

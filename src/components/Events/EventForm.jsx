@@ -78,6 +78,7 @@ export default function EventForm({ mode = 'create' }) {
   const isGoogleCategory = selectedCategory === EVENT_CAT.G_CALENDAR.key;
   const disabledClasses = getDisabledClasses(viewMode, globalLoading);
   const hasParentEvent = Object.keys(event?.parentEvent ?? {}).length > 0 ? true : false;
+  const isMeruBirthDay = selectedCategory === EVENT_CAT.M_BIRTHDAYS.key;
  
   useEffect(() => {
     if(categoryEvents.length === 0){
@@ -318,7 +319,7 @@ export default function EventForm({ mode = 'create' }) {
         </div>
       ) : (
         <>
-        {(viewMode && selectedCategory !== EVENT_CAT.M_BIRTHDAYS.key) && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
+        {(viewMode && !isMeruBirthDay) && <HeadFormButtons url={`/eventos/editar/${event?.id}`} data={[]} disabled={disabled} /> }
         
         <div className="table-container rounded-lg shadow-md p-6 w-full overflow-auto">
           <form onSubmit={handleSubmit(onSubmit, onError)}> 
@@ -401,6 +402,7 @@ export default function EventForm({ mode = 'create' }) {
                       watch={watch}
                       setActiveTab={setActiveTab}
                       parentEventId={event?.parentEventId}
+                      isMeruBirthDay={isMeruBirthDay}
                     />
                   )}
 
