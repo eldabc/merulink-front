@@ -9,7 +9,7 @@ import ConfirmDialog from '../Shared/ConfirmDialog';
 import HasPermission from '../Shared/HasPermission';
 import SpanText from '../Shared/SpanText';
 
-export default function SubDepartmentRow({ subDep }) {
+export default function SubDepartmentRow({ subDep, rowClassName = '', chunk }) {
   
   const navigate = useNavigate();
   const { deleteSubDepartment } = useSubDepartments(); 
@@ -42,8 +42,9 @@ export default function SubDepartmentRow({ subDep }) {
     <>
     <tr
       key={subDep.id}
+      data-chunk={chunk}
       onClick={() => handleSelectedSubDepartment(subDep.id)}
-      className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer"
+      className={`border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer ${rowClassName}`}
     >
       <td className="px-4 py-3 text-white-800 font-medium">{subDep.code}</td>
       <td className="px-4 py-3 text-white-700">{subDep.name}</td>

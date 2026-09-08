@@ -130,8 +130,7 @@ export default function PositionForm({ mode = 'create' }) {
     }
 
     if (success) {
-      if (createMode) navigate(-1);
-      else navigate(-2);
+      navigate('/empleados/cargos');
     }
   };
 
@@ -177,13 +176,12 @@ export default function PositionForm({ mode = 'create' }) {
                   <select 
                     disabled= {viewMode}
                     {...register('departmentId')} 
-                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}>
-
-                      <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
-
-                      {departments.map((dep, index) => (
-                        <option key={`departmentId-${dep.id}-${index}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
-                      ))}
+                    className={`text-xl w-full px-3 py-2 rounded-lg filter-input ${disabledClasses}`}
+                  >
+                    <option value="" className="bg-[#3c4042]"> {globalLoading ? "Cargando..." : "Seleccionar..."} </option>
+                    {departments.map((dep, index) => (
+                      <option key={`departmentId-${dep.id}-${index}`} className='bg-[#3c4042]' value={dep.id}>{dep.departmentName}</option>
+                    ))}
                   </select>
                   {errors?.departmentId && <ErrorMessage msg={errors.departmentId.message} />}  
                 </div>

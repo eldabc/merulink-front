@@ -47,13 +47,13 @@ export default function PositionList() {
 
   // Filtrar
   const filteredPositions = useMemo(() => {
-      return filterData(
-          positionData,
-          searchValue,
-          POSITIONS_SEARCH_FIELDS,
-          "",
-          normalizeText
-      );
+    return filterData(
+      positionData,
+      searchValue,
+      POSITIONS_SEARCH_FIELDS,
+      "",
+      normalizeText
+    );
   }, [positionData, searchValue]);
 
   // "Ver más"/paginación scroll vertical con memoria de posición

@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSubDepartments } from '../../context/SubDepartmentContext';
+import { useGlobalData } from '../../context/GlobalDataContext';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getDisabledClasses } from '../../utils/global-utils';  
 import { generateCodeSubDep } from '../../utils/SubDepartments/subDeparments-utils';  
 import { subDepartmentValidationSchema } from '../../utils/Validations/subDepartmentValidationSchema';
-import { useSubDepartments } from '../../context/SubDepartmentContext';
-import { useGlobalData } from '../../context/GlobalDataContext';
 
 import TitleHeader from '../Shared/TitleHeader';
 import HeadFormButtons from '../Shared/HeadFormButtons';
@@ -78,8 +78,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
     }
 
     if (success) {
-      if (createMode) navigate(-1);
-      else navigate(-2);
+      navigate('/empleados/sub-departamentos');
     }
   };
 

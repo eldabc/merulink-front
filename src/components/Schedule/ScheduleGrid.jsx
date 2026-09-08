@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, { forwardRef, useMemo, useState, useEffect, useCallback, useImperativeHandle } from 'react';
+import { forwardRef, useMemo, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useFormContext } from "react-hook-form";
@@ -9,8 +9,6 @@ import { useSchedules } from '../../context/ScheduleContext';
 
 import { truncateText } from '../../utils/text-utils';
 import { getDisabledClasses } from '../../utils/global-utils';
-import { statusOptions } from '../../utils/StaticData/schedule-utils';
-import { getFortnightInfo } from '../../utils/Schedule/schedule-utils';
 import { exportScheduleToPDF } from '../../utils/Schedule/exportPdf-utils';
 
 import PreviousFortnightViewer from './viewers/PreviousFortnightViewer';
@@ -22,7 +20,6 @@ import ShiftLegend from '../Shift/ShiftLegend';
 import SpanText from '../Shared/SpanText';
 import LiveAlerts from '../Shared/LiveAlerts';
 import LabelFieldForm from '../Shared/LabelFieldForm';
-import SelectGeneric from '../Shared/SelectGeneric';
 import ErrorMessage from '../Shared/ErrorMessage';
 
 

@@ -1,5 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useLoadMore from '../../hooks/useLoadMore';
+import { useListState } from '../../context/ListStateContext';
 import { useSubDepartments } from "../../context/SubDepartmentContext";
 
 import { filterData } from '../../utils/filter-utils';
@@ -11,27 +13,35 @@ import RowTableLoading from '../Shared/RowTableLoading';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import HasPermission from '../Shared/HasPermission';
-import Pagination from '../Pagination';
+import LoadMorePagination from '../Shared/LoadMorePagination';
 
 export default function SubDepartmentList() {
 
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
-  const { loading, subDepartmentData } = useSubDepartments();
+  const { get, set } = useListState();
+  const { loading, subDepartmentData, loadSubDepartments } = useSubDepartments();
 
   const itemsPerPage = 25;
+  const LIST_KEY = 'subdepartment-list';
 
-  // Ejecutar búsqueda automáticamente al teclear
+  // Restaurar búsqueda/filtro recordados
+  const restoredRef = useRef(null);
+  if (restoredRef.current === null) {
+    restoredRef.current = get(LIST_KEY);
+  }
+  const restored = restoredRef.current;
+
+  const [searchValue, setSearchValue] = useState(restored?.searchValue ?? '');
+  const isFiltering = Boolean(searchValue.trim());
+
+  // Persistir búsqueda/filtro (la posición de scroll la recuerda useLoadMore "remember")
   useEffect(() => {
-    if (searchValue.trim()) {
-      setHasSearched(true);
-    } else {
-      setHasSearched(false);
-    }
-    setCurrentPage(1);
-  }, [searchValue]);
+    set(LIST_KEY, { ...(get(LIST_KEY) || {}), searchValue });
+  }, [searchValue, get, set]);
+
+  useEffect(() => {
+    loadSubDepartments();
+  }, []);
 
   const SUB_DEPARTMENTS_SEARCH_FIELDS = [
     'code', 
@@ -41,22 +51,29 @@ export default function SubDepartmentList() {
 
   // Filtrar empleados
   const filteredSubDepartments = useMemo(() => {
-      return filterData(
-          subDepartmentData,
-          searchValue,
-          SUB_DEPARTMENTS_SEARCH_FIELDS,
-          "",
-          normalizeText
-      );
+    return filterData(
+      subDepartmentData,
+      searchValue,
+      SUB_DEPARTMENTS_SEARCH_FIELDS,
+      "",
+      normalizeText
+    );
   }, [subDepartmentData, searchValue]);
 
-  // Datos para mostrar
-  const dataToDisplay = hasSearched ? filteredSubDepartments : subDepartmentData;
   
-  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedSubDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-
+  // "Ver más"/paginación scroll vertical con memoria de posición
+  const {
+    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage,
+    chunkOf, chunkClass, total,
+  } = useLoadMore(isFiltering ? filteredSubDepartments : subDepartmentData, itemsPerPage, {
+    remember: {
+      storage: { get, set },
+      key: LIST_KEY,
+      isBaseView: !isFiltering,
+      resetToken: `${searchValue}|`,
+    },
+  });
+  
   return (
     <HasPermission permissions={["view-subdepartments"]}>
       <div className="main-data-cont table-container">
@@ -89,10 +106,12 @@ export default function SubDepartmentList() {
                 <RowTableLoading />
               ) : (
                 <>
-                {paginatedSubDepartments.map((subDep) => (
+                {visibleItems.map((subDep, index) => (
                   <SubDepartmentRow 
                     key={subDep.id}
-                    subDep={subDep} 
+                    subDep={subDep}
+                    rowClassName={chunkClass(index)}
+                    chunk={chunkOf(index)} 
                   />
                 ))}
                 </>
@@ -101,16 +120,16 @@ export default function SubDepartmentList() {
           </table>
         </div>
 
-        <Pagination
-          paginatedData={paginatedSubDepartments }
-          startIndex={startIndex}
-          itemsPerPage={itemsPerPage}
-          dataToDisplay={dataToDisplay}
-          hasSearched={hasSearched}
-          data={subDepartmentData }
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
+        <LoadMorePagination
+          activePage={activePage}
           totalPages={totalPages}
+          goToPage={goToPage}
+          isExpanded={isExpanded}
+          loadMore={loadMore}
+          showLess={showLess}
+          itemsPerPage={itemsPerPage}
+          visibleCount={visibleItems.length}
+          total={total}
           moduleName={'Subdepartamento'}
         />
       </div>

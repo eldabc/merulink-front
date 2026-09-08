@@ -33,10 +33,6 @@ export const SubDepartmentProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    loadSubDepartments();
-  }, [loadSubDepartments]);
-
 
   const formattedSubDepartment = (formData) => {
     
@@ -149,6 +145,7 @@ export const SubDepartmentProvider = ({ children }) => {
   
   const contextValue = {
     loading,
+    loadSubDepartments,
     subDepartmentData,
     setSubDepartmentData, 
     createSubDepartment,

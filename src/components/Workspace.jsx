@@ -79,9 +79,11 @@ const DepartmentLayout = () => (
 )
 
 const SubDepartmentLayout = () => (
-  <SubDepartmentProvider>
-    <Outlet />
-  </SubDepartmentProvider>
+  <ListStateProvider>
+    <SubDepartmentProvider>
+      <Outlet />
+    </SubDepartmentProvider>
+  </ListStateProvider>
 );
 
 const PositionLayout = () => (
