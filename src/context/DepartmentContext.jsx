@@ -3,6 +3,7 @@ import { ENV } from '../config/env';
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNotification } from "../context/NotificationContext";
 import { useGlobalData } from "../context/GlobalDataContext";
+import { useAuth } from "./AuthContext";
 
 const DepartmentContext = createContext();
 
@@ -19,6 +20,7 @@ export const DepartmentProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const { showNotification } = useNotification();
   const { addDepartmentGlobalState, updateDepartmentGlobalState, setDepartments } = useGlobalData();
+  const { user, updateUserDepartments } = useAuth();
 
   const loadDepartments = useCallback(async () => {
     setLoading(true);
@@ -55,10 +57,9 @@ export const DepartmentProvider = ({ children }) => {
       console.log("Creado", newDepartment);
 
       const response = await axios.post(`${ENV.API_BACK_URL}departments`, newDepartment);
-      // console.log("response.data.data", response.data.data);
-
-      // setDepartmentData(prevData => [response.data.data, ...prevData]);
-      // addDepartmentGlobalState(response.data.data);
+      
+      // Sincroniza de usuario: agregar departamento recién creado a sus accesos.
+      updateUserDepartments([...(user?.departments ?? []), response.data.data.id]);
 
       showNotification(`Department ${newDepartment.code} creado con éxito`);
       

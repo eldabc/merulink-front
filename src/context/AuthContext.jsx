@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ENV } from '../config/env';
-import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useNotification } from "./NotificationContext";
 
 const AuthContext = createContext(null);
@@ -122,6 +122,15 @@ export const AuthProvider = ({ children }) => {
     fetchMenu();
   };
 
+  // Actualizar los departamentos de acceso del usuario.
+  const updateUserDepartments = useCallback((departmentIds) => {
+    const normalized = Array.from(
+      new Set((departmentIds ?? []).map((id) => Number(id)).filter((id) => !Number.isNaN(id)))
+    );
+    localStorage.setItem('userDepartments', JSON.stringify(normalized));
+    setUser((prev) => (prev ? { ...prev, departments: normalized } : prev));
+  }, []);
+
   // Cerrar sesión (manual o por inactividad)
   const logoutContext = async () => {
     try {
@@ -189,6 +198,7 @@ export const AuthProvider = ({ children }) => {
     logoutContext,
     logoutDueToInactivity,
     isAuthenticated: !!user,
+    updateUserDepartments,
     authLogin,
     changePasswordContext,
   };

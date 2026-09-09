@@ -55,13 +55,6 @@ export const SubDepartmentProvider = ({ children }) => {
       console.log("Creado", newSubDep);
       const response = await axios.post(`${ENV.API_BACK_URL}subdepartments`, newSubDep);
 
-      setSubDepartmentData(prevData => {
-        return [response.data.data, ...prevData]; 
-      });
-
-      const globalData = updateGlobalStage(response.data.data);
-      addSubDepartmentGlobalState(globalData);
-
       showNotification(`Sub-Departamento ${newSubDep.name} creado con éxito`);
       
       return true;
@@ -86,24 +79,14 @@ export const SubDepartmentProvider = ({ children }) => {
       console.log("Actualizado:", updateSubDep);
       
       const response = await axios.put(`${ENV.API_BACK_URL}subdepartments/${subDepartmentId}`, updateSubDep);
-        
-        setSubDepartmentData(prevData => {
-          const filteredData = prevData.filter(subDepartment => subDepartment.id !== subDepartmentId);
-          return [response.data.data, ...filteredData];
-        });
-      
-        const globalData = updateGlobalStage(response.data.data);
-        // console.log("globalData:", globalData);
-
-        updateSubDepartmentGlobalState(globalData);
 
         showNotification(`Sub-Departamento ${updateSubDep.name} actualizado con éxito`); 
         return true;
 
     } catch (error) {
       // console.log("error", error);  
-        showNotification('Error al actualizar', error.response.data.message, 'error');
-        return false;
+      showNotification('Error al actualizar', error.response.data.message, 'error');
+      return false;
     }
   };
 

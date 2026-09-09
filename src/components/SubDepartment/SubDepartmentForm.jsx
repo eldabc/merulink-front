@@ -52,9 +52,9 @@ export default function SubDepartmentForm({ mode = 'create' }) {
 
   useEffect(() => {
     
-    if (departments.length === 0) {
+    // if (departments.length === 0) {
       loadDepartments(); 
-    }
+    // }
   }, []);
 
   useEffect(() => {

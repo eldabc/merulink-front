@@ -23,7 +23,7 @@ export default function DepartmentList() {
   const { loading, departmentData, loadDepartments } = useDepartments();
 
   const itemsPerPage = 25;
-  const LIST_KEY = 'position-list';
+  const LIST_KEY = 'department-list';
   
   // Restaurar búsqueda/filtro recordados
   const restoredRef = useRef(null);
