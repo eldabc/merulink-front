@@ -7,6 +7,7 @@ import { useListState } from '../../context/ListStateContext';
 import { normalizeText } from '../../utils/text-utils';
 import { filterData } from '../../utils/filter-utils';
 import FilterByFields from '../Filters/FilterByFields';
+
 import PositionRow from './PositionRow';
 import TitleHeader from '../Shared/TitleHeader';
 import ButtonNavigate from '../Shared/ButtonNavigate';

@@ -26,7 +26,7 @@ export const DepartmentProvider = ({ children }) => {
 
       const response = await axios.get(`${ENV.API_BACK_URL}departments`);
       setDepartmentData(response.data.data);
-      setDepartments(response.data.data); // Global State
+      // setDepartments(response.data.data); // Global State
 
     } catch (error) {
       showNotification('Error al cargar departments', error.message, 'error');
@@ -35,9 +35,6 @@ export const DepartmentProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    loadDepartments();
-  }, [loadDepartments]);
 
     // Armado JSON
   const formattedDepartments = (formData) => {
@@ -58,10 +55,10 @@ export const DepartmentProvider = ({ children }) => {
       console.log("Creado", newDepartment);
 
       const response = await axios.post(`${ENV.API_BACK_URL}departments`, newDepartment);
-      console.log("response.data.data", response.data.data);
+      // console.log("response.data.data", response.data.data);
 
-      setDepartmentData(prevData => [response.data.data, ...prevData]);
-      addDepartmentGlobalState(response.data.data);
+      // setDepartmentData(prevData => [response.data.data, ...prevData]);
+      // addDepartmentGlobalState(response.data.data);
 
       showNotification(`Department ${newDepartment.code} creado con éxito`);
       
@@ -87,12 +84,12 @@ export const DepartmentProvider = ({ children }) => {
       
       const response = await axios.put(`${ENV.API_BACK_URL}departments/${departmentId}`, updatedDepartment);
 
-      setDepartmentData(prevData => {
-        const filteredData = prevData.filter(department => department.id !== departmentId);
-        return [response.data.data, ...filteredData];
-      });
+      // setDepartmentData(prevData => {
+      //   const filteredData = prevData.filter(department => department.id !== departmentId);
+      //   return [response.data.data, ...filteredData];
+      // });
 
-      updateDepartmentGlobalState(response.data.data);
+      // updateDepartmentGlobalState(response.data.data);
 
       showNotification(`Department ${formData.code} actualizado con éxito`); 
       return true;
@@ -123,6 +120,7 @@ export const DepartmentProvider = ({ children }) => {
   const contextValue = {
     departmentData,
     loading,
+    loadDepartments,
     setDepartmentData,
     createDepartment,
     updateDepartment,

@@ -1,59 +1,74 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDepartments } from "../../context/DepartmentContext";
+import useLoadMore from '../../hooks/useLoadMore';
+import { useListState } from '../../context/ListStateContext';
 
-import DepartmentRow from './DepartmentRow';
-import Pagination from '../Pagination';
 import { filterData } from '../../utils/filter-utils';
 import { normalizeText } from '../../utils/text-utils';
+
 import FilterByFields from '../Filters/FilterByFields';
 import ButtonNavigate from '../Shared/ButtonNavigate';
 import TitleHeader from '../Shared/TitleHeader';
 import RowTableLoading from '../Shared/RowTableLoading';
 import HasPermission from '../Shared/HasPermission';
+import DepartmentRow from './DepartmentRow';
+import SpanText from '../Shared/SpanText';
+import LoadMorePagination from '../Shared/LoadMorePagination';
 
 export default function DepartmentList() {
 
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const { loading, departmentData, setDepartmentData } = useDepartments();
+  const { get, set } = useListState();
+  const { loading, departmentData, loadDepartments } = useDepartments();
 
   const itemsPerPage = 25;
+  const LIST_KEY = 'position-list';
+  
+  // Restaurar búsqueda/filtro recordados
+  const restoredRef = useRef(null);
+  if (restoredRef.current === null) {
+    restoredRef.current = get(LIST_KEY);
+  }
+  const restored = restoredRef.current;
+
+  const [searchValue, setSearchValue] = useState(restored?.searchValue ?? '');
+  const isFiltering = Boolean(searchValue.trim());
+
+  // Persistir búsqueda/filtro (la posición de scroll la recuerda useLoadMore "remember")
+  useEffect(() => {
+    set(LIST_KEY, { ...(get(LIST_KEY) || {}), searchValue });
+  }, [searchValue, get, set]);
+
+  useEffect(() => {
+    loadDepartments();
+  }, []);
+
   const DEPARTMENTS_SEARCH_FIELDS = ['code', 'departmentName'];
 
-  // Lógica Unificada: Filtro y detección de búsqueda en un solo paso
-  const { dataToDisplay, isSearching } = useMemo(() => {
-    // Determinamos si el usuario está buscando algo
-    const searching = searchValue.trim() !== '' || filterStatus !== 'all';
+  // Filtrar
+  const filteredDepartments = useMemo(() => {
+    return filterData(
+      departmentData,
+      searchValue,
+      DEPARTMENTS_SEARCH_FIELDS,
+      "",
+      normalizeText
+    );
+  }, [departmentData, searchValue]);
 
-    // Si está buscando, filtramos. Si no, usamos la data original.
-    const filtered = searching 
-      ? filterData(departmentData, searchValue, DEPARTMENTS_SEARCH_FIELDS, filterStatus, normalizeText)
-      : departmentData;
-
-    return {
-      dataToDisplay: filtered,
-      isSearching: searching
-    };
-  }, [departmentData, searchValue, filterStatus]);
-
-  // Cálcula paginación
-  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedDepartments = dataToDisplay.slice(startIndex, startIndex + itemsPerPage);
-
-  // Handlers para asegurar que la página vuelva a 1 al filtrar
-  const handleSearchChange = (value) => {
-    setSearchValue(value);
-    setCurrentPage(1);
-  };
-
-  const handleFilterStatus = (status) => {
-    setFilterStatus(status);
-    setCurrentPage(1);
-  };
+  // "Ver más"/paginación scroll vertical con memoria de posición
+  const {
+    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage,
+    chunkOf, chunkClass, total,
+  } = useLoadMore(isFiltering ? filteredDepartments : departmentData, itemsPerPage, {
+    remember: {
+      storage: { get, set },
+      key: LIST_KEY,
+      isBaseView: !isFiltering,
+      resetToken: `${searchValue}|`,
+    },
+  });
 
   return (
     <HasPermission permissions={["view-departments"]}>
@@ -67,9 +82,7 @@ export default function DepartmentList() {
 
         <FilterByFields
           searchValue={searchValue}
-          onSearchChange={handleSearchChange}
-          filterStatus={filterStatus}
-          onFilterStatus={handleFilterStatus}
+          onSearchChange={setSearchValue}
           moduleName='Departamento'
           placeholder='Ingrese código o nombre de departamento'
         />
@@ -87,17 +100,19 @@ export default function DepartmentList() {
               {loading ? (
                 <RowTableLoading />
               ) : (
-                paginatedDepartments.length === 0 ? (
+                visibleItems.length === 0 ? (
                   <tr>
                     <td colSpan="3" className="text-center py-10 text-gray-500">
-                      No se encontraron departamentos que coincidan con la búsqueda.
+                      <SpanText text="No se encontraron departamentos que coincidan con la búsqueda. " />
                     </td>
                   </tr>
                 ) : (
-                  paginatedDepartments.map((dep) => (
+                  visibleItems.map((dep, index) => (
                     <DepartmentRow 
                       key={dep.id}
                       dep={dep}
+                      rowClassName={chunkClass(index)}
+                      chunk={chunkOf(index)} 
                     />
                   ))
                 )
@@ -107,16 +122,16 @@ export default function DepartmentList() {
           </table>
         </div>
 
-        <Pagination
-          paginatedData={paginatedDepartments}
-          startIndex={startIndex}
-          itemsPerPage={itemsPerPage}
-          dataToDisplay={dataToDisplay}
-          hasSearched={isSearching}
-          data={departmentData}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
+        <LoadMorePagination
+          activePage={activePage}
           totalPages={totalPages}
+          goToPage={goToPage}
+          isExpanded={isExpanded}
+          loadMore={loadMore}
+          showLess={showLess}
+          itemsPerPage={itemsPerPage}
+          visibleCount={visibleItems.length}
+          total={total}
           moduleName={'Departamento'}
         />
       </div>
