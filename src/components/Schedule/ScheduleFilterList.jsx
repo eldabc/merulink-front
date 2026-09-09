@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 import LabelFieldForm from '../Shared/LabelFieldForm';
+import ButtonNavigate from '../Shared/ButtonNavigate';
+import HasPermission from '../Shared/HasPermission';
 
 function ScheduleFilterList({ 
   viewMode, 
@@ -15,6 +18,8 @@ function ScheduleFilterList({
 }) {
 
   const { user } = useAuth();
+  const navigate = useNavigate();
+
   // Manejador de cambios para actualizar el estado
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,10 +50,10 @@ function ScheduleFilterList({
 
   return (
     <div className="rounded-lg w-full p-2 div-border">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
 
         {/* Departamento */}
-        <div>
+        <div className="flex-1">
           <LabelFieldForm field="Departamento" simbol="*" dinamicClasses="mb-3"/>
           <select 
             disabled={viewMode || loading} 
@@ -67,7 +72,7 @@ function ScheduleFilterList({
         </div>
 
         {/* Mes */}
-        <div>
+        <div className="flex-1">
           <LabelFieldForm field="Mes" dinamicClasses="mb-3"/>
           <select 
             disabled={viewMode || loading} 
@@ -85,6 +90,12 @@ function ScheduleFilterList({
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <HasPermission permissions={["create-schedules"]}>
+            <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} marginClass="mb-1" />
+          </HasPermission>
         </div>
       </div>
     </div>

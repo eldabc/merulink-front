@@ -80,11 +80,6 @@ export default function ScheduleList() {
       <div className="main-data-cont table-container">
         <div className="titles-table">
           <TitleHeader title="Listado de Horarios" />
-          <div className="text-sm">
-            <HasPermission permissions={["create-schedules"]}>
-              <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
-            </HasPermission>
-          </div>
         </div>
 
         <ScheduleFilterList 
