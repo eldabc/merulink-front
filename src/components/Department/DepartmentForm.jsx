@@ -12,6 +12,7 @@ import LabelFieldForm from '../Shared/LabelFieldForm';
 import ErrorMessage from '../Shared/ErrorMessage';
 import TitleHeader from '../Shared/TitleHeader';
 import HasPermission from '../Shared/HasPermission';
+import RowTableResults from '../Shared/RowTableResults'; 
 
 import '../../Tables.css';
 
@@ -126,7 +127,7 @@ export default function DepartmentForm({ mode = 'create' }) {
           <div className="mt-6">
             <div className="shadow md:w-2xl mx-auto mb-4">
               
-              <TitleHeader title="Sub-Departamentos" />
+              <TitleHeader title="Sub-Departamentos" dinamicClasses="!mb-3" />
               <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">
@@ -135,12 +136,16 @@ export default function DepartmentForm({ mode = 'create' }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {department.subDepartments.map((dep) => (
-                    <tr key={dep.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
-                      <td className="px-4 py-3 text-center font-medium">{dep.code}</td>
-                      <td className="px-4 py-3 text-center">{dep.name}</td>
-                    </tr>
-                  ))}
+                  {department?.subDepartments?.length === 0 ? (
+                    <RowTableResults colSpan={2} message="Sin Sub-Departamentos asociados" />
+                  ) : (
+                    department.subDepartments.map((dep) => (
+                      <tr key={dep.id} className="border-b tr-table hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+                        <td className="px-4 py-3 text-center font-medium">{dep.code}</td>
+                        <td className="px-4 py-3 text-center">{dep.name}</td>
+                      </tr>
+                    ))
+                )}
                 </tbody>
               </table>
             </div>

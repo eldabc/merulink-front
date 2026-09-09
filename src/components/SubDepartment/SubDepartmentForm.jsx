@@ -151,7 +151,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
           <div className="mt-6">
             <div className="shadow md:w-2xl mx-auto mb-4">
 
-              <TitleHeader title="Cargos" dinamicClasses="mb-5" />
+              <TitleHeader title="Cargos" dinamicClasses="!mb-3" />
               <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">

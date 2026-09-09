@@ -59,9 +59,9 @@ export default function PositionForm({ mode = 'create' }) {
   const subDepartmentIdDisabled = filteredSubDepartments?.length === 0 && 'cursor-not-allowed opacity-50';
 
   useEffect(() => {  
-    if (departments.length === 0) {
+    // if (departments.length === 0) {
       loadDepartments(); 
-    }
+    // }
   }, [mode]);
 
   useEffect(() => {    
@@ -108,7 +108,7 @@ export default function PositionForm({ mode = 'create' }) {
   useEffect(() => {
     
     // Si se seleccionó Sub-departamento
-    if (!viewMode && selectedSubDepartmentId && selectedSubDepartmentId !== "0") {
+    if (!viewMode && selectedSubDepartmentId ) {
       const newCode = newCodePosition(selectedDepartmentId, selectedSubDepartmentId, positionData, departments, position?.id);
       setValue('code', newCode);
     }

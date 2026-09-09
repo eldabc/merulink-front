@@ -80,8 +80,8 @@ export const SubDepartmentProvider = ({ children }) => {
       
       const response = await axios.put(`${ENV.API_BACK_URL}subdepartments/${subDepartmentId}`, updateSubDep);
 
-        showNotification(`Sub-Departamento ${updateSubDep.name} actualizado con éxito`); 
-        return true;
+      showNotification(`Sub-Departamento ${updateSubDep.name} actualizado con éxito`); 
+      return true;
 
     } catch (error) {
       // console.log("error", error);  
@@ -113,18 +113,18 @@ export const SubDepartmentProvider = ({ children }) => {
     }
   };
 
-  const updateGlobalStage = (newSubDepartment) => {
-    return {
-      department:{
-        id: newSubDepartment.department.id
-      },
-      subDepartment: {
-        id: newSubDepartment.id,
-        code: newSubDepartment.code,
-        name: newSubDepartment.name 
-      }
-    };
-  };
+  // const updateGlobalStage = (newSubDepartment) => {
+  //   return {
+  //     department:{
+  //       id: newSubDepartment.department.id
+  //     },
+  //     subDepartment: {
+  //       id: newSubDepartment.id,
+  //       code: newSubDepartment.code,
+  //       name: newSubDepartment.name 
+  //     }
+  //   };
+  // };
   
   const contextValue = {
     loading,

@@ -79,7 +79,7 @@ export default function ScheduleList() {
     <HasPermission permissions={["view-schedules"]}>
       <div className="main-data-cont table-container">
         <div className="titles-table">
-          <TitleHeader title="Horarios" />
+          <TitleHeader title="Listado de Horarios" />
           <div className="text-sm">
             <HasPermission permissions={["create-schedules"]}>
               <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} />
