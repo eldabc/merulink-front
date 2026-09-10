@@ -464,7 +464,14 @@ const ScheduleGrid = forwardRef(({
                 </div>
               )}
               
-              {scheduleSaved && ( <ScheduleWorkflowSteps viewMode={viewMode} reviewedBy={scheduleData?.reviewedBy} approvedBy={scheduleData?.approvedBy} /> )}
+              {scheduleSaved && ( 
+                <>
+                  <div className="text-[0.875rem] text-gray-300 w-full flex justify-end mt-2">
+                    Última Modificación: <span className="pl-2">{scheduleData?.lastModification ? scheduleData?.lastModification : '—'}</span>
+                  </div>
+                  <ScheduleWorkflowSteps viewMode={viewMode} reviewedBy={scheduleData?.reviewedBy} approvedBy={scheduleData?.approvedBy} /> 
+                </>
+              )}
 
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />

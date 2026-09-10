@@ -32,7 +32,7 @@ export default function CarouselTabs({
   showArrows = true,
   showMoreButton = true,
   scrollAmount = 220,
-  gapClass = 'gap-4',
+  gapClass = 'gap-2',
   className = '',
 }) {
   const scrollRef = useRef(null);
