@@ -1,16 +1,16 @@
 import dayjs from 'dayjs';
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { useSchedules } from "../../context/ScheduleContext";
 import { useGlobalData } from '../../context/GlobalDataContext';
+import useLoadMore from '../../hooks/useLoadMore';
+import { useListState } from '../../context/ListStateContext';
 
 import { statusOptions } from '../../utils/StaticData/schedule-utils';
 import { allMonths } from '../../utils/StaticData/months-utils';
 
 import ScheduleRow from './ScheduleRow';
-import Pagination from '../Pagination';
+import LoadMorePagination from '../Shared/LoadMorePagination';
 import TitleHeader from '../Shared/TitleHeader';
-import ButtonNavigate from '../Shared/ButtonNavigate';
 import SpanText from '../Shared/SpanText';
 import RowTableLoading from '../Shared/RowTableLoading';
 import HasPermission from '../Shared/HasPermission';
@@ -19,18 +19,33 @@ import ScheduleFilterList from './ScheduleFilterList';
 import '../../Tables.css';
 
 export default function ScheduleList() {
-
-  const navigate = useNavigate();
+  const { get, set } = useListState();
   const { globalLoading, filteredDepartments } = useGlobalData();
   const { loading, scheduleData, loadSchedules, setScheduleData } = useSchedules();
-  const [currentPage, setCurrentPage] = useState(1);
   const [monthSelectedJson] = useState(1);
+
+  const itemsPerPage = 10;
+  const LIST_KEY = 'schedule-list';
+  
+  // Restaurar búsqueda/filtro recordados
+  const restoredRef = useRef(null);
+  if (restoredRef.current === null) {
+    restoredRef.current = get(LIST_KEY);
+  }
+
   const [filters, setFilters] = useState({
     department: '',
     month: '',
+    ...(restoredRef.current?.filters ?? {}),
   });
+  
+  // ¿Hay algún filtro aplicado? (departamento o mes)
+  const isFiltering = Boolean(filters.department || filters.month);
 
-  const itemsPerPage = 25;
+  // Persistir los filtros (la posición de scroll la recuerda useLoadMore "remember")
+  useEffect(() => {
+    set(LIST_KEY, { ...(get(LIST_KEY) || {}), filters });
+  }, [filters, get, set]);
 
   // Mes actual
   const now = dayjs();
@@ -64,11 +79,19 @@ export default function ScheduleList() {
     }
   }, [loadSchedules]);
 
-  // Datos para mostrar
-  const dataToDisplay = scheduleData ?? [];
-  const totalPages = Math.ceil(dataToDisplay.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedSchedules = dataToDisplay?.slice(startIndex, startIndex + itemsPerPage);
+
+  // "Ver más"/paginación scroll vertical con memoria de posición
+  const {
+    visibleItems, isExpanded, loadMore, showLess, activePage, totalPages, goToPage,
+    chunkOf, chunkClass, total,
+  } = useLoadMore(scheduleData, itemsPerPage, {
+    remember: {
+      storage: { get, set },
+      key: LIST_KEY,
+      isBaseView: !isFiltering,
+      resetToken: `${filters.department}|${filters.month}`,
+    },
+  });
 
   const statusOptionsMap = statusOptions.reduce((acc, option) => {
     acc[option.value] = option;
@@ -91,7 +114,7 @@ export default function ScheduleList() {
           availableMonths={availableMonths}
         />
 
-        {(dataToDisplay.length === 0) && !loading ? (
+        {(visibleItems.length === 0) && !loading ? (
           <SpanText text={`No se encontraron horarios registrados.`} dinamicClasses="inline-block mt-5" />
         ) : (
           <div className="rounded-lg shadow">
@@ -107,7 +130,7 @@ export default function ScheduleList() {
               </thead>
               <tbody>
                 {!loading ? (
-                  paginatedSchedules.map((item) => {
+                  visibleItems.map((item, index) => {
                     const statusInfo = statusOptionsMap[item?.status] || { 
                       value: item?.status || '', 
                       label: 'Sin estado', 
@@ -122,6 +145,8 @@ export default function ScheduleList() {
                         departmentId={filters.department}
                         monthSelectedJson={monthSelectedJson}
                         availableMonths={availableMonths}
+                        rowClassName={chunkClass(index)}
+                        chunk={chunkOf(index)}
                       />
                     );
                   })
@@ -133,15 +158,16 @@ export default function ScheduleList() {
           </div>
         )}
 
-        <Pagination
-          paginatedData={paginatedSchedules}
-          startIndex={startIndex}
-          itemsPerPage={itemsPerPage}
-          dataToDisplay={dataToDisplay}
-          data={scheduleData}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
+        <LoadMorePagination
+          activePage={activePage}
           totalPages={totalPages}
+          goToPage={goToPage}
+          isExpanded={isExpanded}
+          loadMore={loadMore}
+          showLess={showLess}
+          itemsPerPage={itemsPerPage}
+          visibleCount={visibleItems.length}
+          total={total}
           moduleName={'Horario'}
         />
       </div>

@@ -92,7 +92,7 @@ function ScheduleFilterList({
           </select>
         </div>
 
-        <div>
+        <div className="flex-1">
           <HasPermission permissions={["create-schedules"]}>
             <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} marginClass="mb-1" />
           </HasPermission>

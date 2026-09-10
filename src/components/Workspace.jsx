@@ -115,9 +115,11 @@ const ShiftLayout = () => (
 );
 
 const ScheduleLayout = () => (
-  <ScheduleProvider>
-    <Outlet />
-  </ScheduleProvider>
+  <ListStateProvider>
+    <ScheduleProvider>
+      <Outlet />
+    </ScheduleProvider>
+  </ListStateProvider>
 );
 
 export default function Workspace() {
