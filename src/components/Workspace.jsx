@@ -36,6 +36,7 @@ import { ScheduleProvider } from '../context/ScheduleContext';
 import { useNotification } from "../context/NotificationContext";
 import ProtectedRoute from './Shared/ProtectedRoute';
 import MainLayout from './Shared/MainLayout';
+import LoadingSpinner from './Shared/LoadingSpinner';
 import HomePage from "./HomePage";
 
 const EventLayout = ({ showNotification }) => (
@@ -125,7 +126,7 @@ const ScheduleLayout = () => (
 export default function Workspace() {
   const { showNotification } = useNotification();
   return (
-    <Suspense fallback={<div className="p-6">Cargando...</div>}>
+    <Suspense fallback={<LoadingSpinner className="min-h-screen" />}>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/cambiar-contrasena" element={<ChangePassword />} />
