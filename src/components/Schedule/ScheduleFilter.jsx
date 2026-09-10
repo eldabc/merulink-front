@@ -17,14 +17,14 @@ function ScheduleFilter({ viewMode, departments = [], months, globalLoading, dis
 
         {/* Departamento */}
         <div>
-          <LabelFieldForm field="Departamento" simbol="*" dinamicClasses="mb-3"/>
+          <LabelFieldForm field="Departamento" simbol="*" dynamicClasses="mb-3"/>
           <SelectDepartment disabled={viewMode} departments={departments} loading={globalLoading} />
         </div>
 
 
         {/* Mes */}
         <div>
-          <LabelFieldForm field="Mes" simbol="*" dinamicClasses="mb-3"/>
+          <LabelFieldForm field="Mes" simbol="*" dynamicClasses="mb-3"/>
           <SelectGeneric 
             name="monthId"
             disabled={viewMode} 
@@ -36,7 +36,7 @@ function ScheduleFilter({ viewMode, departments = [], months, globalLoading, dis
 
         {/* Quincena */}
         <div>
-          <LabelFieldForm field="Quincena" simbol="*" dinamicClasses="mb-3"/>
+          <LabelFieldForm field="Quincena" simbol="*" dynamicClasses="mb-3"/>
             <div className='h-[42px] mt-1 flex items-center '> 
               <ButtonRadioGeneric
                 name="fortnight" 

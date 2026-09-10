@@ -132,7 +132,7 @@ export default function PersonalData({ createMode, viewMode, isEmployeeActive, e
               type="mobilePhone" 
               disabled={viewMode} 
               register={register} 
-              dinamicClasses={disabledClasses} 
+              dynamicClasses={disabledClasses} 
               arrayCodes={mobilePhoneCodes}
               setValue={setValue}
             />
@@ -145,7 +145,7 @@ export default function PersonalData({ createMode, viewMode, isEmployeeActive, e
               type="homePhone" 
               disabled={viewMode} 
               register={register} 
-              dinamicClasses={disabledClasses} 
+              dynamicClasses={disabledClasses} 
               arrayCodes={phoneCodes}
               setValue={setValue}
             />

@@ -57,7 +57,7 @@ export default function PositionRow({ position, rowClassName = '', chunk }) {
         <ButtonDelete 
           setIsModalOpen={() => handleDeleteClick(position)} 
           title={deleteBtnTitle}
-          dinamicClasses={disabledClasses}
+          dynamicClasses={disabledClasses}
           disabled={blockBtn} 
         />
       </td>

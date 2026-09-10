@@ -101,7 +101,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
       <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
         <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
           <div className='mx-auto mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Sub-Departamento' ):( 'Datos Sub-Departamento')} dinamicClasses="mb-5" />
+              <TitleHeader title={editMode ? ( 'Editar Sub-Departamento' ):( 'Datos Sub-Departamento')} dynamicClasses="mb-5" />
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-2 w-full div-border">
                 
@@ -151,7 +151,7 @@ export default function SubDepartmentForm({ mode = 'create' }) {
           <div className="mt-6">
             <div className="shadow md:w-2xl mx-auto mb-4">
 
-              <TitleHeader title="Cargos" dinamicClasses="!mb-3" />
+              <TitleHeader title="Cargos" dynamicClasses="!mb-3" />
               <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">

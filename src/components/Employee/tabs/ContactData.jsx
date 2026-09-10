@@ -108,7 +108,7 @@ export default function ContactData({ viewMode }) {
                       )}
                     </td>
                     <td className="p-2 text-center">
-                      <ButtonTrash disabled={viewMode} remove={remove} index={index} dinamicClasses={disabledClasses} />
+                      <ButtonTrash disabled={viewMode} remove={remove} index={index} dynamicClasses={disabledClasses} />
                     </td>
                   </tr>
                 ))}

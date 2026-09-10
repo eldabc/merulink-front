@@ -75,7 +75,7 @@ export default function RoleAssignment() {
     <HasPermission permissions={['view-roles']} >
       <div className="main-data-cont table-container p-4">    
         <div className="titles-table">
-          <TitleHeader title="Asignaciones" dinamicClasses="mb-6" />
+          <TitleHeader title="Asignaciones" dynamicClasses="mb-6" />
         </div>
 
         <div className="flex gap-4 items-stretch justify-center min-h-[500px]">

@@ -151,7 +151,7 @@ function RoleForm ({ mode = 'create' }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6 w-full'>
-              <TitleHeader title={editMode ? ( 'Editar Rol' ):( 'Datos del Rol')} dinamicClasses="!mb-5" />
+              <TitleHeader title={editMode ? ( 'Editar Rol' ):( 'Datos del Rol')} dynamicClasses="!mb-5" />
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
 
@@ -163,7 +163,7 @@ function RoleForm ({ mode = 'create' }) {
                       name="roleName"
                       register={register}
                       placeholder="Ingrese nombre del Rol"
-                      dinamicClasses={disabledClasses}
+                      dynamicClasses={disabledClasses}
                       errorIndex={errors?.roleName}
                       onChange={(e) => changeRoleLabel(e)}
                     />

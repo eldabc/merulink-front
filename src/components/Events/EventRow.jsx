@@ -75,7 +75,7 @@ export default function EventRow( {event, isMeruBirthday, eventWithLocation, isE
             <ButtonDelete 
               setIsModalOpen={setIsModalOpen}
               title={deleteBtnTitle}
-              dinamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
+              dynamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
               disabled={blockBtn} 
               id={event.id} 
             />

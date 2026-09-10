@@ -1,7 +1,7 @@
-function SpanText({ text = "Cargando...", dinamicClasses, centerElement = false }) {
+function SpanText({ text = "Cargando...", dynamicClasses, centerElement = false }) {
   return (
     <div className={`${centerElement ? 'flex items-center justify-center min-h-[100px]' : ''} `}>
-      <span className={`italic text-gray-500 ${dinamicClasses}`}>{text}</span>
+      <span className={`italic text-gray-500 ${dynamicClasses}`}>{text}</span>
     </div>
   );
 }

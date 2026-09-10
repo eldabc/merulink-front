@@ -73,7 +73,7 @@ export default function ScheduleRow({ schedule, statusInfo, departmentId, monthS
             <ButtonDelete 
               setIsModalOpen={() => handleDeleteClick(schedule)} 
               title={deleteBtnTitle}
-              dinamicClasses={disabledClasses}
+              dynamicClasses={disabledClasses}
               disabled={blockBtn} 
             />
           </HasPermission>

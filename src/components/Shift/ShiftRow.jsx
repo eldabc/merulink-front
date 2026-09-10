@@ -72,7 +72,7 @@ export default function ShiftRow({ shift }) {
         <ButtonDelete 
           setIsModalOpen={() => handleDeleteClick(shift)} 
           title={deleteBtnTitle}
-          dinamicClasses={disabledClasses}
+          dynamicClasses={disabledClasses}
           disabled={blockBtn} 
         />
       </td>

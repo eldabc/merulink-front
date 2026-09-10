@@ -52,7 +52,7 @@ export default function EmployeeRow({ dep, rowClassName = '', chunk }) {
           <ButtonDelete 
             setIsModalOpen={() => handleDeleteClick(dep)} 
             title={deleteBtnTitle}
-            dinamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
+            dynamicClasses={blockBtn && 'cursor-not-allowed opacity-50'}
             disabled={blockBtn} 
           />
         </HasPermission>

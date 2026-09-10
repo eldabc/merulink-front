@@ -48,7 +48,7 @@ function EventTemplates({disabled, dynamicClasses, applyTemplate, selectedCatego
               Usar Plantilla
             </button>
             <div onClick={(e) => e.stopPropagation()}>
-              <ButtonDelete setIsModalOpen={() => handleDeleteClick(temp)} disabled={disabled} dinamicClasses={dynamicClasses} />
+              <ButtonDelete setIsModalOpen={() => handleDeleteClick(temp)} disabled={disabled} dynamicClasses={dynamicClasses} />
             </div>
           </div>
         ))

@@ -195,7 +195,7 @@ export default function Calendar() {
               <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#2f3d4473] backdrop-blur-[1px]">
                 <div className="bg-[#2f3d44] px-6 py-3 rounded-xl shadow-2xl border border-[#9fd8ff] flex items-center gap-3">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
-                  <SpanText text="Cargando eventos..." dinamicClasses="text-white font-medium" />
+                  <SpanText text="Cargando eventos..." dynamicClasses="text-white font-medium" />
                 </div>
               </div>
             )}

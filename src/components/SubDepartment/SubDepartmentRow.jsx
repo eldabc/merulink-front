@@ -54,7 +54,7 @@ export default function SubDepartmentRow({ subDep, rowClassName = '', chunk }) {
           <ButtonDelete 
             setIsModalOpen={() => handleDeleteClick(subDep)} 
             title={deleteBtnTitle}
-            dinamicClasses={disabledClasses}
+            dynamicClasses={disabledClasses}
             disabled={blockBtn} 
           />
         </HasPermission>

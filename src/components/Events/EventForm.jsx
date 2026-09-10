@@ -315,7 +315,7 @@ export default function EventForm({ mode = 'create' }) {
     <div className="w-full max-w-[1700px] mx-auto overflow-x-auto p-5 rounded-lg">
       {loading ? (
         <div className='flex justify-center items-center mt-20'>
-          <SpanText text="Cargando Datos Evento..." dinamicClasses="justify-center" />
+          <SpanText text="Cargando Datos Evento..." dynamicClasses="justify-center" />
         </div>
       ) : (
         <>

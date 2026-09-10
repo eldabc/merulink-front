@@ -251,7 +251,7 @@ export default function ShiftForm({ mode = 'create' }) {
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6'>
               <div className="relative inline-block">                
-                <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dinamicClasses="!mb-3" />
+                <TitleHeader title={editMode ? ( 'Editar Turno' ):( 'Datos del Turno')} dynamicClasses="!mb-3" />
                 {shift?.alert && <AlertBadge alert={shift?.alert}  dynamicClasses="-top-3" />}
               </div>
               
@@ -272,7 +272,7 @@ export default function ShiftForm({ mode = 'create' }) {
                     name='description'
                     register={register}
                     errorIndex={errors}
-                    dinamicClasses={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
+                    dynamicClasses={`w-20 px-1 py-1 text-xl rounded-lg filter-input ${disabledClasses}`}
                   />
                   {errors?.description && <ErrorMessage msg={errors.description.message} />}  
                 </div>
@@ -446,7 +446,7 @@ export default function ShiftForm({ mode = 'create' }) {
                   </>
                 )}
 
-                 <div className="hidden md:block md:col-span-3"> <LabelFieldForm field="Observación" dinamicClasses="mb-4" />
+                 <div className="hidden md:block md:col-span-3"> <LabelFieldForm field="Observación" dynamicClasses="mb-4" />
                     <textarea
                       readOnly={viewMode}
                       {...register('observation')}

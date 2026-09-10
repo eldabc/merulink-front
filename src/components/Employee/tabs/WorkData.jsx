@@ -56,7 +56,7 @@ export default function WorkData({ viewMode, disabledClasses, employee, availabl
           <LabelFieldForm field="Sub-Departamento" /> 
           <div>
             {showNotApply ? (
-              <SpanText text="No Aplica" dinamicClasses="inline-block mt-2 px-2" />
+              <SpanText text="No Aplica" dynamicClasses="inline-block mt-2 px-2" />
             ) : (
               <>
                 <select 

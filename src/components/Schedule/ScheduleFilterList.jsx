@@ -54,7 +54,7 @@ function ScheduleFilterList({
 
         {/* Departamento */}
         <div className="flex-1">
-          <LabelFieldForm field="Departamento" simbol="*" dinamicClasses="mb-3"/>
+          <LabelFieldForm field="Departamento" simbol="*" dynamicClasses="mb-3"/>
           <select 
             disabled={viewMode || loading} 
             name='department'
@@ -73,7 +73,7 @@ function ScheduleFilterList({
 
         {/* Mes */}
         <div className="flex-1">
-          <LabelFieldForm field="Mes" dinamicClasses="mb-3"/>
+          <LabelFieldForm field="Mes" dynamicClasses="mb-3"/>
           <select 
             disabled={viewMode || loading} 
             name='month'

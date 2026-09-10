@@ -106,7 +106,7 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
 
           {/* Tipo de ausencia */}
           <div>
-            <LabelFieldForm field="Tipo de Ausencia" simbol="*" dinamicClasses="text-sm! mb-1.5" />
+            <LabelFieldForm field="Tipo de Ausencia" simbol="*" dynamicClasses="text-sm! mb-1.5" />
             <select value={type} disabled={isView} onChange={(e) => { setType(e.target.value); clearError('type'); }} 
               className={`input-dark disabled:opacity-60 ${disabledClasses}`}>
               {ABSENCE_TYPES.map((t) => (
@@ -118,7 +118,7 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
 
           {/* Fecha de inicio */}
           <div>
-            <LabelFieldForm field="Fecha de Inicio" simbol="*" dinamicClasses="text-sm! mb-1.5" />
+            <LabelFieldForm field="Fecha de Inicio" simbol="*" dynamicClasses="text-sm! mb-1.5" />
             <input type="date" value={start} disabled={isView} onChange={(e) => { setStart(e.target.value); clearError('start'); }} 
               className={`input-dark disabled:opacity-60 ${disabledClasses}`} />
             {formErrors.start && <ErrorMessage msg={formErrors.start} />}
@@ -126,7 +126,7 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
 
           {/* Fecha de fin */}
           <div>
-            <LabelFieldForm field="Fecha de Fin" simbol="*" dinamicClasses="text-sm! mb-1.5" />
+            <LabelFieldForm field="Fecha de Fin" simbol="*" dynamicClasses="text-sm! mb-1.5" />
             <input type="date" value={end} disabled={isView} onChange={(e) => { setEnd(e.target.value); clearError('end'); }} 
               className={`input-dark disabled:opacity-60 ${disabledClasses}`} />
             {formErrors.end && <ErrorMessage msg={formErrors.end} />}
@@ -134,7 +134,7 @@ export default function AbsenceModal({ isOpen, onClose, employee, mode = 'create
 
           {/* Observaciones */}
           <div>
-            <LabelFieldForm field="Observaciones" dinamicClasses="text-sm! mb-1.5" />
+            <LabelFieldForm field="Observaciones" dynamicClasses="text-sm! mb-1.5" />
             <textarea
               value={observations}
               disabled={isView}

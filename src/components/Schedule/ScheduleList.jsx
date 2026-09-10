@@ -115,7 +115,7 @@ export default function ScheduleList() {
         />
 
         {(visibleItems.length === 0) && !loading ? (
-          <SpanText text={`No se encontraron horarios registrados.`} dinamicClasses="inline-block mt-5" />
+          <SpanText text={`No se encontraron horarios registrados.`} dynamicClasses="inline-block mt-5" />
         ) : (
           <div className="rounded-lg shadow">
             <table className="min-w-full border-collapse text-sm sm:text-base">

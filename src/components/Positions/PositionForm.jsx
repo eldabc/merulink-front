@@ -167,7 +167,7 @@ export default function PositionForm({ mode = 'create' }) {
         <div className="table-container rounded-lg mt-4 shadow-md p-6 w-full overflow-auto">
           <div className="flex gap-x-34 items-center gap-6 relative border-b pb-6 border-[#ffffff21] flex-wrap">
             <div className='mx-auto mt-6'>
-              <TitleHeader title={editMode ? ( 'Editar Cargo' ):( 'Datos del Cargo')} dinamicClasses="!mb-5" />
+              <TitleHeader title={editMode ? ( 'Editar Cargo' ):( 'Datos del Cargo')} dynamicClasses="!mb-5" />
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-3 div-border">
 
@@ -191,7 +191,7 @@ export default function PositionForm({ mode = 'create' }) {
                   {!addSubDep ? (
                     <>
                       {!position?.subDepartment && viewMode ? (
-                        <SpanText text="No Aplica" dinamicClasses="text-lg inline-block mt-2 px-2" />
+                        <SpanText text="No Aplica" dynamicClasses="text-lg inline-block mt-2 px-2" />
                       ) : (
                           <>
                           <select 
@@ -269,7 +269,7 @@ export default function PositionForm({ mode = 'create' }) {
             <div className="mt-6">
               <div className="shadow md:w-2xl mx-auto mb-4">
 
-                <TitleHeader title="Empleados en este Cargo" dinamicClasses="!mb-3" />
+                <TitleHeader title="Empleados en este Cargo" dynamicClasses="!mb-3" />
                 <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                   <thead>
                     <tr className="tr-thead-table">

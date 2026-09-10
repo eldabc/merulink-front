@@ -99,7 +99,7 @@ export default function DepartmentForm({ mode = 'create' }) {
               <TitleHeader title={editMode ? ( 'Editar Departamento' ):( 'Datos del Departamento')} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full m-6 text-xs">
                 
-                <LabelFieldForm field="Nombre Departamento" simbol="*" dinamicClasses="text-xl"/>
+                <LabelFieldForm field="Nombre Departamento" simbol="*" dynamicClasses="text-xl"/>
               <div>
                 <input
                   readOnly={viewMode}
@@ -127,7 +127,7 @@ export default function DepartmentForm({ mode = 'create' }) {
           <div className="mt-6">
             <div className="shadow md:w-2xl mx-auto mb-4">
               
-              <TitleHeader title="Sub-Departamentos" dinamicClasses="!mb-3" />
+              <TitleHeader title="Sub-Departamentos" dynamicClasses="!mb-3" />
               <table className="rounded-lg min-w-full border-collapse text-sm sm:text-base">
                 <thead>
                   <tr className="tr-thead-table">

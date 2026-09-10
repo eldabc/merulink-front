@@ -244,13 +244,13 @@ export default function ScheduleForm({ }) {
                 mode === 'view' 
                   ? 'Datos del Horario' 
                   : 'Crear Horario'
-                )} dinamicClasses="!mb-3" />
+                )} dynamicClasses="!mb-3" />
               
                <ScheduleFilter departments={filteredDepartments} months={availableMonths} globalLoading={globalLoading} />
               
               <div className="div-border mt-2">
                 {loading || globalLoading ? (
-                  <SpanText text={`Cargando datos del horario...`} dinamicClasses="inline-block mt-5" />
+                  <SpanText text={`Cargando datos del horario...`} dynamicClasses="inline-block mt-5" />
                 ) : (
                   Object.keys(formData ?? {}).length > 0 && (
                     <ScheduleGrid 

@@ -86,7 +86,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
         <div className="space-y-4 mb-5">
           {/* Fecha de Efectividad */}
             <div>
-              <LabelFieldForm field={`${isDeactivate ? 'Fecha de Efectividad (último día laborado)' : 'Fecha de reactivación'}`} simbol="*" dinamicClasses="text-sm! mb-1.5" />
+              <LabelFieldForm field={`${isDeactivate ? 'Fecha de Efectividad (último día laborado)' : 'Fecha de reactivación'}`} simbol="*" dynamicClasses="text-sm! mb-1.5" />
               <input
                 type="date"
                 value={effectiveDate}
@@ -102,7 +102,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
             <>
               {/* Tipo de Egreso */}
               <div>
-                <LabelFieldForm field="Tipo de Egreso" simbol="*" dinamicClasses="text-sm! mb-1.5" />
+                <LabelFieldForm field="Tipo de Egreso" simbol="*" dynamicClasses="text-sm! mb-1.5" />
                 <select
                   value={retireReason}
                   onChange={(e) => {
@@ -121,7 +121,7 @@ export default function ChangeStatusModal({ isOpen, onClose, onConfirm, employee
 
               {/* Motivo / Observaciones */}
               <div>
-                <LabelFieldForm field="Motivo / Observaciones" dinamicClasses="text-sm! mb-1.5" />
+                <LabelFieldForm field="Motivo / Observaciones" dynamicClasses="text-sm! mb-1.5" />
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}

@@ -2,7 +2,7 @@ import PhoneInput from "./PhoneInput";
 import OptionSelect from "./OptionSelect";
 import { Controller } from "react-hook-form";
 
-function PhoneNumberEventContact ({ type, numberName, codeNumberName, disabled, register, control, dinamicClasses, arrayCodes, setValue }) {
+function PhoneNumberEventContact ({ type, numberName, codeNumberName, disabled, register, control, dynamicClasses, arrayCodes, setValue }) {
   
   const codeField = codeNumberName ?? `${type}Code`;
   const numberField = numberName ?? type;
@@ -16,14 +16,14 @@ function PhoneNumberEventContact ({ type, numberName, codeNumberName, disabled, 
           <select 
             disabled={disabled}
             {...field}
-            className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${dinamicClasses}`}>
+            className={`w-22 px-3 py-2 rounded-lg filter-input text-gray-300 ${dynamicClasses}`}>
             {arrayCodes.map(code => (
               <OptionSelect key={`${codeField}-${code.id}`} value={code.code} text={code.code} />
             ))}
           </select>
         )}
       />
-      <PhoneInput dynamicNumberName={numberField} type={type} readOnly={disabled} register={register} dinamicClasses={dinamicClasses} setValue={setValue} />
+      <PhoneInput dynamicNumberName={numberField} type={type} readOnly={disabled} register={register} dynamicClasses={dynamicClasses} setValue={setValue} />
     </div>
   );
 }

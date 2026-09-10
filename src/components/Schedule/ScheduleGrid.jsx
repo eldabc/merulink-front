@@ -426,7 +426,7 @@ const ScheduleGrid = forwardRef(({
               </div>
 
               {rowData.length === 0 ? (
-                <SpanText text="Sin quincena registrada." dinamicClasses="mt-10 text-center text-[16px] mb-5" />
+                <SpanText text="Sin quincena registrada." dynamicClasses="mt-10 text-center text-[16px] mb-5" />
               ) : (
                 <div className="relative w-full h-auto shadow-sm rounded-lg overflow-hidden">
                   {scheduleData?.isClosed && (
@@ -476,7 +476,7 @@ const ScheduleGrid = forwardRef(({
               <div className="flex flex-col md:flex-row gap-3 w-full div-border">
                 <ScheduleLegend />
                 <div className="flex flex-col w-full md:flex-1"> 
-                  <LabelFieldForm field="Observación" dinamicClasses="mb-2" />
+                  <LabelFieldForm field="Observación" dynamicClasses="mb-2" />
                   <textarea
                     readOnly={mode === 'view'}
                     {...register('observations')}

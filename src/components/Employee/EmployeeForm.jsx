@@ -294,7 +294,7 @@ export default function EmployeeForm({ mode = 'create' }) {
               <div className='w-full md:w-auto justify-center md:justify-start'>
                 <TitleHeader 
                   title={editMode ? ('Editar Empleado') : (viewMode ? 'Datos del Empleado' : 'Registrar Empleado')} 
-                  dinamicClasses="mb-6! md:mb-4! text-center md:text-left" 
+                  dynamicClasses="mb-6! md:mb-4! text-center md:text-left" 
                 />
                 <HeaderEmployeeForm register={register} errors={errors} viewMode={viewMode} disabledClasses={disabledClasses} />
               </div>

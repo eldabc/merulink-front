@@ -85,7 +85,7 @@ export default function RoleRow({ role }) {
           <ButtonDelete 
             setIsModalOpen={() => handleDeleteClick(role)} 
             title={deleteBtnTitle}
-            dinamicClasses={disabledClasses}
+            dynamicClasses={disabledClasses}
             disabled={hasEmployees} 
           />
         </HasPermission>

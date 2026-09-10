@@ -20,16 +20,16 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
     <div className="w-full div-border mb-4 relative">
       {!viewMode && (
         <div className="absolute top-2 right-2 z-10">
-          <ButtonTrash disabled={viewMode} remove={removeContact} index={index} dinamicClasses={disabledClasses} />
+          <ButtonTrash disabled={viewMode} remove={removeContact} index={index} dynamicClasses={disabledClasses} />
         </div>
       )}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-7">
 
         <LabelFieldForm field="Nombre" simbol="*" />
-          <InputGeneric readOnly={viewMode} name={`contacts.${index}.firstName`} register={register} dinamicClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.firstName}/>
+          <InputGeneric readOnly={viewMode} name={`contacts.${index}.firstName`} register={register} dynamicClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.firstName}/>
         
         <LabelFieldForm field="Apellido" simbol="*" />
-            <InputGeneric readOnly={viewMode} name={`contacts.${index}.lastName`} register={register} dinamicClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.lastName} />
+            <InputGeneric readOnly={viewMode} name={`contacts.${index}.lastName`} register={register} dynamicClasses={disabledClasses} errorIndex={errors?.contacts?.[index]?.lastName} />
 
         <LabelFieldForm field="Email" />
         <div>
@@ -63,7 +63,7 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
                     disabled={viewMode}
                     register={register}
                     control={control}
-                    dinamicClasses={disabledClasses}
+                    dynamicClasses={disabledClasses}
                     arrayCodes={mobilePhoneCodes}
                     setValue={setValue}
                   />
@@ -73,7 +73,7 @@ function ContactItem({ index, control, register, setValue, errors, viewMode, dis
                 </div>
 
                 {!viewMode && phoneFields.length > 1 && (
-                  <ButtonTrash disabled={viewMode} remove={removePhone} index={phoneIndex} dinamicClasses={disabledClasses} />
+                  <ButtonTrash disabled={viewMode} remove={removePhone} index={phoneIndex} dynamicClasses={disabledClasses} />
                 )}
               </div>
             ))}

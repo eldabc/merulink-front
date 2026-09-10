@@ -107,7 +107,7 @@ function PadlockForm ({ mode = 'create' }) {
                   <div className='div-border'>
                     <div className="mt-6">     
 
-                      <TitleHeader title={editMode ? ( 'Editar Padlock' ):( 'Datos Padlock')} dinamicClasses="mb-5" />
+                      <TitleHeader title={editMode ? ( 'Editar Padlock' ):( 'Datos Padlock')} dynamicClasses="mb-5" />
                       <div className="mx-auto w-64 mb-5"></div>
                       <div className='div-border'>
                         <div className='flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-8'>
