@@ -94,7 +94,19 @@ function ScheduleFilterList({
 
         <div className="flex-1">
           <HasPermission permissions={["create-schedules"]}>
-            <ButtonNavigate url={`/empleados/horarios/nuevo`} navigate={navigate} marginClass="mb-1" />
+            <ButtonNavigate
+              url={`/empleados/horarios/nuevo`}
+              navigate={navigate}
+              marginClass="mb-1"
+              // Pasa los filtros actuales al form para que los preseleccione
+              state={{
+                departmentId: filters.department,
+                monthNumber: filters.month,
+                monthSelectedJson: availableMonths.find(
+                  (m) => String(m.value) === String(filters.month)
+                ),
+              }}
+            />
           </HasPermission>
         </div>
       </div>

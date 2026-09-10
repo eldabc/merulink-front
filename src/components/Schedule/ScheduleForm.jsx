@@ -72,16 +72,10 @@ export default function ScheduleForm({ }) {
 
 
   useEffect(() => {
-    const getScheduleData = async () => {
-
-      if(departmentId && monthNumber && fortnight) {
-
-        setValue('departmentId', departmentId);
-        setValue('monthId', monthNumber);
-        setValue('fortnight', String(fortnight));
-      }
-    };
-    getScheduleData();
+    // Precarga desde el listado (location.state).
+    if (departmentId) setValue('departmentId', departmentId);
+    if (monthNumber) setValue('monthId', monthNumber);
+    if (fortnight) setValue('fortnight', String(fortnight));
   }, [departmentsLoaded]);
 
   
@@ -235,13 +229,6 @@ export default function ScheduleForm({ }) {
   const handleAutofillSuccess = (newData) => {
     setFormData(newData);
     setAutofillAlways(!!(newData?.autofillAlways ?? autofillAlways));
-    // if (newData?.isClosed || newData?.status === 'approved') {
-    //   setMode('view');
-    // } else if (newData?.id) {
-    //   setMode('edit');
-    // } else {
-    //   setMode('create');
-    // }
     setMode('edit');
   };
 
